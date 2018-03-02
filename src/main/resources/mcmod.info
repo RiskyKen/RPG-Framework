@@ -1,0 +1,16 @@
+[
+{
+  "modid": "rpgeconomy",
+  "name": "RPG Economy",
+  "description": "RPG Economy Mod.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["RiskyKen"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
