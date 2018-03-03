@@ -5,6 +5,8 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import moe.plushie.rpgeconomy.common.blocks.ModBlocks;
 import moe.plushie.rpgeconomy.common.mail.MailManager;
+import moe.plushie.rpgeconomy.common.network.GuiHandler;
+import moe.plushie.rpgeconomy.common.network.PacketHandler;
 import net.minecraft.server.MinecraftServer;
 
 public class CommonProxy {
@@ -19,6 +21,9 @@ public class CommonProxy {
     }
     
     public void init(FMLInitializationEvent event) {
+        modBlocks.registerTileEntities();
+        new GuiHandler();
+        new PacketHandler();
         mailManager = new MailManager();
     }
     
