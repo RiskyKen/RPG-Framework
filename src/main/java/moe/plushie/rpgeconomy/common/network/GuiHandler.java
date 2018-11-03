@@ -3,7 +3,7 @@ package moe.plushie.rpgeconomy.common.network;
 import cpw.mods.fml.common.network.IGuiHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import moe.plushie.rpgeconomy.RPGEconomy;
-import moe.plushie.rpgeconomy.client.gui.GuiMailBox;
+import moe.plushie.rpgeconomy.client.gui.mailbox.GuiMailBox;
 import moe.plushie.rpgeconomy.common.inventory.ContainerMailBox;
 import moe.plushie.rpgeconomy.common.lib.LibGuiIds;
 import moe.plushie.rpgeconomy.common.tileentities.TileEntityMailBox;

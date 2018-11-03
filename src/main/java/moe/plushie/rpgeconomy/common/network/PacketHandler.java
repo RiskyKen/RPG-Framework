@@ -6,6 +6,7 @@ import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
 import moe.plushie.rpgeconomy.common.lib.LibModInfo;
+import moe.plushie.rpgeconomy.common.network.client.MessageClientGuiMailBox;
 
 public class PacketHandler {
     
@@ -13,7 +14,7 @@ public class PacketHandler {
     private int packetId = 0;
     
     public PacketHandler() {
-        //registerMessage(MessageClientGuiColourUpdate.class, MessageClientGuiColourUpdate.class, Side.SERVER);
+        registerMessage(MessageClientGuiMailBox.class, MessageClientGuiMailBox.class, Side.SERVER);
     }
     
     private <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Class<? extends IMessageHandler<REQ, REPLY>> messageHandler, Class<REQ> requestMessageType, Side side) {

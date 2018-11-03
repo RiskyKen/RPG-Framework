@@ -9,10 +9,15 @@ import moe.plushie.rpgeconomy.common.lib.LibBlockNames;
 import moe.plushie.rpgeconomy.common.lib.LibGuiIds;
 import moe.plushie.rpgeconomy.common.tileentities.TileEntityMailBox;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.MathHelper;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockMailBox extends AbstractModBlockContainer {
 
@@ -26,9 +31,19 @@ public class BlockMailBox extends AbstractModBlockContainer {
             return false;
         }
         if (!world.isRemote) {
+            //player.addChatComponentMessage(new ChatComponentText("Not implemented yet, check back later."));
             FMLNetworkHandler.openGui(player, RPGEconomy.getInstance(), LibGuiIds.MAIL_BOX, world, x, y, z);
         }
         return true;
+    }
+    
+    @Override
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase livingBase, ItemStack itemStack) {
+        int rot = MathHelper.floor_double((double)(livingBase.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+        ForgeDirection rots[] = new ForgeDirection[] {ForgeDirection.SOUTH, ForgeDirection.WEST, ForgeDirection.NORTH, ForgeDirection.EAST};
+        ForgeDirection direction = rots[rot].getOpposite();
+        RPGEconomy.getLogger().info("Rotation " + rot);
+        world.setBlockMetadataWithNotify(x, y, z, direction.ordinal(), 3);
     }
     
     @Override
@@ -43,6 +58,7 @@ public class BlockMailBox extends AbstractModBlockContainer {
     @SideOnly(Side.CLIENT)
     IIcon iconTopBot;
     
+    @SideOnly(Side.CLIENT)
     @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
         blockIcon = iconRegister.registerIcon(LibBlockResources.MAIL_BOX_FRONT);
@@ -51,15 +67,34 @@ public class BlockMailBox extends AbstractModBlockContainer {
         iconTopBot = iconRegister.registerIcon(LibBlockResources.MAIL_BOX_TOP_BOT);
     }
     
+    @SideOnly(Side.CLIENT)
     @Override
-    public IIcon getIcon(int side, int meta) {
-        if (side == 4) {
+    public IIcon getIcon(IBlockAccess blockAccess, int x, int y, int z, int side) {
+        int meta = blockAccess.getBlockMetadata(x, y, z);
+        ForgeDirection direction = ForgeDirection.getOrientation(meta);
+        if (side == meta) {
             return blockIcon;
         }
         if (side < 2) {
             return iconTopBot;
         }
-        if (side == 2) {
+        if (side == direction.getRotation(ForgeDirection.DOWN).ordinal()) {
+            return iconSideFlag;
+        }
+        return iconSide;
+    }
+    
+    @SideOnly(Side.CLIENT)
+    @Override
+    public IIcon getIcon(int side, int meta) {
+        ForgeDirection direction = ForgeDirection.getOrientation(meta);
+        if (side == 3) {
+            return blockIcon;
+        }
+        if (side < 2) {
+            return iconTopBot;
+        }
+        if (side == 5) {
             return iconSideFlag;
         }
         return iconSide;

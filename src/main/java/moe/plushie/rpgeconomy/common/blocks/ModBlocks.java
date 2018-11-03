@@ -8,7 +8,7 @@ import net.minecraft.tileentity.TileEntity;
 
 public class ModBlocks {
     
-    public final Block MAIL_BOX;
+    public static Block MAIL_BOX;
     
     public ModBlocks() {
         MAIL_BOX = new BlockMailBox();

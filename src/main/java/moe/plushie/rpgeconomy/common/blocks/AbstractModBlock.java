@@ -46,4 +46,16 @@ public abstract class AbstractModBlock extends Block {
     protected void registerBlock(String name) {
         GameRegistry.registerBlock(this, ModItemBlock.class, "block." + name);
     }
+    
+    protected static int getBit(int value, int index) {
+        return (value >> index) & 1;
+    }
+    
+    protected static int setBit(int value, int index, boolean on) {
+        if (on) {
+            return value | (1 << index);
+        } else {
+            return value & ~(1 << index);
+        }
+    }
 }
