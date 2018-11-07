@@ -1,6 +1,6 @@
 [
 {
-  "modid": "rpgeconomy",
+  "modid": "rpg_economy",
   "name": "RPG Economy",
   "description": "RPG Economy Mod.",
   "version": "${version}",

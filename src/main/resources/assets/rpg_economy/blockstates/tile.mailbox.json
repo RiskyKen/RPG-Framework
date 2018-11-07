@@ -1,0 +1,18 @@
+{
+    "forge_marker": 1,
+	"defaults": {
+	    "textures": {
+			"top": "rpg_economy:blocks/mail-box/mail-box-top-bot",
+			"side": "rpg_economy:blocks/mail-box/mail-box-side",
+			"front": "rpg_economy:blocks/mail-box/mail-box-front"
+		},
+		"model": "orientable"
+	},
+	"variants": {
+		"normal": [{"model": "orientable"}],
+		"facing=north": {"model": "orientable"},
+		"facing=east": {"model": "orientable", "y": 90},
+		"facing=south": {"model": "orientable", "y": 180},
+		"facing=west": {"model": "orientable", "y": 270}
+	}
+}
