@@ -24,10 +24,10 @@
 # A new line can be inserted with %n. Please add/remove new lines to fit the localisations you are writing.
 
 # Block names
-tile.rpgeconomy:mailBox.name=Mail Box
+tile.rpg_economy:mailBox.name=Mail Box
 
 # Block tooltip
-tile.rpgeconomy:mailBox.tooltip=It's a mail box!
+tile.rpg_economy:mailBox.tooltip=It's a mail box!
 
 # Creative tab
-itemGroup.rpgeconomy=RPG Economy
+itemGroup.rpg_economy=RPG Economy
