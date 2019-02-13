@@ -1,5 +1,8 @@
 package moe.plushie.rpgeconomy.proxies;
 
+import java.io.File;
+
+import moe.plushie.rpgeconomy.common.currency.CurrencyManager;
 import moe.plushie.rpgeconomy.common.init.ModBlocks;
 import moe.plushie.rpgeconomy.common.init.ModItems;
 import moe.plushie.rpgeconomy.common.lib.LibModInfo;
@@ -14,11 +17,26 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 @Mod.EventBusSubscriber(modid = LibModInfo.ID)
 public class CommonProxy {
     
-    private MailSystemManager mailSystemManager;
+    private File instanceDirectory;
+    private File modDirectory;
+    private File modConfigDirectory;
+    
     private ModBlocks modBlocks;
     private ModItems modItems;
     
+    private CurrencyManager currencyManager;
+    private MailSystemManager mailSystemManager;
+    
     public void preInit(FMLPreInitializationEvent event) {
+        instanceDirectory = event.getSuggestedConfigurationFile().getParentFile().getParentFile();
+        modDirectory = new File(instanceDirectory, LibModInfo.ID);
+        if (!modDirectory.exists()) {
+            modDirectory.mkdir();
+        }
+        modConfigDirectory = new File(event.getSuggestedConfigurationFile().getParentFile(), LibModInfo.ID);
+        if (!modConfigDirectory.exists()) {
+            modConfigDirectory.mkdir();
+        }
         modBlocks = new ModBlocks();
         modItems = new ModItems();
     }
@@ -27,13 +45,18 @@ public class CommonProxy {
         modBlocks.registerTileEntities();
         new GuiHandler();
         new PacketHandler();
-        mailSystemManager = new MailSystemManager();
+        currencyManager = new CurrencyManager(modDirectory);
+        mailSystemManager = new MailSystemManager(modDirectory);
     }
     
     public void initRenderers() {
     }
     
     public void postInit(FMLPostInitializationEvent event) {
+    }
+    
+    public CurrencyManager getCurrencyManager() {
+        return currencyManager;
     }
     
     public MailSystemManager getMailSystemManager() {

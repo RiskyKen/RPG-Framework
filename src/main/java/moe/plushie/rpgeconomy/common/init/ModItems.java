@@ -2,6 +2,7 @@ package moe.plushie.rpgeconomy.common.init;
 
 import java.util.ArrayList;
 
+import moe.plushie.rpgeconomy.common.items.ItemCurrency;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -11,6 +12,8 @@ import net.minecraftforge.registries.IForgeRegistry;
 public final class ModItems {
     
     public static final ArrayList<Item> ITEM_LIST = new ArrayList<Item>();
+    
+    public static final Item CURRENCY = new ItemCurrency();
     
     public ModItems() {
         MinecraftForge.EVENT_BUS.register(this);
