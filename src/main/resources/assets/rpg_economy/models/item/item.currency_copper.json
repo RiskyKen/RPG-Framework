@@ -1,0 +1,6 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "rpg_economy:items/coins/copper"
+    }
+}

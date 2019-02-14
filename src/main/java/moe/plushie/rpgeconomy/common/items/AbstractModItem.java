@@ -49,7 +49,7 @@ public abstract class AbstractModItem extends Item implements ICustomModel {
         String unlocalized;
         String localized;
 
-        unlocalized = stack.getTranslationKey() + ".flavour";
+        unlocalized = stack.getTranslationKey() + ".tooltip";
         localized = I18n.format(unlocalized);
         if (!unlocalized.equals(localized)) {
             if (localized.contains("\r\n")) {

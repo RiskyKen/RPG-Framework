@@ -26,8 +26,19 @@
 # Block names
 tile.rpg_economy:mailBox.name=Mail Box
 
-# Block tooltip
+# Block tooltips
 tile.rpg_economy:mailBox.tooltip=It's a mail box!
+
+# Item Names
+item.rpg_economy:currency.0.name=Copper Coin
+item.rpg_economy:currency.1.name=Silver Coin
+item.rpg_economy:currency.2.name=Gold Coin
+item.rpg_economy:currency.3.name=Platinum Coin
+item.rpg_economy:currency.4.name=Emerald Coin
+item.rpg_economy:currency.5.name=Diamond Coin
+
+# Item tooltips
+#item.rpg_economy:currency.0.tooltip=Test
 
 # Creative tab
 itemGroup.rpg_economy=RPG Economy
