@@ -85,7 +85,7 @@ public abstract class AbstractModBlock extends Block implements ICustomItemBlock
     
     @Override
     public void registerItemBlock(IForgeRegistry<Item> registry) {
-        registry.register(new ModItemBlock(this));
+        registry.register(new ModItemBlock(this).setRegistryName(getRegistryName()));
     }
     
     @SideOnly(Side.CLIENT)
