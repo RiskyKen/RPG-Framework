@@ -2,7 +2,6 @@ package moe.plushie.rpgeconomy.common.blocks;
 
 import moe.plushie.rpgeconomy.common.lib.LibBlockNames;
 import moe.plushie.rpgeconomy.common.lib.LibGuiIds;
-import moe.plushie.rpgeconomy.common.tileentities.TileEntityMailBox;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
@@ -11,13 +10,12 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class BlockMailBox extends AbstractModBlockContainer {
+public class BlockMailBox extends AbstractModBlock {
 
     public static final PropertyDirection STATE_FACING = BlockHorizontal.FACING;
     
@@ -68,10 +66,5 @@ public class BlockMailBox extends AbstractModBlockContainer {
         }
         openGui(playerIn, LibGuiIds.MAIL_BOX, worldIn, pos, state, facing);
         return true;
-    }
-
-    @Override
-    public TileEntity createNewTileEntity(World world, int meta) {
-        return new TileEntityMailBox();
     }
 }

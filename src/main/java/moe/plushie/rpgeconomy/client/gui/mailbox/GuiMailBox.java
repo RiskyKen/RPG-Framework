@@ -7,8 +7,8 @@ import moe.plushie.rpgeconomy.client.controls.GuiTabPanel;
 import moe.plushie.rpgeconomy.client.controls.GuiTabbed;
 import moe.plushie.rpgeconomy.client.gui.GuiHelper;
 import moe.plushie.rpgeconomy.client.lib.LibGuiResources;
+import moe.plushie.rpgeconomy.common.init.ModBlocks;
 import moe.plushie.rpgeconomy.common.inventory.ContainerMailBox;
-import moe.plushie.rpgeconomy.common.tileentities.TileEntityMailBox;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
@@ -19,17 +19,15 @@ public class GuiMailBox extends GuiTabbed {
     
     private static final ResourceLocation TEXTURE_TABS = new ResourceLocation(LibGuiResources.MAIL_BOX_TABS);
     
-    private final TileEntityMailBox tileEntity;
     private final String inventoryName;
     
     public final GuiTabMailBoxReading tabReading;
     public final GuiTabMailBoxSending tabSending;
     
-    public GuiMailBox(InventoryPlayer inventoryPlayer, TileEntityMailBox tileEntity) {
-        super(new ContainerMailBox(inventoryPlayer, tileEntity), false, TEXTURE_TABS);
+    public GuiMailBox(InventoryPlayer inventoryPlayer) {
+        super(new ContainerMailBox(inventoryPlayer), false, TEXTURE_TABS);
         
-        this.tileEntity = tileEntity;
-        this.inventoryName = tileEntity.getBlockType().getTranslationKey();
+        this.inventoryName = ModBlocks.MAIL_BOX.getTranslationKey();
         
         tabReading = new GuiTabMailBoxReading(0, this);
         tabSending = new GuiTabMailBoxSending(1, this);

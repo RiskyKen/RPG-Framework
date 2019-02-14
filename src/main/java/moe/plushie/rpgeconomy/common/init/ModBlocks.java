@@ -4,9 +4,7 @@ import java.util.ArrayList;
 
 import moe.plushie.rpgeconomy.common.blocks.BlockMailBox;
 import moe.plushie.rpgeconomy.common.blocks.ICustomItemBlock;
-import moe.plushie.rpgeconomy.common.lib.LibBlockNames;
 import moe.plushie.rpgeconomy.common.lib.LibModInfo;
-import moe.plushie.rpgeconomy.common.tileentities.TileEntityMailBox;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
@@ -47,7 +45,7 @@ public final class ModBlocks {
     }
     
     public void registerTileEntities() {
-        registerTileEntity(TileEntityMailBox.class, LibBlockNames.MAIL_BOX);
+        
     }
     
     private void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id) {

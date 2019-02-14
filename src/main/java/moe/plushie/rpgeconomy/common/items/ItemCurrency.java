@@ -35,6 +35,5 @@ public class ItemCurrency extends AbstractModItem {
         for (int i = 0; i < COIN_TYPES.length; i++) {
             ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(new ResourceLocation(LibModInfo.ID, getTranslationKey() + "_" + COIN_TYPES[i]), "normal"));
         }
-        
     }
 }

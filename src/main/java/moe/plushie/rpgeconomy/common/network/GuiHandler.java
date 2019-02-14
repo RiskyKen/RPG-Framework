@@ -4,7 +4,6 @@ import moe.plushie.rpgeconomy.RpgEconomy;
 import moe.plushie.rpgeconomy.client.gui.mailbox.GuiMailBox;
 import moe.plushie.rpgeconomy.common.inventory.ContainerMailBox;
 import moe.plushie.rpgeconomy.common.lib.LibGuiIds;
-import moe.plushie.rpgeconomy.common.tileentities.TileEntityMailBox;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -23,10 +22,7 @@ public class GuiHandler implements IGuiHandler {
         TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
         switch (ID) {
         case LibGuiIds.MAIL_BOX:
-            if (te instanceof TileEntityMailBox) {
-                return new ContainerMailBox(player.inventory, (TileEntityMailBox) te);
-            }
-            break;
+            return new ContainerMailBox(player.inventory);
         }
         return null;
     }
@@ -36,10 +32,7 @@ public class GuiHandler implements IGuiHandler {
         TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
         switch (ID) {
         case LibGuiIds.MAIL_BOX:
-            if (te instanceof TileEntityMailBox) {
-                return new GuiMailBox(player.inventory, (TileEntityMailBox) te);
-            }
-            break;
+            return new GuiMailBox(player.inventory);
         }
         return null;
     }

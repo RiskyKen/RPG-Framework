@@ -1,15 +1,14 @@
 package moe.plushie.rpgeconomy.common.inventory;
 
-import moe.plushie.rpgeconomy.common.tileentities.TileEntityMailBox;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
-public class ContainerMailBox extends Container {
+public class ContainerMailBox extends ModContainer {
 
-    public ContainerMailBox(InventoryPlayer inventoryPlayer, TileEntityMailBox tileEntity) {
+    public ContainerMailBox(InventoryPlayer inventoryPlayer) {
+        super(inventoryPlayer);
         int playerInvY = 142;
         int hotBarY = playerInvY + 58;
         for (int x = 0; x < 9; x++) {

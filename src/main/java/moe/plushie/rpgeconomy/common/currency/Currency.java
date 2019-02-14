@@ -2,7 +2,6 @@ package moe.plushie.rpgeconomy.common.currency;
 
 import java.util.Arrays;
 
-import moe.plushie.rpgeconomy.RpgEconomy;
 import net.minecraft.item.ItemStack;
 
 public class Currency {
@@ -15,7 +14,6 @@ public class Currency {
         this.name = name;
         this.showInWallet = showInWallet;
         this.variants = variants;
-        RpgEconomy.getLogger().info("Loaded: " + this.toString());
     }
 
     public String getName() {
