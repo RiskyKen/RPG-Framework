@@ -1,6 +1,6 @@
 {
     "parent": "item/handheld",
     "textures": {
-        "layer0": "rpg_economy:items/wallet"
+        "layer0": "rpg_economy:items/coin_purse"
     }
 }
