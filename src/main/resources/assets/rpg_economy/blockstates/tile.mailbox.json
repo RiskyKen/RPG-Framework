@@ -2,9 +2,9 @@
     "forge_marker": 1,
 	"defaults": {
 	    "textures": {
-			"top": "rpg_economy:blocks/mail-box/mail-box-top-bot",
-			"side": "rpg_economy:blocks/mail-box/mail-box-side",
-			"front": "rpg_economy:blocks/mail-box/mail-box-front"
+			"top": "rpg_economy:blocks/mail_box/mail_box_top_bot",
+			"side": "rpg_economy:blocks/mail_box/mail_box_side",
+			"front": "rpg_economy:blocks/mail_box/mail_box_front"
 		},
 		"model": "orientable"
 	},

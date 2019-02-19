@@ -1,5 +1,6 @@
 package moe.plushie.rpgeconomy.proxies;
 
+import moe.plushie.rpgeconomy.client.gui.GuiResourceManager;
 import moe.plushie.rpgeconomy.client.model.ICustomModel;
 import moe.plushie.rpgeconomy.common.init.ModBlocks;
 import moe.plushie.rpgeconomy.common.init.ModItems;
@@ -20,6 +21,7 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void preInit(FMLPreInitializationEvent event) {
         super.preInit(event);
+        new GuiResourceManager();
         //File file = new File(event.getSuggestedConfigurationFile().getParentFile(), "sql.db");
     }
     

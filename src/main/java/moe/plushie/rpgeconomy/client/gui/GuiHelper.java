@@ -6,20 +6,39 @@ import java.util.List;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import moe.plushie.rpgeconomy.client.lib.LibGuiResources;
 import moe.plushie.rpgeconomy.common.lib.LibModInfo;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public final class GuiHelper {
     
+    private static final ResourceLocation PLAYER_TEXTURE = new ResourceLocation(LibGuiResources.PLAYER_INVENTORY);
+    
     private GuiHelper() {}
+    
+    public static void renderPlayerInvTexture(int x, int y) {
+        Minecraft.getMinecraft().renderEngine.bindTexture(PLAYER_TEXTURE);
+        Gui.drawModalRectWithCustomSizedTexture(x, y, 0, 0, 176, 98, 256, 256);
+    }
+    
+    public static void renderPlayerInvlabel(int x, int y, FontRenderer fontRenderer) {
+        renderPlayerInvlabel(x, y, fontRenderer, 0x333333);
+    }
+    
+    public static void renderPlayerInvlabel(int x, int y, FontRenderer fontRenderer, int colour) {
+        fontRenderer.drawString(I18n.format("container.inventory", new Object[0]), x + 8, y + 5, colour);
+    }
     
     public static void renderLocalizedGuiName(FontRenderer fontRenderer, int xSize, String name) {
         renderLocalizedGuiName(fontRenderer, xSize, name, null, 4210752);
