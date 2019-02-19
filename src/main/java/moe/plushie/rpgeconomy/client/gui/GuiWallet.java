@@ -35,5 +35,6 @@ public class GuiWallet extends GuiContainer {
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         GuiHelper.renderLocalizedGuiName(fontRenderer, getXSize(), "wallet");
         GuiHelper.renderPlayerInvlabel(0, 70, fontRenderer);
+        fontRenderer.drawString("              £235,235", 36, 25, 0x333333);
     }
 }
