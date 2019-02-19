@@ -18,6 +18,7 @@ public class ItemCurrency extends AbstractModItem {
     public ItemCurrency() {
         super(LibItemNames.CURRENCY);
         setHasSubtypes(true);
+        setMaxStackSize(64);
     }
 
     @Override
