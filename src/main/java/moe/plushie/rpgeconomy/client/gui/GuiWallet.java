@@ -16,17 +16,24 @@ public class GuiWallet extends GuiContainer {
     public GuiWallet(EntityPlayer entityPlayer) {
         super(new ContainerWallet(entityPlayer));
     }
+    
+    @Override
+    public void initGui() {
+        this.xSize = 176;
+        this.ySize = 168;
+        super.initGui();
+    }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         mc.renderEngine.bindTexture(TEXTURE);
         drawTexturedModalRect(getGuiLeft(), getGuiTop(), 0, 0, 176, 68);
-        GuiHelper.renderPlayerInvTexture(getGuiLeft(), getGuiTop() + 69);
+        GuiHelper.renderPlayerInvTexture(getGuiLeft(), getGuiTop() + 70);
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         GuiHelper.renderLocalizedGuiName(fontRenderer, getXSize(), "wallet");
-        GuiHelper.renderPlayerInvlabel(0, 69, fontRenderer);
+        GuiHelper.renderPlayerInvlabel(0, 70, fontRenderer);
     }
 }

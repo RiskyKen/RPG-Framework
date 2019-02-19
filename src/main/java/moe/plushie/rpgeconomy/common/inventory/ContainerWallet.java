@@ -6,6 +6,6 @@ public class ContainerWallet extends ModContainer {
 
     public ContainerWallet(EntityPlayer entityPlayer) {
         super(entityPlayer.inventory);
-        addPlayerSlots(8, 85);
+        addPlayerSlots(8, 86);
     }
 }
