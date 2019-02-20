@@ -22,12 +22,12 @@ public class ModItemBlock extends ItemBlock {
     public String getUnlocalizedNameInefficiently(ItemStack par1ItemStack) {
         return super.getUnlocalizedNameInefficiently(par1ItemStack);
     }
-    
+
     @Override
     public String getTranslationKey(ItemStack stack) {
         return getModdedUnlocalizedName(super.getTranslationKey(stack), stack);
     }
-    
+
     protected String getModdedUnlocalizedName(String unlocalizedName, ItemStack stack) {
         String name = unlocalizedName.substring(unlocalizedName.indexOf(".") + 1);
         if (hasSubtypes) {
@@ -36,7 +36,7 @@ public class ModItemBlock extends ItemBlock {
             return "tile." + LibModInfo.ID.toLowerCase() + ":" + name;
         }
     }
-    
+
     @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {

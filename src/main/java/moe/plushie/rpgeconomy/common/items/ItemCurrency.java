@@ -29,7 +29,7 @@ public class ItemCurrency extends AbstractModItem {
             }
         }
     }
-    
+
     @SideOnly(Side.CLIENT)
     @Override
     public void registerModels() {

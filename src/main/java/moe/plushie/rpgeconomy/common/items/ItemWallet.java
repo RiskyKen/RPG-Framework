@@ -16,7 +16,7 @@ public class ItemWallet extends AbstractModItem {
     public ItemWallet() {
         super(LibItemNames.WALLET);
     }
-    
+
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
         if (!worldIn.isRemote) {

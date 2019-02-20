@@ -20,11 +20,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public abstract class AbstractModItem extends Item implements ICustomModel {
 
     private int sortPriority = 0;
-    
+
     public AbstractModItem(String name) {
         this(name, true);
     }
-    
+
     public AbstractModItem(String name, boolean addCreativeTab) {
         if (addCreativeTab) {
             setCreativeTab(RpgEconomy.getCreativeTabRPGEconomy());
@@ -35,14 +35,14 @@ public abstract class AbstractModItem extends Item implements ICustomModel {
         setNoRepair();
         ModItems.ITEM_LIST.add(this);
     }
-    
+
     @Override
     public Item setTranslationKey(String unlocalizedName) {
         super.setTranslationKey(unlocalizedName);
         setRegistryName(new ResourceLocation(LibModInfo.ID, "item." + unlocalizedName));
         return this;
     }
-    
+
     @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
@@ -62,12 +62,12 @@ public abstract class AbstractModItem extends Item implements ICustomModel {
             }
         }
     }
-    
+
     @Override
     public String getTranslationKey(ItemStack stack) {
         return getModdedUnlocalizedName(super.getTranslationKey(stack), stack);
     }
-    
+
     protected String getModdedUnlocalizedName(String unlocalizedName) {
         String name = unlocalizedName.substring(unlocalizedName.indexOf(".") + 1);
         if (hasSubtypes) {
@@ -76,7 +76,7 @@ public abstract class AbstractModItem extends Item implements ICustomModel {
             return "item." + LibModInfo.ID.toLowerCase() + ":" + name;
         }
     }
-    
+
     protected String getModdedUnlocalizedName(String unlocalizedName, ItemStack stack) {
         String name = unlocalizedName.substring(unlocalizedName.indexOf(".") + 1);
         if (hasSubtypes) {
@@ -85,12 +85,12 @@ public abstract class AbstractModItem extends Item implements ICustomModel {
             return "item." + LibModInfo.ID.toLowerCase() + ":" + name;
         }
     }
-    
+
     public AbstractModItem setSortPriority(int sortPriority) {
         this.sortPriority = sortPriority;
         return this;
     }
-    
+
     @SideOnly(Side.CLIENT)
     @Override
     public void registerModels() {
