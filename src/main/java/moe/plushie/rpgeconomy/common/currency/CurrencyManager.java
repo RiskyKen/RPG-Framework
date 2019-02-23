@@ -19,11 +19,13 @@ public class CurrencyManager {
     
     public CurrencyManager(File modDirectory) {
         currencyDirectory = new File(modDirectory, DIRECTORY_NAME);
+        if (!currencyDirectory.exists()) {
+            currencyDirectory.mkdir();
+        }
         currencyMap = new HashMap<String, Currency>();
-        reload();
     }
     
-    public void reload() {
+    public void reload(boolean syncWithClients) {
         RpgEconomy.getLogger().info("Loading Currency");
         File[] files = currencyDirectory.listFiles(new FilenameFilter() {
             @Override
@@ -41,7 +43,7 @@ public class CurrencyManager {
         RpgEconomy.getLogger().info("Loading currency: " + currencyFile.getName());
         JsonElement jsonElement = SerializeHelper.readJsonFile(currencyFile);
         if (jsonElement != null) {
-            Currency currency = CurrencySerializer.deserialize(jsonElement);
+            Currency currency = CurrencySerializer.deserializeJson(jsonElement);
             if (currency != null) {
                 currencyMap.put(currency.getName(), currency);
             }
@@ -50,5 +52,9 @@ public class CurrencyManager {
     
     public Currency getCurrency(String name) {
         return currencyMap.get(name);
+    }
+    
+    public Currency[] getCurrencies() {
+        return currencyMap.values().toArray(new Currency[currencyMap.size()]);
     }
 }

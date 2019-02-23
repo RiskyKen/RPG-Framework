@@ -12,6 +12,10 @@ public class MailSystemManager {
         mailSystemMain = new MailSystem("main");
     }
     
+    public void reload(boolean syncWithClients) {
+        
+    }
+    
     public void onClientSendMailMessage(EntityPlayerMP entityPlayer, MailMessage mailMessage) {
         mailSystemMain.onClientSendMailMessage(entityPlayer, mailMessage);
     }

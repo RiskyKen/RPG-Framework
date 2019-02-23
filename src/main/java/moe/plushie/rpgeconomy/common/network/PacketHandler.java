@@ -2,6 +2,7 @@ package moe.plushie.rpgeconomy.common.network;
 
 import moe.plushie.rpgeconomy.common.lib.LibModInfo;
 import moe.plushie.rpgeconomy.common.network.client.MessageClientGuiMailBox;
+import moe.plushie.rpgeconomy.common.network.server.MessageServerSyncWalletCap;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -15,6 +16,7 @@ public class PacketHandler {
     
     public PacketHandler() {
         registerMessage(MessageClientGuiMailBox.class, MessageClientGuiMailBox.class, Side.SERVER);
+        registerMessage(MessageServerSyncWalletCap.class, MessageServerSyncWalletCap.class, Side.CLIENT);
     }
     
     private <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Class<? extends IMessageHandler<REQ, REPLY>> messageHandler, Class<REQ> requestMessageType, Side side) {

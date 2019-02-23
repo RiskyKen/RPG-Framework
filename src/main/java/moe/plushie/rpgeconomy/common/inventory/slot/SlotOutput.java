@@ -29,5 +29,4 @@ public class SlotOutput extends SlotHidable {
     public boolean isItemValid(ItemStack stack) {
         return false;
     }
-    
 }

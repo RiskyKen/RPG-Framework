@@ -2,6 +2,7 @@ package moe.plushie.rpgeconomy.proxies;
 
 import java.io.File;
 
+import moe.plushie.rpgeconomy.common.capability.ModCapabilityManager;
 import moe.plushie.rpgeconomy.common.config.ConfigHandler;
 import moe.plushie.rpgeconomy.common.currency.CurrencyManager;
 import moe.plushie.rpgeconomy.common.init.ModBlocks;
@@ -39,16 +40,22 @@ public class CommonProxy {
         if (!modDirectory.exists()) {
             modDirectory.mkdir();
         }
+        
+        currencyManager = new CurrencyManager(modDirectory);
+        mailSystemManager = new MailSystemManager(modDirectory);
+        
         modBlocks = new ModBlocks();
         modItems = new ModItems();
+        ModCapabilityManager.register();
     }
     
     public void init(FMLInitializationEvent event) {
         modBlocks.registerTileEntities();
         new GuiHandler();
         new PacketHandler();
-        currencyManager = new CurrencyManager(modDirectory);
-        mailSystemManager = new MailSystemManager(modDirectory);
+        
+        currencyManager.reload(false);
+        mailSystemManager.reload(false);
     }
     
     public void initRenderers() {

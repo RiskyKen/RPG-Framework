@@ -14,49 +14,79 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public final class CurrencySerializer {
     
+    private static final String PROP_NAME = "name";
+    private static final String PROP_HAS_WALLET = "hasWallet";
+    private static final String PROP_NEED_ITEM_TO_OPEN = "needItemToOpen";
+    private static final String PROP_OPEN_WITH_KEYBIND = "opensWithKeybind";
+    private static final String PROP_VARIANTS = "variants";
+    
+    private static final String PROP_VAR_NAME = "name";
+    private static final String PROP_VAR_VALUE = "value";
+    private static final String PROP_VAR_ITEM = "item";
+    
     private CurrencySerializer() {
     }
     
-    /*public static JsonElement serialize(Currency currency) {
+    public static JsonElement serializeJson(Currency currency) {
+        JsonObject jsonObject = new JsonObject();
         
-    }*/
+        jsonObject.addProperty(PROP_NAME, currency.getName());
+        jsonObject.addProperty(PROP_HAS_WALLET, currency.getHasWallet());
+        jsonObject.addProperty(PROP_NEED_ITEM_TO_OPEN, currency.getNeedItemToOpen());
+        jsonObject.addProperty(PROP_OPEN_WITH_KEYBIND, currency.getOpensWithKeybind());
+        
+        JsonArray jsonVariants = new JsonArray();
+        Variant[] variants = currency.getVariants();
+        for (int i = 0; i < variants.length; i++) {
+            JsonObject jsonVariant = new JsonObject();
+            jsonVariant.addProperty(PROP_VAR_NAME, variants[i].getName());
+            jsonVariant.addProperty(PROP_VAR_VALUE, variants[i].getValue());
+            NBTTagCompound compound = new NBTTagCompound();
+            variants[i].getItem().writeToNBT(compound);
+            jsonVariant.addProperty(PROP_VAR_ITEM, compound.toString());
+            jsonVariants.add(jsonVariant);
+        }
+        jsonObject.add(PROP_VARIANTS, jsonVariants);
+        
+        return jsonObject;
+    }
     
-    public static Currency deserialize(JsonElement json) {
+    public static Currency deserializeJson(JsonElement json) {
         try {
             JsonObject jsonObject = json.getAsJsonObject();
-            JsonElement elementName = jsonObject.get("name");
-            JsonElement elementShowsInWallet = jsonObject.get("shows in wallet");
-            JsonElement elementVariants = jsonObject.get("variants");
             
-            String name = elementName.getAsString();
-            boolean showsInWallet = elementShowsInWallet.getAsBoolean();
-            JsonArray jsonArray = elementVariants.getAsJsonArray();
+            JsonElement propName = jsonObject.get(PROP_NAME);
+            JsonElement propHasWallet = jsonObject.get(PROP_HAS_WALLET);
+            JsonElement propNeedItemToOpen = jsonObject.get(PROP_NEED_ITEM_TO_OPEN);
+            JsonElement propPpensWithKeybind = jsonObject.get(PROP_OPEN_WITH_KEYBIND);
+            
+            String name = propName.getAsString();
+            boolean hasWallet = propHasWallet.getAsBoolean();
+            boolean needItemToOpen = propNeedItemToOpen.getAsBoolean();
+            boolean opensWithKeybind = propPpensWithKeybind.getAsBoolean();
+            
+            JsonElement propVariants = jsonObject.get(PROP_VARIANTS);
+            JsonArray jsonVariants = propVariants.getAsJsonArray();
             
             ArrayList<Variant> variants = new ArrayList<Variant>();
-            for (int i = 0; i < jsonArray.size(); i++) {
-                JsonObject jsonVariant = jsonArray.get(i).getAsJsonObject();
-                JsonElement elementVariantName = jsonVariant.get("name");
-                JsonElement elementVariantValue = jsonVariant.get("value");
+            for (int i = 0; i < jsonVariants.size(); i++) {
+                JsonObject jsonVariant = jsonVariants.get(i).getAsJsonObject();
+                JsonElement propVariantName = jsonVariant.get(PROP_VAR_NAME);
+                JsonElement propVariantValue = jsonVariant.get(PROP_VAR_VALUE);
+                JsonElement propVariantItem = jsonVariant.get(PROP_VAR_ITEM);
                 
-                String variantName = elementVariantName.getAsString();
-                int variantValue = elementVariantValue.getAsInt();
-                ItemStack[] items = null;
                 
-                if (jsonVariant.has("items")) {
-                    JsonElement variantItems = jsonVariant.get("items");
-                    JsonArray variantArray = variantItems.getAsJsonArray();
-                    items = new ItemStack[variantArray.size()];
-                    for (int j = 0; j < variantArray.size(); j++) {
-                        NBTTagCompound nbtBase = JsonToNBT.getTagFromJson(variantArray.get(j).toString());
-                        if (!nbtBase.hasKey("Count")) {
-                            nbtBase.setByte("Count", (byte) 1);
-                        }
-                        items[j] = new ItemStack(nbtBase);
-                    }
+                String variantName = propVariantName.getAsString();
+                int variantValue = propVariantValue.getAsInt();
+                NBTTagCompound compound = JsonToNBT.getTagFromJson(propVariantItem.getAsJsonObject().toString());
+                if (!compound.hasKey("Count")) {
+                    compound.setByte("Count", (byte) 1);
                 }
-                variants.add(new Variant(variantName, variantValue, items));
+                ItemStack item = new ItemStack(compound);
+                
+                variants.add(new Variant(variantName, variantValue, item));
             }
-            return new Currency(name, showsInWallet, variants.toArray(new Variant[variants.size()]));
+            return new Currency(name, hasWallet, needItemToOpen, opensWithKeybind, variants.toArray(new Variant[variants.size()]));
         } catch (Exception e) {
             e.printStackTrace();
         }

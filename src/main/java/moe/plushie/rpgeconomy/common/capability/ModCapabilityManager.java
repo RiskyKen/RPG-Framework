@@ -1,7 +1,7 @@
 package moe.plushie.rpgeconomy.common.capability;
 
-import moe.plushie.rpgeconomy.common.capability.wallet.IWallet;
-import moe.plushie.rpgeconomy.common.capability.wallet.WalletCapability;
+import moe.plushie.rpgeconomy.common.capability.currency.CurrencyCapability;
+import moe.plushie.rpgeconomy.common.capability.currency.ICurrencyCapability;
 import moe.plushie.rpgeconomy.common.lib.LibModInfo;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,7 +27,7 @@ public final class ModCapabilityManager {
     }
 
     public static void register() {
-        CapabilityManager.INSTANCE.register(IWallet.class, new WalletCapability.WalletStorage(), new WalletCapability.WalletFactory());
+        CapabilityManager.INSTANCE.register(ICurrencyCapability.class, new CurrencyCapability.Storage(), new CurrencyCapability.Factory());
     }
 
     @SubscribeEvent
@@ -36,12 +36,12 @@ public final class ModCapabilityManager {
             return;
         }
         EntityPlayer player = (EntityPlayer) event.getObject();
-        event.addCapability(KEY_WALLET_PROVIDER, new WalletCapability.WalletProvider());
+        event.addCapability(KEY_WALLET_PROVIDER, new CurrencyCapability.Provider());
     }
     
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerLoggedInEvent event) {
-        IWallet wallet = WalletCapability.get(event.player);
+        ICurrencyCapability wallet = CurrencyCapability.get(event.player);
         if (wallet != null) {
             wallet.syncToOwner((EntityPlayerMP) event.player);
         }
@@ -52,12 +52,12 @@ public final class ModCapabilityManager {
         World world = event.getEntityPlayer().getEntityWorld();
         if (event.isWasDeath()) {
             NBTBase nbt = null;
-            IWallet walletOld = WalletCapability.get(event.getOriginal());
-            IWallet walletNew = WalletCapability.get(event.getEntityPlayer());
+            ICurrencyCapability walletOld = CurrencyCapability.get(event.getOriginal());
+            ICurrencyCapability walletNew = CurrencyCapability.get(event.getEntityPlayer());
             
-            IStorage<IWallet> storageWallet = WalletCapability.WALLET_CAP.getStorage();
-            nbt = storageWallet.writeNBT(WalletCapability.WALLET_CAP, walletOld, null);
-            storageWallet.readNBT(WalletCapability.WALLET_CAP, walletNew, null, nbt);
+            IStorage<ICurrencyCapability> storageWallet = CurrencyCapability.WALLET_CAP.getStorage();
+            nbt = storageWallet.writeNBT(CurrencyCapability.WALLET_CAP, walletOld, null);
+            storageWallet.readNBT(CurrencyCapability.WALLET_CAP, walletNew, null, nbt);
         }
     }
     
@@ -65,7 +65,7 @@ public final class ModCapabilityManager {
     public static void onRespawn(PlayerRespawnEvent event) {
         // Called after onPlayerClone. Used to sync after death.
         if (!event.isEndConquered()) {
-            IWallet wallet = WalletCapability.get(event.player);
+            ICurrencyCapability wallet = CurrencyCapability.get(event.player);
             if (wallet != null) {
                 wallet.syncToOwner((EntityPlayerMP) event.player);
             }

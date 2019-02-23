@@ -1,7 +1,9 @@
 package moe.plushie.rpgeconomy.common.inventory.slot;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 
 public class SlotHidable extends Slot {
 
@@ -27,6 +29,16 @@ public class SlotHidable extends Slot {
 
     public boolean isVisible() {
         return this.visible;
+    }
+    
+    @Override
+    public boolean canTakeStack(EntityPlayer playerIn) {
+        return this.visible & super.canTakeStack(playerIn);
+    }
+    
+    @Override
+    public boolean isItemValid(ItemStack stack) {
+        return this.visible & super.isItemValid(stack);
     }
     
     public void setVisible(boolean visible) {
