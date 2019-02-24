@@ -94,7 +94,7 @@ public final class MailMessageSerializer {
                 }
                 attachments.add(itemStack);
             }
-            return new MailMessage(sender, receiver, Calendar.getInstance(), subject, messageText, attachments);
+            return new MailMessage(null, sender, receiver, Calendar.getInstance(), subject, messageText, attachments);
         } catch (Exception e) {
             e.printStackTrace();
         }
