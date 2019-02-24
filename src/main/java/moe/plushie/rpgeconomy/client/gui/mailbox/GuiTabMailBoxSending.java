@@ -1,8 +1,11 @@
 package moe.plushie.rpgeconomy.client.gui.mailbox;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import org.lwjgl.opengl.GL11;
+
+import com.mojang.authlib.GameProfile;
 
 import moe.plushie.rpgeconomy.client.gui.GuiHelper;
 import moe.plushie.rpgeconomy.client.gui.controls.GuiLabeledTextField;
@@ -14,6 +17,7 @@ import moe.plushie.rpgeconomy.common.network.client.MessageClientGuiMailBox;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
 import net.minecraftforge.fml.relauncher.Side;
@@ -87,8 +91,8 @@ public class GuiTabMailBoxSending extends GuiTabPanel {
         }
     }
     
-    private void sendMail(String usernameSender, String usernameReceiver, String subject, String messageText, ArrayList<ItemStack> attachments) {
-        MailMessage mailMessage = new MailMessage(usernameSender, usernameReceiver, subject, messageText, attachments);
+    private void sendMail(GameProfile sender, GameProfile receiver, Calendar sendDateTime, String subject, String messageText, NonNullList<ItemStack> attachments) {
+        MailMessage mailMessage = new MailMessage(sender, receiver, sendDateTime, subject, messageText, attachments);
         PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiMailBox(mailMessage));
     }
 

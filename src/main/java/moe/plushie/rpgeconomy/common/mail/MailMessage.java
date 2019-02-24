@@ -1,48 +1,60 @@
 package moe.plushie.rpgeconomy.common.mail;
 
-import java.util.ArrayList;
+import java.util.Calendar;
 
+import com.mojang.authlib.GameProfile;
+
+import moe.plushie.rpgeconomy.api.mail.IMailMessage;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 
-public class MailMessage {
-    
-    private final String usernameSender;
-    private final String usernameReceiver;
+public class MailMessage implements IMailMessage {
+
+    private final GameProfile sender;
+    private final GameProfile receiver;
+    private final Calendar sendDateTime;
     private final String subject;
     private final String messageText;
-    private final ArrayList<ItemStack> attachments;
-    
-    public MailMessage(String usernameSender, String usernameReceiver, String subject, String messageText, ArrayList<ItemStack> attachments) {
-        this.usernameSender = usernameSender;
-        this.usernameReceiver = usernameReceiver;
+    private final NonNullList<ItemStack> attachments;
+
+    public MailMessage(GameProfile sender, GameProfile receiver, Calendar sendDateTime, String subject, String messageText, NonNullList<ItemStack> attachments) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.sendDateTime = sendDateTime;
         this.subject = subject;
         this.messageText = messageText;
         this.attachments = attachments;
     }
-    
-    public String getUsernameSender() {
-        return usernameSender;
+
+    @Override
+    public GameProfile getSender() {
+        return sender;
     }
-    
-    public String getUsernameReceiver() {
-        return usernameReceiver;
+
+    @Override
+    public GameProfile getReceiver() {
+        return receiver;
     }
-    
+
+    @Override
+    public Calendar getSendDateTime() {
+        return sendDateTime;
+    }
+
     public String getSubject() {
         return subject;
     }
-    
-    public ArrayList<ItemStack> getAttachments() {
-        return attachments;
-    }
-    
+
     public String getMessageText() {
         return messageText;
     }
-    
+
+    public NonNullList<ItemStack> getAttachments() {
+        return attachments;
+    }
+
     @Override
     public String toString() {
-        return "MailMessage [usernameSender=" + usernameSender + ", usernameReceiver=" + usernameReceiver + ", subject=" + subject + ", messageText=" + messageText + ", attachments="
-                + attachments + "]";
+        return "MailMessage [sender=" + sender + ", receiver=" + receiver + ", sendDateTime=" + sendDateTime + ", subject=" + subject + ", messageText=" + messageText + ", attachments=" + attachments + "]";
     }
 }

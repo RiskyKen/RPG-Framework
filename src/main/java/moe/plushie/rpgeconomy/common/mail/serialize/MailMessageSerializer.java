@@ -1,11 +1,12 @@
 package moe.plushie.rpgeconomy.common.mail.serialize;
 
-import java.util.ArrayList;
+import java.util.Calendar;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mojang.authlib.GameProfile;
 
 import moe.plushie.rpgeconomy.RpgEconomy;
 import moe.plushie.rpgeconomy.common.mail.MailMessage;
@@ -14,6 +15,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
+import net.minecraft.util.NonNullList;
 
 public final class MailMessageSerializer {
     
@@ -25,8 +28,8 @@ public final class MailMessageSerializer {
             return null;
         }
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("sender", mailMessage.getUsernameSender());
-        jsonObject.addProperty("receiver", mailMessage.getUsernameReceiver());
+        jsonObject.addProperty("sender", NBTUtil.writeGameProfile(new NBTTagCompound(), mailMessage.getSender()).toString());
+        jsonObject.addProperty("receiver", NBTUtil.writeGameProfile(new NBTTagCompound(), mailMessage.getReceiver()).toString());
         jsonObject.addProperty("messageText", mailMessage.getMessageText());
         JsonArray jsonArray = new JsonArray();
         for (int i = 0; i < mailMessage.getAttachments().size(); i++) {
@@ -70,13 +73,14 @@ public final class MailMessageSerializer {
             JsonElement elementMessageText = jsonObject.get("messageText");
             JsonElement elementAttachments = jsonObject.get("attachments");
             
-            String sender = elementSender.getAsString();
-            String receiver = elementReceiver.getAsString();
+            GameProfile sender = NBTUtil.readGameProfileFromNBT(JsonToNBT.getTagFromJson(elementSender.getAsString()));
+            GameProfile receiver = NBTUtil.readGameProfileFromNBT(JsonToNBT.getTagFromJson(elementReceiver.getAsString()));
             String subject = elementSubject.getAsString();
             String messageText = elementMessageText.getAsString();
+            
             JsonArray jsonArray = elementAttachments.getAsJsonArray();
             
-            ArrayList<ItemStack> attachments = new ArrayList<ItemStack>();
+            NonNullList<ItemStack> attachments = NonNullList.<ItemStack>withSize(0, ItemStack.EMPTY);
             for (int i = 0; i < jsonArray.size(); i++) {
                 JsonObject jsonAttachment = jsonArray.get(i).getAsJsonObject();
                 JsonElement elementid = jsonAttachment.get("id");
@@ -90,7 +94,7 @@ public final class MailMessageSerializer {
                 }
                 attachments.add(itemStack);
             }
-            return new MailMessage(sender, receiver, subject, messageText, attachments);
+            return new MailMessage(sender, receiver, Calendar.getInstance(), subject, messageText, attachments);
         } catch (Exception e) {
             e.printStackTrace();
         }
