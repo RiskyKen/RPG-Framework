@@ -21,7 +21,7 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 @Mod.EventBusSubscriber(modid = LibModInfo.ID)
 public final class ModCapabilityManager {
 
-    private static final ResourceLocation KEY_WALLET_PROVIDER = new ResourceLocation(LibModInfo.ID, "wallet_provider");
+    private static final ResourceLocation KEY_CURRENCY_PROVIDER = new ResourceLocation(LibModInfo.ID, "currency_provider");
 
     private ModCapabilityManager() {
     }
@@ -36,7 +36,7 @@ public final class ModCapabilityManager {
             return;
         }
         EntityPlayer player = (EntityPlayer) event.getObject();
-        event.addCapability(KEY_WALLET_PROVIDER, new CurrencyCapability.Provider());
+        event.addCapability(KEY_CURRENCY_PROVIDER, new CurrencyCapability.Provider());
     }
 
     @SubscribeEvent
