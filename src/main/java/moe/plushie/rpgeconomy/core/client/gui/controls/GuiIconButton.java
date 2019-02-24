@@ -72,14 +72,14 @@ public class GuiIconButton extends GuiButtonExt {
         int offsetPos = 0;
         //disabled
         if (hoverState == 0) {
-            offsetPos += (iconWidth + 1) * 2;
+            offsetPos += (iconWidth) * 2;
         }
         //hovering
         if (hoverState == 2) {
-            offsetPos += iconWidth + 1;
+            offsetPos += iconWidth;
         }
         if (isPressed) {
-            offsetPos += (iconWidth + 1) * 2;
+            offsetPos += (iconWidth) * 2;
         }
         mc.renderEngine.bindTexture(iconTexture);
         if (horizontal) {

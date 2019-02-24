@@ -2,7 +2,6 @@ package moe.plushie.rpgeconomy.core.common.inventory;
 
 import javax.annotation.Nonnull;
 
-import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.utils.NBTHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -57,7 +56,6 @@ public class ModInventory implements IInventory {
         if (!itemstack.isEmpty()) {
             this.markDirty();
         }
-        RpgEconomy.getLogger().info("decrStackSize");
         return itemstack;
     }
     
@@ -67,7 +65,6 @@ public class ModInventory implements IInventory {
         if (!itemstack.isEmpty()) {
             this.markDirty();
         }
-        RpgEconomy.getLogger().info("removeStackFromSlot");
         return itemstack;
     }
 
@@ -78,7 +75,6 @@ public class ModInventory implements IInventory {
             stack.setCount(this.getInventoryStackLimit());
         }
         this.markDirty();
-        RpgEconomy.getLogger().info("setInventorySlotContents");
         if (callback != null) {
             callback.setInventorySlotContents(this, index, stack);
         }
