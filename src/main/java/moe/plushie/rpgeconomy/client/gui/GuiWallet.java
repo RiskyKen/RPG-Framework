@@ -1,9 +1,9 @@
 package moe.plushie.rpgeconomy.client.gui;
 
+import moe.plushie.rpgeconomy.api.currency.IWallet;
 import moe.plushie.rpgeconomy.client.lib.LibGuiResources;
 import moe.plushie.rpgeconomy.common.capability.currency.CurrencyCapability;
 import moe.plushie.rpgeconomy.common.currency.Currency;
-import moe.plushie.rpgeconomy.common.currency.Wallet;
 import moe.plushie.rpgeconomy.common.init.ModItems;
 import moe.plushie.rpgeconomy.common.inventory.ContainerWallet;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -20,7 +20,7 @@ public class GuiWallet extends GuiContainer {
     
     private final ItemStack walletStack;
     private final Currency currency;
-    private final Wallet wallet;
+    private final IWallet wallet;
     
     public GuiWallet(EntityPlayer entityPlayer, Currency currency) {
         super(new ContainerWallet(entityPlayer, currency));

@@ -2,10 +2,10 @@ package moe.plushie.rpgeconomy.common.inventory;
 
 import moe.plushie.rpgeconomy.RpgEconomy;
 import moe.plushie.rpgeconomy.api.currency.ICurrencyCapability;
+import moe.plushie.rpgeconomy.api.currency.IWallet;
 import moe.plushie.rpgeconomy.common.capability.currency.CurrencyCapability;
 import moe.plushie.rpgeconomy.common.currency.Currency;
 import moe.plushie.rpgeconomy.common.currency.Currency.CurrencyVariant;
-import moe.plushie.rpgeconomy.common.currency.Wallet;
 import moe.plushie.rpgeconomy.common.inventory.ModInventory.IInventoryCallback;
 import moe.plushie.rpgeconomy.common.inventory.slot.SlotCurrency;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,7 +19,7 @@ public class ContainerWallet extends ModContainer implements IInventoryCallback 
     private final EntityPlayer player;
     private final Currency currency;
     private final ICurrencyCapability currencyCap;
-    private final Wallet wallet;
+    private final IWallet wallet;
     private final ModInventory inventoryWallet;
     
     public ContainerWallet(EntityPlayer entityPlayer, Currency currency) {

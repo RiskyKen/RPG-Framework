@@ -7,7 +7,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 import moe.plushie.rpgeconomy.RpgEconomy;
+import moe.plushie.rpgeconomy.api.currency.ICurrency;
 import moe.plushie.rpgeconomy.api.currency.ICurrencyCapability;
+import moe.plushie.rpgeconomy.api.currency.IWallet;
 import moe.plushie.rpgeconomy.common.currency.Currency;
 import moe.plushie.rpgeconomy.common.currency.CurrencyManager;
 import moe.plushie.rpgeconomy.common.currency.Wallet;
@@ -43,7 +45,7 @@ public class CurrencyCapability implements ICurrencyCapability {
     }
     
     @Override
-    public Wallet getWallet(Currency currency) {
+    public Wallet getWallet(ICurrency currency) {
         return walletMap.get(currency.getName());
     }
     
@@ -72,7 +74,7 @@ public class CurrencyCapability implements ICurrencyCapability {
             CurrencyManager currencyManager = RpgEconomy.getProxy().getCurrencyManager();
             Currency[] currencies = currencyManager.getCurrencies();
             for (Currency currency : currencies) {
-                Wallet wallet = instance.getWallet(currency);
+                IWallet wallet = instance.getWallet(currency);
                 JsonElement json = WalletSerializer.serializeJson(wallet);
                 compound.setString(TAG_WALLET + currency.getName(), json.toString());
             }
@@ -89,8 +91,8 @@ public class CurrencyCapability implements ICurrencyCapability {
                     try {
                         JsonParser parser = new JsonParser();
                         JsonElement json = parser.parse(compound.getString(TAG_WALLET + currency.getName()));
-                        Wallet walletNew = WalletSerializer.deserializeJson(json);
-                        Wallet walletOld = instance.getWallet(currency);
+                        IWallet walletNew = WalletSerializer.deserializeJson(json);
+                        IWallet walletOld = instance.getWallet(currency);
                         walletOld.setAmount(walletNew.getAmount());
                     } catch (Exception e) {
                         RpgEconomy.getLogger().error("Error parsing json.");

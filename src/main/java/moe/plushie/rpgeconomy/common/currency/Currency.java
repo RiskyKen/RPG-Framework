@@ -29,23 +29,28 @@ public class Currency implements ICurrency {
         this.opensWithKeybind = opensWithKeybind;
         this.variants = variants;
     }
-
+    
+    @Override
     public String getName() {
         return name;
     }
     
+    @Override
     public boolean getHasWallet() {
         return hasWallet;
     }
     
+    @Override
     public boolean getNeedItemToOpen() {
         return needItemToOpen;
     }
     
+    @Override
     public boolean getOpensWithKeybind() {
         return opensWithKeybind;
     }
     
+    @Override
     public CurrencyVariant[] getVariants() {
         return variants;
     }
@@ -67,14 +72,17 @@ public class Currency implements ICurrency {
             this.item = item;
         }
         
+        @Override
         public String getName() {
             return name;
         }
         
+        @Override
         public int getValue() {
             return value;
         }
         
+        @Override
         public ItemStack getItem() {
             return item;
         }

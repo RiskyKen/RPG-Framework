@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import moe.plushie.rpgeconomy.RpgEconomy;
+import moe.plushie.rpgeconomy.api.currency.IWallet;
 import moe.plushie.rpgeconomy.common.currency.Currency;
 import moe.plushie.rpgeconomy.common.currency.CurrencyManager;
 import moe.plushie.rpgeconomy.common.currency.Wallet;
@@ -16,7 +17,7 @@ public class WalletSerializer {
     private WalletSerializer() {
     }
     
-    public static JsonElement serializeJson(Wallet wallet) {
+    public static JsonElement serializeJson(IWallet wallet) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty(PROP_CURRENCY, wallet.getCurrency().getName());
         jsonObject.addProperty(PROP_AMOUNT, wallet.getAmount());
