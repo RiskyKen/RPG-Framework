@@ -2,12 +2,12 @@ package moe.plushie.rpgeconomy.common.mail.serialize;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
-import moe.plushie.rpgeconomy.RpgEconomy;
 import moe.plushie.rpgeconomy.common.mail.MailSystem;
 
 public class MailSystemSerializer {
+    
+    private static final String PROP_NAME = "name";
     
     private MailSystemSerializer() {}
     
@@ -20,21 +20,17 @@ public class MailSystemSerializer {
         return jsonObject;
     }
     
-    public static MailSystem deserialize(String jsonString) {
-        if (jsonString == null) {
-            return null;
-        }
+    public static MailSystem deserializeJson(JsonElement json) {
         try {
-            JsonParser parser = new JsonParser();
-            return deserialize(parser.parse(jsonString)); 
+            JsonObject jsonObject = json.getAsJsonObject();
+
+            JsonElement propName = jsonObject.get(PROP_NAME);
+
+            String name = propName.getAsString();
+            return new MailSystem(name);
         } catch (Exception e) {
-            RpgEconomy.getLogger().error("Error loading mail message.");
-            RpgEconomy.getLogger().error(e.getLocalizedMessage());
-            return null;
+            e.printStackTrace();
         }
-    }
-    
-    public static MailSystem deserialize(JsonElement json) {
         return null;
     }
 }

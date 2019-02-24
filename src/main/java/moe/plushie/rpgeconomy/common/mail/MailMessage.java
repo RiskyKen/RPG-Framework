@@ -5,11 +5,13 @@ import java.util.Calendar;
 import com.mojang.authlib.GameProfile;
 
 import moe.plushie.rpgeconomy.api.mail.IMailMessage;
+import moe.plushie.rpgeconomy.api.mail.IMailSystem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 
 public class MailMessage implements IMailMessage {
 
+    private final MailSystem mailSystem;
     private final GameProfile sender;
     private final GameProfile receiver;
     private final Calendar sendDateTime;
@@ -17,13 +19,19 @@ public class MailMessage implements IMailMessage {
     private final String messageText;
     private final NonNullList<ItemStack> attachments;
 
-    public MailMessage(GameProfile sender, GameProfile receiver, Calendar sendDateTime, String subject, String messageText, NonNullList<ItemStack> attachments) {
+    public MailMessage(MailSystem mailSystem, GameProfile sender, GameProfile receiver, Calendar sendDateTime, String subject, String messageText, NonNullList<ItemStack> attachments) {
+        this.mailSystem = mailSystem;
         this.sender = sender;
         this.receiver = receiver;
         this.sendDateTime = sendDateTime;
         this.subject = subject;
         this.messageText = messageText;
         this.attachments = attachments;
+    }
+
+    @Override
+    public IMailSystem getMailSystem() {
+        return mailSystem;
     }
 
     @Override

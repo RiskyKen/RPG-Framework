@@ -9,6 +9,8 @@ import net.minecraft.util.NonNullList;
 
 public interface IMailMessage {
     
+    public IMailSystem getMailSystem();
+    
     public GameProfile getSender();
 
     public GameProfile getReceiver();
