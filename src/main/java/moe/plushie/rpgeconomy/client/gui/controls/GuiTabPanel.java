@@ -1,4 +1,4 @@
-package moe.plushie.rpgeconomy.client.controls;
+package moe.plushie.rpgeconomy.client.gui.controls;
 
 import java.util.ArrayList;
 

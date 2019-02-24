@@ -7,7 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import moe.plushie.rpgeconomy.common.currency.Currency;
-import moe.plushie.rpgeconomy.common.currency.Currency.Variant;
+import moe.plushie.rpgeconomy.common.currency.Currency.CurrencyVariant;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTTagCompound;
@@ -36,7 +36,7 @@ public final class CurrencySerializer {
         jsonObject.addProperty(PROP_OPEN_WITH_KEYBIND, currency.getOpensWithKeybind());
         
         JsonArray jsonVariants = new JsonArray();
-        Variant[] variants = currency.getVariants();
+        CurrencyVariant[] variants = currency.getVariants();
         for (int i = 0; i < variants.length; i++) {
             JsonObject jsonVariant = new JsonObject();
             jsonVariant.addProperty(PROP_VAR_NAME, variants[i].getName());
@@ -68,7 +68,7 @@ public final class CurrencySerializer {
             JsonElement propVariants = jsonObject.get(PROP_VARIANTS);
             JsonArray jsonVariants = propVariants.getAsJsonArray();
             
-            ArrayList<Variant> variants = new ArrayList<Variant>();
+            ArrayList<CurrencyVariant> variants = new ArrayList<CurrencyVariant>();
             for (int i = 0; i < jsonVariants.size(); i++) {
                 JsonObject jsonVariant = jsonVariants.get(i).getAsJsonObject();
                 JsonElement propVariantName = jsonVariant.get(PROP_VAR_NAME);
@@ -84,9 +84,9 @@ public final class CurrencySerializer {
                 }
                 ItemStack item = new ItemStack(compound);
                 
-                variants.add(new Variant(variantName, variantValue, item));
+                variants.add(new CurrencyVariant(variantName, variantValue, item));
             }
-            return new Currency(name, hasWallet, needItemToOpen, opensWithKeybind, variants.toArray(new Variant[variants.size()]));
+            return new Currency(name, hasWallet, needItemToOpen, opensWithKeybind, variants.toArray(new CurrencyVariant[variants.size()]));
         } catch (Exception e) {
             e.printStackTrace();
         }

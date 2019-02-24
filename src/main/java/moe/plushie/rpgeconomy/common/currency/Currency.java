@@ -2,9 +2,10 @@ package moe.plushie.rpgeconomy.common.currency;
 
 import java.util.Arrays;
 
+import moe.plushie.rpgeconomy.api.currency.ICurrency;
 import net.minecraft.item.ItemStack;
 
-public class Currency {
+public class Currency implements ICurrency {
     
     /** Name of the currency. (this is used as the currency ID) */
     private final String name;
@@ -19,9 +20,9 @@ public class Currency {
     private final boolean opensWithKeybind;
     
     /** Different variants of this currency. */
-    private final Variant[] variants;
+    private final CurrencyVariant[] variants;
     
-    public Currency(String name, boolean hasWallet, boolean needItemToOpen, boolean opensWithKeybind, Variant[] variants) {
+    public Currency(String name, boolean hasWallet, boolean needItemToOpen, boolean opensWithKeybind, CurrencyVariant[] variants) {
         this.name = name;
         this.hasWallet = hasWallet;
         this.needItemToOpen = needItemToOpen;
@@ -45,7 +46,7 @@ public class Currency {
         return opensWithKeybind;
     }
     
-    public Variant[] getVariants() {
+    public CurrencyVariant[] getVariants() {
         return variants;
     }
     
@@ -54,13 +55,13 @@ public class Currency {
         return "Currency [name=" + name + ", hasWallet=" + hasWallet + ", needItemToOpen=" + needItemToOpen + ", opensWithKeybind=" + opensWithKeybind + ", variants=" + Arrays.toString(variants) + "]";
     }
 
-    public static class Variant {
+    public static class CurrencyVariant implements ICurrencyVariant {
         
         private final String name;
         private final int value;
         private final ItemStack item;
         
-        public Variant(String name, int value, ItemStack item) {
+        public CurrencyVariant(String name, int value, ItemStack item) {
             this.name = name;
             this.value = value;
             this.item = item;

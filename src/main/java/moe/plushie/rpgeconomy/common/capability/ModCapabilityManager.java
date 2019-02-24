@@ -1,7 +1,7 @@
 package moe.plushie.rpgeconomy.common.capability;
 
+import moe.plushie.rpgeconomy.api.currency.ICurrencyCapability;
 import moe.plushie.rpgeconomy.common.capability.currency.CurrencyCapability;
-import moe.plushie.rpgeconomy.common.capability.currency.ICurrencyCapability;
 import moe.plushie.rpgeconomy.common.lib.LibModInfo;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;

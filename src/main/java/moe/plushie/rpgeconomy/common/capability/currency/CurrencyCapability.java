@@ -7,6 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 import moe.plushie.rpgeconomy.RpgEconomy;
+import moe.plushie.rpgeconomy.api.currency.ICurrencyCapability;
 import moe.plushie.rpgeconomy.common.currency.Currency;
 import moe.plushie.rpgeconomy.common.currency.CurrencyManager;
 import moe.plushie.rpgeconomy.common.currency.Wallet;

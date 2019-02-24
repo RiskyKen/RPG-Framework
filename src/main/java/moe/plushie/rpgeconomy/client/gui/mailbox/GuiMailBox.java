@@ -2,10 +2,10 @@ package moe.plushie.rpgeconomy.client.gui.mailbox;
 
 import org.lwjgl.opengl.GL11;
 
-import moe.plushie.rpgeconomy.client.controls.GuiTab;
-import moe.plushie.rpgeconomy.client.controls.GuiTabPanel;
-import moe.plushie.rpgeconomy.client.controls.GuiTabbed;
 import moe.plushie.rpgeconomy.client.gui.GuiHelper;
+import moe.plushie.rpgeconomy.client.gui.controls.GuiTab;
+import moe.plushie.rpgeconomy.client.gui.controls.GuiTabPanel;
+import moe.plushie.rpgeconomy.client.gui.controls.GuiTabbed;
 import moe.plushie.rpgeconomy.client.lib.LibGuiResources;
 import moe.plushie.rpgeconomy.common.init.ModBlocks;
 import moe.plushie.rpgeconomy.common.inventory.ContainerMailBox;

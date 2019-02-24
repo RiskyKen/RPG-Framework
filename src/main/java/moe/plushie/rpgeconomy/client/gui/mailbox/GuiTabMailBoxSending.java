@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 import org.lwjgl.opengl.GL11;
 
-import moe.plushie.rpgeconomy.client.controls.GuiLabeledTextField;
-import moe.plushie.rpgeconomy.client.controls.GuiTabPanel;
 import moe.plushie.rpgeconomy.client.gui.GuiHelper;
+import moe.plushie.rpgeconomy.client.gui.controls.GuiLabeledTextField;
+import moe.plushie.rpgeconomy.client.gui.controls.GuiTabPanel;
 import moe.plushie.rpgeconomy.client.lib.LibGuiResources;
 import moe.plushie.rpgeconomy.common.mail.MailMessage;
 import moe.plushie.rpgeconomy.common.network.PacketHandler;

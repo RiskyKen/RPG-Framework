@@ -2,8 +2,8 @@ package moe.plushie.rpgeconomy.common.network.server;
 
 import io.netty.buffer.ByteBuf;
 import moe.plushie.rpgeconomy.RpgEconomy;
+import moe.plushie.rpgeconomy.api.currency.ICurrencyCapability;
 import moe.plushie.rpgeconomy.common.capability.currency.CurrencyCapability;
-import moe.plushie.rpgeconomy.common.capability.currency.ICurrencyCapability;
 import moe.plushie.rpgeconomy.common.network.client.DelayedMessageHandler;
 import moe.plushie.rpgeconomy.common.network.client.DelayedMessageHandler.IDelayedMessage;
 import net.minecraft.client.Minecraft;

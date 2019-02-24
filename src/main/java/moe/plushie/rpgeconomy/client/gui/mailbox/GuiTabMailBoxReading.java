@@ -2,8 +2,8 @@ package moe.plushie.rpgeconomy.client.gui.mailbox;
 
 import org.lwjgl.opengl.GL11;
 
-import moe.plushie.rpgeconomy.client.controls.GuiTabPanel;
 import moe.plushie.rpgeconomy.client.gui.GuiHelper;
+import moe.plushie.rpgeconomy.client.gui.controls.GuiTabPanel;
 import moe.plushie.rpgeconomy.client.lib.LibGuiResources;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
