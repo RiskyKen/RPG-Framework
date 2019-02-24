@@ -1,13 +1,17 @@
-package moe.plushie.rpgeconomy.core.common.inventory;
+package moe.plushie.rpgeconomy.currency.common.inventory;
 
 import moe.plushie.rpgeconomy.api.currency.ICurrencyCapability;
 import moe.plushie.rpgeconomy.api.currency.IWallet;
-import moe.plushie.rpgeconomy.core.RpgEconomy;
+import moe.plushie.rpgeconomy.core.common.config.ConfigHandler;
+import moe.plushie.rpgeconomy.core.common.inventory.ModContainer;
+import moe.plushie.rpgeconomy.core.common.inventory.ModInventory;
 import moe.plushie.rpgeconomy.core.common.inventory.slot.SlotCurrency;
 import moe.plushie.rpgeconomy.core.common.network.client.MessageClientGuiButton.IButtonPress;
 import moe.plushie.rpgeconomy.currency.common.Currency;
+import moe.plushie.rpgeconomy.currency.common.Currency.CurrencyVariant;
 import moe.plushie.rpgeconomy.currency.common.capability.CurrencyCapability;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 
 public class ContainerWallet extends ModContainer implements IButtonPress {
 
@@ -27,7 +31,9 @@ public class ContainerWallet extends ModContainer implements IButtonPress {
 
         inventoryWallet = new ModInventory("wallet", currency.getCurrencyVariants().length);
 
-        addPlayerSlots(8, 114);
+        if (ConfigHandler.showPlayerInventoryInWalletGUI) {
+            addPlayerSlots(8, 114);
+        }
 
         for (int i = 0; i < currency.getCurrencyVariants().length; i++) {
             addSlotToContainer(new SlotCurrency(currency, currency.getCurrencyVariants()[i], inventoryWallet, i, 34 + i * 18, 54));
@@ -37,6 +43,20 @@ public class ContainerWallet extends ModContainer implements IButtonPress {
 
     @Override
     public void buttonPress(int buttonID) {
-        RpgEconomy.getLogger().info("Button ID: " + buttonID);
+        boolean withdraw = false;
+        if (buttonID >= currency.getCurrencyVariants().length) {
+            withdraw = true;
+        }
+        buttonID = buttonID % currency.getCurrencyVariants().length;
+        CurrencyVariant variant = currency.getCurrencyVariants()[buttonID];
+        if (withdraw) {
+            if (player.addItemStackToInventory(variant.getItem().copy())) {
+                wallet.setAmount(wallet.getAmount() - variant.getValue());
+                currencyCap.syncToOwner((EntityPlayerMP) player);
+            }
+        } else {
+            wallet.setAmount(wallet.getAmount() + variant.getValue());
+            currencyCap.syncToOwner((EntityPlayerMP) player);
+        }
     }
 }

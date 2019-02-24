@@ -27,7 +27,7 @@ public class CurrencyManager implements ICurrencyManager {
     }
 
     public void reload(boolean syncWithClients) {
-        RpgEconomy.getLogger().info("Loading Currency");
+        RpgEconomy.getLogger().info("Loading Currencies");
         File[] files = currencyDirectory.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {

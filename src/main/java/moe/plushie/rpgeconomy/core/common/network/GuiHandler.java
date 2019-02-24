@@ -2,11 +2,11 @@ package moe.plushie.rpgeconomy.core.common.network;
 
 import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.inventory.ContainerMailBox;
-import moe.plushie.rpgeconomy.core.common.inventory.ContainerWallet;
 import moe.plushie.rpgeconomy.core.common.items.ItemWallet;
 import moe.plushie.rpgeconomy.core.common.lib.LibGuiIds;
 import moe.plushie.rpgeconomy.currency.client.gui.GuiWallet;
 import moe.plushie.rpgeconomy.currency.common.Currency;
+import moe.plushie.rpgeconomy.currency.common.inventory.ContainerWallet;
 import moe.plushie.rpgeconomy.mail.client.gui.GuiMailBox;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

@@ -17,8 +17,7 @@ public class ConfigHandler {
     
     
     // Currency
-    public static boolean walletNeedItemToOpen = false;
-    public static boolean walletOpenWithKeybind = true;
+    public static boolean showPlayerInventoryInWalletGUI = true;
     
     // Other
     public static String lastVersion;
@@ -71,11 +70,8 @@ public class ConfigHandler {
     private static void loadCategoryCurrency() {
         config.setCategoryComment(CATEGORY_CURRENCY, "Setting to do with the currency system.");
         
-        walletNeedItemToOpen = config.getBoolean("walletNeedItemToOpen", CATEGORY_CURRENCY, false, 
-                "Does the wallet item need to be in the players inventory to open the wallet GUI.");
-        
-        walletOpenWithKeybind = config.getBoolean("walletOpenWithKeybind", CATEGORY_CURRENCY, true,
-                "Can the wallet be opened by pressing a keybind.");
+        showPlayerInventoryInWalletGUI = config.getBoolean("showPlayerInventoryInWalletGUI", CATEGORY_CURRENCY, true, 
+                "Is the players inventory shown in the wallet GUI.");
     }
 
     private static int versionCompare(String str1, String str2) {
