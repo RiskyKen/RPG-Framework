@@ -26,7 +26,7 @@ public class RpgEconomy {
     
     private static Logger logger;
     
-    private static final CreativeTabRPGEconomy creativeTabRPGEconomy = new CreativeTabRPGEconomy();
+    private static final CreativeTabRPGEconomy CREATIVE_TAB_RPG_ECONOMY = new CreativeTabRPGEconomy();
     
     @EventHandler
     public void perInit(FMLPreInitializationEvent event) {
@@ -67,6 +67,6 @@ public class RpgEconomy {
     }
     
     public static CreativeTabRPGEconomy getCreativeTabRPGEconomy() {
-        return creativeTabRPGEconomy;
+        return CREATIVE_TAB_RPG_ECONOMY;
     }
 }

@@ -7,6 +7,7 @@ import moe.plushie.rpgeconomy.common.config.ConfigHandler;
 import moe.plushie.rpgeconomy.common.currency.CurrencyManager;
 import moe.plushie.rpgeconomy.common.init.ModBlocks;
 import moe.plushie.rpgeconomy.common.init.ModItems;
+import moe.plushie.rpgeconomy.common.init.ModSounds;
 import moe.plushie.rpgeconomy.common.lib.LibModInfo;
 import moe.plushie.rpgeconomy.common.mail.MailSystemManager;
 import moe.plushie.rpgeconomy.common.network.GuiHandler;
@@ -25,6 +26,7 @@ public class CommonProxy {
     
     private ModBlocks modBlocks;
     private ModItems modItems;
+    private ModSounds modSounds;
     
     private CurrencyManager currencyManager;
     private MailSystemManager mailSystemManager;
@@ -46,6 +48,8 @@ public class CommonProxy {
         
         modBlocks = new ModBlocks();
         modItems = new ModItems();
+        modSounds = new ModSounds();
+        
         ModCapabilityManager.register();
     }
     
