@@ -135,7 +135,7 @@ public class CurrencyCapability implements ICurrencyCapability {
         }
         
     }
-    
+
     public static class Factory implements Callable<ICurrencyCapability> {
 
         @Override

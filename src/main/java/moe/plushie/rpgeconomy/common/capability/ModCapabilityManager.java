@@ -22,7 +22,7 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 public final class ModCapabilityManager {
 
     private static final ResourceLocation KEY_WALLET_PROVIDER = new ResourceLocation(LibModInfo.ID, "wallet_provider");
-    
+
     private ModCapabilityManager() {
     }
 
@@ -38,7 +38,7 @@ public final class ModCapabilityManager {
         EntityPlayer player = (EntityPlayer) event.getObject();
         event.addCapability(KEY_WALLET_PROVIDER, new CurrencyCapability.Provider());
     }
-    
+
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerLoggedInEvent event) {
         ICurrencyCapability wallet = CurrencyCapability.get(event.player);
@@ -54,13 +54,13 @@ public final class ModCapabilityManager {
             NBTBase nbt = null;
             ICurrencyCapability walletOld = CurrencyCapability.get(event.getOriginal());
             ICurrencyCapability walletNew = CurrencyCapability.get(event.getEntityPlayer());
-            
+
             IStorage<ICurrencyCapability> storageWallet = CurrencyCapability.WALLET_CAP.getStorage();
             nbt = storageWallet.writeNBT(CurrencyCapability.WALLET_CAP, walletOld, null);
             storageWallet.readNBT(CurrencyCapability.WALLET_CAP, walletNew, null, nbt);
         }
     }
-    
+
     @SubscribeEvent
     public static void onRespawn(PlayerRespawnEvent event) {
         // Called after onPlayerClone. Used to sync after death.

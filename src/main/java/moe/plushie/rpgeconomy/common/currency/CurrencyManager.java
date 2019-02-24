@@ -26,7 +26,6 @@ public class CurrencyManager implements ICurrencyManager {
         currencyMap = new HashMap<String, Currency>();
     }
 
-    @Override
     public void reload(boolean syncWithClients) {
         RpgEconomy.getLogger().info("Loading Currency");
         File[] files = currencyDirectory.listFiles(new FilenameFilter() {
@@ -51,12 +50,12 @@ public class CurrencyManager implements ICurrencyManager {
             }
         }
     }
-    
+
     @Override
     public Currency getCurrency(String name) {
         return currencyMap.get(name);
     }
-    
+
     @Override
     public Currency[] getCurrencies() {
         return currencyMap.values().toArray(new Currency[currencyMap.size()]);
