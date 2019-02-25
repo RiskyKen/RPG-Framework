@@ -51,9 +51,11 @@ public class ContainerWallet extends ModContainer implements IButtonPress {
         buttonID = buttonID % currency.getCurrencyVariants().length;
         CurrencyVariant variant = currency.getCurrencyVariants()[buttonID];
         if (withdraw) {
-            if (player.addItemStackToInventory(variant.getItem().copy())) {
-                wallet.setAmount(wallet.getAmount() - variant.getValue());
-                currencyCap.syncToOwner((EntityPlayerMP) player);
+            if (wallet.getAmount() >= variant.getValue()) {
+                if (player.addItemStackToInventory(variant.getItem().copy())) {
+                    wallet.setAmount(wallet.getAmount() - variant.getValue());
+                    currencyCap.syncToOwner((EntityPlayerMP) player);
+                }
             }
         } else {
             if (CurrencyHelper.consumeAmountFromInventory(currency, player.inventory, variant.getValue(), true)) {
