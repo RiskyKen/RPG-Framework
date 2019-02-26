@@ -47,6 +47,13 @@ public class GuiWallet extends GuiContainer {
             buttonList.add(new GuiIconButton(this, i + currency.getCurrencyVariants().length, getGuiLeft() + 33 + 18 * i, getGuiTop() + 72, 18, 18, "out", TEXTURE).setIconLocation(0, 240, 16, 16));
         }
     }
+    
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        this.drawDefaultBackground();
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        this.renderHoveredToolTip(mouseX, mouseY);
+    }
 
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
