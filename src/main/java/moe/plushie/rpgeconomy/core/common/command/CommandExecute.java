@@ -1,5 +1,6 @@
 package moe.plushie.rpgeconomy.core.common.command;
 
+import moe.plushie.rpgeconomy.core.RpgEconomy;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -15,6 +16,7 @@ public class CommandExecute extends ModCommand {
     
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+        RpgEconomy.getLogger().info(getUsage(sender));
         commandExecute.execute(server, sender, args);
     }
     

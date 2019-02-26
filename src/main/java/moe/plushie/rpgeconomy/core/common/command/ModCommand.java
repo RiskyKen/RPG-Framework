@@ -24,7 +24,14 @@ public abstract class ModCommand extends CommandBase {
 
     @Override
     public String getUsage(ICommandSender commandSender) {
-        return "commands." + LibModInfo.ID + ":" + getName() + ".usage";
+        return "commands." + LibModInfo.ID + ":" + getFullName() + ".usage";
+    }
+    
+    public String getFullName() {
+        if (parent != null) {
+            return parent.getFullName() + "." + name;
+        }
+        return name;
     }
 
     @Override

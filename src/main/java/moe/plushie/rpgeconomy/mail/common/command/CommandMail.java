@@ -16,6 +16,7 @@ public class CommandMail extends ModSubCommands {
         addSubCommand(new CommandExecute(this, "reload", new ICommandExecute() {
             @Override
             public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+                
                 RpgEconomy.getProxy().getMailSystemManager().reload(true);
             }
         }));
