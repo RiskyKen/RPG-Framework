@@ -48,10 +48,12 @@ public class RpgEconomy {
     
     @EventHandler
     public void serverStart(FMLServerStartingEvent event) {
+        proxy.serverStart(event);
     }
     
     @EventHandler
     public void serverStop(FMLServerStoppingEvent event) {
+        proxy.serverStop(event);
     }
     
     public static CommonProxy getProxy() {

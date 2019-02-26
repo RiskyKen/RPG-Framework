@@ -3,6 +3,7 @@ package moe.plushie.rpgeconomy.core.proxies;
 import java.io.File;
 
 import moe.plushie.rpgeconomy.core.common.capability.ModCapabilityManager;
+import moe.plushie.rpgeconomy.core.common.command.CommandRpg;
 import moe.plushie.rpgeconomy.core.common.config.ConfigHandler;
 import moe.plushie.rpgeconomy.core.common.init.ModBlocks;
 import moe.plushie.rpgeconomy.core.common.init.ModItems;
@@ -16,6 +17,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 
 @Mod.EventBusSubscriber(modid = LibModInfo.ID)
 public class CommonProxy {
@@ -66,6 +69,13 @@ public class CommonProxy {
     }
     
     public void postInit(FMLPostInitializationEvent event) {
+    }
+    
+    public void serverStart(FMLServerStartingEvent event) {
+        event.registerServerCommand(new CommandRpg());
+    }
+    
+    public void serverStop(FMLServerStoppingEvent event) {
     }
     
     public CurrencyManager getCurrencyManager() {

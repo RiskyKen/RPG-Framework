@@ -3,6 +3,7 @@ package moe.plushie.rpgeconomy.currency.common;
 import java.util.Arrays;
 
 import moe.plushie.rpgeconomy.api.currency.ICurrency;
+import moe.plushie.rpgeconomy.core.RpgEconomy;
 import net.minecraft.item.ItemStack;
 
 public class Currency implements ICurrency {
@@ -31,6 +32,7 @@ public class Currency implements ICurrency {
         this.needItemToOpen = needItemToOpen;
         this.opensWithKeybind = opensWithKeybind;
         this.variants = variants;
+        RpgEconomy.getLogger().info(this);
     }
 
     @Override
@@ -63,7 +65,7 @@ public class Currency implements ICurrency {
         return "Currency [name=" + name + ", hasWallet=" + hasWallet + ", needItemToOpen=" + needItemToOpen + ", opensWithKeybind=" + opensWithKeybind + ", variants=" + Arrays.toString(variants) + "]";
     }
 
-    public static class CurrencyVariant implements ICurrencyVariant {
+    public static class CurrencyVariant implements ICurrencyVariant, Comparable<CurrencyVariant> {
 
         private final String name;
         private final int value;
@@ -93,6 +95,11 @@ public class Currency implements ICurrency {
         @Override
         public String toString() {
             return "Variant [name=" + name + ", value=" + value + ", item=" + item + "]";
+        }
+
+        @Override
+        public int compareTo(CurrencyVariant o) {
+            return value + o.value;
         }
     }
 }

@@ -1,6 +1,7 @@
 package moe.plushie.rpgeconomy.currency.serialize;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -85,6 +86,7 @@ public final class CurrencySerializer {
 
                 variants.add(new CurrencyVariant(variantName, variantValue, item));
             }
+            Collections.sort(variants);
             return new Currency(name, hasWallet, needItemToOpen, opensWithKeybind, variants.toArray(new CurrencyVariant[variants.size()]));
         } catch (Exception e) {
             e.printStackTrace();
