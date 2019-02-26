@@ -99,7 +99,7 @@ public class Currency implements ICurrency {
 
         @Override
         public int compareTo(CurrencyVariant o) {
-            return value + o.value;
+            return  value - o.value;
         }
     }
 }
