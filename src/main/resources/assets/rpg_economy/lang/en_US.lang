@@ -46,3 +46,8 @@ itemGroup.rpg_economy=RPG Economy
 
 # Inventory names
 inventory.rpg_economy:wallet.name=Wallet
+
+# Commands
+commands.rpg_economy:rpg_economy.usage=<currency | mail>
+commands.rpg_economy:rpg_economy.currency.usage=<reload>
+commands.rpg_economy:rpg_economy.mail.usage=<reload>

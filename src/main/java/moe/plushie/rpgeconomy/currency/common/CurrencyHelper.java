@@ -75,12 +75,43 @@ public final class CurrencyHelper {
             inventory = copyInventory(inventory);
         }
 
+        // Remove full coins.
+        for (int j = currency.getCurrencyVariants().length; j > 0; j--) {
+            ICurrencyVariant variant = currency.getCurrencyVariants()[j - 1];
+
+            if (variant.getValue() <= amount) {
+                for (int i = 0; i < inventory.getSizeInventory(); i++) {
+                    ItemStack stack = inventory.getStackInSlot(i);
+                    if (stack.isItemEqual(variant.getItem())) {
+                        while (amount > 0 & !stack.isEmpty()) {
+                            stack.shrink(1);
+                            amount -= variant.getValue();
+                        }
+                    }
+                    if (amount < 1) {
+                        break;
+                    }
+                }
+            }
+
+            if (amount < 1) {
+                break;
+            }
+        }
+
+        if (amount == 0) {
+            return true;
+        }
+
+        // Remove remainder.
         for (ICurrencyVariant variant : currency.getCurrencyVariants()) {
             for (int i = 0; i < inventory.getSizeInventory(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
                 if (stack.isItemEqual(variant.getItem())) {
-                    amount -= variant.getValue() * stack.getCount();
-                    inventory.setInventorySlotContents(i, ItemStack.EMPTY);
+                    while (!stack.isEmpty() & amount > 0) {
+                        stack.shrink(1);
+                        amount -= variant.getValue();
+                    }
                 }
                 if (amount < 1) {
                     break;
