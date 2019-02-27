@@ -11,7 +11,7 @@ public interface ICurrency {
     public boolean getHasWallet();
     
     /** Must the player have the wallet item in their inventory to open the wallet GUI. */
-    public boolean getNeedItemToOpen();
+    public boolean getNeedItemToAccess();
     
     /** Can the wallet GUI be opened with a key binding. */
     public boolean getOpensWithKeybind();

@@ -29,7 +29,10 @@ public class CurrencyPickupHelper {
 
         Currency[] currencies = RpgEconomy.getProxy().getCurrencyManager().getCurrencies();
         for (Currency currency : currencies) {
-            if (currency.getNeedItemToOpen() & !haveWalletForCurrency(player, currency)) {
+            if (!currency.getPickupIntoWallet()) {
+                continue;
+            }
+            if (currency.getNeedItemToAccess() & !haveWalletForCurrency(player, currency)) {
                 continue;
             }
             for (CurrencyVariant variant : currency.getCurrencyVariants()) {

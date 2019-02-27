@@ -17,8 +17,9 @@ public final class CurrencySerializer {
 
     private static final String PROP_NAME = "name";
     private static final String PROP_HAS_WALLET = "hasWallet";
-    private static final String PROP_NEED_ITEM_TO_OPEN = "needItemToOpen";
+    private static final String PROP_NEED_ITEM_TO_OPEN = "needItemToAccess";
     private static final String PROP_OPEN_WITH_KEYBIND = "opensWithKeybind";
+    private static final String PROP_PICKUP_INTO_WALLET = "pickupIntoWallet";
     private static final String PROP_VARIANTS = "variants";
 
     private static final String PROP_VAR_NAME = "name";
@@ -33,8 +34,9 @@ public final class CurrencySerializer {
 
         jsonObject.addProperty(PROP_NAME, currency.getName());
         jsonObject.addProperty(PROP_HAS_WALLET, currency.getHasWallet());
-        jsonObject.addProperty(PROP_NEED_ITEM_TO_OPEN, currency.getNeedItemToOpen());
+        jsonObject.addProperty(PROP_NEED_ITEM_TO_OPEN, currency.getNeedItemToAccess());
         jsonObject.addProperty(PROP_OPEN_WITH_KEYBIND, currency.getOpensWithKeybind());
+        jsonObject.addProperty(PROP_PICKUP_INTO_WALLET, currency.getPickupIntoWallet());
 
         JsonArray jsonVariants = new JsonArray();
         CurrencyVariant[] variants = currency.getCurrencyVariants();
@@ -59,12 +61,14 @@ public final class CurrencySerializer {
             JsonElement propName = jsonObject.get(PROP_NAME);
             JsonElement propHasWallet = jsonObject.get(PROP_HAS_WALLET);
             JsonElement propNeedItemToOpen = jsonObject.get(PROP_NEED_ITEM_TO_OPEN);
-            JsonElement propPpensWithKeybind = jsonObject.get(PROP_OPEN_WITH_KEYBIND);
+            JsonElement propOpensWithKeybind = jsonObject.get(PROP_OPEN_WITH_KEYBIND);
+            JsonElement propPickupIntoWallet = jsonObject.get(PROP_PICKUP_INTO_WALLET);
 
             String name = propName.getAsString();
             boolean hasWallet = propHasWallet.getAsBoolean();
-            boolean needItemToOpen = propNeedItemToOpen.getAsBoolean();
-            boolean opensWithKeybind = propPpensWithKeybind.getAsBoolean();
+            boolean needItemToAccess = propNeedItemToOpen.getAsBoolean();
+            boolean opensWithKeybind = propOpensWithKeybind.getAsBoolean();
+            boolean pickupIntoWallet = propPickupIntoWallet.getAsBoolean();
 
             JsonElement propVariants = jsonObject.get(PROP_VARIANTS);
             JsonArray jsonVariants = propVariants.getAsJsonArray();
@@ -87,7 +91,7 @@ public final class CurrencySerializer {
                 variants.add(new CurrencyVariant(variantName, variantValue, item));
             }
             Collections.sort(variants);
-            return new Currency(name, hasWallet, needItemToOpen, opensWithKeybind, variants.toArray(new CurrencyVariant[variants.size()]));
+            return new Currency(name, hasWallet, needItemToAccess, opensWithKeybind, pickupIntoWallet, variants.toArray(new CurrencyVariant[variants.size()]));
         } catch (Exception e) {
             e.printStackTrace();
         }
