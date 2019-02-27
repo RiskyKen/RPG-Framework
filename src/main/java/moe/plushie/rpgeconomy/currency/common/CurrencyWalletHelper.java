@@ -6,9 +6,9 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
-public final class CurrencyHelper {
+public final class CurrencyWalletHelper {
 
-    private CurrencyHelper() {
+    private CurrencyWalletHelper() {
     }
 
     public static boolean haveAmountInInventory(ICurrency currency, InventoryPlayer inventory, int amount) {

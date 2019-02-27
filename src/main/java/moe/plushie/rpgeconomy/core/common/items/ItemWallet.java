@@ -1,5 +1,6 @@
 package moe.plushie.rpgeconomy.core.common.items;
 
+import moe.plushie.rpgeconomy.api.currency.ICurrency;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.init.ModItems;
 import moe.plushie.rpgeconomy.core.common.lib.LibGuiIds;
@@ -21,27 +22,24 @@ import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 public class ItemWallet extends AbstractModItem {
 
     private static final String TAG_CURRENCY = "currency";
-    
+
     public ItemWallet() {
         super(LibItemNames.WALLET);
     }
-    
+
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
         if (this.isInCreativeTab(tab)) {
             CurrencyManager currencyManager = RpgEconomy.getProxy().getCurrencyManager();
             for (Currency currency : currencyManager.getCurrencies()) {
-                if (currency.getHasWallet()) {
-                    ItemStack stack = new ItemStack(this, 1, 0);
-                    NBTTagCompound compound = new NBTTagCompound();
-                    compound.setString(TAG_CURRENCY, currency.getName());
-                    stack.setTagCompound(compound);
+                ItemStack stack = getWallet(currency);
+                if (!stack.isEmpty()) {
                     items.add(stack);
                 }
             }
         }
     }
-    
+
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
         Currency currency = getCurrency(stack);
@@ -50,7 +48,7 @@ public class ItemWallet extends AbstractModItem {
         }
         return super.getItemStackDisplayName(stack);
     }
-    
+
     public static Currency getCurrency(ItemStack itemStack) {
         if (itemStack.getItem() == ModItems.WALLET) {
             if (itemStack.hasTagCompound()) {
@@ -61,6 +59,17 @@ public class ItemWallet extends AbstractModItem {
             }
         }
         return null;
+    }
+
+    public static ItemStack getWallet(ICurrency currency) {
+        if (currency.getHasWallet()) {
+            ItemStack stack = new ItemStack(ModItems.WALLET, 1, 0);
+            NBTTagCompound compound = new NBTTagCompound();
+            compound.setString(TAG_CURRENCY, currency.getName());
+            stack.setTagCompound(compound);
+            return stack;
+        }
+        return ItemStack.EMPTY;
     }
 
     @Override

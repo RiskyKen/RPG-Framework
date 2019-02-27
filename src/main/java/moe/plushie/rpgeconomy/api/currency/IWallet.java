@@ -7,4 +7,8 @@ public interface IWallet {
     public void setAmount(int amount);
     
     public int getAmount();
+    
+    public void addAmount(int amount);
+    
+    public void removeAmount(int amount);
 }

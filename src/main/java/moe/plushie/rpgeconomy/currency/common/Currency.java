@@ -3,7 +3,6 @@ package moe.plushie.rpgeconomy.currency.common;
 import java.util.Arrays;
 
 import moe.plushie.rpgeconomy.api.currency.ICurrency;
-import moe.plushie.rpgeconomy.core.RpgEconomy;
 import net.minecraft.item.ItemStack;
 
 public class Currency implements ICurrency {
@@ -32,7 +31,6 @@ public class Currency implements ICurrency {
         this.needItemToOpen = needItemToOpen;
         this.opensWithKeybind = opensWithKeybind;
         this.variants = variants;
-        RpgEconomy.getLogger().info(this);
     }
 
     @Override

@@ -31,7 +31,17 @@ public class Wallet implements IWallet {
     public int getAmount() {
         return amount;
     }
+    
+    @Override
+    public void addAmount(int amount) {
+        this.amount += amount;
+    }
 
+    @Override
+    public void removeAmount(int amount) {
+        this.amount -= amount;
+    }
+    
     @Override
     public String toString() {
         return "Wallet [currency=" + currency + ", amount=" + amount + "]";

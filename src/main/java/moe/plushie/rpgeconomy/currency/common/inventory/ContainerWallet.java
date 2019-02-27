@@ -9,7 +9,7 @@ import moe.plushie.rpgeconomy.core.common.inventory.slot.SlotCurrency;
 import moe.plushie.rpgeconomy.core.common.network.client.MessageClientGuiButton.IButtonPress;
 import moe.plushie.rpgeconomy.currency.common.Currency;
 import moe.plushie.rpgeconomy.currency.common.Currency.CurrencyVariant;
-import moe.plushie.rpgeconomy.currency.common.CurrencyHelper;
+import moe.plushie.rpgeconomy.currency.common.CurrencyWalletHelper;
 import moe.plushie.rpgeconomy.currency.common.capability.CurrencyCapability;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -58,8 +58,8 @@ public class ContainerWallet extends ModContainer implements IButtonPress {
                 }
             }
         } else {
-            if (CurrencyHelper.consumeAmountFromInventory(currency, player.inventory, variant.getValue(), true)) {
-                CurrencyHelper.consumeAmountFromInventory(currency, player.inventory, variant.getValue(), false);
+            if (CurrencyWalletHelper.consumeAmountFromInventory(currency, player.inventory, variant.getValue(), true)) {
+                CurrencyWalletHelper.consumeAmountFromInventory(currency, player.inventory, variant.getValue(), false);
                 wallet.setAmount(wallet.getAmount() + variant.getValue());
                 currencyCap.syncToOwner((EntityPlayerMP) player);
             }

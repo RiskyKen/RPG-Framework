@@ -12,6 +12,7 @@ import moe.plushie.rpgeconomy.core.common.lib.LibModInfo;
 import moe.plushie.rpgeconomy.core.common.network.GuiHandler;
 import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
 import moe.plushie.rpgeconomy.currency.common.CurrencyManager;
+import moe.plushie.rpgeconomy.currency.common.CurrencyPickupHelper;
 import moe.plushie.rpgeconomy.mail.common.MailSystemManager;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -63,6 +64,7 @@ public class CommonProxy {
         
         currencyManager.reload(false);
         mailSystemManager.reload(false);
+        new CurrencyPickupHelper();
     }
     
     public void initRenderers() {
