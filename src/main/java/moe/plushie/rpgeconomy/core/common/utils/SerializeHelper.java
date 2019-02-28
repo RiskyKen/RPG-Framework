@@ -9,9 +9,16 @@ import org.apache.commons.io.IOUtils;
 
 import com.google.common.base.Charsets;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import moe.plushie.rpgeconomy.core.RpgEconomy;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTException;
+import net.minecraft.nbt.NBTTagCompound;
 
 public final class SerializeHelper {
 
@@ -38,7 +45,10 @@ public final class SerializeHelper {
     }
 
     public static JsonElement readJsonFile(File file, Charset encoding) {
-        String jsonString = readFile(file, encoding);
+        return stringToJson(readFile(file, encoding));
+    }
+    
+    public static JsonElement stringToJson(String jsonString) {
         try {
             JsonParser parser = new JsonParser();
             return parser.parse(jsonString);
@@ -47,5 +57,50 @@ public final class SerializeHelper {
             RpgEconomy.getLogger().error(e.getLocalizedMessage());
             return null;
         }
+    }
+    
+    public static JsonObject writeItemToJson(ItemStack itemStack) {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("id", Item.getIdFromItem(itemStack.getItem()));
+        jsonObject.addProperty("count", itemStack.getCount());
+        jsonObject.addProperty("damage", itemStack.getItemDamage());
+        if (itemStack.getItem().isDamageable() || itemStack.getItem().getShareTag()) {
+            if (itemStack.hasTagCompound()) {
+                jsonObject.addProperty("nbt", itemStack.getTagCompound().toString());
+            }
+        }
+        return jsonObject;
+    }
+    
+    public static ItemStack readItemFromJson(JsonElement jsonElement) throws NBTException {
+        return readItemFromJson(jsonElement.getAsJsonObject());
+    }
+    
+    public static ItemStack readItemFromJson(JsonObject jsonObject) throws NBTException {
+        if (!jsonObject.has("id")) {
+            return ItemStack.EMPTY;
+        }
+        Item item = Item.getByNameOrId(jsonObject.get("id").getAsString());
+        int count = 1;
+        int damage = 0;
+        if (jsonObject.has("count")) {
+            count = jsonObject.get("count").getAsInt();
+        }
+        if (jsonObject.has("Count")) {
+            count = jsonObject.get("Count").getAsInt();
+        }
+        if (jsonObject.has("damage")) {
+            damage = jsonObject.get("damage").getAsInt();
+        }
+        if (jsonObject.has("Damage")) {
+            damage = jsonObject.get("Damage").getAsInt();
+        }
+        ItemStack itemStack = new ItemStack(item, count, damage);
+        if (jsonObject.has("nbt")) {
+            JsonElement elementNbt = jsonObject.get("nbt");
+            NBTBase nbtBase = JsonToNBT.getTagFromJson(elementNbt.getAsString());
+            itemStack.setTagCompound((NBTTagCompound) nbtBase);
+        }
+        return itemStack;
     }
 }

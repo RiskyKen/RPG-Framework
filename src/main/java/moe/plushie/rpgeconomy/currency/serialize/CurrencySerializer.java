@@ -7,11 +7,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import moe.plushie.rpgeconomy.core.common.utils.SerializeHelper;
 import moe.plushie.rpgeconomy.currency.common.Currency;
 import moe.plushie.rpgeconomy.currency.common.Currency.CurrencyVariant;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTTagCompound;
 
 public final class CurrencySerializer {
 
@@ -42,11 +41,11 @@ public final class CurrencySerializer {
         CurrencyVariant[] variants = currency.getCurrencyVariants();
         for (int i = 0; i < variants.length; i++) {
             JsonObject jsonVariant = new JsonObject();
+            
             jsonVariant.addProperty(PROP_VAR_NAME, variants[i].getName());
             jsonVariant.addProperty(PROP_VAR_VALUE, variants[i].getValue());
-            NBTTagCompound compound = new NBTTagCompound();
-            variants[i].getItem().writeToNBT(compound);
-            jsonVariant.addProperty(PROP_VAR_ITEM, compound.toString());
+            jsonVariant.add(PROP_VAR_ITEM, SerializeHelper.writeItemToJson(variants[i].getItem()));
+            
             jsonVariants.add(jsonVariant);
         }
         jsonObject.add(PROP_VARIANTS, jsonVariants);
@@ -76,19 +75,16 @@ public final class CurrencySerializer {
             ArrayList<CurrencyVariant> variants = new ArrayList<CurrencyVariant>();
             for (int i = 0; i < jsonVariants.size(); i++) {
                 JsonObject jsonVariant = jsonVariants.get(i).getAsJsonObject();
+                
                 JsonElement propVariantName = jsonVariant.get(PROP_VAR_NAME);
                 JsonElement propVariantValue = jsonVariant.get(PROP_VAR_VALUE);
                 JsonElement propVariantItem = jsonVariant.get(PROP_VAR_ITEM);
 
                 String variantName = propVariantName.getAsString();
                 int variantValue = propVariantValue.getAsInt();
-                NBTTagCompound compound = JsonToNBT.getTagFromJson(propVariantItem.getAsJsonObject().toString());
-                if (!compound.hasKey("Count")) {
-                    compound.setByte("Count", (byte) 1);
-                }
-                ItemStack item = new ItemStack(compound);
-
-                variants.add(new CurrencyVariant(variantName, variantValue, item));
+                ItemStack itemStack = SerializeHelper.readItemFromJson(propVariantItem);
+                
+                variants.add(new CurrencyVariant(variantName, variantValue, itemStack));
             }
             Collections.sort(variants);
             return new Currency(name, hasWallet, needItemToAccess, opensWithKeybind, pickupIntoWallet, variants.toArray(new CurrencyVariant[variants.size()]));

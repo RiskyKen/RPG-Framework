@@ -62,8 +62,7 @@ public class CommonProxy {
         new GuiHandler();
         new PacketHandler();
         
-        currencyManager.reload(false);
-        mailSystemManager.reload(false);
+
         new CurrencyPickupHelper();
     }
     
@@ -75,6 +74,8 @@ public class CommonProxy {
     
     public void serverStart(FMLServerStartingEvent event) {
         event.registerServerCommand(new CommandRpg());
+        currencyManager.reload(false);
+        mailSystemManager.reload(false);
     }
     
     public void serverStop(FMLServerStoppingEvent event) {

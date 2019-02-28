@@ -8,8 +8,15 @@ import com.google.gson.JsonElement;
 
 import moe.plushie.rpgeconomy.api.currency.ICurrencyManager;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
+import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
+import moe.plushie.rpgeconomy.core.common.network.server.MessageServerSyncCurrency;
 import moe.plushie.rpgeconomy.core.common.utils.SerializeHelper;
 import moe.plushie.rpgeconomy.currency.serialize.CurrencySerializer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public class CurrencyManager implements ICurrencyManager {
 
@@ -24,6 +31,7 @@ public class CurrencyManager implements ICurrencyManager {
             currencyDirectory.mkdir();
         }
         currencyMap = new HashMap<String, Currency>();
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     public void reload(boolean syncWithClients) {
@@ -38,6 +46,30 @@ public class CurrencyManager implements ICurrencyManager {
         for (File file : files) {
             loadCurrency(file);
         }
+        if (syncWithClients) {
+            syncToAll();
+        }
+    }
+    
+    @SubscribeEvent
+    public void onPlayerLoggedIn(PlayerLoggedInEvent event) {
+        if (!event.player.getEntityWorld().isRemote) {
+            syncToClient((EntityPlayerMP) event.player);
+        }
+    }
+    
+    private void syncToClient(EntityPlayerMP entityPlayer) {
+        RpgEconomy.getLogger().info("Sending currency list to player " + entityPlayer.getName() + ".");
+        PacketHandler.NETWORK_WRAPPER.sendTo(getSyncMessage(), entityPlayer);
+    }
+    
+    private void syncToAll() {
+        RpgEconomy.getLogger().info("Sending currency list to all players.");
+        PacketHandler.NETWORK_WRAPPER.sendToAll(getSyncMessage());
+    }
+    
+    private IMessage getSyncMessage() {
+        return new MessageServerSyncCurrency(getCurrencies());
     }
 
     private void loadCurrency(File currencyFile) {
@@ -50,7 +82,15 @@ public class CurrencyManager implements ICurrencyManager {
             }
         }
     }
-
+    
+    public void gotCurrenciesFromServer(Currency[] currencies) {
+        RpgEconomy.getLogger().info("Got currency list from server. " + currencies.length);
+        currencyMap.clear();
+        for (Currency currency : currencies) {
+            currencyMap.put(currency.getName(), currency);
+        }
+    }
+    
     @Override
     public Currency getCurrency(String name) {
         return currencyMap.get(name);
