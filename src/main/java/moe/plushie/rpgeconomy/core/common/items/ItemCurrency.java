@@ -4,6 +4,7 @@ import moe.plushie.rpgeconomy.core.common.lib.LibItemNames;
 import moe.plushie.rpgeconomy.core.common.lib.LibModInfo;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
@@ -19,6 +20,20 @@ public class ItemCurrency extends AbstractModItem {
         super(LibItemNames.CURRENCY);
         setHasSubtypes(true);
         setMaxStackSize(64);
+    }
+    
+    @Override
+    public EnumRarity getRarity(ItemStack stack) {
+        if (stack.getItemDamage() > 4) {
+            return EnumRarity.EPIC;
+        }
+        if (stack.getItemDamage() > 3) {
+            return EnumRarity.RARE;
+        }
+        if (stack.getItemDamage() > 2) {
+            return EnumRarity.UNCOMMON;
+        }
+        return EnumRarity.COMMON;
     }
 
     @Override
