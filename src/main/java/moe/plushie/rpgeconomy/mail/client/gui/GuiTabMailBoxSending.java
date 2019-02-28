@@ -10,13 +10,13 @@ import com.mojang.authlib.GameProfile;
 import moe.plushie.rpgeconomy.core.client.gui.GuiHelper;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiLabeledTextField;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTabPanel;
+import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTabbed;
 import moe.plushie.rpgeconomy.core.client.lib.LibGuiResources;
 import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
 import moe.plushie.rpgeconomy.core.common.network.client.MessageClientGuiMailBox;
 import moe.plushie.rpgeconomy.mail.common.MailMessage;
 import moe.plushie.rpgeconomy.mail.common.MailSystem;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
@@ -25,7 +25,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class GuiTabMailBoxSending extends GuiTabPanel {
+public class GuiTabMailBoxSending extends GuiTabPanel<GuiTabbed> {
     
     private static final ResourceLocation TEXTURE_SENDING = new ResourceLocation(LibGuiResources.MAIL_BOX_SENDING);
     
@@ -34,7 +34,7 @@ public class GuiTabMailBoxSending extends GuiTabPanel {
     private GuiLabeledTextField textFieldSubject;
     private GuiLabeledTextField textFieldMessage;
     
-    public GuiTabMailBoxSending(int tabId, GuiScreen parent) {
+    public GuiTabMailBoxSending(int tabId, GuiTabbed parent) {
         super(tabId, parent, false);
     }
     
@@ -109,7 +109,7 @@ public class GuiTabMailBoxSending extends GuiTabPanel {
     
     @Override
     public void drawForegroundLayer(int mouseX, int mouseY, float partialTickTime) {
-        GuiHelper.renderLocalizedGuiName(fontRenderer, width, "Sending");
+        GuiHelper.renderLocalizedGuiName(fontRenderer, width, parent.getName() + ".tab.sending");
         super.drawForegroundLayer(mouseX, mouseY, 0);
     }
 } 

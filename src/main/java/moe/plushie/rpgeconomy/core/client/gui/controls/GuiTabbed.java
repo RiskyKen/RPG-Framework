@@ -31,6 +31,8 @@ public abstract class GuiTabbed extends GuiContainer {
         activeTabIndex = value;
     }
     
+    public abstract String getName();
+    
     @Override
     public void initGui() {
         super.initGui();
