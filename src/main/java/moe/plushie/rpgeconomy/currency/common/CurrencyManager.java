@@ -9,7 +9,7 @@ import com.google.gson.JsonElement;
 import moe.plushie.rpgeconomy.api.currency.ICurrencyManager;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
-import moe.plushie.rpgeconomy.core.common.network.server.MessageServerSyncCurrency;
+import moe.plushie.rpgeconomy.core.common.network.server.MessageServerSyncCurrencies;
 import moe.plushie.rpgeconomy.core.common.utils.SerializeHelper;
 import moe.plushie.rpgeconomy.currency.serialize.CurrencySerializer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -69,9 +69,17 @@ public class CurrencyManager implements ICurrencyManager {
     }
     
     private IMessage getSyncMessage() {
-        return new MessageServerSyncCurrency(getCurrencies());
+        return new MessageServerSyncCurrencies(getCurrencies());
     }
-
+    
+    public void gotCurrenciesFromServer(Currency[] currencies) {
+        RpgEconomy.getLogger().info("Got " + currencies.length + " currency list(s) from server.");
+        currencyMap.clear();
+        for (Currency currency : currencies) {
+            currencyMap.put(currency.getName(), currency);
+        }
+    }
+    
     private void loadCurrency(File currencyFile) {
         RpgEconomy.getLogger().info("Loading currency: " + currencyFile.getName());
         JsonElement jsonElement = SerializeHelper.readJsonFile(currencyFile);
@@ -80,14 +88,6 @@ public class CurrencyManager implements ICurrencyManager {
             if (currency != null) {
                 currencyMap.put(currency.getName(), currency);
             }
-        }
-    }
-    
-    public void gotCurrenciesFromServer(Currency[] currencies) {
-        RpgEconomy.getLogger().info("Got " + currencies.length + " currency list(s) from server.");
-        currencyMap.clear();
-        for (Currency currency : currencies) {
-            currencyMap.put(currency.getName(), currency);
         }
     }
     

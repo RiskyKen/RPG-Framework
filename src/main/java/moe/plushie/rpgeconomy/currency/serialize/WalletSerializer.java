@@ -17,18 +17,20 @@ public class WalletSerializer {
     private WalletSerializer() {
     }
 
-    public static JsonElement serializeJson(IWallet wallet) {
+    public static JsonObject serializeJson(IWallet wallet) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty(PROP_CURRENCY, wallet.getCurrency().getName());
         jsonObject.addProperty(PROP_AMOUNT, wallet.getAmount());
         return jsonObject;
     }
-
-    public static Wallet deserializeJson(JsonElement json) {
+    
+    public static Wallet deserializeJson(JsonElement jsonElement) {
+        return deserializeJson(jsonElement.getAsJsonObject());
+    }
+    
+    public static Wallet deserializeJson(JsonObject jsonObject) {
         CurrencyManager currencyManager = RpgEconomy.getProxy().getCurrencyManager();
         try {
-            JsonObject jsonObject = json.getAsJsonObject();
-
             JsonElement propCurrency = jsonObject.get(PROP_CURRENCY);
             JsonElement propAmount = jsonObject.get(PROP_AMOUNT);
 

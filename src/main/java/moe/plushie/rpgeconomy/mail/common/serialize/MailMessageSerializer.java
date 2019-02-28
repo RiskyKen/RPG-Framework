@@ -5,20 +5,27 @@ import java.util.Calendar;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 
 import moe.plushie.rpgeconomy.core.RpgEconomy;
+import moe.plushie.rpgeconomy.core.common.utils.SerializeHelper;
 import moe.plushie.rpgeconomy.mail.common.MailMessage;
-import net.minecraft.item.Item;
+import moe.plushie.rpgeconomy.mail.common.MailSystem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.NonNullList;
 
 public final class MailMessageSerializer {
+    
+    private static final String PROP_MAIL_SYSTEM = "mailSystem";
+    private static final String PROP_SENDER = "sender";
+    private static final String PROP_RECEIVER = "receiver";
+    private static final String PROP_SEND_DATE_TIME = "sendDateTime";
+    private static final String PROP_SUBJECT = "subject";
+    private static final String PROP_MESSAGE_TEXT = "messageText";
+    private static final String PROP_ATTACHMENTS = "attachments";
     
     private MailMessageSerializer() {
     }
@@ -28,73 +35,51 @@ public final class MailMessageSerializer {
             return null;
         }
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("sender", NBTUtil.writeGameProfile(new NBTTagCompound(), mailMessage.getSender()).toString());
-        jsonObject.addProperty("receiver", NBTUtil.writeGameProfile(new NBTTagCompound(), mailMessage.getReceiver()).toString());
-        jsonObject.addProperty("messageText", mailMessage.getMessageText());
+        
+        jsonObject.addProperty(PROP_MAIL_SYSTEM, mailMessage.getMailSystem().getName());
+        jsonObject.addProperty(PROP_SENDER, NBTUtil.writeGameProfile(new NBTTagCompound(), mailMessage.getSender()).toString());
+        jsonObject.addProperty(PROP_RECEIVER, NBTUtil.writeGameProfile(new NBTTagCompound(), mailMessage.getReceiver()).toString());
+        jsonObject.addProperty(PROP_SEND_DATE_TIME, mailMessage.getSendDateTime().toString());
+        jsonObject.addProperty(PROP_SUBJECT, mailMessage.getSubject());
+        jsonObject.addProperty(PROP_MESSAGE_TEXT, mailMessage.getMessageText());
+        
         JsonArray jsonArray = new JsonArray();
         for (int i = 0; i < mailMessage.getAttachments().size(); i++) {
             ItemStack itemStack = mailMessage.getAttachments().get(i);
-            JsonObject jsonAttachment = new JsonObject();
-            jsonAttachment.addProperty("id", Item.getIdFromItem(itemStack.getItem()));
-            jsonAttachment.addProperty("count", itemStack.getCount());
-            jsonAttachment.addProperty("damage", itemStack.getItemDamage());
-            if (itemStack.getItem().isDamageable() || itemStack.getItem().getShareTag()) {
-                if (itemStack.hasTagCompound()) {
-                    jsonAttachment.addProperty("nbt", itemStack.getTagCompound().toString());
-                }
-            }
-            jsonArray.add(jsonAttachment);
+            jsonArray.add(SerializeHelper.writeItemToJson(itemStack));
         }
-        jsonObject.add("attachments", jsonArray);
+        jsonObject.add(PROP_ATTACHMENTS, jsonArray);
         
         return jsonObject;
-    }
-    
-    public static MailMessage deserialize(String jsonString) {
-        if (jsonString == null) {
-            return null;
-        }
-        try {
-            JsonParser parser = new JsonParser();
-            return deserialize(parser.parse(jsonString));
-        } catch (Exception e) {
-            RpgEconomy.getLogger().error("Error parsing mail message.");
-            RpgEconomy.getLogger().error(e.getLocalizedMessage());
-            return null;
-        }
     }
     
     public static MailMessage deserialize(JsonElement json) {
         try {
             JsonObject jsonObject = json.getAsJsonObject();
-            JsonElement elementSender = jsonObject.get("sender");
-            JsonElement elementReceiver = jsonObject.get("receiver");
-            JsonElement elementSubject = jsonObject.get("subject");
-            JsonElement elementMessageText = jsonObject.get("messageText");
-            JsonElement elementAttachments = jsonObject.get("attachments");
             
+            JsonElement elementMailSystem = jsonObject.get(PROP_MAIL_SYSTEM);
+            JsonElement elementSender = jsonObject.get(PROP_SENDER);
+            JsonElement elementReceiver = jsonObject.get(PROP_RECEIVER);
+            JsonElement elementSendDateTime = jsonObject.get(PROP_SEND_DATE_TIME);
+            JsonElement elementSubject = jsonObject.get(PROP_SUBJECT);
+            JsonElement elementMessageText = jsonObject.get(PROP_MESSAGE_TEXT);
+            JsonElement elementAttachments = jsonObject.get(PROP_ATTACHMENTS);
+            
+            MailSystem mailSystem = RpgEconomy.getProxy().getMailSystemManager().getMailSystem(elementMailSystem.getAsString());
             GameProfile sender = NBTUtil.readGameProfileFromNBT(JsonToNBT.getTagFromJson(elementSender.getAsString()));
             GameProfile receiver = NBTUtil.readGameProfileFromNBT(JsonToNBT.getTagFromJson(elementReceiver.getAsString()));
+            Calendar sendDateTime = Calendar.getInstance(); // TODO Load date from string.
             String subject = elementSubject.getAsString();
             String messageText = elementMessageText.getAsString();
             
             JsonArray jsonArray = elementAttachments.getAsJsonArray();
-            
             NonNullList<ItemStack> attachments = NonNullList.<ItemStack>withSize(0, ItemStack.EMPTY);
             for (int i = 0; i < jsonArray.size(); i++) {
                 JsonObject jsonAttachment = jsonArray.get(i).getAsJsonObject();
-                JsonElement elementid = jsonAttachment.get("id");
-                JsonElement elementCount = jsonAttachment.get("count");
-                JsonElement elementDamage = jsonAttachment.get("damage");
-                ItemStack itemStack = new ItemStack(Item.getItemById(elementid.getAsInt()), elementCount.getAsInt(), elementDamage.getAsInt());
-                if (jsonAttachment.has("nbt")) {
-                    JsonElement elementNbt = jsonAttachment.get("nbt");
-                    NBTBase nbtBase = JsonToNBT.getTagFromJson(elementNbt.getAsString());
-                    itemStack.setTagCompound((NBTTagCompound) nbtBase);
-                }
-                attachments.add(itemStack);
+                attachments.add(SerializeHelper.readItemFromJson(jsonAttachment));
             }
-            return new MailMessage(null, sender, receiver, Calendar.getInstance(), subject, messageText, attachments);
+            
+            return new MailMessage(mailSystem, sender, receiver, sendDateTime, subject, messageText, attachments);
         } catch (Exception e) {
             e.printStackTrace();
         }

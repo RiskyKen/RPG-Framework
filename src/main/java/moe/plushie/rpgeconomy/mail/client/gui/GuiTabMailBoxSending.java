@@ -1,12 +1,12 @@
 package moe.plushie.rpgeconomy.mail.client.gui;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 
 import org.lwjgl.opengl.GL11;
 
 import com.mojang.authlib.GameProfile;
 
+import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.client.gui.GuiHelper;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiLabeledTextField;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTabPanel;
@@ -82,13 +82,13 @@ public class GuiTabMailBoxSending extends GuiTabPanel<GuiTabbed> {
     @Override
     protected void actionPerformed(GuiButton button) {
         if (button == buttonSend) {
-            ArrayList<ItemStack> items = new ArrayList<ItemStack>();
-            /*
-            if (mc.player.getCurrentEquippedItem() != null) {
-                items.add(mc.player.getCurrentEquippedItem());
+            NonNullList<ItemStack> attachments = NonNullList.<ItemStack>withSize(0, ItemStack.EMPTY);
+            
+            if (!mc.player.getHeldItemMainhand().isEmpty()) {
+                attachments.add(mc.player.getHeldItemMainhand());
             }
-            sendMail(mc.player.getCommandSenderName(), textFieldTo.getText(), textFieldSubject.getText(), "This is a test message.", items);
-            */
+            MailSystem mailSystem = RpgEconomy.getProxy().getMailSystemManager().getMailSystem("main");
+            //sendMail(mailSystem, mc.player.getGameProfile(), new GameProfile(null, textFieldTo.getText()), Calendar.getInstance(), textFieldSubject.getText(), "This is a test message.", attachments);
         }
     }
     

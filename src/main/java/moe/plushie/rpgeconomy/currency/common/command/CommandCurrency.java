@@ -20,10 +20,4 @@ public class CommandCurrency extends ModSubCommands {
             }
         }));
     }
-    
-    @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        // TODO Auto-generated method stub
-        super.execute(server, sender, args);
-    }
 }

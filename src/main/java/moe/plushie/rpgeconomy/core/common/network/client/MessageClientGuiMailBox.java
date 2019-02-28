@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 
 import io.netty.buffer.ByteBuf;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
+import moe.plushie.rpgeconomy.core.common.utils.SerializeHelper;
 import moe.plushie.rpgeconomy.mail.common.MailMessage;
 import moe.plushie.rpgeconomy.mail.common.serialize.MailMessageSerializer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -32,7 +33,7 @@ public class MessageClientGuiMailBox implements IMessage, IMessageHandler<Messag
     public void fromBytes(ByteBuf buf) {
         String mailJson = ByteBufUtils.readUTF8String(buf);
         RpgEconomy.getLogger().info("Got json from client. " + mailJson);
-        mailMessage = MailMessageSerializer.deserialize(mailJson);
+        mailMessage = MailMessageSerializer.deserialize(SerializeHelper.stringToJson(mailJson));
     }
 
     @Override
