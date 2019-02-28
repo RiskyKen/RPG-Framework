@@ -1,8 +1,8 @@
-package moe.plushie.rpgeconomy.core.common.inventory;
+package moe.plushie.rpgeconomy.mail.common.inventory;
 
+import moe.plushie.rpgeconomy.core.common.inventory.ModContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
 
 public class ContainerMailBox extends ModContainer {
 
@@ -18,11 +18,6 @@ public class ContainerMailBox extends ModContainer {
                 addSlotToContainer(new Slot(entityPlayer.inventory, x + y * 9 + 9, 8 + 18 * x, playerInvY + y * 18));
             }
         }
-    }
-    
-    @Override
-    public ItemStack transferStackInSlot(EntityPlayer entityPlayer, int slotId) {
-        return null;
     }
     
     @Override
