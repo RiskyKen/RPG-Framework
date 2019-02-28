@@ -59,12 +59,12 @@ public class CurrencyManager implements ICurrencyManager {
     }
     
     private void syncToClient(EntityPlayerMP entityPlayer) {
-        RpgEconomy.getLogger().info("Sending currency list to player " + entityPlayer.getName() + ".");
+        RpgEconomy.getLogger().info("Sending " + currencyMap.size() + " currency list(s) to player " + entityPlayer.getName() + ".");
         PacketHandler.NETWORK_WRAPPER.sendTo(getSyncMessage(), entityPlayer);
     }
     
     private void syncToAll() {
-        RpgEconomy.getLogger().info("Sending currency list to all players.");
+        RpgEconomy.getLogger().info("Sending " + currencyMap.size() + " currency list(s) to all players.");
         PacketHandler.NETWORK_WRAPPER.sendToAll(getSyncMessage());
     }
     
@@ -84,7 +84,7 @@ public class CurrencyManager implements ICurrencyManager {
     }
     
     public void gotCurrenciesFromServer(Currency[] currencies) {
-        RpgEconomy.getLogger().info("Got currency list from server. " + currencies.length);
+        RpgEconomy.getLogger().info("Got " + currencies.length + " currency list(s) from server.");
         currencyMap.clear();
         for (Currency currency : currencies) {
             currencyMap.put(currency.getName(), currency);

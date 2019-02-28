@@ -28,7 +28,6 @@ public class MessageServerSyncCurrency implements IMessage, IMessageHandler<Mess
         buf.writeInt(currencies.length);
         for (int i = 0; i < currencies.length; i++) {
             JsonElement jsonCurrency = CurrencySerializer.serializeJson(currencies[i]);
-            RpgEconomy.getLogger().info("Sending " + jsonCurrency.toString());
             ByteBufUtils.writeUTF8String(buf, jsonCurrency.toString());
         }
     }
@@ -39,7 +38,6 @@ public class MessageServerSyncCurrency implements IMessage, IMessageHandler<Mess
         currencies = new Currency[size];
         for (int i = 0; i < size; i++) {
             String jsonString = ByteBufUtils.readUTF8String(buf);
-            RpgEconomy.getLogger().info("Receive " + jsonString);
             JsonElement jsonCurrency = SerializeHelper.stringToJson(jsonString);
             if (jsonCurrency != null) {
                 currencies[i] = CurrencySerializer.deserializeJson(jsonCurrency);
