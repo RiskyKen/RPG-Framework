@@ -1,5 +1,6 @@
 package moe.plushie.rpgeconomy.core.common.blocks;
 
+import moe.plushie.rpgeconomy.core.common.items.block.ItemBlockMailBox;
 import moe.plushie.rpgeconomy.core.common.lib.LibBlockNames;
 import moe.plushie.rpgeconomy.core.common.lib.LibGuiIds;
 import net.minecraft.block.BlockHorizontal;
@@ -9,33 +10,43 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.registries.IForgeRegistry;
 
 public class BlockMailBox extends AbstractModBlock {
 
     public static final PropertyDirection STATE_FACING = BlockHorizontal.FACING;
-    
+
     public BlockMailBox() {
         super(LibBlockNames.MAIL_BOX);
     }
-    
+
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, new IProperty[] {STATE_FACING});
+        return new BlockStateContainer(this, new IProperty[] { STATE_FACING });
     }
-    
+
     public IBlockState getStateFromMeta(int meta) {
         boolean northSouthBit = getBitBool(meta, 0);
         boolean posNegBit = getBitBool(meta, 1);
         EnumFacing facing = EnumFacing.EAST;
         if (northSouthBit) {
-            if (posNegBit) { facing = EnumFacing.SOUTH; } else { facing = EnumFacing.NORTH; }
+            if (posNegBit) {
+                facing = EnumFacing.SOUTH;
+            } else {
+                facing = EnumFacing.NORTH;
+            }
         } else {
-            if (posNegBit) { facing = EnumFacing.EAST; } else { facing = EnumFacing.WEST; }
+            if (posNegBit) {
+                facing = EnumFacing.EAST;
+            } else {
+                facing = EnumFacing.WEST;
+            }
         }
         return this.getDefaultState().withProperty(STATE_FACING, facing);
     }
@@ -51,7 +62,7 @@ public class BlockMailBox extends AbstractModBlock {
         }
         return meta;
     }
-    
+
     @Override
     public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
         EnumFacing enumfacing = placer.getHorizontalFacing().getOpposite();
@@ -66,5 +77,10 @@ public class BlockMailBox extends AbstractModBlock {
         }
         openGui(playerIn, LibGuiIds.MAIL_BOX, worldIn, pos, state, facing);
         return true;
+    }
+
+    @Override
+    public void registerItemBlock(IForgeRegistry<Item> registry) {
+        registry.register(new ItemBlockMailBox(this).setRegistryName(getRegistryName()));
     }
 }
