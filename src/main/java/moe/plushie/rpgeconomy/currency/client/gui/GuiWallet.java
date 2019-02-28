@@ -75,8 +75,7 @@ public class GuiWallet extends GuiContainer {
         fontRenderer.drawString(title, xSize / 2 - titleWidth / 2, 6, 0x333333);
 
         GuiHelper.renderPlayerInvlabel(0, 98, fontRenderer);
-
-        String value = "£" + wallet.getAmount();
+        String value = String.format(currency.getDisplayFormat(), wallet.getAmount());
         int valueWidth = fontRenderer.getStringWidth(value);
 
         fontRenderer.drawString(value, 139 - valueWidth, 21, 0x333333);

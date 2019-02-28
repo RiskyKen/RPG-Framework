@@ -22,15 +22,18 @@ public class Currency implements ICurrency {
     /** Should picked up items be auto added to the wallet. */
     private final boolean pickupIntoWallet;
 
+    private final String displayFormat;
+
     /** Different variants of this currency. */
     private final CurrencyVariant[] variants;
 
-    public Currency(String name, boolean hasWallet, boolean needItemToAccess, boolean opensWithKeybind, boolean pickupIntoWallet, CurrencyVariant[] variants) {
+    public Currency(String name, boolean hasWallet, boolean needItemToAccess, boolean opensWithKeybind, boolean pickupIntoWallet, String displayFormat, CurrencyVariant[] variants) {
         this.name = name;
         this.hasWallet = hasWallet;
         this.needItemToAccess = needItemToAccess;
         this.opensWithKeybind = opensWithKeybind;
         this.pickupIntoWallet = pickupIntoWallet;
+        this.displayFormat = displayFormat;
         this.variants = variants;
     }
 
@@ -64,8 +67,13 @@ public class Currency implements ICurrency {
     }
 
     @Override
+    public String getDisplayFormat() {
+        return displayFormat;
+    }
+
+    @Override
     public String toString() {
-        return "Currency [name=" + name + ", hasWallet=" + hasWallet + ", needItemToAccess=" + needItemToAccess + ", opensWithKeybind=" + opensWithKeybind + ", pickupIntoWallet=" + pickupIntoWallet + ", variants=" + Arrays.toString(variants) + "]";
+        return "Currency [name=" + name + ", hasWallet=" + hasWallet + ", needItemToAccess=" + needItemToAccess + ", opensWithKeybind=" + opensWithKeybind + ", pickupIntoWallet=" + pickupIntoWallet + ", displayFormat=" + displayFormat + ", variants=" + Arrays.toString(variants) + "]";
     }
 
     public static class CurrencyVariant implements ICurrencyVariant, Comparable<CurrencyVariant> {

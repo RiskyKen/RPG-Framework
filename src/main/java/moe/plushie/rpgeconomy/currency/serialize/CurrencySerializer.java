@@ -19,6 +19,7 @@ public final class CurrencySerializer {
     private static final String PROP_NEED_ITEM_TO_OPEN = "needItemToAccess";
     private static final String PROP_OPEN_WITH_KEYBIND = "opensWithKeybind";
     private static final String PROP_PICKUP_INTO_WALLET = "pickupIntoWallet";
+    private static final String PROP_DISPLAY_FORMAT = "displayFormat";
     private static final String PROP_VARIANTS = "variants";
 
     private static final String PROP_VAR_NAME = "name";
@@ -36,20 +37,21 @@ public final class CurrencySerializer {
         jsonObject.addProperty(PROP_NEED_ITEM_TO_OPEN, currency.getNeedItemToAccess());
         jsonObject.addProperty(PROP_OPEN_WITH_KEYBIND, currency.getOpensWithKeybind());
         jsonObject.addProperty(PROP_PICKUP_INTO_WALLET, currency.getPickupIntoWallet());
+        jsonObject.addProperty(PROP_DISPLAY_FORMAT, currency.getDisplayFormat());
 
         JsonArray jsonVariants = new JsonArray();
         CurrencyVariant[] variants = currency.getCurrencyVariants();
         for (int i = 0; i < variants.length; i++) {
             JsonObject jsonVariant = new JsonObject();
-            
+
             jsonVariant.addProperty(PROP_VAR_NAME, variants[i].getName());
             jsonVariant.addProperty(PROP_VAR_VALUE, variants[i].getValue());
             jsonVariant.add(PROP_VAR_ITEM, SerializeHelper.writeItemToJson(variants[i].getItem()));
-            
+
             jsonVariants.add(jsonVariant);
         }
         jsonObject.add(PROP_VARIANTS, jsonVariants);
-
+        //RpgEconomy.getLogger().info(jsonObject.toString());
         return jsonObject;
     }
 
@@ -62,12 +64,14 @@ public final class CurrencySerializer {
             JsonElement propNeedItemToOpen = jsonObject.get(PROP_NEED_ITEM_TO_OPEN);
             JsonElement propOpensWithKeybind = jsonObject.get(PROP_OPEN_WITH_KEYBIND);
             JsonElement propPickupIntoWallet = jsonObject.get(PROP_PICKUP_INTO_WALLET);
+            JsonElement propDisplayFormat = jsonObject.get(PROP_DISPLAY_FORMAT);
 
             String name = propName.getAsString();
             boolean hasWallet = propHasWallet.getAsBoolean();
             boolean needItemToAccess = propNeedItemToOpen.getAsBoolean();
             boolean opensWithKeybind = propOpensWithKeybind.getAsBoolean();
             boolean pickupIntoWallet = propPickupIntoWallet.getAsBoolean();
+            String displayFormat = propDisplayFormat.getAsString();
 
             JsonElement propVariants = jsonObject.get(PROP_VARIANTS);
             JsonArray jsonVariants = propVariants.getAsJsonArray();
@@ -75,7 +79,7 @@ public final class CurrencySerializer {
             ArrayList<CurrencyVariant> variants = new ArrayList<CurrencyVariant>();
             for (int i = 0; i < jsonVariants.size(); i++) {
                 JsonObject jsonVariant = jsonVariants.get(i).getAsJsonObject();
-                
+
                 JsonElement propVariantName = jsonVariant.get(PROP_VAR_NAME);
                 JsonElement propVariantValue = jsonVariant.get(PROP_VAR_VALUE);
                 JsonElement propVariantItem = jsonVariant.get(PROP_VAR_ITEM);
@@ -83,11 +87,12 @@ public final class CurrencySerializer {
                 String variantName = propVariantName.getAsString();
                 int variantValue = propVariantValue.getAsInt();
                 ItemStack itemStack = SerializeHelper.readItemFromJson(propVariantItem);
-                
+
                 variants.add(new CurrencyVariant(variantName, variantValue, itemStack));
             }
             Collections.sort(variants);
-            return new Currency(name, hasWallet, needItemToAccess, opensWithKeybind, pickupIntoWallet, variants.toArray(new CurrencyVariant[variants.size()]));
+            //RpgEconomy.getLogger().info(displayFormat);
+            return new Currency(name, hasWallet, needItemToAccess, opensWithKeybind, pickupIntoWallet, displayFormat, variants.toArray(new CurrencyVariant[variants.size()]));
         } catch (Exception e) {
             e.printStackTrace();
         }

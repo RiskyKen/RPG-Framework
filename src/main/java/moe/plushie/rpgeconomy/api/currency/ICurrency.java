@@ -19,6 +19,8 @@ public interface ICurrency {
     /** Different variants of this currency. */
     public ICurrencyVariant[] getCurrencyVariants();
     
+    public String getDisplayFormat();
+    
     public static interface ICurrencyVariant {
         
         public String getName();
