@@ -1,8 +1,8 @@
 package moe.plushie.rpgeconomy.core.common.utils;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 
 import org.apache.commons.io.IOUtils;
@@ -26,12 +26,12 @@ public final class SerializeHelper {
     }
 
     public static String readFile(File file, Charset encoding) {
-        BufferedReader inputStream = null;
+        InputStream inputStream = null;
         String text = null;
         try {
-            inputStream = new BufferedReader(new FileReader(file));
-            byte[] data = IOUtils.toByteArray(inputStream, encoding);
-            text = new String(data, encoding);
+            inputStream = new FileInputStream(file);
+            char[] data = IOUtils.toCharArray(inputStream, encoding);
+            text = new String(data);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
