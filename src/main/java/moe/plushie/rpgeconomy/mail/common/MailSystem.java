@@ -1,8 +1,8 @@
 package moe.plushie.rpgeconomy.mail.common;
 
+import moe.plushie.rpgeconomy.api.currency.IWallet;
 import moe.plushie.rpgeconomy.api.mail.IMailSystem;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
-import moe.plushie.rpgeconomy.currency.common.Wallet;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 
@@ -10,8 +10,8 @@ public class MailSystem implements IMailSystem {
 
     private final String name;
     private int characterLimit;
-    private Wallet messageCost;
-    private Wallet attachmentCost;
+    private IWallet messageCost;
+    private IWallet attachmentCost;
     private int inboxSize;
     private int maxAttachments;
 
@@ -23,7 +23,8 @@ public class MailSystem implements IMailSystem {
     public String getName() {
         return name;
     }
-    
+
+    @Override
     public int getCharacterLimit() {
         return characterLimit;
     }
@@ -33,24 +34,27 @@ public class MailSystem implements IMailSystem {
         return this;
     }
 
-    public Wallet getMessageCost() {
+    @Override
+    public IWallet getMessageCost() {
         return messageCost;
     }
 
-    public MailSystem setMessageCost(Wallet messageCost) {
+    public MailSystem setMessageCost(IWallet messageCost) {
         this.messageCost = messageCost;
         return this;
     }
 
-    public Wallet getAttachmentCost() {
+    @Override
+    public IWallet getAttachmentCost() {
         return attachmentCost;
     }
 
-    public MailSystem setAttachmentCost(Wallet attachmentCost) {
+    public MailSystem setAttachmentCost(IWallet attachmentCost) {
         this.attachmentCost = attachmentCost;
         return this;
     }
 
+    @Override
     public int getInboxSize() {
         return inboxSize;
     }
@@ -60,6 +64,7 @@ public class MailSystem implements IMailSystem {
         return this;
     }
 
+    @Override
     public int getMaxAttachments() {
         return maxAttachments;
     }
