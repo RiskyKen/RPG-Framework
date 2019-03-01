@@ -62,7 +62,7 @@ public class ItemWallet extends AbstractModItem {
     }
 
     public static ItemStack getWallet(ICurrency currency) {
-        if (currency.getHasWallet()) {
+        if (currency.getCurrencyWalletInfo().getCreateWalletItem()) {
             ItemStack stack = new ItemStack(ModItems.WALLET, 1, 0);
             NBTTagCompound compound = new NBTTagCompound();
             compound.setString(TAG_CURRENCY, currency.getName());

@@ -7,21 +7,28 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import moe.plushie.rpgeconomy.api.currency.ICurrency.ICurrencyWalletInfo;
 import moe.plushie.rpgeconomy.core.common.utils.SerializeHelper;
 import moe.plushie.rpgeconomy.currency.common.Currency;
 import moe.plushie.rpgeconomy.currency.common.Currency.CurrencyVariant;
+import moe.plushie.rpgeconomy.currency.common.Currency.CurrencyWalletInfo;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTException;
 
 public final class CurrencySerializer {
 
     private static final String PROP_NAME = "name";
-    private static final String PROP_HAS_WALLET = "hasWallet";
-    private static final String PROP_NEED_ITEM_TO_OPEN = "needItemToAccess";
-    private static final String PROP_OPEN_WITH_KEYBIND = "opensWithKeybind";
-    private static final String PROP_PICKUP_INTO_WALLET = "pickupIntoWallet";
     private static final String PROP_DISPLAY_FORMAT = "displayFormat";
-    private static final String PROP_VARIANTS = "variants";
 
+    private static final String PROP_WALLET = "wallet";
+    private static final String PROP_CREATE_WALLET_ITEM = "createWalletItem";
+    private static final String PROP_NEED_ITEM_TO_ACCESS = "needItemToAccess";
+    private static final String PROP_MOD_KEYBIND = "modKeybind";
+    private static final String PROP_PICKUP_INTO_WALLET = "pickupIntoWallet";
+    private static final String PROP_DEATH_PERCENTAGE_DROPPED = "deathPercentageDropped";
+    private static final String PROP_DEATH_PERCENTAGE_LOST = "deathPercentageLost";
+
+    private static final String PROP_VARIANTS = "variants";
     private static final String PROP_VAR_NAME = "name";
     private static final String PROP_VAR_VALUE = "value";
     private static final String PROP_VAR_ITEM = "item";
@@ -33,69 +40,75 @@ public final class CurrencySerializer {
         JsonObject jsonObject = new JsonObject();
 
         jsonObject.addProperty(PROP_NAME, currency.getName());
-        jsonObject.addProperty(PROP_HAS_WALLET, currency.getHasWallet());
-        jsonObject.addProperty(PROP_NEED_ITEM_TO_OPEN, currency.getNeedItemToAccess());
-        jsonObject.addProperty(PROP_OPEN_WITH_KEYBIND, currency.getOpensWithKeybind());
-        jsonObject.addProperty(PROP_PICKUP_INTO_WALLET, currency.getPickupIntoWallet());
         jsonObject.addProperty(PROP_DISPLAY_FORMAT, currency.getDisplayFormat());
+        jsonObject.add(PROP_WALLET, serializeCurrencyWalletInfo(currency.getCurrencyWalletInfo()));
 
         JsonArray jsonVariants = new JsonArray();
         CurrencyVariant[] variants = currency.getCurrencyVariants();
         for (int i = 0; i < variants.length; i++) {
-            JsonObject jsonVariant = new JsonObject();
-
-            jsonVariant.addProperty(PROP_VAR_NAME, variants[i].getName());
-            jsonVariant.addProperty(PROP_VAR_VALUE, variants[i].getValue());
-            jsonVariant.add(PROP_VAR_ITEM, SerializeHelper.writeItemToJson(variants[i].getItem()));
-
-            jsonVariants.add(jsonVariant);
+            jsonVariants.add(serializeCurrencyVariant(variants[i]));
         }
         jsonObject.add(PROP_VARIANTS, jsonVariants);
-        //RpgEconomy.getLogger().info(jsonObject.toString());
+        return jsonObject;
+    }
+
+    public static JsonObject serializeCurrencyVariant(CurrencyVariant variant) {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty(PROP_VAR_NAME, variant.getName());
+        jsonObject.addProperty(PROP_VAR_VALUE, variant.getValue());
+        jsonObject.add(PROP_VAR_ITEM, SerializeHelper.writeItemToJson(variant.getItem()));
+        return jsonObject;
+    }
+
+    public static JsonObject serializeCurrencyWalletInfo(ICurrencyWalletInfo walletInfo) {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty(PROP_CREATE_WALLET_ITEM, walletInfo.getCreateWalletItem());
+        jsonObject.addProperty(PROP_NEED_ITEM_TO_ACCESS, walletInfo.getNeedItemToAccess());
+        jsonObject.addProperty(PROP_MOD_KEYBIND, walletInfo.getModKeybind());
+        jsonObject.addProperty(PROP_PICKUP_INTO_WALLET, walletInfo.getPickupIntoWallet());
+        jsonObject.addProperty(PROP_DEATH_PERCENTAGE_DROPPED, walletInfo.getDeathPercentageDropped());
+        jsonObject.addProperty(PROP_DEATH_PERCENTAGE_LOST, walletInfo.getDeathPercentageLost());
         return jsonObject;
     }
 
     public static Currency deserializeJson(JsonElement json) {
         try {
-            JsonObject jsonObject = json.getAsJsonObject();
+            JsonObject jsonCurrency = json.getAsJsonObject();
 
-            JsonElement propName = jsonObject.get(PROP_NAME);
-            JsonElement propHasWallet = jsonObject.get(PROP_HAS_WALLET);
-            JsonElement propNeedItemToOpen = jsonObject.get(PROP_NEED_ITEM_TO_OPEN);
-            JsonElement propOpensWithKeybind = jsonObject.get(PROP_OPEN_WITH_KEYBIND);
-            JsonElement propPickupIntoWallet = jsonObject.get(PROP_PICKUP_INTO_WALLET);
-            JsonElement propDisplayFormat = jsonObject.get(PROP_DISPLAY_FORMAT);
-
-            String name = propName.getAsString();
-            boolean hasWallet = propHasWallet.getAsBoolean();
-            boolean needItemToAccess = propNeedItemToOpen.getAsBoolean();
-            boolean opensWithKeybind = propOpensWithKeybind.getAsBoolean();
-            boolean pickupIntoWallet = propPickupIntoWallet.getAsBoolean();
-            String displayFormat = propDisplayFormat.getAsString();
-
-            JsonElement propVariants = jsonObject.get(PROP_VARIANTS);
-            JsonArray jsonVariants = propVariants.getAsJsonArray();
-
+            String name = jsonCurrency.get(PROP_NAME).getAsString();
+            String displayFormat = jsonCurrency.get(PROP_DISPLAY_FORMAT).getAsString();
+            CurrencyWalletInfo walletInfo = deserializeCurrencyWalletInfo(jsonCurrency.get(PROP_WALLET).getAsJsonObject());
+            JsonArray jsonVariants = jsonCurrency.get(PROP_VARIANTS).getAsJsonArray();
             ArrayList<CurrencyVariant> variants = new ArrayList<CurrencyVariant>();
             for (int i = 0; i < jsonVariants.size(); i++) {
-                JsonObject jsonVariant = jsonVariants.get(i).getAsJsonObject();
-
-                JsonElement propVariantName = jsonVariant.get(PROP_VAR_NAME);
-                JsonElement propVariantValue = jsonVariant.get(PROP_VAR_VALUE);
-                JsonElement propVariantItem = jsonVariant.get(PROP_VAR_ITEM);
-
-                String variantName = propVariantName.getAsString();
-                int variantValue = propVariantValue.getAsInt();
-                ItemStack itemStack = SerializeHelper.readItemFromJson(propVariantItem);
-
-                variants.add(new CurrencyVariant(variantName, variantValue, itemStack));
+                variants.add(deserializeCurrencyVariant(jsonVariants.get(i).getAsJsonObject()));
             }
             Collections.sort(variants);
-            //RpgEconomy.getLogger().info(displayFormat);
-            return new Currency(name, hasWallet, needItemToAccess, opensWithKeybind, pickupIntoWallet, displayFormat, variants.toArray(new CurrencyVariant[variants.size()]));
+            return new Currency(name, displayFormat, walletInfo, variants.toArray(new CurrencyVariant[variants.size()]));
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private static CurrencyVariant deserializeCurrencyVariant(JsonObject jsonObject) throws NBTException {
+        JsonElement propVariantName = jsonObject.get(PROP_VAR_NAME);
+        JsonElement propVariantValue = jsonObject.get(PROP_VAR_VALUE);
+        JsonElement propVariantItem = jsonObject.get(PROP_VAR_ITEM);
+
+        String variantName = propVariantName.getAsString();
+        int variantValue = propVariantValue.getAsInt();
+        ItemStack variantItemStack = SerializeHelper.readItemFromJson(propVariantItem);
+        return new CurrencyVariant(variantName, variantValue, variantItemStack);
+    }
+
+    private static CurrencyWalletInfo deserializeCurrencyWalletInfo(JsonObject jsonObject) {
+        boolean createWalletItem = jsonObject.get(PROP_CREATE_WALLET_ITEM).getAsBoolean();
+        boolean needItemToAccess = jsonObject.get(PROP_NEED_ITEM_TO_ACCESS).getAsBoolean();
+        String modKeybind = jsonObject.get(PROP_MOD_KEYBIND).getAsString();
+        boolean pickupIntoWallet = jsonObject.get(PROP_PICKUP_INTO_WALLET).getAsBoolean();
+        float deathPercentageDropped = jsonObject.get(PROP_DEATH_PERCENTAGE_DROPPED).getAsFloat();
+        float deathPercentageLost = jsonObject.get(PROP_DEATH_PERCENTAGE_LOST).getAsFloat();
+        return new CurrencyWalletInfo(createWalletItem, needItemToAccess, modKeybind, pickupIntoWallet, deathPercentageDropped, deathPercentageLost);
     }
 }

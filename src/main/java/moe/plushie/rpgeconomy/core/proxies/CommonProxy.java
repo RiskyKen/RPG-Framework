@@ -3,7 +3,6 @@ package moe.plushie.rpgeconomy.core.proxies;
 import java.io.File;
 
 import moe.plushie.rpgeconomy.auction.ModuleAuction;
-import moe.plushie.rpgeconomy.core.common.capability.ModCapabilityManager;
 import moe.plushie.rpgeconomy.core.common.command.CommandRpg;
 import moe.plushie.rpgeconomy.core.common.config.ConfigHandler;
 import moe.plushie.rpgeconomy.core.common.init.ModBlocks;
@@ -16,6 +15,7 @@ import moe.plushie.rpgeconomy.core.common.network.GuiHandler;
 import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
 import moe.plushie.rpgeconomy.currency.ModuleCurrency;
 import moe.plushie.rpgeconomy.currency.common.CurrencyManager;
+import moe.plushie.rpgeconomy.currency.common.capability.CurrencyCapabilityManager;
 import moe.plushie.rpgeconomy.mail.ModuleMail;
 import moe.plushie.rpgeconomy.mail.common.MailSystemManager;
 import net.minecraftforge.fml.common.Mod;
@@ -62,7 +62,7 @@ public class CommonProxy {
         modItems = new ModItems();
         modSounds = new ModSounds();
         
-        ModCapabilityManager.register();
+        CurrencyCapabilityManager.register();
         
         for (IModModule module : ModModule.MOD_MODULES) {
             module.preInit(event);

@@ -1,7 +1,5 @@
 package moe.plushie.rpgeconomy.currency.common;
 
-import java.util.Arrays;
-
 import moe.plushie.rpgeconomy.api.currency.ICurrency;
 import net.minecraft.item.ItemStack;
 
@@ -10,30 +8,17 @@ public class Currency implements ICurrency {
     /** Name of the currency. (this is used as the currency ID) */
     private final String name;
 
-    /** Will a wallet item be generated for this currency. */
-    private final boolean hasWallet;
-
-    /** Must the player have the wallet item in their inventory to access the wallet GUI. */
-    private final boolean needItemToAccess;
-
-    /** Can the wallet GUI be opened with a key binding. */
-    private final boolean opensWithKeybind;
-
-    /** Should picked up items be auto added to the wallet. */
-    private final boolean pickupIntoWallet;
-
     private final String displayFormat;
+    
+    private final CurrencyWalletInfo walletInfo;
 
     /** Different variants of this currency. */
     private final CurrencyVariant[] variants;
 
-    public Currency(String name, boolean hasWallet, boolean needItemToAccess, boolean opensWithKeybind, boolean pickupIntoWallet, String displayFormat, CurrencyVariant[] variants) {
+    public Currency(String name,  String displayFormat, CurrencyWalletInfo walletInfo, CurrencyVariant[] variants) {
         this.name = name;
-        this.hasWallet = hasWallet;
-        this.needItemToAccess = needItemToAccess;
-        this.opensWithKeybind = opensWithKeybind;
-        this.pickupIntoWallet = pickupIntoWallet;
         this.displayFormat = displayFormat;
+        this.walletInfo = walletInfo;
         this.variants = variants;
     }
 
@@ -41,40 +26,22 @@ public class Currency implements ICurrency {
     public String getName() {
         return name;
     }
-
-    @Override
-    public boolean getHasWallet() {
-        return hasWallet;
-    }
-
-    @Override
-    public boolean getNeedItemToAccess() {
-        return needItemToAccess;
-    }
-
-    @Override
-    public boolean getOpensWithKeybind() {
-        return opensWithKeybind;
-    }
-
-    public boolean getPickupIntoWallet() {
-        return pickupIntoWallet;
-    }
-
-    @Override
-    public CurrencyVariant[] getCurrencyVariants() {
-        return variants;
-    }
-
+    
     @Override
     public String getDisplayFormat() {
         return displayFormat;
     }
-
+    
     @Override
-    public String toString() {
-        return "Currency [name=" + name + ", hasWallet=" + hasWallet + ", needItemToAccess=" + needItemToAccess + ", opensWithKeybind=" + opensWithKeybind + ", pickupIntoWallet=" + pickupIntoWallet + ", displayFormat=" + displayFormat + ", variants=" + Arrays.toString(variants) + "]";
+    public ICurrencyWalletInfo getCurrencyWalletInfo() {
+        return walletInfo;
     }
+    
+    @Override
+    public CurrencyVariant[] getCurrencyVariants() {
+        return variants;
+    }
+    
 
     public static class CurrencyVariant implements ICurrencyVariant, Comparable<CurrencyVariant> {
 
@@ -111,6 +78,64 @@ public class Currency implements ICurrency {
         @Override
         public int compareTo(CurrencyVariant o) {
             return value - o.value;
+        }
+    }
+    
+    public static class CurrencyWalletInfo implements ICurrencyWalletInfo {
+        
+        /** Will a wallet item be generated for this currency. */
+        private final boolean createWalletItem;
+
+        /** Must the player have the wallet item in their inventory to access the wallet GUI. */
+        private final boolean needItemToAccess;
+
+        /** Can the wallet GUI be opened with a key binding. */
+        private final String modKeybind;
+
+        /** Should picked up items be auto added to the wallet. */
+        private final boolean pickupIntoWallet;
+        
+        private final float deathPercentageDropped;
+        
+        private final float deathPercentageLost;
+
+        public CurrencyWalletInfo(boolean createWalletItem, boolean needItemToAccess, String modKeybind, boolean pickupIntoWallet, float deathPercentageDropped, float deathPercentageLost) {
+            this.createWalletItem = createWalletItem;
+            this.needItemToAccess = needItemToAccess;
+            this.modKeybind = modKeybind;
+            this.pickupIntoWallet = pickupIntoWallet;
+            this.deathPercentageDropped = deathPercentageDropped;
+            this.deathPercentageLost = deathPercentageLost;
+        }
+
+        @Override
+        public boolean getCreateWalletItem() {
+            return createWalletItem;
+        }
+
+        @Override
+        public boolean getNeedItemToAccess() {
+            return needItemToAccess;
+        }
+
+        @Override
+        public String getModKeybind() {
+            return modKeybind;
+        }
+
+        @Override
+        public boolean getPickupIntoWallet() {
+            return pickupIntoWallet;
+        }
+
+        @Override
+        public float getDeathPercentageDropped() {
+            return deathPercentageDropped;
+        }
+
+        @Override
+        public float getDeathPercentageLost() {
+            return deathPercentageLost;
         }
     }
 }

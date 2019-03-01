@@ -7,19 +7,12 @@ public interface ICurrency {
     /** Name of the currency. (this is used as the currency ID) */
     public String getName();
     
-    /** Will a wallet item be generated for this currency. */
-    public boolean getHasWallet();
+    public String getDisplayFormat();
     
-    /** Must the player have the wallet item in their inventory to open the wallet GUI. */
-    public boolean getNeedItemToAccess();
-    
-    /** Can the wallet GUI be opened with a key binding. */
-    public boolean getOpensWithKeybind();
+    public ICurrencyWalletInfo getCurrencyWalletInfo();
     
     /** Different variants of this currency. */
     public ICurrencyVariant[] getCurrencyVariants();
-    
-    public String getDisplayFormat();
     
     public static interface ICurrencyVariant {
         
@@ -28,5 +21,23 @@ public interface ICurrency {
         public int getValue();
         
         public ItemStack getItem();
+    }
+    
+    public static interface ICurrencyWalletInfo {
+        
+        /** Will a wallet item be generated for this currency. */
+        public boolean getCreateWalletItem();
+        
+        /** Must the player have the wallet item in their inventory to open the wallet GUI. */
+        public boolean getNeedItemToAccess();
+        
+        /** Key binding to open the wallet GUI. */
+        public String getModKeybind();
+        
+        public boolean getPickupIntoWallet();
+        
+        public float getDeathPercentageDropped();
+        
+        public float getDeathPercentageLost();
     }
 }
