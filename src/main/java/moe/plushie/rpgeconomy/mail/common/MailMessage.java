@@ -1,6 +1,6 @@
 package moe.plushie.rpgeconomy.mail.common;
 
-import java.util.Calendar;
+import java.util.Date;
 
 import com.mojang.authlib.GameProfile;
 
@@ -14,12 +14,12 @@ public class MailMessage implements IMailMessage {
     private final MailSystem mailSystem;
     private final GameProfile sender;
     private final GameProfile receiver;
-    private final Calendar sendDateTime;
+    private final Date sendDateTime;
     private final String subject;
     private final String messageText;
     private final NonNullList<ItemStack> attachments;
 
-    public MailMessage(MailSystem mailSystem, GameProfile sender, GameProfile receiver, Calendar sendDateTime, String subject, String messageText, NonNullList<ItemStack> attachments) {
+    public MailMessage(MailSystem mailSystem, GameProfile sender, GameProfile receiver, Date sendDateTime, String subject, String messageText, NonNullList<ItemStack> attachments) {
         this.mailSystem = mailSystem;
         this.sender = sender;
         this.receiver = receiver;
@@ -45,7 +45,7 @@ public class MailMessage implements IMailMessage {
     }
 
     @Override
-    public Calendar getSendDateTime() {
+    public Date getSendDateTime() {
         return sendDateTime;
     }
 

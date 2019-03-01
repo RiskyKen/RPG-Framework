@@ -1,6 +1,8 @@
 package moe.plushie.rpgeconomy.mail.common.serialize;
 
-import java.util.Calendar;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -27,6 +29,8 @@ public final class MailMessageSerializer {
     private static final String PROP_MESSAGE_TEXT = "messageText";
     private static final String PROP_ATTACHMENTS = "attachments";
     
+    private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+    
     private MailMessageSerializer() {
     }
     
@@ -39,7 +43,7 @@ public final class MailMessageSerializer {
         jsonObject.addProperty(PROP_MAIL_SYSTEM, mailMessage.getMailSystem().getName());
         jsonObject.addProperty(PROP_SENDER, NBTUtil.writeGameProfile(new NBTTagCompound(), mailMessage.getSender()).toString());
         jsonObject.addProperty(PROP_RECEIVER, NBTUtil.writeGameProfile(new NBTTagCompound(), mailMessage.getReceiver()).toString());
-        jsonObject.addProperty(PROP_SEND_DATE_TIME, mailMessage.getSendDateTime().toString());
+        jsonObject.addProperty(PROP_SEND_DATE_TIME, SDF.format(mailMessage.getSendDateTime()));
         jsonObject.addProperty(PROP_SUBJECT, mailMessage.getSubject());
         jsonObject.addProperty(PROP_MESSAGE_TEXT, mailMessage.getMessageText());
         
@@ -49,13 +53,15 @@ public final class MailMessageSerializer {
             jsonArray.add(SerializeHelper.writeItemToJson(itemStack));
         }
         jsonObject.add(PROP_ATTACHMENTS, jsonArray);
-        
+
         return jsonObject;
     }
     
     public static MailMessage deserialize(JsonElement json) {
         try {
             JsonObject jsonObject = json.getAsJsonObject();
+            
+            
             
             JsonElement elementMailSystem = jsonObject.get(PROP_MAIL_SYSTEM);
             JsonElement elementSender = jsonObject.get(PROP_SENDER);
@@ -68,12 +74,12 @@ public final class MailMessageSerializer {
             MailSystem mailSystem = RpgEconomy.getProxy().getMailSystemManager().getMailSystem(elementMailSystem.getAsString());
             GameProfile sender = NBTUtil.readGameProfileFromNBT(JsonToNBT.getTagFromJson(elementSender.getAsString()));
             GameProfile receiver = NBTUtil.readGameProfileFromNBT(JsonToNBT.getTagFromJson(elementReceiver.getAsString()));
-            Calendar sendDateTime = Calendar.getInstance(); // TODO Load date from string.
+            Date sendDateTime = SDF.parse(elementSendDateTime.getAsString());
             String subject = elementSubject.getAsString();
             String messageText = elementMessageText.getAsString();
             
             JsonArray jsonArray = elementAttachments.getAsJsonArray();
-            NonNullList<ItemStack> attachments = NonNullList.<ItemStack>withSize(0, ItemStack.EMPTY);
+            NonNullList<ItemStack> attachments = NonNullList.<ItemStack>create();
             for (int i = 0; i < jsonArray.size(); i++) {
                 JsonObject jsonAttachment = jsonArray.get(i).getAsJsonObject();
                 attachments.add(SerializeHelper.readItemFromJson(jsonAttachment));

@@ -1,6 +1,6 @@
 package moe.plushie.rpgeconomy.api.mail;
 
-import java.util.Calendar;
+import java.util.Date;
 
 import com.mojang.authlib.GameProfile;
 
@@ -15,7 +15,7 @@ public interface IMailMessage {
 
     public GameProfile getReceiver();
     
-    public Calendar getSendDateTime();
+    public Date getSendDateTime();
 
     public String getSubject();
     

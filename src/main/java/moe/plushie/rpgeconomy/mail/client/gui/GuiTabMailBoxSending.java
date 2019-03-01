@@ -1,6 +1,7 @@
 package moe.plushie.rpgeconomy.mail.client.gui;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import org.lwjgl.opengl.GL11;
 
@@ -82,17 +83,32 @@ public class GuiTabMailBoxSending extends GuiTabPanel<GuiTabbed> {
     @Override
     protected void actionPerformed(GuiButton button) {
         if (button == buttonSend) {
-            NonNullList<ItemStack> attachments = NonNullList.<ItemStack>withSize(0, ItemStack.EMPTY);
+            if (textFieldTo.getText().trim().isEmpty()) {
+                return;
+            }
+            if (textFieldSubject.getText().trim().isEmpty()) {
+                return;
+            }
+            if (textFieldMessage.getText().trim().isEmpty()) {
+                return;
+            }
+            MailSystem mailSystem = RpgEconomy.getProxy().getMailSystemManager().getMailSystem("main");
+            GameProfile sender = mc.player.getGameProfile();
+            GameProfile receiver = new GameProfile(null, textFieldTo.getText());
+            Date sendDateTime = Calendar.getInstance().getTime();
+            String subject = textFieldSubject.getText();
+            String message = textFieldMessage.getText();
             
+            NonNullList<ItemStack> attachments = NonNullList.<ItemStack>create();
             if (!mc.player.getHeldItemMainhand().isEmpty()) {
                 attachments.add(mc.player.getHeldItemMainhand());
             }
-            MailSystem mailSystem = RpgEconomy.getProxy().getMailSystemManager().getMailSystem("main");
-            //sendMail(mailSystem, mc.player.getGameProfile(), new GameProfile(null, textFieldTo.getText()), Calendar.getInstance(), textFieldSubject.getText(), "This is a test message.", attachments);
+            
+            //sendMail(mailSystem, sender, receiver, sendDateTime, subject, message, attachments);
         }
     }
     
-    private void sendMail(MailSystem mailSystem, GameProfile sender, GameProfile receiver, Calendar sendDateTime, String subject, String messageText, NonNullList<ItemStack> attachments) {
+    private void sendMail(MailSystem mailSystem, GameProfile sender, GameProfile receiver, Date sendDateTime, String subject, String messageText, NonNullList<ItemStack> attachments) {
         MailMessage mailMessage = new MailMessage(mailSystem, sender, receiver, sendDateTime, subject, messageText, attachments);
         PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiMailBox(mailMessage));
     }
