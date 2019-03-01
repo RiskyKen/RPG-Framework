@@ -16,16 +16,16 @@ import net.minecraft.world.World;
 public class BlockAuction extends AbstractModBlock {
 
     public static final PropertyDirection STATE_FACING = BlockHorizontal.FACING;
-    
+
     public BlockAuction() {
         super(LibBlockNames.AUCTION);
     }
-    
+
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, new IProperty[] { STATE_FACING });
     }
-    
+
     public IBlockState getStateFromMeta(int meta) {
         boolean northSouthBit = getBitBool(meta, 0);
         boolean posNegBit = getBitBool(meta, 1);
@@ -45,7 +45,7 @@ public class BlockAuction extends AbstractModBlock {
         }
         return this.getDefaultState().withProperty(STATE_FACING, facing);
     }
-    
+
     public int getMetaFromState(IBlockState state) {
         EnumFacing facing = state.getValue(STATE_FACING);
         int meta = 0;
@@ -57,11 +57,10 @@ public class BlockAuction extends AbstractModBlock {
         }
         return meta;
     }
-    
+
     @Override
     public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
         EnumFacing enumfacing = placer.getHorizontalFacing().getOpposite();
         return getDefaultState().withProperty(STATE_FACING, enumfacing);
     }
-
 }

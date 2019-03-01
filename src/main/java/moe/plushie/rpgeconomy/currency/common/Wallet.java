@@ -5,15 +5,15 @@ import moe.plushie.rpgeconomy.api.currency.IWallet;
 
 public class Wallet implements IWallet {
 
-    private final Currency currency;
+    private final ICurrency currency;
     private int amount;
 
-    public Wallet(Currency currency, int amount) {
+    public Wallet(ICurrency currency, int amount) {
         this.currency = currency;
         this.amount = amount;
     }
 
-    public Wallet(Currency currency) {
+    public Wallet(ICurrency currency) {
         this(currency, 0);
     }
 
@@ -34,12 +34,19 @@ public class Wallet implements IWallet {
     
     @Override
     public void addAmount(int amount) {
-        this.amount += amount;
+        if ((long)amount + (long)this.amount > (long)Integer.MAX_VALUE) {
+            this.amount = Integer.MAX_VALUE;
+        } else {
+            this.amount += amount;
+        }
     }
 
     @Override
     public void removeAmount(int amount) {
         this.amount -= amount;
+        if (this.amount < 0) {
+            this.amount = 0;
+        }
     }
     
     @Override

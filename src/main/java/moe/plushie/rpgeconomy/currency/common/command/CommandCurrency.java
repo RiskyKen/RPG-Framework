@@ -19,5 +19,8 @@ public class CommandCurrency extends ModSubCommands {
                 RpgEconomy.getProxy().getCurrencyManager().reload(true);
             }
         }));
+        addSubCommand(new CommandCurrencySet(this, "set"));
+        addSubCommand(new CommandCurrencyAdd(this, "add"));
+        addSubCommand(new CommandCurrencyRemove(this, "remove"));
     }
 }

@@ -5,4 +5,6 @@ public interface ICurrencyManager {
     public ICurrency getCurrency(String name);
     
     public ICurrency[] getCurrencies();
+    
+    public String[] getCurrencyNames();
 }

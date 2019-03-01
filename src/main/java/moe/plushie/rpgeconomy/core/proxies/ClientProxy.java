@@ -5,6 +5,8 @@ import moe.plushie.rpgeconomy.core.client.model.ICustomModel;
 import moe.plushie.rpgeconomy.core.common.init.ModBlocks;
 import moe.plushie.rpgeconomy.core.common.init.ModItems;
 import moe.plushie.rpgeconomy.core.common.lib.LibModInfo;
+import moe.plushie.rpgeconomy.core.common.module.IModModule;
+import moe.plushie.rpgeconomy.core.common.module.ModModule;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -43,5 +45,8 @@ public class ClientProxy extends CommonProxy {
     
     @Override
     public void initRenderers() {
+        for (IModModule module : ModModule.MOD_MODULES) {
+            module.initRenderers();
+        }
     }
 }

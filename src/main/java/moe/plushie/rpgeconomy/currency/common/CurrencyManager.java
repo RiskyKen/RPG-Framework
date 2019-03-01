@@ -100,4 +100,9 @@ public class CurrencyManager implements ICurrencyManager {
     public Currency[] getCurrencies() {
         return currencyMap.values().toArray(new Currency[currencyMap.size()]);
     }
+    
+    @Override
+    public String[] getCurrencyNames() {
+        return currencyMap.keySet().toArray(new String[currencyMap.size()]);
+    }
 }

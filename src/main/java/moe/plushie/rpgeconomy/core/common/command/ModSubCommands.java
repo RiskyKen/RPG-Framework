@@ -47,7 +47,7 @@ public abstract class ModSubCommands extends ModCommand {
             return getListOfStringsMatchingLastWord(args, getSubCommandNames());
         }
         if (args.length > getParentCount() + 1) {
-            String commandName = args[0];
+            String commandName = args[getParentCount()];
             ModCommand command = getSubCommand(commandName);
             if (command != null) {
                 return command.getTabCompletions(server, sender, args, targetPos);

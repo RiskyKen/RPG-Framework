@@ -2,6 +2,7 @@ package moe.plushie.rpgeconomy.core.proxies;
 
 import java.io.File;
 
+import moe.plushie.rpgeconomy.auction.ModuleAuction;
 import moe.plushie.rpgeconomy.core.common.capability.ModCapabilityManager;
 import moe.plushie.rpgeconomy.core.common.command.CommandRpg;
 import moe.plushie.rpgeconomy.core.common.config.ConfigHandler;
@@ -9,10 +10,13 @@ import moe.plushie.rpgeconomy.core.common.init.ModBlocks;
 import moe.plushie.rpgeconomy.core.common.init.ModItems;
 import moe.plushie.rpgeconomy.core.common.init.ModSounds;
 import moe.plushie.rpgeconomy.core.common.lib.LibModInfo;
+import moe.plushie.rpgeconomy.core.common.module.IModModule;
+import moe.plushie.rpgeconomy.core.common.module.ModModule;
 import moe.plushie.rpgeconomy.core.common.network.GuiHandler;
 import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
+import moe.plushie.rpgeconomy.currency.ModuleCurrency;
 import moe.plushie.rpgeconomy.currency.common.CurrencyManager;
-import moe.plushie.rpgeconomy.currency.common.CurrencyPickupHelper;
+import moe.plushie.rpgeconomy.mail.ModuleMail;
 import moe.plushie.rpgeconomy.mail.common.MailSystemManager;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -35,6 +39,10 @@ public class CommonProxy {
     private CurrencyManager currencyManager;
     private MailSystemManager mailSystemManager;
     
+    private IModModule moduleCurrency = new ModuleCurrency();
+    private IModModule moduleMail = new ModuleMail();
+    private IModModule moduleAuction = new ModuleAuction();
+    
     public void preInit(FMLPreInitializationEvent event) {
         modConfigDirectory = new File(event.getSuggestedConfigurationFile().getParentFile(), LibModInfo.ID);
         if (!modConfigDirectory.exists()) {
@@ -55,6 +63,10 @@ public class CommonProxy {
         modSounds = new ModSounds();
         
         ModCapabilityManager.register();
+        
+        for (IModModule module : ModModule.MOD_MODULES) {
+            module.preInit(event);
+        }
     }
     
     public void init(FMLInitializationEvent event) {
@@ -62,23 +74,31 @@ public class CommonProxy {
         new GuiHandler();
         new PacketHandler();
         
-
-        new CurrencyPickupHelper();
+        for (IModModule module : ModModule.MOD_MODULES) {
+            module.init(event);
+        }
     }
     
     public void initRenderers() {
     }
     
     public void postInit(FMLPostInitializationEvent event) {
+        for (IModModule module : ModModule.MOD_MODULES) {
+            module.postInit(event);
+        }
     }
     
     public void serverStart(FMLServerStartingEvent event) {
         event.registerServerCommand(new CommandRpg());
-        currencyManager.reload(false);
-        mailSystemManager.reload(false);
+        for (IModModule module : ModModule.MOD_MODULES) {
+            module.serverStart(event);
+        }
     }
     
     public void serverStop(FMLServerStoppingEvent event) {
+        for (IModModule module : ModModule.MOD_MODULES) {
+            module.serverStop(event);
+        }
     }
     
     public CurrencyManager getCurrencyManager() {

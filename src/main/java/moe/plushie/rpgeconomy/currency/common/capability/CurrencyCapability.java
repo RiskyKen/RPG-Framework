@@ -46,6 +46,9 @@ public class CurrencyCapability implements ICurrencyCapability {
     
     @Override
     public IWallet getWallet(ICurrency currency) {
+        if (!walletMap.containsKey(currency.getName())) {
+            walletMap.put(currency.getName(), new Wallet(currency));
+        }
         return walletMap.get(currency.getName());
     }
     

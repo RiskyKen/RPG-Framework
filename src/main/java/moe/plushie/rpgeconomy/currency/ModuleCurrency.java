@@ -1,13 +1,17 @@
 package moe.plushie.rpgeconomy.currency;
 
-import moe.plushie.rpgeconomy.core.common.module.IModModule;
+import moe.plushie.rpgeconomy.core.RpgEconomy;
+import moe.plushie.rpgeconomy.core.common.module.ModModule;
+import moe.plushie.rpgeconomy.currency.common.CurrencyPickupHelper;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ModuleCurrency implements IModModule {
+public class ModuleCurrency extends ModModule {
 
     @Override
     public void preInit(FMLPreInitializationEvent event) {
@@ -15,6 +19,7 @@ public class ModuleCurrency implements IModModule {
 
     @Override
     public void init(FMLInitializationEvent event) {
+        new CurrencyPickupHelper();
     }
 
     @SideOnly(Side.CLIENT)
@@ -24,5 +29,14 @@ public class ModuleCurrency implements IModModule {
 
     @Override
     public void postInit(FMLPostInitializationEvent event) {
+    }
+
+    @Override
+    public void serverStart(FMLServerStartingEvent event) {
+        RpgEconomy.getProxy().getCurrencyManager().reload(false);
+    }
+
+    @Override
+    public void serverStop(FMLServerStoppingEvent event) {
     }
 }
