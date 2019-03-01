@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import com.google.gson.JsonElement;
 
+import moe.plushie.rpgeconomy.api.mail.IMailSystemManager;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
 import moe.plushie.rpgeconomy.core.common.network.server.MessageServerSyncMailSystems;
@@ -17,7 +18,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
-public class MailSystemManager {
+public class MailSystemManager implements IMailSystemManager {
 
     private static final String DIRECTORY_NAME = "mail";
 
@@ -90,12 +91,19 @@ public class MailSystemManager {
         }
     }
 
+    @Override
     public MailSystem getMailSystem(String name) {
         return mailSystemMap.get(name);
     }
 
+    @Override
     public MailSystem[] getMailSystems() {
         return mailSystemMap.values().toArray(new MailSystem[mailSystemMap.size()]);
+    }
+    
+    @Override
+    public String[] getMailSystemNames() {
+        return mailSystemMap.keySet().toArray(new String[mailSystemMap.size()]);
     }
 
     public void onClientSendMailMessage(EntityPlayerMP entityPlayer, MailMessage mailMessage) {
