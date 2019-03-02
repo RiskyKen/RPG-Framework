@@ -13,6 +13,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -62,7 +63,8 @@ public class GuiShop extends GuiContainer {
     
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        String title = ModBlocks.SHOP.getLocalizedName();
+        ItemStack itemStack = new ItemStack(ModBlocks.SHOP);
+        String title = itemStack.getDisplayName();
         int titleWidth = fontRenderer.getStringWidth(title);
         fontRenderer.drawString(title, xSize / 2 - titleWidth / 2, 6, 0x333333);
         
@@ -71,7 +73,16 @@ public class GuiShop extends GuiContainer {
         }
         
         fontRenderer.drawString("Stock: 50", 25, 20, 0x333333, false);
-        fontRenderer.drawString("Cost: 10000", 25, 30, 0x333333, false);
+        fontRenderer.drawString("Cost: 10,000", 25, 30, 0x333333, false);
+        
+        fontRenderer.drawString("Stock: 4", 25, 43, 0x333333, false);
+        fontRenderer.drawString("Cost: 10,000,000", 25, 53, 0x333333, false);
+        
+        fontRenderer.drawString("Stock: 50,000", 25, 66, 0x333333, false);
+        fontRenderer.drawString("Cost: 5", 25, 76, 0x333333, false);
+        
+        fontRenderer.drawString("Stock: 5000", 25, 89, 0x333333, false);
+        fontRenderer.drawString("Cost: 100,000", 25, 99, 0x333333, false);
         
         GlStateManager.pushMatrix();
         GlStateManager.translate(-guiLeft, -guiTop, 0);
