@@ -17,7 +17,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class GuiIconButton extends GuiButtonExt {
 
     private final GuiScreen parent;
-    private final String hoverText;
+    private String hoverText;
     private final ResourceLocation iconTexture;
     private String disableText;
     private int iconPosX;
@@ -26,11 +26,11 @@ public class GuiIconButton extends GuiButtonExt {
     private int iconHeight;
     private boolean isPressed;
     private boolean horizontal = true;
+    private boolean drawButtonBackground = true;
     
-    public GuiIconButton(GuiScreen parent, int id, int xPos, int yPos, int width, int height, String hoverText, ResourceLocation iconTexture) {
+    public GuiIconButton(GuiScreen parent, int id, int xPos, int yPos, int width, int height, ResourceLocation iconTexture) {
         super(id, xPos, yPos, width, height, "");
         this.parent = parent;
-        this.hoverText = hoverText;
         this.iconTexture = iconTexture;
         this.disableText = "";
     }
@@ -40,6 +40,11 @@ public class GuiIconButton extends GuiButtonExt {
         this.iconPosY = y;
         this.iconWidth = width;
         this.iconHeight = height;
+        return this;
+    }
+    
+    public GuiIconButton setHoverText(String hoverText) {
+        this.hoverText = hoverText;
         return this;
     }
     
@@ -60,9 +65,16 @@ public class GuiIconButton extends GuiButtonExt {
         this.disableText = disableText;
     }
     
+    public GuiIconButton setDrawButtonBackground(boolean drawButtonBackground) {
+        this.drawButtonBackground = drawButtonBackground;
+        return this;
+    }
+    
     @Override
     public void drawButton(Minecraft mc, int mouseX, int mouseY, float partial) {
-        super.drawButton(mc, mouseX, mouseY, partial);
+        if (drawButtonBackground) {
+            super.drawButton(mc, mouseX, mouseY, partial);
+        }
         if (!this.visible) {
             return;
         }
