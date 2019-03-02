@@ -47,7 +47,6 @@ public class TileEntityMailBox extends ModTileEntity {
     
     @Override
     public void readFromNBT(NBTTagCompound compound) {
-        RpgEconomy.getLogger().info("reading: " + compound);
         super.readFromNBT(compound);
         if (compound.hasKey(TAG_MAIL_SYSTEM, NBT.TAG_STRING)) {
             String mailSystemName = compound.getString(TAG_MAIL_SYSTEM);
@@ -61,7 +60,6 @@ public class TileEntityMailBox extends ModTileEntity {
         if (mailSystem != null) {
             compound.setString(TAG_MAIL_SYSTEM, mailSystem.getName());
         }
-        RpgEconomy.getLogger().info("writing: " + compound);
         return compound;
     }
 }
