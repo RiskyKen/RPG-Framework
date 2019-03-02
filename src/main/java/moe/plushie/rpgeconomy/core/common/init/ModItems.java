@@ -2,8 +2,8 @@ package moe.plushie.rpgeconomy.core.common.init;
 
 import java.util.ArrayList;
 
-import moe.plushie.rpgeconomy.core.common.items.ItemCurrency;
-import moe.plushie.rpgeconomy.core.common.items.ItemWallet;
+import moe.plushie.rpgeconomy.currency.common.items.ItemCurrency;
+import moe.plushie.rpgeconomy.currency.common.items.ItemWallet;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;

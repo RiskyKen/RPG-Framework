@@ -1,8 +1,9 @@
-package moe.plushie.rpgeconomy.core.common.items;
+package moe.plushie.rpgeconomy.currency.common.items;
 
 import moe.plushie.rpgeconomy.api.currency.ICurrency;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.init.ModItems;
+import moe.plushie.rpgeconomy.core.common.items.AbstractModItem;
 import moe.plushie.rpgeconomy.core.common.lib.LibGuiIds;
 import moe.plushie.rpgeconomy.core.common.lib.LibItemNames;
 import moe.plushie.rpgeconomy.currency.common.Currency;

@@ -1,5 +1,6 @@
-package moe.plushie.rpgeconomy.core.common.items;
+package moe.plushie.rpgeconomy.currency.common.items;
 
+import moe.plushie.rpgeconomy.core.common.items.AbstractModItem;
 import moe.plushie.rpgeconomy.core.common.lib.LibItemNames;
 import moe.plushie.rpgeconomy.core.common.lib.LibModInfo;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;

@@ -1,4 +1,4 @@
-package moe.plushie.rpgeconomy.currency.serialize;
+package moe.plushie.rpgeconomy.currency.common.serialize;
 
 import java.util.ArrayList;
 import java.util.Collections;

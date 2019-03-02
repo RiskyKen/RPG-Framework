@@ -6,7 +6,7 @@ import io.netty.buffer.ByteBuf;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.utils.SerializeHelper;
 import moe.plushie.rpgeconomy.currency.common.Currency;
-import moe.plushie.rpgeconomy.currency.serialize.CurrencySerializer;
+import moe.plushie.rpgeconomy.currency.common.serialize.CurrencySerializer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;

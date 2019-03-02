@@ -15,7 +15,7 @@ import moe.plushie.rpgeconomy.core.common.network.server.MessageServerSyncWallet
 import moe.plushie.rpgeconomy.currency.common.Currency;
 import moe.plushie.rpgeconomy.currency.common.CurrencyManager;
 import moe.plushie.rpgeconomy.currency.common.Wallet;
-import moe.plushie.rpgeconomy.currency.serialize.WalletSerializer;
+import moe.plushie.rpgeconomy.currency.common.serialize.WalletSerializer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTBase;

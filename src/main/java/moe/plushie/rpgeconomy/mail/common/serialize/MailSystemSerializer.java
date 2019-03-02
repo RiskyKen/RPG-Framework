@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import moe.plushie.rpgeconomy.currency.common.Wallet;
-import moe.plushie.rpgeconomy.currency.serialize.WalletSerializer;
+import moe.plushie.rpgeconomy.currency.common.serialize.WalletSerializer;
 import moe.plushie.rpgeconomy.mail.common.MailSystem;
 
 public class MailSystemSerializer {

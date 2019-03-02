@@ -1,7 +1,8 @@
-package moe.plushie.rpgeconomy.core.common.items.block;
+package moe.plushie.rpgeconomy.mail.common.items.block;
 
 import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.init.ModBlocks;
+import moe.plushie.rpgeconomy.core.common.items.block.ModItemBlock;
 import moe.plushie.rpgeconomy.mail.common.MailSystem;
 import moe.plushie.rpgeconomy.mail.common.MailSystemManager;
 import net.minecraft.block.Block;

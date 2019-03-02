@@ -3,9 +3,9 @@ package moe.plushie.rpgeconomy.core.common.init;
 import java.util.ArrayList;
 
 import moe.plushie.rpgeconomy.auction.common.blocks.BlockAuction;
-import moe.plushie.rpgeconomy.core.common.blocks.BlockMailBox;
 import moe.plushie.rpgeconomy.core.common.blocks.ICustomItemBlock;
 import moe.plushie.rpgeconomy.core.common.lib.LibModInfo;
+import moe.plushie.rpgeconomy.mail.common.blocks.BlockMailBox;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;

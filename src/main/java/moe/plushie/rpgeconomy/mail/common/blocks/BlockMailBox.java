@@ -1,8 +1,9 @@
-package moe.plushie.rpgeconomy.core.common.blocks;
+package moe.plushie.rpgeconomy.mail.common.blocks;
 
-import moe.plushie.rpgeconomy.core.common.items.block.ItemBlockMailBox;
+import moe.plushie.rpgeconomy.core.common.blocks.AbstractModBlock;
 import moe.plushie.rpgeconomy.core.common.lib.LibBlockNames;
 import moe.plushie.rpgeconomy.core.common.lib.LibGuiIds;
+import moe.plushie.rpgeconomy.mail.common.items.block.ItemBlockMailBox;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
