@@ -26,6 +26,7 @@
 # Block names
 tile.rpg_economy:mailbox.name=Mail Box
 tile.rpg_economy:auction.name=Auction House
+tile.rpg_economy:shop.name=Shop
 
 # Block tooltips
 #tile.rpg_economy:mailbox.tooltip=It's a mail box!
