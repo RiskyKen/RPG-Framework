@@ -1,14 +1,12 @@
 package moe.plushie.rpgeconomy.mail.common.tileentities;
 
 import moe.plushie.rpgeconomy.core.RpgEconomy;
-import moe.plushie.rpgeconomy.core.common.tileentities.ModTileEntity;
+import moe.plushie.rpgeconomy.core.common.tileentities.ModAutoSyncTileEntity;
 import moe.plushie.rpgeconomy.mail.common.MailSystem;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraftforge.common.util.Constants.NBT;
 
-public class TileEntityMailBox extends ModTileEntity {
+public class TileEntityMailBox extends ModAutoSyncTileEntity {
     
     private static final String TAG_MAIL_SYSTEM = "mailSystem";
     
@@ -28,21 +26,6 @@ public class TileEntityMailBox extends ModTileEntity {
     public void setMailSystem(MailSystem mailSystem) {
         this.mailSystem = mailSystem;
         dirtySync();
-    }
-    
-    @Override
-    public SPacketUpdateTileEntity getUpdatePacket() {
-        return new SPacketUpdateTileEntity(getPos(), 0, getUpdateTag());
-    }
-    
-    @Override
-    public NBTTagCompound getUpdateTag() {
-        return writeToNBT(new NBTTagCompound());
-    }
-    
-    @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-        readFromNBT(pkt.getNbtCompound());
     }
     
     @Override
