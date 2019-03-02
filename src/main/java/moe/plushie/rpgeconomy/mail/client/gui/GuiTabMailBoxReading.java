@@ -4,18 +4,17 @@ import org.lwjgl.opengl.GL11;
 
 import moe.plushie.rpgeconomy.core.client.gui.GuiHelper;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTabPanel;
-import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTabbed;
 import moe.plushie.rpgeconomy.core.client.lib.LibGuiResources;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class GuiTabMailBoxReading extends GuiTabPanel<GuiTabbed> {
+public class GuiTabMailBoxReading extends GuiTabPanel<GuiMailBox> {
     
     private static final ResourceLocation TEXTURE_READING = new ResourceLocation(LibGuiResources.MAIL_BOX_READING);
     
-    public GuiTabMailBoxReading(int tabId, GuiTabbed parent) {
+    public GuiTabMailBoxReading(int tabId, GuiMailBox parent) {
         super(tabId, parent, false);
     }
 

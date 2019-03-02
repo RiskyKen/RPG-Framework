@@ -9,6 +9,7 @@ import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTabbed;
 import moe.plushie.rpgeconomy.core.client.lib.LibGuiResources;
 import moe.plushie.rpgeconomy.core.common.lib.LibBlockNames;
 import moe.plushie.rpgeconomy.mail.common.inventory.ContainerMailBox;
+import moe.plushie.rpgeconomy.mail.common.tileentities.TileEntityMailBox;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
@@ -19,11 +20,14 @@ public class GuiMailBox extends GuiTabbed {
 
     private static final ResourceLocation TEXTURE_TABS = new ResourceLocation(LibGuiResources.MAIL_BOX_TABS);
 
-    public final GuiTabMailBoxReading tabReading;
-    public final GuiTabMailBoxSending tabSending;
+    private final TileEntityMailBox tileEntity;
+    private final GuiTabMailBoxReading tabReading;
+    private final GuiTabMailBoxSending tabSending;
 
-    public GuiMailBox(EntityPlayer entityPlayer) {
-        super(new ContainerMailBox(entityPlayer), false, TEXTURE_TABS);
+    public GuiMailBox(TileEntityMailBox tileEntity, EntityPlayer entityPlayer) {
+        super(new ContainerMailBox(tileEntity, entityPlayer), false, TEXTURE_TABS);
+        this.tileEntity = tileEntity;
+        
         tabReading = new GuiTabMailBoxReading(0, this);
         tabSending = new GuiTabMailBoxSending(1, this);
 
@@ -71,5 +75,9 @@ public class GuiMailBox extends GuiTabbed {
         GL11.glTranslatef(-guiLeft, -guiTop, 0F);
         tabController.drawHoverText(mc, mouseX, mouseY);
         GL11.glPopMatrix();
+    }
+    
+    public TileEntityMailBox getTileEntity() {
+        return tileEntity;
     }
 }

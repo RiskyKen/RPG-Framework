@@ -11,7 +11,6 @@ import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.client.gui.GuiHelper;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiLabeledTextField;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTabPanel;
-import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTabbed;
 import moe.plushie.rpgeconomy.core.client.lib.LibGuiResources;
 import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
 import moe.plushie.rpgeconomy.core.common.network.client.MessageClientGuiMailBox;
@@ -26,7 +25,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class GuiTabMailBoxSending extends GuiTabPanel<GuiTabbed> {
+public class GuiTabMailBoxSending extends GuiTabPanel<GuiMailBox> {
     
     private static final ResourceLocation TEXTURE_SENDING = new ResourceLocation(LibGuiResources.MAIL_BOX_SENDING);
     
@@ -35,7 +34,7 @@ public class GuiTabMailBoxSending extends GuiTabPanel<GuiTabbed> {
     private GuiLabeledTextField textFieldSubject;
     private GuiLabeledTextField textFieldMessage;
     
-    public GuiTabMailBoxSending(int tabId, GuiTabbed parent) {
+    public GuiTabMailBoxSending(int tabId, GuiMailBox parent) {
         super(tabId, parent, false);
     }
     
@@ -56,6 +55,11 @@ public class GuiTabMailBoxSending extends GuiTabPanel<GuiTabbed> {
         textFieldMessage = new GuiLabeledTextField(fontRenderer, x + 13, y + 49, 150, 68);
         textFieldMessage.setMaxStringLength(300);
         textFieldMessage.setEmptyLabel("Message");
+        
+        MailSystem mailSystem = parent.getTileEntity().getMailSystem();
+        if (mailSystem != null) {
+            textFieldMessage.setText(mailSystem.getName());
+        }
     }
     
     @Override

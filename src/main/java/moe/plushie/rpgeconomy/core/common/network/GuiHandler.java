@@ -8,6 +8,7 @@ import moe.plushie.rpgeconomy.currency.common.inventory.ContainerWallet;
 import moe.plushie.rpgeconomy.currency.common.items.ItemWallet;
 import moe.plushie.rpgeconomy.mail.client.gui.GuiMailBox;
 import moe.plushie.rpgeconomy.mail.common.inventory.ContainerMailBox;
+import moe.plushie.rpgeconomy.mail.common.tileentities.TileEntityMailBox;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -33,7 +34,9 @@ public class GuiHandler implements IGuiHandler {
 
         switch (ID) {
         case LibGuiIds.MAIL_BOX:
-            return new ContainerMailBox(player);
+            if (te != null && te instanceof TileEntityMailBox) {
+                return new ContainerMailBox((TileEntityMailBox) te, player);
+            }
         case LibGuiIds.WALLET:
             ItemStack itemStack = player.getHeldItemMainhand();
             Currency currency = ItemWallet.getCurrency(itemStack);
@@ -55,12 +58,14 @@ public class GuiHandler implements IGuiHandler {
 
         switch (ID) {
         case LibGuiIds.MAIL_BOX:
-            return new GuiMailBox(player);
+            if (te != null && te instanceof TileEntityMailBox) {
+                return new GuiMailBox((TileEntityMailBox) te, player);
+            }
         case LibGuiIds.WALLET:
             ItemStack itemStack = player.getHeldItemMainhand();
             Currency currency = ItemWallet.getCurrency(itemStack);
             if (currency != null) {
-                return new GuiWallet(player, currency); 
+                return new GuiWallet(player, currency);
             }
         }
         return null;

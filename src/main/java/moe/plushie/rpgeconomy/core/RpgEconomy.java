@@ -12,6 +12,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 
@@ -48,13 +49,18 @@ public class RpgEconomy {
     }
 
     @EventHandler
+    public void serverAboutToStart(FMLServerAboutToStartEvent event) {
+        proxy.serverAboutToStart(event);
+    }
+    
+    @EventHandler
     public void serverStart(FMLServerStartingEvent event) {
-        proxy.serverStart(event);
+        proxy.serverStarting(event);
     }
 
     @EventHandler
     public void serverStop(FMLServerStoppingEvent event) {
-        proxy.serverStop(event);
+        proxy.serverStopping(event);
     }
 
     public static CommonProxy getProxy() {

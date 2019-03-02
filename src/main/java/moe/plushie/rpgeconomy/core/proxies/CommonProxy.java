@@ -8,6 +8,7 @@ import moe.plushie.rpgeconomy.core.common.config.ConfigHandler;
 import moe.plushie.rpgeconomy.core.common.init.ModBlocks;
 import moe.plushie.rpgeconomy.core.common.init.ModItems;
 import moe.plushie.rpgeconomy.core.common.init.ModSounds;
+import moe.plushie.rpgeconomy.core.common.init.ModTiles;
 import moe.plushie.rpgeconomy.core.common.lib.LibModInfo;
 import moe.plushie.rpgeconomy.core.common.module.IModModule;
 import moe.plushie.rpgeconomy.core.common.module.ModModule;
@@ -22,6 +23,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 
@@ -70,7 +72,7 @@ public class CommonProxy {
     }
     
     public void init(FMLInitializationEvent event) {
-        modBlocks.registerTileEntities();
+        ModTiles.registerTileEntities();
         new GuiHandler();
         new PacketHandler();
         
@@ -88,16 +90,22 @@ public class CommonProxy {
         }
     }
     
-    public void serverStart(FMLServerStartingEvent event) {
-        event.registerServerCommand(new CommandRpg());
+    public void serverAboutToStart(FMLServerAboutToStartEvent event) {
         for (IModModule module : ModModule.MOD_MODULES) {
-            module.serverStart(event);
+            module.serverAboutToStart(event);
         }
     }
     
-    public void serverStop(FMLServerStoppingEvent event) {
+    public void serverStarting(FMLServerStartingEvent event) {
+        event.registerServerCommand(new CommandRpg());
         for (IModModule module : ModModule.MOD_MODULES) {
-            module.serverStop(event);
+            module.serverStarting(event);
+        }
+    }
+    
+    public void serverStopping(FMLServerStoppingEvent event) {
+        for (IModModule module : ModModule.MOD_MODULES) {
+            module.serverStopping(event);
         }
     }
     

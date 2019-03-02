@@ -4,16 +4,12 @@ import java.util.ArrayList;
 
 import moe.plushie.rpgeconomy.auction.common.blocks.BlockAuction;
 import moe.plushie.rpgeconomy.core.common.blocks.ICustomItemBlock;
-import moe.plushie.rpgeconomy.core.common.lib.LibModInfo;
 import moe.plushie.rpgeconomy.mail.common.blocks.BlockMailBox;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 
 public final class ModBlocks {
@@ -44,13 +40,5 @@ public final class ModBlocks {
                 ((ICustomItemBlock)block).registerItemBlock(registry);
             }
         }
-    }
-    
-    public void registerTileEntities() {
-        
-    }
-    
-    private void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id) {
-        GameRegistry.registerTileEntity(tileEntityClass, new ResourceLocation(LibModInfo.ID, "tileentity." + id));
     }
 }
