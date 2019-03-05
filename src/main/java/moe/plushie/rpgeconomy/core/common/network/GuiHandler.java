@@ -4,8 +4,8 @@ import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.lib.LibGuiIds;
 import moe.plushie.rpgeconomy.currency.client.gui.GuiWallet;
 import moe.plushie.rpgeconomy.currency.common.Currency;
+import moe.plushie.rpgeconomy.currency.common.CurrencyWalletHelper;
 import moe.plushie.rpgeconomy.currency.common.inventory.ContainerWallet;
-import moe.plushie.rpgeconomy.currency.common.items.ItemWallet;
 import moe.plushie.rpgeconomy.mail.client.gui.GuiMailBox;
 import moe.plushie.rpgeconomy.mail.common.inventory.ContainerMailBox;
 import moe.plushie.rpgeconomy.mail.common.tileentities.TileEntityMailBox;
@@ -13,7 +13,6 @@ import moe.plushie.rpgeconomy.shop.client.gui.GuiShop;
 import moe.plushie.rpgeconomy.shop.common.inventory.ContainerShop;
 import moe.plushie.rpgeconomy.shop.common.tileentities.TileEntityShop;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -42,9 +41,13 @@ public class GuiHandler implements IGuiHandler {
             }
             break;
         case LibGuiIds.WALLET:
-            ItemStack itemStack = player.getHeldItemMainhand();
-            Currency currency = ItemWallet.getCurrency(itemStack);
+            Currency currency = RpgEconomy.getProxy().getCurrencyManager().getCurrencyFromID(x);
             if (currency != null) {
+                if (currency.getCurrencyWalletInfo().getNeedItemToAccess()) {
+                    if (!CurrencyWalletHelper.haveWalletForCurrency(player, currency)) {
+                        return null;
+                    }
+                }
                 return new ContainerWallet(player, currency);
             }
             break;
@@ -73,9 +76,13 @@ public class GuiHandler implements IGuiHandler {
             }
             break;
         case LibGuiIds.WALLET:
-            ItemStack itemStack = player.getHeldItemMainhand();
-            Currency currency = ItemWallet.getCurrency(itemStack);
+            Currency currency = RpgEconomy.getProxy().getCurrencyManager().getCurrencyFromID(x);
             if (currency != null) {
+                if (currency.getCurrencyWalletInfo().getNeedItemToAccess()) {
+                    if (!CurrencyWalletHelper.haveWalletForCurrency(player, currency)) {
+                        return null;
+                    }
+                }
                 return new GuiWallet(player, currency);
             }
             break;

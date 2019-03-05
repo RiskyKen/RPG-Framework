@@ -2,23 +2,30 @@ package moe.plushie.rpgeconomy.core.proxies;
 
 import java.io.File;
 
+import moe.plushie.rpgeconomy.api.currency.ICurrency;
 import moe.plushie.rpgeconomy.auction.ModuleAuction;
+import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.command.CommandRpg;
 import moe.plushie.rpgeconomy.core.common.config.ConfigHandler;
 import moe.plushie.rpgeconomy.core.common.init.ModBlocks;
 import moe.plushie.rpgeconomy.core.common.init.ModItems;
 import moe.plushie.rpgeconomy.core.common.init.ModSounds;
 import moe.plushie.rpgeconomy.core.common.init.ModTiles;
+import moe.plushie.rpgeconomy.core.common.lib.LibGuiIds;
 import moe.plushie.rpgeconomy.core.common.lib.LibModInfo;
+import moe.plushie.rpgeconomy.core.common.lib.LibModKeys.ModKey;
 import moe.plushie.rpgeconomy.core.common.module.IModModule;
 import moe.plushie.rpgeconomy.core.common.module.ModModule;
 import moe.plushie.rpgeconomy.core.common.network.GuiHandler;
 import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
 import moe.plushie.rpgeconomy.currency.ModuleCurrency;
+import moe.plushie.rpgeconomy.currency.common.Currency;
 import moe.plushie.rpgeconomy.currency.common.CurrencyManager;
 import moe.plushie.rpgeconomy.currency.common.capability.CurrencyCapabilityManager;
 import moe.plushie.rpgeconomy.mail.ModuleMail;
 import moe.plushie.rpgeconomy.mail.common.MailSystemManager;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -26,6 +33,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
+import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 
 @Mod.EventBusSubscriber(modid = LibModInfo.ID)
 public class CommonProxy {
@@ -115,5 +123,27 @@ public class CommonProxy {
     
     public MailSystemManager getMailSystemManager() {
         return mailSystemManager;
+    }
+
+    public void onClentKeyPress(EntityPlayerMP player, ModKey modKey) {
+        if (modKey.getName().startsWith("open_wallet_")) {
+            for (Currency currency : currencyManager.getCurrencies()) {
+                if (currency.getCurrencyWalletInfo().getModKeybind().equals("1") & modKey == ModKey.OPEN_WALLET_1) {
+                    openCurrencyWalletGui(player, currency);
+                    break;
+                }
+                if (currency.getCurrencyWalletInfo().getModKeybind().equals("2") & modKey == ModKey.OPEN_WALLET_2) {
+                    openCurrencyWalletGui(player, currency);
+                    break;
+                }
+            }
+        }
+    }
+    
+    public void openCurrencyWalletGui(EntityPlayer player, ICurrency currency) {
+        if (currency != null) {
+            int id = RpgEconomy.getProxy().getCurrencyManager().getCurrencyID(currency);
+            FMLNetworkHandler.openGui(player, RpgEconomy.getInstance(), LibGuiIds.WALLET, player.getEntityWorld(), id, 0, 0);
+        }
     }
 }

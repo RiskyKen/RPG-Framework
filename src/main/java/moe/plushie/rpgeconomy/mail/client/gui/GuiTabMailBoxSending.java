@@ -108,12 +108,13 @@ public class GuiTabMailBoxSending extends GuiTabPanel<GuiMailBox> {
                 attachments.add(mc.player.getHeldItemMainhand());
             }
             
+            MailMessage mailMessage = new MailMessage(mailSystem, sender, receiver, sendDateTime, subject, message, attachments);
+            
             //sendMail(mailSystem, sender, receiver, sendDateTime, subject, message, attachments);
         }
     }
     
-    private void sendMail(MailSystem mailSystem, GameProfile sender, GameProfile receiver, Date sendDateTime, String subject, String messageText, NonNullList<ItemStack> attachments) {
-        MailMessage mailMessage = new MailMessage(mailSystem, sender, receiver, sendDateTime, subject, messageText, attachments);
+    private void sendMail(MailMessage mailMessage) {
         PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiMailBox(mailMessage));
     }
 

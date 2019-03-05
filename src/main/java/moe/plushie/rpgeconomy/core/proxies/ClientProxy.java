@@ -2,6 +2,7 @@ package moe.plushie.rpgeconomy.core.proxies;
 
 import moe.plushie.rpgeconomy.core.client.gui.GuiResourceManager;
 import moe.plushie.rpgeconomy.core.client.model.ICustomModel;
+import moe.plushie.rpgeconomy.core.client.settings.Keybindings;
 import moe.plushie.rpgeconomy.core.common.init.ModBlocks;
 import moe.plushie.rpgeconomy.core.common.init.ModItems;
 import moe.plushie.rpgeconomy.core.common.lib.LibModInfo;
@@ -11,6 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -25,6 +27,12 @@ public class ClientProxy extends CommonProxy {
         super.preInit(event);
         new GuiResourceManager();
         //File file = new File(event.getSuggestedConfigurationFile().getParentFile(), "sql.db");
+    }
+    
+    @Override
+    public void init(FMLInitializationEvent event) {
+        super.init(event);
+        Keybindings.registerKeyBindings();
     }
     
     @SubscribeEvent

@@ -1,12 +1,10 @@
 package moe.plushie.rpgeconomy.currency.common;
 
-import moe.plushie.rpgeconomy.api.currency.ICurrency;
 import moe.plushie.rpgeconomy.api.currency.ICurrencyCapability;
 import moe.plushie.rpgeconomy.api.currency.IWallet;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.currency.common.Currency.CurrencyVariant;
 import moe.plushie.rpgeconomy.currency.common.capability.CurrencyCapability;
-import moe.plushie.rpgeconomy.currency.common.items.ItemWallet;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
@@ -32,7 +30,7 @@ public class CurrencyPickupHelper {
             if (!currency.getCurrencyWalletInfo().getPickupIntoWallet()) {
                 continue;
             }
-            if (currency.getCurrencyWalletInfo().getNeedItemToAccess() & !haveWalletForCurrency(player, currency)) {
+            if (currency.getCurrencyWalletInfo().getNeedItemToAccess() & !CurrencyWalletHelper.haveWalletForCurrency(player, currency)) {
                 continue;
             }
             for (CurrencyVariant variant : currency.getCurrencyVariants()) {
@@ -56,13 +54,5 @@ public class CurrencyPickupHelper {
 
             }
         }
-    }
-    
-    private boolean haveWalletForCurrency(EntityPlayer player, ICurrency currency) {
-        ItemStack stack = ItemWallet.getWallet(currency);
-        if (!stack.isEmpty()) {
-            return player.inventory.hasItemStack(stack);
-        }
-        return false;
     }
 }

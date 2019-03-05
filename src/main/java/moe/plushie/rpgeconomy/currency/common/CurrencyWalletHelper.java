@@ -2,6 +2,8 @@ package moe.plushie.rpgeconomy.currency.common;
 
 import moe.plushie.rpgeconomy.api.currency.ICurrency;
 import moe.plushie.rpgeconomy.api.currency.ICurrency.ICurrencyVariant;
+import moe.plushie.rpgeconomy.currency.common.items.ItemWallet;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -140,5 +142,13 @@ public final class CurrencyWalletHelper {
             inventoryPlayer.setInventorySlotContents(i, inventory.getStackInSlot(i).copy());
         }
         return inventoryPlayer;
+    }
+    
+    public static boolean haveWalletForCurrency(EntityPlayer player, ICurrency currency) {
+        ItemStack stack = ItemWallet.getWallet(currency);
+        if (!stack.isEmpty()) {
+            return player.inventory.hasItemStack(stack);
+        }
+        return false;
     }
 }

@@ -4,7 +4,6 @@ import moe.plushie.rpgeconomy.api.currency.ICurrency;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.init.ModItems;
 import moe.plushie.rpgeconomy.core.common.items.AbstractModItem;
-import moe.plushie.rpgeconomy.core.common.lib.LibGuiIds;
 import moe.plushie.rpgeconomy.core.common.lib.LibItemNames;
 import moe.plushie.rpgeconomy.currency.common.Currency;
 import moe.plushie.rpgeconomy.currency.common.CurrencyManager;
@@ -18,7 +17,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 
 public class ItemWallet extends AbstractModItem {
 
@@ -76,7 +74,8 @@ public class ItemWallet extends AbstractModItem {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
         if (!worldIn.isRemote) {
-            FMLNetworkHandler.openGui(playerIn, RpgEconomy.getInstance(), LibGuiIds.WALLET, worldIn, 0, 0, 0);
+            ICurrency currency = getCurrency(playerIn.getHeldItem(handIn));
+            RpgEconomy.getProxy().openCurrencyWalletGui(playerIn, currency);
         }
         return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
     }

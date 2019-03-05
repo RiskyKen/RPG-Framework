@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import com.google.gson.JsonElement;
 
+import moe.plushie.rpgeconomy.api.currency.ICurrency;
 import moe.plushie.rpgeconomy.api.currency.ICurrencyManager;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
@@ -104,5 +105,23 @@ public class CurrencyManager implements ICurrencyManager {
     @Override
     public String[] getCurrencyNames() {
         return currencyMap.keySet().toArray(new String[currencyMap.size()]);
+    }
+    
+    public int getCurrencyID(ICurrency currency) {
+        Currency[] currencies = getCurrencies();
+        for (int i = 0; i < currencies.length; i++) {
+            if (currency.getName().equals(currencies[i].getName())) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    
+    public Currency getCurrencyFromID(int id) {
+        Currency[] currencies = getCurrencies();
+        if (id >= 0 & id < currencies.length) {
+            return currencies[id];
+        }
+        return null;
     }
 }
