@@ -82,3 +82,26 @@ processResources {
         exclude 'mcmod.info'
     }
 }
+
+task apiJar(type: Jar) {
+    from sourceSets.main.allSource
+    from sourceSets.main.output
+    include 'moe/plushie/rpgeconomy/api/**'
+    classifier = 'api'
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    classifier = 'deobf'
+}
+
+artifacts {
+    archives apiJar
+    archives sourcesJar
+    archives deobfJar
+}
