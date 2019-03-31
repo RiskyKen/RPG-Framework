@@ -18,6 +18,7 @@ import moe.plushie.rpgeconomy.core.common.module.IModModule;
 import moe.plushie.rpgeconomy.core.common.module.ModModule;
 import moe.plushie.rpgeconomy.core.common.network.GuiHandler;
 import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
+import moe.plushie.rpgeconomy.core.database.SQLiteJDBCDriverConnection;
 import moe.plushie.rpgeconomy.currency.ModuleCurrency;
 import moe.plushie.rpgeconomy.currency.common.Currency;
 import moe.plushie.rpgeconomy.currency.common.CurrencyManager;
@@ -73,6 +74,8 @@ public class CommonProxy {
         modSounds = new ModSounds();
         
         CurrencyCapabilityManager.register();
+        
+        SQLiteJDBCDriverConnection.connect(new File(modDirectory, "test.db"));
         
         for (IModModule module : ModModule.MOD_MODULES) {
             module.preInit(event);

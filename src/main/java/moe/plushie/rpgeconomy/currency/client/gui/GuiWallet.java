@@ -4,11 +4,14 @@ import java.io.IOException;
 
 import moe.plushie.rpgeconomy.api.currency.IWallet;
 import moe.plushie.rpgeconomy.core.client.gui.GuiHelper;
+import moe.plushie.rpgeconomy.core.client.gui.GuiResourceManager;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiIconButton;
+import moe.plushie.rpgeconomy.core.client.gui.json.GuiJsonInfo;
 import moe.plushie.rpgeconomy.core.client.lib.LibGuiResources;
 import moe.plushie.rpgeconomy.core.common.config.ConfigHandler;
 import moe.plushie.rpgeconomy.core.common.init.ModItems;
 import moe.plushie.rpgeconomy.core.common.inventory.slot.SlotCurrency;
+import moe.plushie.rpgeconomy.core.common.lib.LibModInfo;
 import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
 import moe.plushie.rpgeconomy.core.common.network.client.MessageClientGuiButton;
 import moe.plushie.rpgeconomy.currency.common.Currency;
@@ -29,15 +32,19 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class GuiWallet extends GuiContainer {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation(LibGuiResources.WALLET);
+    private static final ResourceLocation GUI_JSON = new ResourceLocation(LibModInfo.ID, "gui/wallet.json");
+    
     private static final int TEXTURE_SIZE_X = 176;
     private static final int TEXTURE_SIZE_Y = 97;
 
+    private final GuiJsonInfo guiJson;
     private final ItemStack walletStack;
     private final Currency currency;
     private final IWallet wallet;
 
     public GuiWallet(EntityPlayer entityPlayer, Currency currency) {
         super(new ContainerWallet(entityPlayer, currency));
+        this.guiJson = GuiResourceManager.getGuiJsonInfo(GUI_JSON);
         this.walletStack = entityPlayer.getHeldItemMainhand();
         this.currency = currency;
         this.wallet = CurrencyCapability.get(entityPlayer).getWallet(currency);

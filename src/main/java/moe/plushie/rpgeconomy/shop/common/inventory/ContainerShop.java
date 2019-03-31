@@ -30,7 +30,7 @@ public class ContainerShop extends ModTileContainer<TileEntityShop> {
         inventory.setInventorySlotContents(3, new ItemStack(Items.STICK).setStackDisplayName("Punt Stick!"));
         inventory.getStackInSlot(3).addEnchantment(Enchantment.getEnchantmentByLocation("knockback"), 50);
         
-        addPlayerSlots(8, 154);
+        addPlayerSlots(8, 169);
         
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             addSlotToContainer(new SlotShop(inventory, i, 7, 21 + i * 23));
