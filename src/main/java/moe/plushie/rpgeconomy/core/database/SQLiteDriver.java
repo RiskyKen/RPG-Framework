@@ -42,15 +42,17 @@ public final class SQLiteDriver {
 		}
 	}
 
-	public static ArrayList<String> executeQuery(String sql) {
+	public static ArrayList<String> executeQueryArrayList(String sql) {
 		ArrayList<String> results = new ArrayList<String>();
 		try (Connection conn = getConnection(); Statement statement = conn.createStatement()) {
 			statement.setQueryTimeout(10);
 			try (ResultSet rs = statement.executeQuery(sql)) {
 				while (rs.next()) {
-					for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
-						results.add(rs.getString(i));
+					String line = rs.getString(1);
+					for (int i = 2; i < rs.getMetaData().getColumnCount() + 1; i++) {
+						line += " - "+ rs.getString(i);
 					}
+					results.add(line);
 				}
 			}
 		} catch (SQLException e) {

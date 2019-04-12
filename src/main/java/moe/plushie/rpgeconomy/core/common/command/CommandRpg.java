@@ -12,5 +12,6 @@ public class CommandRpg extends ModSubCommands {
         addSubCommand(new CommandCurrency(this));
         addSubCommand(new CommandMail(this));
         addSubCommand(new CommandShop(this));
+        addSubCommand(new CommandDev(this));
     }
 }

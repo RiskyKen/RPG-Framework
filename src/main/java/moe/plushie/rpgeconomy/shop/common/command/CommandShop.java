@@ -24,21 +24,5 @@ public class CommandShop extends ModSubCommands {
                 RpgEconomy.getProxy().getMailSystemManager().reload(true);
             }
         }));
-        
-        addSubCommand(new CommandExecute(this, "sql-test", new ICommandExecute() {
-            @Override
-            public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-            	RpgEconomy.getLogger().info("Updating database.");
-            	SQLiteDriver.executeUpdate(
-            			"DROP TABLE IF EXISTS TEST",
-            			"CREATE TABLE TEST (id INTEGER, name STRING)",
-            			"INSERT INTO TEST VALUES(1, 'Test 1')",
-            			"INSERT INTO TEST VALUES(2, 'Test 2')");
-            	
-            	RpgEconomy.getLogger().info("Query database.");
-            	ArrayList<String> result = SQLiteDriver.executeQuery("SELECT * FROM TEST");
-            	RpgEconomy.getLogger().info(result.toString());
-            }
-        }));
     }
 }
