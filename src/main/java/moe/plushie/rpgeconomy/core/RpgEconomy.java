@@ -32,7 +32,6 @@ public class RpgEconomy {
     @EventHandler
     public void perInit(FMLPreInitializationEvent event) {
         logger = event.getModLog();
-        // reputation system
         logger.info(String.format("Loading %s version %s", LibModInfo.NAME, LibModInfo.VERSION));
         proxy.preInit(event);
     }

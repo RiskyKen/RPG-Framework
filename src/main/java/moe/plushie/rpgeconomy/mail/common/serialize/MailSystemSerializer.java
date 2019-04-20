@@ -46,7 +46,7 @@ public class MailSystemSerializer {
             int inboxSize = jsonObject.get(PROP_INBOX_SIZE).getAsInt();
             int maxAttachments = jsonObject.get(PROP_MAX_ATTACHMENTS).getAsInt();
 
-            MailSystem mailSystem = new MailSystem(name)
+            MailSystem mailSystem = new MailSystem(name, name)
                     .setCharacterLimit(characterLimit)
                     .setMessageCost(messageCost)
                     .setAttachmentCost(attachmentCost)

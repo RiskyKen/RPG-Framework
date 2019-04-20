@@ -76,7 +76,7 @@ public class MailSystemManager implements IMailSystemManager {
         RpgEconomy.getLogger().info("Got " + mailSystems.length + " mail systems(s) from server.");
         mailSystemMap.clear();
         for (MailSystem mailSystem : mailSystems) {
-            mailSystemMap.put(mailSystem.getName(), mailSystem);
+            mailSystemMap.put(mailSystem.getIdentifier(), mailSystem);
         }
     }
 
@@ -86,7 +86,7 @@ public class MailSystemManager implements IMailSystemManager {
         if (jsonElement != null) {
             MailSystem mailSystem = MailSystemSerializer.deserializeJson(jsonElement);
             if (mailSystem != null) {
-                mailSystemMap.put(mailSystem.getName(), mailSystem);
+                mailSystemMap.put(mailSystem.getIdentifier(), mailSystem);
             }
         }
     }

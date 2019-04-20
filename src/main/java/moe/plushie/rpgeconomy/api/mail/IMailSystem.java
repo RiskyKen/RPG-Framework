@@ -4,6 +4,8 @@ import moe.plushie.rpgeconomy.api.currency.IWallet;
 
 public interface IMailSystem {
 
+	public String getIdentifier();
+	
     public String getName();
     
     public int getCharacterLimit();

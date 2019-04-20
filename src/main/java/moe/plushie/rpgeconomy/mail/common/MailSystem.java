@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 
 public class MailSystem implements IMailSystem {
 
+	private final String identifier;
     private final String name;
     private int characterLimit;
     private IWallet messageCost;
@@ -15,8 +16,14 @@ public class MailSystem implements IMailSystem {
     private int inboxSize;
     private int maxAttachments;
 
-    public MailSystem(String name) {
+    public MailSystem(String identifier, String name) {
+    	this.identifier = identifier;
         this.name = name;
+    }
+    
+    @Override
+    public String getIdentifier() {
+    	return name;
     }
 
     @Override
