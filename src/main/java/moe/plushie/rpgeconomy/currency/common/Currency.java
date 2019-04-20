@@ -5,6 +5,8 @@ import net.minecraft.item.ItemStack;
 
 public class Currency implements ICurrency {
 
+	private final String identifier;
+	
     /** Name of the currency. (this is used as the currency ID) */
     private final String name;
 
@@ -15,11 +17,17 @@ public class Currency implements ICurrency {
     /** Different variants of this currency. */
     private final CurrencyVariant[] variants;
 
-    public Currency(String name,  String displayFormat, CurrencyWalletInfo walletInfo, CurrencyVariant[] variants) {
+    public Currency(String identifier, String name,  String displayFormat, CurrencyWalletInfo walletInfo, CurrencyVariant[] variants) {
+    	this.identifier = identifier;
         this.name = name;
         this.displayFormat = displayFormat;
         this.walletInfo = walletInfo;
         this.variants = variants;
+    }
+    
+    @Override
+    public String getIdentifier() {
+    	return identifier;
     }
 
     @Override

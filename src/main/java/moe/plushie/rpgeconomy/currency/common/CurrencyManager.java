@@ -77,7 +77,7 @@ public class CurrencyManager implements ICurrencyManager {
         RpgEconomy.getLogger().info("Got " + currencies.length + " currency list(s) from server.");
         currencyMap.clear();
         for (Currency currency : currencies) {
-            currencyMap.put(currency.getName(), currency);
+            currencyMap.put(currency.getIdentifier(), currency);
         }
     }
     
@@ -87,7 +87,7 @@ public class CurrencyManager implements ICurrencyManager {
         if (jsonElement != null) {
             Currency currency = CurrencySerializer.deserializeJson(jsonElement);
             if (currency != null) {
-                currencyMap.put(currency.getName(), currency);
+                currencyMap.put(currency.getIdentifier(), currency);
             }
         }
     }

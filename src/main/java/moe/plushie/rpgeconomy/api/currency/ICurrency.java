@@ -4,6 +4,8 @@ import net.minecraft.item.ItemStack;
 
 public interface ICurrency {
     
+	public String getIdentifier();
+	
     /** Name of the currency. (this is used as the currency ID) */
     public String getName();
     

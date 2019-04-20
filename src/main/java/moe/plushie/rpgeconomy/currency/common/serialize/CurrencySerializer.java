@@ -84,7 +84,7 @@ public final class CurrencySerializer {
                 variants.add(deserializeCurrencyVariant(jsonVariants.get(i).getAsJsonObject()));
             }
             Collections.sort(variants);
-            return new Currency(name, displayFormat, walletInfo, variants.toArray(new CurrencyVariant[variants.size()]));
+            return new Currency(name, name, displayFormat, walletInfo, variants.toArray(new CurrencyVariant[variants.size()]));
         } catch (Exception e) {
             e.printStackTrace();
         }
