@@ -93,8 +93,8 @@ public class CurrencyManager implements ICurrencyManager {
     }
     
     @Override
-    public Currency getCurrency(String name) {
-        return currencyMap.get(name);
+    public Currency getCurrency(String identifier) {
+        return currencyMap.get(identifier);
     }
 
     @Override

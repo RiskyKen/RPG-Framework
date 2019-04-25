@@ -92,8 +92,8 @@ public class MailSystemManager implements IMailSystemManager {
     }
 
     @Override
-    public MailSystem getMailSystem(String name) {
-        return mailSystemMap.get(name);
+    public MailSystem getMailSystem(String identifier) {
+        return mailSystemMap.get(identifier);
     }
 
     @Override
