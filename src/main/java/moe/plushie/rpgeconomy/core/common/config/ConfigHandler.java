@@ -10,19 +10,27 @@ public class ConfigHandler {
 
     public static final String CATEGORY_GENERAL = "General";
     public static final String CATEGORY_CURRENCY = "Currency";
+    public static final String CATEGORY_MAIL = "Mail";
+    public static final String CATEGORY_SHOP = "Shop ";
     
     public static Configuration config;
-    
+
     // General
-    
-    
+    public static int heatmapTrackingRate = 0;
+
     // Currency
     public static boolean showPlayerInventoryInWalletGUI = true;
-    
+
+    // Mail
+    public static boolean showPlayerInventoryInMailGUI = true;
+
+    // Shop
+    public static boolean showPlayerInventoryInShopGUI = true;
+
     // Other
     public static String lastVersion;
     public static boolean hasUpdated;
-    
+
     public static void init(File file) {
         if (config == null) {
             config = new Configuration(file, "1");
@@ -33,12 +41,13 @@ public class ConfigHandler {
     public static void loadConfigFile() {
         loadCategoryGeneral();
         loadCategoryCurrency();
+        loadCategoryShop();
         checkIfUpdated();
         if (config.hasChanged()) {
             config.save();
         }
     }
-    
+
     private static void checkIfUpdated() {
         String localVersion = LibModInfo.VERSION;
         if (LibModInfo.VERSION.startsWith("@VER")) {
@@ -59,12 +68,13 @@ public class ConfigHandler {
     private static void loadCategoryGeneral() {
         config.setCategoryComment(CATEGORY_GENERAL, "General settings.");
         
-        
-        
         if (!LibModInfo.VERSION.startsWith("@VER")) {
             lastVersion = config.getString("lastVersion", CATEGORY_GENERAL, "0.0",
                     "Used by the mod to check if it has been updated.");
         }
+        
+        heatmapTrackingRate = config.getInt("heatmapTrackingRate", CATEGORY_GENERAL, 5, 0, 300,
+                "How often in seconds a players location is added to the heatmap. 0 = Disabled.");
     }
     
     private static void loadCategoryCurrency() {
@@ -72,6 +82,13 @@ public class ConfigHandler {
         
         showPlayerInventoryInWalletGUI = config.getBoolean("showPlayerInventoryInWalletGUI", CATEGORY_CURRENCY, true, 
                 "Is the players inventory shown in the wallet GUI.");
+    }
+    
+    private static void loadCategoryShop() {
+        config.setCategoryComment(CATEGORY_SHOP, "Setting to do with the shop system.");
+        
+        showPlayerInventoryInShopGUI = config.getBoolean("showPlayerInventoryInShopGUI", CATEGORY_SHOP, true,
+                "Is the players inventory shown in the shop GUI.");
     }
 
     private static int versionCompare(String str1, String str2) {

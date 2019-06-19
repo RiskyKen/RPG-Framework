@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.lwjgl.opengl.GL11;
 
 import moe.plushie.rpgeconomy.core.client.gui.GuiHelper;
+import moe.plushie.rpgeconomy.core.client.lib.LibGuiResources;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
@@ -15,25 +16,26 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class GuiTabController extends GuiButtonExt {
     
-    private final ResourceLocation texture;
+    private static final ResourceLocation TEXTURE = new ResourceLocation(LibGuiResources.TABS);
+    private static final ResourceLocation ICONS = new ResourceLocation(LibGuiResources.ICONS);
+    
     private GuiScreen parent;
     private boolean fullscreen;
     private int activeTab = -1;
     private ArrayList<GuiTab> tabs = new ArrayList<GuiTab>();
     private int tabSpacing = 27;
     
-    public GuiTabController(GuiScreen parent, boolean fullscreen, int xPos, int yPos, int width, int height, ResourceLocation texture) {
+    public GuiTabController(GuiScreen parent, boolean fullscreen, int xPos, int yPos, int width, int height) {
         super(0, xPos, yPos, width, height, "");
         this.parent = parent;
         this.fullscreen = fullscreen;
-        this.texture = texture;
         if (!fullscreen) {
             tabSpacing = 25;
         }
     }
     
-    public GuiTabController(GuiScreen parent, boolean fullscreen, ResourceLocation texture) {
-        this(parent, fullscreen, 0, 0, 0, 0, texture);
+    public GuiTabController(GuiScreen parent, boolean fullscreen) {
+        this(parent, fullscreen, 0, 0, 0, 0);
     }
     
     public void setTabSpacing(int tabSpacing) {
@@ -123,7 +125,7 @@ public class GuiTabController extends GuiButtonExt {
     
     @Override
     public void drawButton(Minecraft mc, int mouseX, int mouseY, float partial) {
-        mc.renderEngine.bindTexture(texture);
+        mc.renderEngine.bindTexture(TEXTURE);
         GL11.glColor4f(1, 1, 1, 1);
         int yOffset = (int) ((float)height / 2F - ((float)tabs.size() * tabSpacing) / 2F);
         
@@ -135,7 +137,8 @@ public class GuiTabController extends GuiButtonExt {
         for (int i = 0; i < tabs.size(); i++) {
             GuiTab tab = tabs.get(i);
             if (tab.visible) {
-                tab.render(this.x - 4, this.y + count * tabSpacing + yOffset, mouseX, mouseY, activeTab == i);
+                mc.renderEngine.bindTexture(TEXTURE);
+                tab.render(this.x - 4, this.y + count * tabSpacing + yOffset, mouseX, mouseY, activeTab == i, ICONS);
                 count++;
             }
         }

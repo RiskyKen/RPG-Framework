@@ -2,7 +2,9 @@ package moe.plushie.rpgeconomy.core.client.gui.controls;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.util.ResourceLocation;
 
 @SideOnly(Side.CLIENT)
 public class GuiTab extends Gui {
@@ -36,7 +38,7 @@ public class GuiTab extends Gui {
         return name;
     }
     
-    public void render(int x, int y, int mouseX, int mouseY, boolean activeTab) {
+    public void render(int x, int y, int mouseX, int mouseY, boolean activeTab, ResourceLocation tabIcons) {
         int textureOffsetX = 0;
         int textureOffsetY = tabTextureHeight;
         if (isMouseOver(x, y, mouseX, mouseY)) {
@@ -49,6 +51,7 @@ public class GuiTab extends Gui {
             textureOffsetY = 0;
         }
         drawTexturedModalRect(x, y, textureOffsetX, textureOffsetY, tabTextureWidth, tabTextureHeight);
+        Minecraft.getMinecraft().renderEngine.bindTexture(tabIcons);
         renderIcon(x, y, mouseX, mouseY);
     }
     

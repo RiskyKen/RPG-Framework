@@ -12,6 +12,8 @@ public interface IShop {
 	public String getName();
 
 	public IShopTab[] getTabs();
+	
+	public int getTabCount();
 
 	public static interface IShopTab {
 
@@ -19,21 +21,20 @@ public interface IShop {
 
 		public int getIconIndex();
 
-		public IShopPage getPage(int index);
+		public IShopItem[] getPageItems(int pageIndex);
+		
+		public IShopItem[] getItems();
+		
+		public int getItemCount();
 
 		public int getPageCount();
 	}
 
-	public static interface IShopPage {
-
-		public IShopItem[] getItems();
-	}
-
 	public static interface IShopItem {
-
-		public IWallet getCost();
-
+		
 		public ItemStack getItem();
+		
+		public IWallet getCost();
 
 		public int getStock();
 

@@ -2,6 +2,7 @@ package moe.plushie.rpgeconomy.core.proxies;
 
 import java.io.File;
 
+import moe.plushie.rpgeconomy.api.RpgEconomyAPI;
 import moe.plushie.rpgeconomy.api.currency.ICurrency;
 import moe.plushie.rpgeconomy.auction.ModuleAuction;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
@@ -25,6 +26,8 @@ import moe.plushie.rpgeconomy.currency.common.CurrencyManager;
 import moe.plushie.rpgeconomy.currency.common.capability.CurrencyCapabilityManager;
 import moe.plushie.rpgeconomy.mail.ModuleMail;
 import moe.plushie.rpgeconomy.mail.common.MailSystemManager;
+import moe.plushie.rpgeconomy.shop.ModuleShop;
+import moe.plushie.rpgeconomy.shop.common.ShopManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.Mod;
@@ -35,6 +38,7 @@ import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 @Mod.EventBusSubscriber(modid = LibModInfo.ID)
 public class CommonProxy {
@@ -49,9 +53,11 @@ public class CommonProxy {
     
     private CurrencyManager currencyManager;
     private MailSystemManager mailSystemManager;
+    private ShopManager shopManager;
     
     private IModModule moduleCurrency = new ModuleCurrency();
     private IModModule moduleMail = new ModuleMail();
+    private IModModule moduleShop = new ModuleShop();
     private IModModule moduleAuction = new ModuleAuction();
     
     public void preInit(FMLPreInitializationEvent event) {
@@ -68,6 +74,11 @@ public class CommonProxy {
         
         currencyManager = new CurrencyManager(modDirectory);
         mailSystemManager = new MailSystemManager(modDirectory);
+        shopManager = new ShopManager(modDirectory);
+        
+        ReflectionHelper.setPrivateValue(RpgEconomyAPI.class, null, currencyManager, "currencyManager");
+        ReflectionHelper.setPrivateValue(RpgEconomyAPI.class, null, mailSystemManager, "mailSystemManager");
+        ReflectionHelper.setPrivateValue(RpgEconomyAPI.class, null, shopManager, "shopManager");
         
         modBlocks = new ModBlocks();
         modItems = new ModItems();
@@ -129,6 +140,10 @@ public class CommonProxy {
     public MailSystemManager getMailSystemManager() {
         return mailSystemManager;
     }
+    
+    public ShopManager getShopManager() {
+		return shopManager;
+	}
 
     public void onClentKeyPress(EntityPlayerMP player, ModKey modKey) {
         if (modKey.getName().startsWith("open_wallet_")) {

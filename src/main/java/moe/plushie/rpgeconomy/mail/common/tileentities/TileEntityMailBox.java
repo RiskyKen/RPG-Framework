@@ -7,27 +7,27 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants.NBT;
 
 public class TileEntityMailBox extends ModAutoSyncTileEntity {
-    
+
     private static final String TAG_MAIL_SYSTEM = "mailSystem";
-    
+
     private MailSystem mailSystem;
-    
+
     public TileEntityMailBox() {
     }
-    
+
     public TileEntityMailBox(MailSystem mailSystem) {
         this.mailSystem = mailSystem;
     }
-    
+
     public MailSystem getMailSystem() {
         return mailSystem;
     }
-    
+
     public void setMailSystem(MailSystem mailSystem) {
         this.mailSystem = mailSystem;
         dirtySync();
     }
-    
+
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
@@ -36,12 +36,12 @@ public class TileEntityMailBox extends ModAutoSyncTileEntity {
             mailSystem = RpgEconomy.getProxy().getMailSystemManager().getMailSystem(mailSystemName);
         }
     }
-    
+
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound = super.writeToNBT(compound);
         if (mailSystem != null) {
-            compound.setString(TAG_MAIL_SYSTEM, mailSystem.getName());
+            compound.setString(TAG_MAIL_SYSTEM, mailSystem.getIdentifier());
         }
         return compound;
     }

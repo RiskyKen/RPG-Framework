@@ -23,7 +23,7 @@ public class MailSystem implements IMailSystem {
     
     @Override
     public String getIdentifier() {
-    	return name;
+    	return identifier;
     }
 
     @Override

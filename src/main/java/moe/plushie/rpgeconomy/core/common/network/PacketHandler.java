@@ -4,6 +4,7 @@ import moe.plushie.rpgeconomy.core.common.lib.LibModInfo;
 import moe.plushie.rpgeconomy.core.common.network.client.MessageClientGuiButton;
 import moe.plushie.rpgeconomy.core.common.network.client.MessageClientGuiMailBox;
 import moe.plushie.rpgeconomy.core.common.network.client.MessageClientKeyPress;
+import moe.plushie.rpgeconomy.core.common.network.server.MessageServerShop;
 import moe.plushie.rpgeconomy.core.common.network.server.MessageServerSyncCurrencies;
 import moe.plushie.rpgeconomy.core.common.network.server.MessageServerSyncMailSystems;
 import moe.plushie.rpgeconomy.core.common.network.server.MessageServerSyncWalletCap;
@@ -28,6 +29,7 @@ public class PacketHandler {
         registerMessage(MessageServerSyncWalletCap.class, MessageServerSyncWalletCap.class, Side.CLIENT);
         registerMessage(MessageServerSyncCurrencies.class, MessageServerSyncCurrencies.class, Side.CLIENT);
         registerMessage(MessageServerSyncMailSystems.class, MessageServerSyncMailSystems.class, Side.CLIENT);
+        registerMessage(MessageServerShop.class, MessageServerShop.class, Side.CLIENT);
     }
 
     private <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Class<? extends IMessageHandler<REQ, REPLY>> messageHandler, Class<REQ> requestMessageType, Side side) {

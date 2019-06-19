@@ -1,8 +1,12 @@
 package moe.plushie.rpgeconomy.shop.common.blocks;
 
+import moe.plushie.rpgeconomy.api.shop.IShop;
+import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.blocks.AbstractModBlockContainer;
 import moe.plushie.rpgeconomy.core.common.lib.LibBlockNames;
 import moe.plushie.rpgeconomy.core.common.lib.LibGuiIds;
+import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
+import moe.plushie.rpgeconomy.core.common.network.server.MessageServerShop;
 import moe.plushie.rpgeconomy.shop.common.tileentities.TileEntityShop;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.properties.IProperty;
@@ -11,6 +15,7 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -76,6 +81,14 @@ public class BlockShop extends AbstractModBlockContainer {
             return false;
         }
         openGui(playerIn, LibGuiIds.SHOP, worldIn, pos, state, facing);
+        if (!worldIn.isRemote) {
+            TileEntity tileEntity = worldIn.getTileEntity(pos);
+            IShop shop = null;
+            if (tileEntity != null && tileEntity instanceof TileEntityShop) {
+                shop = ((TileEntityShop)tileEntity).getShop();
+            }
+            PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerShop(shop), (EntityPlayerMP) playerIn);
+        }
         return true;
     }
 

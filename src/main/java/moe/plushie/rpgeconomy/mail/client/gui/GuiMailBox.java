@@ -23,19 +23,20 @@ public class GuiMailBox extends GuiTabbed {
     private final TileEntityMailBox tileEntity;
     private final GuiTabMailBoxReading tabReading;
     private final GuiTabMailBoxSending tabSending;
+    private static int activeTabIndex = 0;
 
     public GuiMailBox(TileEntityMailBox tileEntity, EntityPlayer entityPlayer) {
-        super(new ContainerMailBox(tileEntity, entityPlayer), false, TEXTURE_TABS);
+        super(new ContainerMailBox(tileEntity, entityPlayer), false);
         this.tileEntity = tileEntity;
-        
+
         tabReading = new GuiTabMailBoxReading(0, this);
         tabSending = new GuiTabMailBoxSending(1, this);
 
         tabList.add(tabReading);
         tabList.add(tabSending);
 
-        tabController.addTab(new GuiTab(GuiHelper.getLocalizedControlName(getName(), "tab.reading.name")).setIconLocation(52, 0).setTabTextureSize(26, 30).setPadding(0, 4, 3, 3).setAnimation(1, 150));
-        tabController.addTab(new GuiTab(GuiHelper.getLocalizedControlName(getName(), "tab.sending.name")).setIconLocation(52 + 16, 0).setTabTextureSize(26, 30).setPadding(0, 4, 3, 3).setAnimation(1, 150));
+        tabController.addTab(new GuiTab(GuiHelper.getLocalizedControlName(getName(), "tab.reading.name")).setIconLocation(0, 0).setTabTextureSize(26, 30).setPadding(0, 4, 3, 3).setAnimation(1, 150));
+        tabController.addTab(new GuiTab(GuiHelper.getLocalizedControlName(getName(), "tab.sending.name")).setIconLocation(0, 0).setTabTextureSize(26, 30).setPadding(0, 4, 3, 3).setAnimation(1, 150));
 
         tabController.setActiveTabIndex(getActiveTab());
         tabChanged();
@@ -76,8 +77,18 @@ public class GuiMailBox extends GuiTabbed {
         tabController.drawHoverText(mc, mouseX, mouseY);
         GL11.glPopMatrix();
     }
-    
+
     public TileEntityMailBox getTileEntity() {
         return tileEntity;
+    }
+
+    @Override
+    protected int getActiveTab() {
+        return activeTabIndex;
+    }
+
+    @Override
+    protected void setActiveTab(int value) {
+        activeTabIndex = value;
     }
 }
