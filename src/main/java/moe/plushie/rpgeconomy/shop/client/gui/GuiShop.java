@@ -1,37 +1,42 @@
 package moe.plushie.rpgeconomy.shop.client.gui;
 
+import java.io.IOException;
+
 import org.lwjgl.opengl.GL11;
 
 import moe.plushie.rpgeconomy.api.shop.IShop;
 import moe.plushie.rpgeconomy.api.shop.IShop.IShopTab;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
+import moe.plushie.rpgeconomy.core.client.gui.AbstractGuiDialog;
+import moe.plushie.rpgeconomy.core.client.gui.AbstractGuiDialog.DialogResult;
+import moe.plushie.rpgeconomy.core.client.gui.AbstractGuiDialog.IDialogCallback;
 import moe.plushie.rpgeconomy.core.client.gui.GuiHelper;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiIconButton;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTab;
+import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTabController.ITabEditCallback;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTabbed;
 import moe.plushie.rpgeconomy.core.client.lib.LibGuiResources;
 import moe.plushie.rpgeconomy.core.common.config.ConfigHandler;
-import moe.plushie.rpgeconomy.core.common.init.ModBlocks;
 import moe.plushie.rpgeconomy.core.common.inventory.slot.SlotCurrency;
 import moe.plushie.rpgeconomy.core.common.lib.LibBlockNames;
+import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
+import moe.plushie.rpgeconomy.core.common.network.client.MessageClientGuiShopUpdate;
+import moe.plushie.rpgeconomy.core.common.network.client.MessageClientGuiShopUpdate.ShopMessageType;
 import moe.plushie.rpgeconomy.currency.common.Currency;
 import moe.plushie.rpgeconomy.currency.common.Currency.CurrencyVariant;
 import moe.plushie.rpgeconomy.shop.common.inventory.ContainerShop;
 import moe.plushie.rpgeconomy.shop.common.tileentities.TileEntityShop;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class GuiShop extends GuiTabbed {
+public class GuiShop extends GuiTabbed implements IDialogCallback, ITabEditCallback {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation(LibGuiResources.SHOP);
     private static final int TEXTURE_SIZE_X = 176;
@@ -42,9 +47,15 @@ public class GuiShop extends GuiTabbed {
     private IShop shop;
     private boolean shopLinked = false;
     
+    protected AbstractGuiDialog dialog;
+    int oldMouseX;
+    int oldMouseY;
+    
     private GuiIconButton buttonEditMode;
     private GuiIconButton buttonShopList;
     private GuiIconButton buttonSave;
+    
+    private boolean editMode = false;
     
     public GuiShop(EntityPlayer entityPlayer, TileEntityShop tileEntity) {
         super(new ContainerShop(entityPlayer, tileEntity), false);
@@ -61,6 +72,9 @@ public class GuiShop extends GuiTabbed {
             this.ySize += 98 + 1;
         }
         super.initGui();
+        if (isDialogOpen()) {
+            dialog.initGui();
+        }
         tabController.x = getGuiLeft() + 4;
         
         buttonEditMode = new GuiIconButton(this, 0, getGuiLeft(), getGuiTop() + 147, 16, 16, TEXTURE).setDrawButtonBackground(true).setHoverText("Edit Mode");
@@ -75,6 +89,11 @@ public class GuiShop extends GuiTabbed {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         this.drawDefaultBackground();
+        oldMouseX = mouseX;
+        oldMouseY = mouseY;
+        if (isDialogOpen()) {
+            mouseX = mouseY = 0;
+        }
         super.drawScreen(mouseX, mouseY, partialTicks);
         this.renderHoveredToolTip(mouseX, mouseY);
     }
@@ -90,7 +109,7 @@ public class GuiShop extends GuiTabbed {
         GuiUtils.drawContinuousTexturedBox(getGuiLeft() + 21 + 177, getGuiTop() + 146, 0, 0, 101, 98, 100, 100, 4, zLevel);
         
         // Render title.
-        GuiUtils.drawContinuousTexturedBox(getGuiLeft() + 21 + 33, getGuiTop() + 4, 0, 132, 200, 13, 100, 13, 2, zLevel);
+        GuiUtils.drawContinuousTexturedBox(getGuiLeft() + 21 + 38, getGuiTop() + 4, 0, 132, 200, 13, 100, 13, 2, zLevel);
         
         // Render item box.
         for (int i = 0; i < 4; i++) {
@@ -120,6 +139,9 @@ public class GuiShop extends GuiTabbed {
             title = "SHOP NOT LINKED";
             titleColour = 0xAA0000;
         }
+        if (editMode) {
+            title = "EDIT MODE - " + title + " - EDIT MODE";
+        }
         int titleWidth = fontRenderer.getStringWidth(title);
         fontRenderer.drawString(title, xSize / 2 - titleWidth / 2, 6, titleColour);
         
@@ -136,7 +158,7 @@ public class GuiShop extends GuiTabbed {
         
         fontRenderer.drawString("Stock: \u221E", 55, 21, 0x888888, false);
         
-
+        /*
         for (int i = 0; i < currency.getCurrencyVariants().length; i++) {
             GlStateManager.pushMatrix();
             GlStateManager.pushAttrib();
@@ -150,7 +172,7 @@ public class GuiShop extends GuiTabbed {
             GlStateManager.popAttrib();
             GlStateManager.popMatrix();
         }
-        
+        */
         GlStateManager.pushMatrix();
         GlStateManager.translate(-guiLeft, -guiTop, 0);
         for (GuiButton button : buttonList) {
@@ -159,6 +181,12 @@ public class GuiShop extends GuiTabbed {
             }
         }
         GlStateManager.popMatrix();
+        
+        if (isDialogOpen()) {
+            GL11.glTranslatef(-guiLeft, -guiTop, 0);
+            dialog.draw(oldMouseX, oldMouseY, 0);
+            GL11.glTranslatef(guiLeft, guiTop, 0);
+        }
         
         GL11.glPushMatrix();
         GL11.glTranslatef(-guiLeft, -guiTop, 0F);
@@ -178,12 +206,33 @@ public class GuiShop extends GuiTabbed {
         if (shop != null) {
             for (int i = 0; i < shop.getTabCount(); i++) {
                 IShopTab shopTab = shop.getTabs()[i];
-                tabController.addTab(new GuiTab(shopTab.getName()).setIconLocation(0, 0).setTabTextureSize(26, 30).setPadding(0, 4, 3, 3));
+                tabController.addTab(new GuiTab(tabController, shopTab.getName()).setIconLocation(0, 0).setTabTextureSize(26, 30).setPadding(0, 4, 3, 3));
             }
         }
         activeTabIndex = 0;
         tabController.setActiveTabIndex(getActiveTab());
         tabChanged();
+    }
+    
+    @Override
+    protected void actionPerformed(GuiButton button) {
+        super.actionPerformed(button);
+        if (button == buttonEditMode) {
+            setEditMode(!editMode);
+        }
+        if (button == buttonShopList) {
+            openDialog(new GuiShopDialogShopList(this, "shopList", this, 300, 200));
+        }
+    }
+    
+    private void setEditMode(boolean editMode) {
+        this.editMode = editMode;
+        tabController.setEditMode(editMode);
+        if (editMode) {
+            PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.EDIT_MODE_ON));
+        } else {
+            PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.EDIT_MODE_OFF));
+        }
     }
 
     @Override
@@ -199,5 +248,79 @@ public class GuiShop extends GuiTabbed {
     @Override
     protected void setActiveTab(int value) {
         activeTabIndex = value;
+    }
+    
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int button) throws IOException {
+        if (isDialogOpen()) {
+            dialog.mouseClicked(mouseX, mouseY, button);
+        } else {
+            super.mouseClicked(mouseX, mouseY, button);
+        }
+    }
+    
+    @Override
+    protected void mouseClickMove(int mouseX, int mouseY, int lastButtonClicked, long timeSinceMouseClick) {
+        if (isDialogOpen()) {
+            dialog.mouseClickMove(mouseX, mouseY, lastButtonClicked, timeSinceMouseClick);
+        } else {
+            super.mouseClickMove(mouseX, mouseY, lastButtonClicked, timeSinceMouseClick);
+        }
+    }
+    
+    @Override
+    protected void mouseReleased(int mouseX, int mouseY, int state) {
+        if (isDialogOpen()) {
+            dialog.mouseMovedOrUp(mouseX, mouseY, state);
+        } else {
+            super.mouseReleased(mouseX, mouseY, state);
+        }
+    }
+    
+    @Override
+    protected void keyTyped(char c, int keycode) throws IOException {
+        if (isDialogOpen()) {
+            dialog.keyTyped(c, keycode);
+        } else {
+            super.keyTyped(c, keycode);
+        }
+    }
+    
+    public void openDialog(AbstractGuiDialog dialog) {
+        this.dialog = dialog;
+        dialog.initGui();
+    }
+    
+    protected boolean isDialogOpen() {
+        return dialog != null;
+    }
+
+    @Override
+    public void dialogResult(AbstractGuiDialog dialog, DialogResult result) {
+        this.dialog = null;
+    }
+
+    @Override
+    public void tabAdded() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void tabRemoved(int index) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void tabMovedBack(int index) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void tabMovedForward(int index) {
+        // TODO Auto-generated method stub
+        
     }
 }

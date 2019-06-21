@@ -1,14 +1,15 @@
 package moe.plushie.rpgeconomy.core.client.gui.controls;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiTab extends Gui {
     
+    private final GuiTabController parent;
     private final String name;
     
     public boolean enabled;
@@ -28,7 +29,8 @@ public class GuiTab extends Gui {
     private int animationFrames = 0;
     private int animationSpeed = 0;
     
-    public GuiTab(String name) {
+    public GuiTab(GuiTabController parent, String name) {
+        this.parent = parent;
         this.name = name;
         this.enabled = true;
         this.visible = true;
@@ -38,7 +40,7 @@ public class GuiTab extends Gui {
         return name;
     }
     
-    public void render(int x, int y, int mouseX, int mouseY, boolean activeTab, ResourceLocation tabIcons) {
+    public void render(int index, int x, int y, int mouseX, int mouseY, boolean activeTab, ResourceLocation tabIcons) {
         int textureOffsetX = 0;
         int textureOffsetY = tabTextureHeight;
         if (isMouseOver(x, y, mouseX, mouseY)) {
@@ -101,6 +103,19 @@ public class GuiTab extends Gui {
         if (mouseX >= x + padLeft & mouseX < x + tabTextureWidth - padRight) {
             if (mouseY >= y + padTop & mouseY < y + tabTextureHeight - padBottom) {
                 return true;
+            }
+        }
+        return false;
+    }
+    
+    public boolean mousePress(int x, int y, int mouseX, int mouseY) {
+        if (mouseX >= x + padLeft & mouseX < x + tabTextureWidth - padRight) {
+            if (mouseY >= y + padTop & mouseY < y + tabTextureHeight - padBottom) {
+                if (enabled) {
+                    if (!parent.isEditMode()) {
+                        return true;
+                    }
+                }
             }
         }
         return false;

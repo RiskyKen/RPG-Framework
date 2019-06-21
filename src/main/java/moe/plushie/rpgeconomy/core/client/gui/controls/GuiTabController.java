@@ -24,6 +24,7 @@ public class GuiTabController extends GuiButtonExt {
     private int activeTab = -1;
     private ArrayList<GuiTab> tabs = new ArrayList<GuiTab>();
     private int tabSpacing = 27;
+    private boolean editMode = false;
     
     public GuiTabController(GuiScreen parent, boolean fullscreen, int xPos, int yPos, int width, int height) {
         super(0, xPos, yPos, width, height, "");
@@ -112,10 +113,10 @@ public class GuiTabController extends GuiButtonExt {
             GuiTab tab = tabs.get(i);
             if (tab.visible) {
                 if (tab.isMouseOver(this.x - 4, this.y + count * tabSpacing  + yOffset, mouseX, mouseY)) {
-                    if (tab.enabled) {
+                    if (tab.mousePress(this.x - 4, this.y + count * tabSpacing  + yOffset, mouseX, mouseY)) {
                         activeTab = i;
-                        return true;
                     }
+                    return true;
                 }
                 count++;
             }
@@ -138,10 +139,18 @@ public class GuiTabController extends GuiButtonExt {
             GuiTab tab = tabs.get(i);
             if (tab.visible) {
                 mc.renderEngine.bindTexture(TEXTURE);
-                tab.render(this.x - 4, this.y + count * tabSpacing + yOffset, mouseX, mouseY, activeTab == i, ICONS);
+                tab.render(i, this.x - 4, this.y + count * tabSpacing + yOffset, mouseX, mouseY, activeTab == i, ICONS);
                 count++;
             }
         }
+    }
+    
+    public boolean isEditMode() {
+        return editMode;
+    }
+    
+    public void setEditMode(boolean editMode) {
+        this.editMode = editMode;
     }
     
     public void drawHoverText(Minecraft mc, int mouseX, int mouseY) {
@@ -168,5 +177,16 @@ public class GuiTabController extends GuiButtonExt {
             textList.add(hoverTab.getName());
             GuiHelper.drawHoveringText(textList, mouseX, mouseY, mc.fontRenderer, parent.width, parent.height, zLevel);
         }
+    }
+    
+    public static interface ITabEditCallback {
+        
+        public void tabAdded();
+        
+        public void tabRemoved(int index);
+        
+        public void tabMovedBack(int index);
+        
+        public void tabMovedForward(int index);
     }
 }
