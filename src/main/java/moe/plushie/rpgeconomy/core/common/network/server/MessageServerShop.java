@@ -56,7 +56,6 @@ public class MessageServerShop implements IMessage, IMessageHandler<MessageServe
 
     @SideOnly(Side.CLIENT)
     private void sendShopToGui(IShop shop) {
-        
         Minecraft.getMinecraft().addScheduledTask(new ShopToGui(shop));
     }
 

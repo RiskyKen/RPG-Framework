@@ -58,7 +58,7 @@ public class MailSystemManager implements IMailSystemManager {
         }
     }
 
-    private void syncToClient(EntityPlayerMP entityPlayer) {
+    public void syncToClient(EntityPlayerMP entityPlayer) {
         RpgEconomy.getLogger().info("Sending " + mailSystemMap.size() + " mail system(s) to player " + entityPlayer.getName() + ".");
         PacketHandler.NETWORK_WRAPPER.sendTo(getSyncMessage(), entityPlayer);
     }

@@ -59,7 +59,7 @@ public class CurrencyManager implements ICurrencyManager {
         }
     }
     
-    private void syncToClient(EntityPlayerMP entityPlayer) {
+    public void syncToClient(EntityPlayerMP entityPlayer) {
         RpgEconomy.getLogger().info("Sending " + currencyMap.size() + " currency list(s) to player " + entityPlayer.getName() + ".");
         PacketHandler.NETWORK_WRAPPER.sendTo(getSyncMessage(), entityPlayer);
     }

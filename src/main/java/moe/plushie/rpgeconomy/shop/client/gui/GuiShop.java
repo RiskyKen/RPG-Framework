@@ -149,7 +149,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback, ITabEditCallb
             GuiHelper.renderPlayerInvlabel(21, 145 + 1, fontRenderer);
         }
         
-        fontRenderer.drawString("Munie!", 206, 151, 0x333333);
+        fontRenderer.drawString("Player Munie!", 206, 151, 0x333333);
         
         Currency currency = RpgEconomy.getProxy().getCurrencyManager().getCurrency("Common");
         for (CurrencyVariant variant : currency.getCurrencyVariants()) {
@@ -212,6 +212,10 @@ public class GuiShop extends GuiTabbed implements IDialogCallback, ITabEditCallb
         activeTabIndex = 0;
         tabController.setActiveTabIndex(getActiveTab());
         tabChanged();
+    }
+    
+    public void gotShopIdentifiersFromServer(String[] shopIdentifiers) {
+        // TODO Auto-generated method stub
     }
     
     @Override
