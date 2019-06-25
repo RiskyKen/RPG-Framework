@@ -4,9 +4,10 @@ import java.io.IOException;
 
 import org.lwjgl.opengl.GL11;
 
+import moe.plushie.rpgeconomy.api.currency.ICurrency.ICurrencyVariant;
+import moe.plushie.rpgeconomy.api.currency.IWallet;
 import moe.plushie.rpgeconomy.api.shop.IShop;
 import moe.plushie.rpgeconomy.api.shop.IShop.IShopTab;
-import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpgeconomy.core.client.gui.AbstractGuiDialog.DialogResult;
 import moe.plushie.rpgeconomy.core.client.gui.AbstractGuiDialog.IDialogCallback;
@@ -22,15 +23,15 @@ import moe.plushie.rpgeconomy.core.common.lib.LibBlockNames;
 import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
 import moe.plushie.rpgeconomy.core.common.network.client.MessageClientGuiShopUpdate;
 import moe.plushie.rpgeconomy.core.common.network.client.MessageClientGuiShopUpdate.ShopMessageType;
-import moe.plushie.rpgeconomy.currency.common.Currency;
-import moe.plushie.rpgeconomy.currency.common.Currency.CurrencyVariant;
 import moe.plushie.rpgeconomy.shop.common.inventory.ContainerShop;
 import moe.plushie.rpgeconomy.shop.common.tileentities.TileEntityShop;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -149,30 +150,12 @@ public class GuiShop extends GuiTabbed implements IDialogCallback, ITabEditCallb
             GuiHelper.renderPlayerInvlabel(21, 145 + 1, fontRenderer);
         }
         
+        for (int i = 0; i < 8; i++) {
+            renderItemDetails(i);
+        }
+        
         fontRenderer.drawString("Player Munie!", 206, 151, 0x333333);
         
-        Currency currency = RpgEconomy.getProxy().getCurrencyManager().getCurrency("Common");
-        for (CurrencyVariant variant : currency.getCurrencyVariants()) {
-            
-        }
-        
-        fontRenderer.drawString("Stock: \u221E", 55, 21, 0x888888, false);
-        
-        /*
-        for (int i = 0; i < currency.getCurrencyVariants().length; i++) {
-            GlStateManager.pushMatrix();
-            GlStateManager.pushAttrib();
-            GlStateManager.translate(55 + i * 17, 30, 0);
-            //GlStateManager.scale(0.5, 0.5, 0.5);
-            CurrencyVariant variant = currency.getCurrencyVariants()[i];
-            ItemStack stack = variant.getItem().copy();
-            stack.setCount(20);
-            itemRender.renderItemAndEffectIntoGUI(stack, 0, 0);
-            itemRender.renderItemOverlays(fontRenderer, stack, 0, 0);
-            GlStateManager.popAttrib();
-            GlStateManager.popMatrix();
-        }
-        */
         GlStateManager.pushMatrix();
         GlStateManager.translate(-guiLeft, -guiTop, 0);
         for (GuiButton button : buttonList) {
@@ -200,13 +183,61 @@ public class GuiShop extends GuiTabbed implements IDialogCallback, ITabEditCallb
         GL11.glPopMatrix();
     }
     
+    private void renderItemDetails(int index) {
+        Slot slot = inventorySlots.inventorySlots.get(index);
+        if (shop != null && activeTabIndex != -1) {
+            if (shop.getTabCount() > activeTabIndex && index < shop.getTabs()[activeTabIndex].getItemCount()) {
+                fontRenderer.drawString("Stock: \u221E", slot.xPos + 23, slot.yPos - 4, 0x888888, false);
+                IWallet cost = shop.getTabs()[activeTabIndex].getItems()[index].getCost();
+                int amount = cost.getAmount();
+                boolean used = false;
+                int renderCount = 0;
+                //fontRenderer.drawString("Stock: " + amount, slot.xPos + 23, slot.yPos - 4, 0x888888, false);
+                for (int i = 0; i < cost.getCurrency().getCurrencyVariants().length; i++) {
+                    if (amount > 0) {
+                        ICurrencyVariant variant = cost.getCurrency().getCurrencyVariants()[cost.getCurrency().getCurrencyVariants().length - i - 1];
+                        //variant = cost.getCurrency().getCurrencyVariants()[i];
+
+                        int count = 0;
+                        for (int j = 0; j < 64; j++) {
+                            if (variant.getValue() <= amount) {
+                                amount -= variant.getValue();
+                                count++;
+                                used = true;
+                            } else {
+                                continue;
+                            }
+                        }
+                        
+                        if (used) {
+                            GlStateManager.pushMatrix();
+                            GlStateManager.pushAttrib();
+                            GlStateManager.translate(108 + slot.xPos + renderCount * -17, 5 + slot.yPos, 0);
+                            // GlStateManager.scale(0.5, 0.5, 0.5);
+                            ItemStack stack = variant.getItem().copy();
+                            stack.setCount(1);
+                            itemRender.renderItemAndEffectIntoGUI(stack, 0, 0);
+                            itemRender.renderItemOverlayIntoGUI(fontRenderer, stack, 0, 0, String.valueOf(count));
+                            GlStateManager.popAttrib();
+                            GlStateManager.popMatrix();
+                            renderCount++;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     public void gotShopFromServer(IShop shop) {
         this.shop = shop;
         shopLinked = shop != null;
+        tabController.clearTabs();
         if (shop != null) {
             for (int i = 0; i < shop.getTabCount(); i++) {
                 IShopTab shopTab = shop.getTabs()[i];
-                tabController.addTab(new GuiTab(tabController, shopTab.getName()).setIconLocation(0, 0).setTabTextureSize(26, 30).setPadding(0, 4, 3, 3));
+                int y = MathHelper.floor(shopTab.getIconIndex() / 16);
+                int x = shopTab.getIconIndex() - (y * 16);
+                tabController.addTab(new GuiTab(tabController, shopTab.getName()).setIconLocation(x * 16, y * 16).setTabTextureSize(26, 30).setPadding(0, 4, 3, 3));
             }
         }
         activeTabIndex = 0;
@@ -215,7 +246,9 @@ public class GuiShop extends GuiTabbed implements IDialogCallback, ITabEditCallb
     }
     
     public void gotShopIdentifiersFromServer(String[] shopIdentifiers) {
-        // TODO Auto-generated method stub
+        if (isDialogOpen() && dialog instanceof GuiShopDialogShopList) {
+            ((GuiShopDialogShopList)dialog).gotShopIdentifiersFromServer(shopIdentifiers);
+        }
     }
     
     @Override
@@ -252,6 +285,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback, ITabEditCallb
     @Override
     protected void setActiveTab(int value) {
         activeTabIndex = value;
+        PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.TAB_CHANGED).setTabIndex(value));
     }
     
     @Override
@@ -301,6 +335,12 @@ public class GuiShop extends GuiTabbed implements IDialogCallback, ITabEditCallb
 
     @Override
     public void dialogResult(AbstractGuiDialog dialog, DialogResult result) {
+        if (result == DialogResult.OK) {
+            if (dialog instanceof GuiShopDialogShopList) {
+                String shopIdentifier = ((GuiShopDialogShopList)dialog).getSelectedShopIdentifier();
+                PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.SHOP_CHANGE).setShopIdentifier(shopIdentifier));
+            }
+        }
         this.dialog = null;
     }
 

@@ -155,4 +155,15 @@ public class GuiList extends Gui {
     public int getSize() {
         return this.listItems.size();
     }
+    
+    public static interface IGuiListItem {
+        
+        public void drawListItem(FontRenderer fontRenderer, int x, int y, int mouseX, int mouseY, boolean selected, int width);
+        
+        public boolean mousePressed(FontRenderer fontRenderer, int x, int y, int mouseX, int mouseY, int button, int width);
+        
+        public void mouseReleased(FontRenderer fontRenderer, int x, int y, int mouseX, int mouseY, int button, int width);
+
+        public String getDisplayName();
+    }
 }

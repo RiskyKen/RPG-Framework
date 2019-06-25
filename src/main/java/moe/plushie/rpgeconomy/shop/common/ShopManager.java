@@ -4,13 +4,13 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.HashMap;
 
-import org.apache.commons.lang3.NotImplementedException;
-
 import com.google.gson.JsonElement;
 
 import moe.plushie.rpgeconomy.api.shop.IShop;
 import moe.plushie.rpgeconomy.api.shop.IShopManager;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
+import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
+import moe.plushie.rpgeconomy.core.common.network.server.MessageServerSyncShops;
 import moe.plushie.rpgeconomy.core.common.utils.SerializeHelper;
 import moe.plushie.rpgeconomy.shop.common.serialize.ShopSerializer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -73,6 +73,6 @@ public class ShopManager implements IShopManager {
 	}
 
     public void syncToClient(EntityPlayerMP player) {
-        throw new NotImplementedException("syncToClient not implemented");
+        PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerSyncShops(getShopNames()), player);
     }
 }

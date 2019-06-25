@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import moe.plushie.rpgeconomy.api.shop.IShop;
 import moe.plushie.rpgeconomy.shop.common.inventory.ContainerShop;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -13,6 +14,7 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
     private ShopMessageType type;
     private String shopIdentifier;
     private IShop shop;
+    private int tabIndex;
     
     public MessageClientGuiShopUpdate() {
     }
@@ -31,6 +33,11 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
         return this;
     }
     
+    public MessageClientGuiShopUpdate setTabIndex(int value) {
+        this.tabIndex = value;
+        return this;
+    }
+    
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(type.ordinal());
@@ -39,13 +46,10 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
             break;
         case EDIT_MODE_OFF:
             break;
-        case TAB_ADD:
-            break;
-        case TAB_REMOVE:
-            break;
-        case TAB_EDIT:
-            break;
+        case SHOP_CHANGE:
+            ByteBufUtils.writeUTF8String(buf, shopIdentifier);
         case TAB_CHANGED:
+            buf.writeInt(tabIndex);
             break;
         default:
             break;
@@ -60,13 +64,11 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
             break;
         case EDIT_MODE_OFF:
             break;
-        case TAB_ADD:
-            break;
-        case TAB_REMOVE:
-            break;
-        case TAB_EDIT:
+        case SHOP_CHANGE:
+            shopIdentifier = ByteBufUtils.readUTF8String(buf);
             break;
         case TAB_CHANGED:
+            tabIndex = buf.readInt();
             break;
         default:
             break;
@@ -84,6 +86,12 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
                 break;
             case EDIT_MODE_OFF:
                 containerShop.setEditMode(false);
+                break;
+            case SHOP_CHANGE:
+                containerShop.setShopIdentifier(message.shopIdentifier);
+                break;
+            case TAB_CHANGED:
+                containerShop.changeTab(message.tabIndex);
                 break;
             default:
                 break;

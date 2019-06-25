@@ -4,7 +4,6 @@ import com.google.gson.JsonElement;
 
 import io.netty.buffer.ByteBuf;
 import moe.plushie.rpgeconomy.api.shop.IShop;
-import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.utils.SerializeHelper;
 import moe.plushie.rpgeconomy.shop.client.gui.GuiShop;
 import moe.plushie.rpgeconomy.shop.common.serialize.ShopSerializer;
@@ -71,7 +70,7 @@ public class MessageServerShop implements IMessage, IMessageHandler<MessageServe
         @Override
         public void run() {
             GuiScreen guiScreen = Minecraft.getMinecraft().currentScreen;
-            RpgEconomy.getLogger().info(guiScreen);
+            //RpgEconomy.getLogger().info(guiScreen);
             if (guiScreen instanceof GuiShop) {
                 ((GuiShop) guiScreen).gotShopFromServer(shop);
             }

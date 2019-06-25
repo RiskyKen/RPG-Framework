@@ -24,7 +24,12 @@ public class TileEntityShop extends ModAutoSyncTileEntity {
     public Shop getShop() {
         return RpgEconomy.getProxy().getShopManager().getShop(shopIdentifier);
     }
-
+    
+    public void setShop(String shopIdentifier) {
+        this.shopIdentifier = shopIdentifier;
+        dirtySync();
+    }
+    
     public void setShop(Shop shop) {
         this.shopIdentifier = shop.getIdentifier();
         dirtySync();

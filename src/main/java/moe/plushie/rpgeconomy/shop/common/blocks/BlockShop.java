@@ -1,7 +1,6 @@
 package moe.plushie.rpgeconomy.shop.common.blocks;
 
 import moe.plushie.rpgeconomy.api.shop.IShop;
-import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.blocks.AbstractModBlockContainer;
 import moe.plushie.rpgeconomy.core.common.lib.LibBlockNames;
 import moe.plushie.rpgeconomy.core.common.lib.LibGuiIds;

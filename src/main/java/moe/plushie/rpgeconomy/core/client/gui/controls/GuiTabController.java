@@ -72,6 +72,10 @@ public class GuiTabController extends GuiButtonExt {
         tabs.add(tab);
     }
     
+    public void clearTabs() {
+        tabs.clear();
+    }
+    
     public int getTabCount() {
         return tabs.size();
     }

@@ -1,7 +1,6 @@
 package moe.plushie.rpgeconomy.core.common.network.server;
 
 import io.netty.buffer.ByteBuf;
-import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.shop.client.gui.GuiShop;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -42,6 +41,7 @@ public class MessageServerSyncShops implements IMessage, IMessageHandler<Message
 
     @Override
     public IMessage onMessage(MessageServerSyncShops message, MessageContext ctx) {
+        sendShopsToGui(message.shopIdentifiers);
         return null;
     }
     
@@ -62,7 +62,6 @@ public class MessageServerSyncShops implements IMessage, IMessageHandler<Message
         @Override
         public void run() {
             GuiScreen guiScreen = Minecraft.getMinecraft().currentScreen;
-            RpgEconomy.getLogger().info(guiScreen);
             if (guiScreen instanceof GuiShop) {
                 ((GuiShop) guiScreen).gotShopIdentifiersFromServer(shopIdentifiers);
             }

@@ -1,18 +1,14 @@
 package moe.plushie.rpgeconomy.shop.common.inventory;
 
 import moe.plushie.rpgeconomy.api.shop.IShop;
-import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.config.ConfigHandler;
 import moe.plushie.rpgeconomy.core.common.inventory.ModTileContainer;
 import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
 import moe.plushie.rpgeconomy.core.common.network.server.MessageServerShop;
 import moe.plushie.rpgeconomy.shop.common.inventory.slot.SlotShop;
 import moe.plushie.rpgeconomy.shop.common.tileentities.TileEntityShop;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 
@@ -28,39 +24,61 @@ public class ContainerShop extends ModTileContainer<TileEntityShop> {
         inventory = new InventoryBasic("shop", false, 8);
 
         if (!entityPlayer.getEntityWorld().isRemote) {
-            this.shop = tileEntity.getShop();
-            if (shop != null) {
-                for (int i = 0; i < shop.getTabs()[activeTabIndex].getItemCount(); i++) {
-                    if (i < 8) {
-                        inventory.setInventorySlotContents(i, shop.getTabs()[activeTabIndex].getItems()[i].getItem());
-                    }
-                }
-            }
-        }
-        
-        if (ConfigHandler.showPlayerInventoryInShopGUI) {
-            addPlayerSlots(29, 162);
+            setShopFromTile();
         }
 
         for (int i = 0; i < 4; i++) {
             addSlotToContainer(new SlotShop(inventory, i, 32, 25 + i * 31));
             addSlotToContainer(new SlotShop(inventory, i + 4, 168, 25 + i * 31));
         }
+        
+        if (ConfigHandler.showPlayerInventoryInShopGUI) {
+            addPlayerSlots(29, 162);
+        }
     }
-    
+
+    private void setShopFromTile() {
+        this.shop = tileEntity.getShop();
+        changeTab(0);
+    }
+
+    private void setSlotForTab() {
+        for (int i = 0; i < inventory.getSizeInventory(); i++) {
+            inventory.setInventorySlotContents(i, ItemStack.EMPTY);
+        }
+        if (shop != null & activeTabIndex != -1) {
+            for (int i = 0; i < shop.getTabs()[activeTabIndex].getItemCount(); i++) {
+                if (i < 8) {
+                    inventory.setInventorySlotContents(i, shop.getTabs()[activeTabIndex].getItems()[i].getItem());
+                }
+            }
+        }
+    }
+
     public boolean isEditMode() {
         return editMode;
     }
-    
+
     public void setEditMode(boolean editMode) {
         this.editMode = editMode;
     }
-    
+
     public void changeTab(int index) {
         activeTabIndex = index;
+        setSlotForTab();
     }
-    
+
     public int getActiveTabIndex() {
         return activeTabIndex;
+    }
+
+    public void setShopIdentifier(String shopIdentifier) {
+        getTileEntity().setShop(shopIdentifier);
+        setShopFromTile();
+        for (int j = 0; j < this.listeners.size(); ++j) {
+            if (listeners.get(j) instanceof EntityPlayerMP) {
+                PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerShop(getTileEntity().getShop()), (EntityPlayerMP) listeners.get(j));
+            }
+        }
     }
 }
