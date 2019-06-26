@@ -2,7 +2,7 @@ package moe.plushie.rpgeconomy.api.shop;
 
 import java.util.Date;
 
-import moe.plushie.rpgeconomy.api.currency.IWallet;
+import moe.plushie.rpgeconomy.api.currency.ICost;
 import net.minecraft.item.ItemStack;
 
 public interface IShop {
@@ -34,7 +34,7 @@ public interface IShop {
 		
 		public ItemStack getItem();
 		
-		public IWallet getCost();
+		public ICost getCost();
 
 		public int getStock();
 

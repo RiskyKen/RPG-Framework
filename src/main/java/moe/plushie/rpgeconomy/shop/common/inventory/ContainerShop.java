@@ -29,6 +29,9 @@ public class ContainerShop extends ModTileContainer<TileEntityShop> {
 
         for (int i = 0; i < 4; i++) {
             addSlotToContainer(new SlotShop(inventory, i, 32, 25 + i * 31));
+        }
+        
+        for (int i = 0; i < 4; i++) {
             addSlotToContainer(new SlotShop(inventory, i + 4, 168, 25 + i * 31));
         }
         

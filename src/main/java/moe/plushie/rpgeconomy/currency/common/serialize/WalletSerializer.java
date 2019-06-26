@@ -9,7 +9,7 @@ import moe.plushie.rpgeconomy.currency.common.Currency;
 import moe.plushie.rpgeconomy.currency.common.CurrencyManager;
 import moe.plushie.rpgeconomy.currency.common.Wallet;
 
-public class WalletSerializer {
+public  class WalletSerializer {
 
     private static final String PROP_CURRENCY = "currency";
     private static final String PROP_AMOUNT = "amount";

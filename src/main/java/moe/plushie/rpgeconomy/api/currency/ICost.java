@@ -6,5 +6,9 @@ public interface ICost {
     
     public IWallet getWalletCost();
     
-    public ItemStack getItemCost();
+    public ItemStack[] getItemCost();
+    
+    public boolean hasWalletCost();
+    
+    public boolean hasItemCost();
 }

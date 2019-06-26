@@ -5,9 +5,8 @@ import java.util.Date;
 
 import org.apache.commons.lang3.NotImplementedException;
 
-import moe.plushie.rpgeconomy.api.currency.IWallet;
+import moe.plushie.rpgeconomy.api.currency.ICost;
 import moe.plushie.rpgeconomy.api.shop.IShop;
-import moe.plushie.rpgeconomy.currency.common.Wallet;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 
@@ -91,9 +90,9 @@ public class Shop implements IShop {
 	public static class ShopItem implements IShopItem {
 
 		private final ItemStack item;
-		private final IWallet cost;
+		private final ICost cost;
 
-		public ShopItem(ItemStack item, IWallet cost) {
+		public ShopItem(ItemStack item, ICost cost) {
 			this.item = item;
 			this.cost = cost;
 		}
@@ -104,7 +103,7 @@ public class Shop implements IShop {
 		}
 
 		@Override
-		public IWallet getCost() {
+		public ICost getCost() {
 			return cost;
 		}
 

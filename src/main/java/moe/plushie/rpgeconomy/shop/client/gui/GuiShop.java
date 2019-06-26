@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.lwjgl.opengl.GL11;
 
+import moe.plushie.rpgeconomy.api.currency.ICost;
 import moe.plushie.rpgeconomy.api.currency.ICurrency.ICurrencyVariant;
 import moe.plushie.rpgeconomy.api.currency.IWallet;
 import moe.plushie.rpgeconomy.api.shop.IShop;
@@ -188,42 +189,64 @@ public class GuiShop extends GuiTabbed implements IDialogCallback, ITabEditCallb
         if (shop != null && activeTabIndex != -1) {
             if (shop.getTabCount() > activeTabIndex && index < shop.getTabs()[activeTabIndex].getItemCount()) {
                 fontRenderer.drawString("Stock: \u221E", slot.xPos + 23, slot.yPos - 4, 0x888888, false);
-                IWallet cost = shop.getTabs()[activeTabIndex].getItems()[index].getCost();
-                int amount = cost.getAmount();
-                boolean used = false;
-                int renderCount = 0;
+                ICost cost = shop.getTabs()[activeTabIndex].getItems()[index].getCost();
+                renderCost(slot.xPos, slot.yPos, cost);
                 //fontRenderer.drawString("Stock: " + amount, slot.xPos + 23, slot.yPos - 4, 0x888888, false);
-                for (int i = 0; i < cost.getCurrency().getCurrencyVariants().length; i++) {
-                    if (amount > 0) {
-                        ICurrencyVariant variant = cost.getCurrency().getCurrencyVariants()[cost.getCurrency().getCurrencyVariants().length - i - 1];
-                        //variant = cost.getCurrency().getCurrencyVariants()[i];
+            }
+        }
+    }
+    
+    private void renderCost(int slotX, int slotY, ICost cost) {
+        if (cost.hasWalletCost()) {
+            IWallet wallet = cost.getWalletCost();
+            int amount = wallet.getAmount();
+            boolean used = false;
+            int renderCount = 0;
+            for (int i = 0; i < wallet.getCurrency().getCurrencyVariants().length; i++) {
+                if (amount > 0) {
+                    ICurrencyVariant variant = wallet.getCurrency().getCurrencyVariants()[wallet.getCurrency().getCurrencyVariants().length - i - 1];
+                    //variant = cost.getCurrency().getCurrencyVariants()[i];
 
-                        int count = 0;
-                        for (int j = 0; j < 64; j++) {
-                            if (variant.getValue() <= amount) {
-                                amount -= variant.getValue();
-                                count++;
-                                used = true;
-                            } else {
-                                continue;
-                            }
-                        }
-                        
-                        if (used) {
-                            GlStateManager.pushMatrix();
-                            GlStateManager.pushAttrib();
-                            GlStateManager.translate(108 + slot.xPos + renderCount * -17, 5 + slot.yPos, 0);
-                            // GlStateManager.scale(0.5, 0.5, 0.5);
-                            ItemStack stack = variant.getItem().copy();
-                            stack.setCount(1);
-                            itemRender.renderItemAndEffectIntoGUI(stack, 0, 0);
-                            itemRender.renderItemOverlayIntoGUI(fontRenderer, stack, 0, 0, String.valueOf(count));
-                            GlStateManager.popAttrib();
-                            GlStateManager.popMatrix();
-                            renderCount++;
+                    int count = 0;
+                    for (int j = 0; j < 64; j++) {
+                        if (variant.getValue() <= amount) {
+                            amount -= variant.getValue();
+                            count++;
+                            used = true;
+                        } else {
+                            continue;
                         }
                     }
+                    
+                    if (used) {
+                        GlStateManager.pushMatrix();
+                        GlStateManager.pushAttrib();
+                        GlStateManager.translate(108 + slotX + renderCount * -17, 5 + slotY, 0);
+                        // GlStateManager.scale(0.5, 0.5, 0.5);
+                        ItemStack stack = variant.getItem().copy();
+                        stack.setCount(1);
+                        itemRender.renderItemAndEffectIntoGUI(stack, 0, 0);
+                        itemRender.renderItemOverlayIntoGUI(fontRenderer, stack, 0, 0, String.valueOf(count));
+                        GlStateManager.popAttrib();
+                        GlStateManager.popMatrix();
+                        renderCount++;
+                    }
                 }
+            }
+        }
+        if (cost.hasItemCost()) {
+            ItemStack[] itemCost = cost.getItemCost();
+            for (int i = 0; i < itemCost.length; i++) {
+                GlStateManager.pushMatrix();
+                GlStateManager.pushAttrib();
+                GlStateManager.translate(108 + slotX + i * -17, 5 + slotY, 0);
+                // GlStateManager.scale(0.5, 0.5, 0.5);
+                ItemStack stack = itemCost[i].copy();
+                //stack.setCount(1);
+                itemRender.renderItemAndEffectIntoGUI(stack, 0, 0);
+                itemRender.renderItemOverlayIntoGUI(fontRenderer, stack, 0, 0, String.valueOf(stack.getCount()));
+                GlStateManager.popAttrib();
+                GlStateManager.popMatrix();
             }
         }
     }

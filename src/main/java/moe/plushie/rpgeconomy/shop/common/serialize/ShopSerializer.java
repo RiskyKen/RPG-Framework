@@ -6,14 +6,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import moe.plushie.rpgeconomy.api.currency.IWallet;
+import moe.plushie.rpgeconomy.api.currency.ICost;
 import moe.plushie.rpgeconomy.api.shop.IShop;
 import moe.plushie.rpgeconomy.api.shop.IShop.IShopItem;
 import moe.plushie.rpgeconomy.api.shop.IShop.IShopTab;
 import moe.plushie.rpgeconomy.core.common.utils.SerializeHelper;
-import moe.plushie.rpgeconomy.currency.common.Wallet;
-import moe.plushie.rpgeconomy.currency.common.serialize.WalletSerializer;
-import moe.plushie.rpgeconomy.mail.common.MailSystem;
+import moe.plushie.rpgeconomy.currency.common.serialize.CostSerializer;
 import moe.plushie.rpgeconomy.shop.common.Shop;
 import moe.plushie.rpgeconomy.shop.common.Shop.ShopItem;
 import moe.plushie.rpgeconomy.shop.common.Shop.ShopTab;
@@ -30,7 +28,7 @@ public class ShopSerializer {
 	private static final String PROP_TAB_ITEMS = "items";
 	
 	private static final String PROP_TAB_ITEM = "item";
-	private static final String PROP_TAB_ITEM_VALUE = "value";
+	private static final String PROP_TAB_ITEM_COST = "cost";
 	
 	public static JsonElement serializeJson(IShop shop) {
         if (shop == null) {
@@ -65,7 +63,7 @@ public class ShopSerializer {
 	private static JsonObject serializeItem(IShopItem item) {
 		JsonObject jsonObject = new JsonObject();
 		jsonObject.add(PROP_TAB_ITEM, SerializeHelper.writeItemToJson(item.getItem()));
-		jsonObject.add(PROP_TAB_ITEM_VALUE, WalletSerializer.serializeJson(item.getCost()));
+		jsonObject.add(PROP_TAB_ITEM_COST, CostSerializer.serializeJson(item.getCost()));
 		return jsonObject;
 	}
 	
@@ -103,7 +101,7 @@ public class ShopSerializer {
 	
 	private static IShopItem deserializeItem(JsonObject jsonObject) throws NBTException {
 		ItemStack item = SerializeHelper.readItemFromJson(jsonObject.get(PROP_TAB_ITEM));
-		IWallet cost = WalletSerializer.deserializeJson(jsonObject.get(PROP_TAB_ITEM_VALUE));
+		ICost cost = CostSerializer.deserializeJson(jsonObject.get(PROP_TAB_ITEM_COST));
 		return new ShopItem(item, cost);
 	}
 }
