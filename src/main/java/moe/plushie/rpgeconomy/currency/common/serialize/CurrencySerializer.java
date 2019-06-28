@@ -9,7 +9,6 @@ import com.google.gson.JsonObject;
 
 import moe.plushie.rpgeconomy.api.currency.ICurrency.ICurrencyWalletInfo;
 import moe.plushie.rpgeconomy.api.currency.IItemMatcher;
-import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.currency.common.Currency;
 import moe.plushie.rpgeconomy.currency.common.Currency.CurrencyVariant;
 import moe.plushie.rpgeconomy.currency.common.Currency.CurrencyWalletInfo;
@@ -97,8 +96,6 @@ public final class CurrencySerializer {
         String variantName = propVariantName.getAsString();
         int variantValue = propVariantValue.getAsInt();
         IItemMatcher variantItemStack = ItemMacherSerializer.deserializeJson(propVariantItem);
-        RpgEconomy.getLogger().info(variantItemStack);
-        
         return new CurrencyVariant(variantName, variantValue, variantItemStack);
     }
 

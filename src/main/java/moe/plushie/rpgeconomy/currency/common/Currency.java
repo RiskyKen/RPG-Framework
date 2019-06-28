@@ -2,7 +2,6 @@ package moe.plushie.rpgeconomy.currency.common;
 
 import moe.plushie.rpgeconomy.api.currency.ICurrency;
 import moe.plushie.rpgeconomy.api.currency.IItemMatcher;
-import moe.plushie.rpgeconomy.core.RpgEconomy;
 
 public class Currency implements ICurrency {
 
@@ -24,7 +23,6 @@ public class Currency implements ICurrency {
         this.displayFormat = displayFormat;
         this.walletInfo = walletInfo;
         this.variants = variants;
-        RpgEconomy.getLogger().info(variants[0]);
     }
     
     @Override
