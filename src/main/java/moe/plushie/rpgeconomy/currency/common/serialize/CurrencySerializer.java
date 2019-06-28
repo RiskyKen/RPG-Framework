@@ -8,11 +8,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import moe.plushie.rpgeconomy.api.currency.ICurrency.ICurrencyWalletInfo;
-import moe.plushie.rpgeconomy.core.common.utils.SerializeHelper;
+import moe.plushie.rpgeconomy.api.currency.IItemMatcher;
+import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.currency.common.Currency;
 import moe.plushie.rpgeconomy.currency.common.Currency.CurrencyVariant;
 import moe.plushie.rpgeconomy.currency.common.Currency.CurrencyWalletInfo;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTException;
 
 public final class CurrencySerializer {
@@ -31,7 +31,6 @@ public final class CurrencySerializer {
     private static final String PROP_VARIANTS = "variants";
     private static final String PROP_VAR_NAME = "name";
     private static final String PROP_VAR_VALUE = "value";
-    private static final String PROP_VAR_ITEM = "item";
 
     private CurrencySerializer() {
     }
@@ -56,7 +55,7 @@ public final class CurrencySerializer {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty(PROP_VAR_NAME, variant.getName());
         jsonObject.addProperty(PROP_VAR_VALUE, variant.getValue());
-        jsonObject.add(PROP_VAR_ITEM, SerializeHelper.writeItemToJson(variant.getItem()));
+        jsonObject.add(ItemMacherSerializer.PROP_ITEM_MATCHER, ItemMacherSerializer.serializeJson(variant.getItem()));
         return jsonObject;
     }
 
@@ -94,11 +93,12 @@ public final class CurrencySerializer {
     private static CurrencyVariant deserializeCurrencyVariant(JsonObject jsonObject) throws NBTException {
         JsonElement propVariantName = jsonObject.get(PROP_VAR_NAME);
         JsonElement propVariantValue = jsonObject.get(PROP_VAR_VALUE);
-        JsonElement propVariantItem = jsonObject.get(PROP_VAR_ITEM);
-
+        JsonElement propVariantItem = jsonObject.get(ItemMacherSerializer.PROP_ITEM_MATCHER);
         String variantName = propVariantName.getAsString();
         int variantValue = propVariantValue.getAsInt();
-        ItemStack variantItemStack = SerializeHelper.readItemFromJson(propVariantItem);
+        IItemMatcher variantItemStack = ItemMacherSerializer.deserializeJson(propVariantItem);
+        RpgEconomy.getLogger().info(variantItemStack);
+        
         return new CurrencyVariant(variantName, variantValue, variantItemStack);
     }
 

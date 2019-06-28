@@ -6,6 +6,7 @@ import org.lwjgl.opengl.GL11;
 
 import moe.plushie.rpgeconomy.api.currency.ICost;
 import moe.plushie.rpgeconomy.api.currency.ICurrency.ICurrencyVariant;
+import moe.plushie.rpgeconomy.api.currency.IItemMatcher;
 import moe.plushie.rpgeconomy.api.currency.IWallet;
 import moe.plushie.rpgeconomy.api.shop.IShop;
 import moe.plushie.rpgeconomy.api.shop.IShop.IShopTab;
@@ -223,7 +224,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback, ITabEditCallb
                         GlStateManager.pushAttrib();
                         GlStateManager.translate(108 + slotX + renderCount * -17, 5 + slotY, 0);
                         // GlStateManager.scale(0.5, 0.5, 0.5);
-                        ItemStack stack = variant.getItem().copy();
+                        ItemStack stack = variant.getItem().getItemStack().copy();
                         stack.setCount(1);
                         itemRender.renderItemAndEffectIntoGUI(stack, 0, 0);
                         itemRender.renderItemOverlayIntoGUI(fontRenderer, stack, 0, 0, String.valueOf(count));
@@ -235,13 +236,13 @@ public class GuiShop extends GuiTabbed implements IDialogCallback, ITabEditCallb
             }
         }
         if (cost.hasItemCost()) {
-            ItemStack[] itemCost = cost.getItemCost();
+            IItemMatcher[] itemCost = cost.getItemCost();
             for (int i = 0; i < itemCost.length; i++) {
                 GlStateManager.pushMatrix();
                 GlStateManager.pushAttrib();
                 GlStateManager.translate(108 + slotX + i * -17, 5 + slotY, 0);
                 // GlStateManager.scale(0.5, 0.5, 0.5);
-                ItemStack stack = itemCost[i].copy();
+                ItemStack stack = itemCost[i].getItemStack();
                 //stack.setCount(1);
                 itemRender.renderItemAndEffectIntoGUI(stack, 0, 0);
                 itemRender.renderItemOverlayIntoGUI(fontRenderer, stack, 0, 0, String.valueOf(stack.getCount()));

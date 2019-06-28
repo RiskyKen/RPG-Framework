@@ -29,7 +29,7 @@ public final class CurrencyWalletHelper {
     public static int getItemCurrencyValue(ICurrency currency, ItemStack stack) {
         if (!stack.isEmpty()) {
             for (ICurrencyVariant variant : currency.getCurrencyVariants()) {
-                if (stack.isItemEqual(variant.getItem())) {
+                if (variant.getItem().matches(stack)) {
                     return variant.getValue() * stack.getCount();
                 }
             }
@@ -58,7 +58,7 @@ public final class CurrencyWalletHelper {
         for (int i = currency.getCurrencyVariants().length; i > 0; i--) {
             ICurrencyVariant variant = currency.getCurrencyVariants()[i - 1];
             while (variant.getValue() <= amount) {
-                if (inventory.addItemStackToInventory(variant.getItem().copy())) {
+                if (inventory.addItemStackToInventory(variant.getItem().getItemStack().copy())) {
                     amount -= variant.getValue();
                 } else {
                     break;
@@ -84,7 +84,7 @@ public final class CurrencyWalletHelper {
             if (variant.getValue() <= amount) {
                 for (int i = 0; i < inventory.getSizeInventory(); i++) {
                     ItemStack stack = inventory.getStackInSlot(i);
-                    if (stack.isItemEqual(variant.getItem())) {
+                    if (variant.getItem().matches(stack)) {
                         while (amount > 0 & !stack.isEmpty()) {
                             stack.shrink(1);
                             amount -= variant.getValue();
@@ -109,7 +109,7 @@ public final class CurrencyWalletHelper {
         for (ICurrencyVariant variant : currency.getCurrencyVariants()) {
             for (int i = 0; i < inventory.getSizeInventory(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
-                if (stack.isItemEqual(variant.getItem())) {
+                if (variant.getItem().matches(stack)) {
                     while (!stack.isEmpty() & amount > 0) {
                         stack.shrink(1);
                         amount -= variant.getValue();

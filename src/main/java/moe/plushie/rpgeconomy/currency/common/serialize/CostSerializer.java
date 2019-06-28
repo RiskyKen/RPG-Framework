@@ -5,12 +5,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import moe.plushie.rpgeconomy.api.currency.ICost;
+import moe.plushie.rpgeconomy.api.currency.IItemMatcher;
 import moe.plushie.rpgeconomy.api.currency.IWallet;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
-import moe.plushie.rpgeconomy.core.common.utils.SerializeHelper;
 import moe.plushie.rpgeconomy.currency.common.Cost;
 import moe.plushie.rpgeconomy.currency.common.CurrencyManager;
-import net.minecraft.item.ItemStack;
 
 public final class CostSerializer {
     
@@ -26,7 +25,7 @@ public final class CostSerializer {
         JsonArray arrayItems = new JsonArray();
         if (cost.hasItemCost()) {
             for (int i = 0; i < cost.getItemCost().length; i++) {
-                arrayItems.add(SerializeHelper.writeItemToJson(cost.getItemCost()[i]));
+                arrayItems.add(ItemMacherSerializer.serializeJson(cost.getItemCost()[i]));
             }
             jsonObject.add(PROP_ITEMS, arrayItems);
         }
@@ -45,14 +44,14 @@ public final class CostSerializer {
     public static Cost deserializeJson(JsonObject jsonObject) {
         CurrencyManager currencyManager = RpgEconomy.getProxy().getCurrencyManager();
         try {
-            ItemStack[] itemCost = null;
+            IItemMatcher[] itemCost = null;
             IWallet walletCost = null;
             // Read items.
             if (jsonObject.has(PROP_ITEMS)) {
                 JsonArray arrayItems = jsonObject.get(PROP_ITEMS).getAsJsonArray();
-                itemCost = new ItemStack[arrayItems.size()];
+                itemCost = new IItemMatcher[arrayItems.size()];
                 for (int i = 0; i < arrayItems.size(); i++) {
-                    itemCost[i] = SerializeHelper.readItemFromJson(arrayItems.get(i));
+                    itemCost[i] = ItemMacherSerializer.deserializeJson(arrayItems.get(i));
                 }
             }
             // Read wallet.

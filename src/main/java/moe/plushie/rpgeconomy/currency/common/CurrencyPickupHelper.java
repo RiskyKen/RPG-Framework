@@ -35,7 +35,7 @@ public class CurrencyPickupHelper {
             }
             for (CurrencyVariant variant : currency.getCurrencyVariants()) {
 
-                if (stack.isItemEqual(variant.getItem())) {
+                if (variant.getItem().matches(stack)) {
                     ICurrencyCapability currencyCap = CurrencyCapability.get(player);
                     if (currencyCap != null) {
                         IWallet wallet = currencyCap.getWallet(currency);

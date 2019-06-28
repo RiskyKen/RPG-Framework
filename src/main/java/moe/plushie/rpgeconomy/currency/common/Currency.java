@@ -1,7 +1,8 @@
 package moe.plushie.rpgeconomy.currency.common;
 
 import moe.plushie.rpgeconomy.api.currency.ICurrency;
-import net.minecraft.item.ItemStack;
+import moe.plushie.rpgeconomy.api.currency.IItemMatcher;
+import moe.plushie.rpgeconomy.core.RpgEconomy;
 
 public class Currency implements ICurrency {
 
@@ -23,6 +24,7 @@ public class Currency implements ICurrency {
         this.displayFormat = displayFormat;
         this.walletInfo = walletInfo;
         this.variants = variants;
+        RpgEconomy.getLogger().info(variants[0]);
     }
     
     @Override
@@ -55,9 +57,9 @@ public class Currency implements ICurrency {
 
         private final String name;
         private final int value;
-        private final ItemStack item;
+        private final IItemMatcher item;
 
-        public CurrencyVariant(String name, int value, ItemStack item) {
+        public CurrencyVariant(String name, int value, IItemMatcher item) {
             this.name = name;
             this.value = value;
             this.item = item;
@@ -74,7 +76,7 @@ public class Currency implements ICurrency {
         }
 
         @Override
-        public ItemStack getItem() {
+        public IItemMatcher getItem() {
             return item;
         }
 

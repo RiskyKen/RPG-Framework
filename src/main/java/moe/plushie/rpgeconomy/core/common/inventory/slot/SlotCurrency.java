@@ -20,7 +20,7 @@ public class SlotCurrency extends Slot {
     
     @Override
     public boolean isItemValid(ItemStack stack) {
-        return stack.isItemEqualIgnoreDurability(variant.getItem());
+        return variant.getItem().matches(stack);
     }
     
     @Override

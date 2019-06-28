@@ -1,15 +1,15 @@
 package moe.plushie.rpgeconomy.currency.common;
 
 import moe.plushie.rpgeconomy.api.currency.ICost;
+import moe.plushie.rpgeconomy.api.currency.IItemMatcher;
 import moe.plushie.rpgeconomy.api.currency.IWallet;
-import net.minecraft.item.ItemStack;
 
 public class Cost implements ICost {
 
     private final IWallet walletCost;
-    private final ItemStack[] itemCost;
+    private final IItemMatcher[] itemCost;
     
-    public Cost(IWallet walletCost, ItemStack[] itemCost) {
+    public Cost(IWallet walletCost, IItemMatcher[] itemCost) {
         this.walletCost = walletCost;
         this.itemCost = itemCost;
     }
@@ -20,7 +20,7 @@ public class Cost implements ICost {
     }
 
     @Override
-    public ItemStack[] getItemCost() {
+    public IItemMatcher[] getItemCost() {
         return itemCost;
     }
     

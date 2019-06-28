@@ -35,19 +35,19 @@ public class ContainerWallet extends ModContainer implements IButtonPress {
         if (ConfigHandler.showPlayerInventoryInWalletGUI) {
             addPlayerSlots(8, 114);
         }
-        
+
         int sizeX = 176;
         int slotSpacing = 1;
         int slotSize = 18;
-        
-        int halfSizeX = (int) ((float)sizeX / 2F);
+
+        int halfSizeX = (int) ((float) sizeX / 2F);
         int slotCount = currency.getCurrencyVariants().length;
         int slotTotalWidth = (slotSize + slotSpacing) * slotCount - 1;
-        int halfSlotTotalWidth = (int) ((float)slotTotalWidth / 2F);
-        
+        int halfSlotTotalWidth = (int) ((float) slotTotalWidth / 2F);
+
         for (int i = 0; i < currency.getCurrencyVariants().length; i++) {
             addSlotToContainer(new SlotCurrency(currency, currency.getCurrencyVariants()[i], inventoryWallet, i, halfSizeX - halfSlotTotalWidth + i * (slotSize + slotSpacing), 54));
-            inventoryWallet.setInventorySlotContents(i, currency.getCurrencyVariants()[i].getItem().copy());
+            inventoryWallet.setInventorySlotContents(i, currency.getCurrencyVariants()[i].getItem().getItemStack().copy());
         }
     }
 
@@ -67,7 +67,7 @@ public class ContainerWallet extends ModContainer implements IButtonPress {
         CurrencyVariant variant = currency.getCurrencyVariants()[buttonID];
         if (withdraw) {
             if (wallet.getAmount() >= variant.getValue()) {
-                if (player.addItemStackToInventory(variant.getItem().copy())) {
+                if (player.addItemStackToInventory(variant.getItem().getItemStack().copy())) {
                     wallet.setAmount(wallet.getAmount() - variant.getValue());
                     currencyCap.syncToOwner((EntityPlayerMP) player);
                 }

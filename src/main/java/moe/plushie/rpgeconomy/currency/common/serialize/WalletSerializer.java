@@ -9,7 +9,7 @@ import moe.plushie.rpgeconomy.currency.common.Currency;
 import moe.plushie.rpgeconomy.currency.common.CurrencyManager;
 import moe.plushie.rpgeconomy.currency.common.Wallet;
 
-public  class WalletSerializer {
+public class WalletSerializer {
 
     private static final String PROP_CURRENCY = "currency";
     private static final String PROP_AMOUNT = "amount";
@@ -23,11 +23,11 @@ public  class WalletSerializer {
         jsonObject.addProperty(PROP_AMOUNT, wallet.getAmount());
         return jsonObject;
     }
-    
+
     public static Wallet deserializeJson(JsonElement jsonElement) {
         return deserializeJson(jsonElement.getAsJsonObject());
     }
-    
+
     public static Wallet deserializeJson(JsonObject jsonObject) {
         CurrencyManager currencyManager = RpgEconomy.getProxy().getCurrencyManager();
         try {

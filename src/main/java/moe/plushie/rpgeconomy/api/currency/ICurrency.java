@@ -1,7 +1,5 @@
 package moe.plushie.rpgeconomy.api.currency;
 
-import net.minecraft.item.ItemStack;
-
 public interface ICurrency {
     
 	public String getIdentifier();
@@ -22,7 +20,7 @@ public interface ICurrency {
         
         public int getValue();
         
-        public ItemStack getItem();
+        public IItemMatcher getItem();
     }
     
     public static interface ICurrencyWalletInfo {
