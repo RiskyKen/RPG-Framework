@@ -110,10 +110,10 @@ public class GuiShop extends GuiTabbed implements IDialogCallback, ITabEditCallb
         buttonEditTabUp.setDrawButtonBackground(false).setIconLocation(208, 128, 16, 16);
         buttonEditTabDown.setDrawButtonBackground(false).setIconLocation(208, 112, 16, 16);
         
-        buttonShopList.setHoverText("Shop List");
-        buttonStats.setHoverText("Stats");
+        buttonShopList.setHoverText("Shop List...");
+        buttonStats.setHoverText("Stats...");
         buttonEditMode.setHoverText("Edit Mode").setDisableText(ChatFormatting.RED + "Shop must be LINKED to use this option.");
-        buttonRename.setHoverText("Rename").setDisableText(ChatFormatting.RED + "Shop must be in EDIT MODE to use this option.");
+        buttonRename.setHoverText("Rename Shop...").setDisableText(ChatFormatting.RED + "Shop must be in EDIT MODE to use this option.");
         
         buttonEditTabAdd.setHoverText("Add Tab");
         buttonEditTabRemove.setHoverText("Remove Tab");
