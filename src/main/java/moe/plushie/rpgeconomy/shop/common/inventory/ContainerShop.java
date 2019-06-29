@@ -30,11 +30,11 @@ public class ContainerShop extends ModTileContainer<TileEntityShop> {
         for (int i = 0; i < 4; i++) {
             addSlotToContainer(new SlotShop(inventory, i, 32, 25 + i * 31));
         }
-        
+
         for (int i = 0; i < 4; i++) {
             addSlotToContainer(new SlotShop(inventory, i + 4, 168, 25 + i * 31));
         }
-        
+
         if (ConfigHandler.showPlayerInventoryInShopGUI) {
             addPlayerSlots(29, 162);
         }
@@ -49,10 +49,12 @@ public class ContainerShop extends ModTileContainer<TileEntityShop> {
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             inventory.setInventorySlotContents(i, ItemStack.EMPTY);
         }
-        if (shop != null & activeTabIndex != -1) {
-            for (int i = 0; i < shop.getTabs()[activeTabIndex].getItemCount(); i++) {
-                if (i < 8) {
-                    inventory.setInventorySlotContents(i, shop.getTabs()[activeTabIndex].getItems()[i].getItem());
+        if (shop != null && shop.getTabCount() > 0) {
+            if (activeTabIndex != -1) {
+                for (int i = 0; i < shop.getTabs()[activeTabIndex].getItemCount(); i++) {
+                    if (i < 8) {
+                        inventory.setInventorySlotContents(i, shop.getTabs()[activeTabIndex].getItems()[i].getItem());
+                    }
                 }
             }
         }

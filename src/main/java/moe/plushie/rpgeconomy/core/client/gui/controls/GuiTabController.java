@@ -111,6 +111,7 @@ public class GuiTabController extends GuiButtonExt {
         int yOffset = getYOffSet();
         int xOffset = -4;
         int count = 0;
+        boolean movedRight = false;
         for (int i = 0; i < tabs.size(); i++) {
             GuiTab tab = tabs.get(i);
             if (tab.visible) {
@@ -119,9 +120,10 @@ public class GuiTabController extends GuiButtonExt {
                 }
                 count++;
             }
-            if (count > 4) {
+            if (count > 4 & !movedRight) {
                 count = 0;
-                xOffset = width - tabSpacing - 4;
+                xOffset += width - tabSpacing;
+                movedRight = true;
             }
         }
         return null;

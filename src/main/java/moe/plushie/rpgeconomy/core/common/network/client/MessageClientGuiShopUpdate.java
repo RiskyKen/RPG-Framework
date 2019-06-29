@@ -15,29 +15,29 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
     private String shopIdentifier;
     private IShop shop;
     private int tabIndex;
-    
+
     public MessageClientGuiShopUpdate() {
     }
-    
+
     public MessageClientGuiShopUpdate(ShopMessageType type) {
         this.type = type;
     }
-    
+
     public MessageClientGuiShopUpdate setShopIdentifier(String shopIdentifier) {
         this.shopIdentifier = shopIdentifier;
         return this;
     }
-    
+
     public MessageClientGuiShopUpdate setShop(IShop shop) {
         this.shop = shop;
         return this;
     }
-    
+
     public MessageClientGuiShopUpdate setTabIndex(int value) {
         this.tabIndex = value;
         return this;
     }
-    
+
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(type.ordinal());
@@ -106,7 +106,7 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
         }
         return null;
     }
-    
+
     public static enum ShopMessageType {
         EDIT_MODE_ON,
         EDIT_MODE_OFF,

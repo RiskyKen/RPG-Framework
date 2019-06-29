@@ -56,8 +56,15 @@ public class GuiShop extends GuiTabbed implements IDialogCallback, ITabEditCallb
     int oldMouseY;
 
     private GuiIconButton buttonShopList;
+    private GuiIconButton buttonStats;
     private GuiIconButton buttonEditMode;
-    private GuiIconButton buttonSave;
+    private GuiIconButton buttonRename;
+    
+    private GuiIconButton buttonEditTabAdd;
+    private GuiIconButton buttonEditTabRemove;
+    private GuiIconButton buttonEditTabEdit;
+    private GuiIconButton buttonEditTabUp;
+    private GuiIconButton buttonEditTabDown;
 
     private boolean editMode = false;
 
@@ -82,20 +89,83 @@ public class GuiShop extends GuiTabbed implements IDialogCallback, ITabEditCallb
         tabController.x = getGuiLeft() + 4;
 
         buttonShopList = new GuiIconButton(this, 0, getGuiLeft(), getGuiTop() + 147, 16, 16, TEXTURE);
-        buttonEditMode = new GuiIconButton(this, 0, getGuiLeft() + getXSize() - 16, getGuiTop() + 147, 16, 16, TEXTURE);
-        buttonSave = new GuiIconButton(this, 0, getGuiLeft() + getXSize() - 16, getGuiTop() + 167, 16, 16, TEXTURE);
+        buttonStats = new GuiIconButton(this, 0, getGuiLeft(), getGuiTop() + 147 + 17 * 1, 16, 16, TEXTURE);
+        buttonEditMode = new GuiIconButton(this, 0, getGuiLeft(), getGuiTop() + 147 + 17 * 2, 16, 16, TEXTURE);
+        buttonRename = new GuiIconButton(this, 0, getGuiLeft(), getGuiTop() + 147 + 17 * 3, 16, 16, TEXTURE);
+        
+        buttonEditTabAdd = new GuiIconButton(this, 0, getGuiLeft() + getXSize() - 16, getGuiTop() + 147 + 17 * 0, 16, 16, TEXTURE);
+        buttonEditTabRemove = new GuiIconButton(this, 0, getGuiLeft() + getXSize() - 16, getGuiTop() + 147 + 17 * 1, 16, 16, TEXTURE);
+        buttonEditTabEdit = new GuiIconButton(this, 0, getGuiLeft() + getXSize() - 16, getGuiTop() + 147 + 17 * 2, 16, 16, TEXTURE);
+        buttonEditTabUp = new GuiIconButton(this, 0, getGuiLeft() + getXSize() - 16, getGuiTop() + 147 + 17 * 3, 16, 16, TEXTURE);
+        buttonEditTabDown = new GuiIconButton(this, 0, getGuiLeft() + getXSize() - 16, getGuiTop() + 147 + 17 * 4, 16, 16, TEXTURE);
 
-        buttonShopList.setDrawButtonBackground(true).setHoverText("Shop List");
-        buttonEditMode.setDrawButtonBackground(true).setHoverText("Edit Mode").setDisableText(ChatFormatting.RED + "Shop must be linked to use the option.");
-        buttonSave.setDrawButtonBackground(true).setHoverText("Save").setDisableText(ChatFormatting.RED + "Shop must be linked to use the option.");
-
-        buttonEditMode.enabled = isShopLinked();
-        buttonSave.enabled = isShopLinked();
+        buttonShopList.setDrawButtonBackground(false).setIconLocation(208, 240, 16, 16);;
+        buttonStats.setDrawButtonBackground(false).setIconLocation(208, 224, 16, 16);
+        buttonEditMode.setDrawButtonBackground(false).setIconLocation(208, 208, 16, 16);
+        buttonRename.setDrawButtonBackground(false).setIconLocation(208, 192, 16, 16);;
+        
+        buttonEditTabAdd.setDrawButtonBackground(false).setIconLocation(208, 176, 16, 16);
+        buttonEditTabRemove.setDrawButtonBackground(false).setIconLocation(208, 160, 16, 16);
+        buttonEditTabEdit.setDrawButtonBackground(false).setIconLocation(208, 144, 16, 16);
+        buttonEditTabUp.setDrawButtonBackground(false).setIconLocation(208, 128, 16, 16);
+        buttonEditTabDown.setDrawButtonBackground(false).setIconLocation(208, 112, 16, 16);
+        
+        buttonShopList.setHoverText("Shop List");
+        buttonStats.setHoverText("Stats");
+        buttonEditMode.setHoverText("Edit Mode").setDisableText(ChatFormatting.RED + "Shop must be LINKED to use this option.");
+        buttonRename.setHoverText("Rename").setDisableText(ChatFormatting.RED + "Shop must be in EDIT MODE to use this option.");
+        
+        buttonEditTabAdd.setHoverText("Add Tab");
+        buttonEditTabRemove.setHoverText("Remove Tab");
+        buttonEditTabEdit.setHoverText("Edit Tab");
+        buttonEditTabUp.setHoverText("Move Tab Up");
+        buttonEditTabDown.setHoverText("Move Tab Down");
+        
+        updateEditButtons();
 
         if (entityPlayer.capabilities.isCreativeMode) {
             buttonList.add(buttonShopList);
+            buttonList.add(buttonStats);
             buttonList.add(buttonEditMode);
-            buttonList.add(buttonSave);
+            buttonList.add(buttonRename);
+            
+            buttonList.add(buttonEditTabAdd);
+            buttonList.add(buttonEditTabRemove);
+            buttonList.add(buttonEditTabEdit);
+            buttonList.add(buttonEditTabUp);
+            buttonList.add(buttonEditTabDown);
+        }
+    }
+    
+    private void updateEditButtons() {
+        buttonEditMode.enabled = isShopLinked();
+        buttonStats.enabled = false;
+        buttonRename.enabled = editMode;
+        
+        buttonEditTabAdd.enabled = editMode;
+        buttonEditTabRemove.enabled = editMode;
+        buttonEditTabEdit.enabled = editMode;
+        buttonEditTabUp.enabled = editMode;
+        buttonEditTabDown.enabled = editMode;
+        
+        if (isShopLinked()) {
+            buttonStats.setHoverText("Stats").setDisableText(ChatFormatting.RED + "Coming soon. \u2122");
+        } else {
+            buttonStats.setDisableText(ChatFormatting.RED + "Shop must be LINKED to use this option.");
+        }
+        
+        if (editMode) {
+            buttonEditTabAdd.setDisableText(ChatFormatting.RED + "Tab list is full.");
+            buttonEditTabRemove.setDisableText(ChatFormatting.RED + "Must have one tab to use this option.");
+            buttonEditTabEdit.setDisableText(ChatFormatting.RED + "Must have one tab to use this option.");
+            buttonEditTabUp.setDisableText(ChatFormatting.RED + "Already at top.");
+            buttonEditTabDown.setHoverText("Move Tab Down").setDisableText(ChatFormatting.RED + "Already at bottom.");
+        } else {
+            buttonEditTabAdd.setDisableText(ChatFormatting.RED + "Shop must be in EDIT MODE to use this option.");
+            buttonEditTabRemove.setDisableText(ChatFormatting.RED + "Shop must be in EDIT MODE to use this option.");
+            buttonEditTabEdit.setDisableText(ChatFormatting.RED + "Shop must be in EDIT MODE to use this option.");
+            buttonEditTabUp.setDisableText(ChatFormatting.RED + "Shop must be in EDIT MODE to use this option.");
+            buttonEditTabDown.setDisableText(ChatFormatting.RED + "Shop must be in EDIT MODE to use this option.");
         }
     }
 
@@ -276,10 +346,11 @@ public class GuiShop extends GuiTabbed implements IDialogCallback, ITabEditCallb
                 int x = shopTab.getIconIndex() - (y * 16);
                 tabController.addTab(new GuiTab(tabController, shopTab.getName()).setIconLocation(x * 16, y * 16).setTabTextureSize(26, 30).setPadding(0, 4, 3, 3));
             }
+        } else {
+            editMode = false;
         }
         
-        buttonEditMode.enabled = isShopLinked();
-        buttonSave.enabled = isShopLinked();
+        updateEditButtons();
         
         activeTabIndex = 0;
         tabController.setActiveTabIndex(getActiveTab());
@@ -305,7 +376,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback, ITabEditCallb
 
     private void setEditMode(boolean editMode) {
         this.editMode = editMode;
-        tabController.setEditMode(editMode);
+        updateEditButtons();
         if (editMode) {
             PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.EDIT_MODE_ON));
         } else {
