@@ -47,7 +47,12 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
         case EDIT_MODE_OFF:
             break;
         case SHOP_CHANGE:
-            ByteBufUtils.writeUTF8String(buf, shopIdentifier);
+            if (shopIdentifier != null) {
+                buf.writeBoolean(true);
+                ByteBufUtils.writeUTF8String(buf, shopIdentifier);
+            } else {
+                buf.writeBoolean(false);
+            }
         case TAB_CHANGED:
             buf.writeInt(tabIndex);
             break;
@@ -65,7 +70,9 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
         case EDIT_MODE_OFF:
             break;
         case SHOP_CHANGE:
-            shopIdentifier = ByteBufUtils.readUTF8String(buf);
+            if (buf.readBoolean()) {
+                shopIdentifier = ByteBufUtils.readUTF8String(buf);
+            }
             break;
         case TAB_CHANGED:
             tabIndex = buf.readInt();

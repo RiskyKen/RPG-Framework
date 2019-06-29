@@ -40,6 +40,8 @@ public class TileEntityShop extends ModAutoSyncTileEntity {
         super.readFromNBT(compound);
         if (compound.hasKey(TAG_SHOP, NBT.TAG_STRING)) {
             shopIdentifier = compound.getString(TAG_SHOP);
+        } else {
+            shopIdentifier = null;
         }
     }
 
