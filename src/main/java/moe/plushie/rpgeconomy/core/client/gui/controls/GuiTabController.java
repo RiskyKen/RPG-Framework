@@ -1,13 +1,13 @@
 package moe.plushie.rpgeconomy.core.client.gui.controls;
 
+import java.awt.Point;
 import java.util.ArrayList;
-
-import org.lwjgl.opengl.GL11;
 
 import moe.plushie.rpgeconomy.core.client.gui.GuiHelper;
 import moe.plushie.rpgeconomy.core.client.lib.LibGuiResources;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
 import net.minecraftforge.fml.relauncher.Side;
@@ -99,6 +99,47 @@ public class GuiTabController extends GuiButtonExt {
         return null;
     }
     
+    private int getYOffSet() {
+        if (!fullscreen) {
+            return 5;
+        } else {
+            return (int) ((float)height / 2F - ((float)tabs.size() * tabSpacing) / 2F);
+        }
+    }
+    
+    public Point getTabPos(int index) {
+        int yOffset = getYOffSet();
+        int xOffset = -4;
+        int count = 0;
+        for (int i = 0; i < tabs.size(); i++) {
+            GuiTab tab = tabs.get(i);
+            if (tab.visible) {
+                if (i == index) {
+                    return new Point(this.x + xOffset, this.y + count * tabSpacing + yOffset);
+                }
+                count++;
+            }
+            if (count > 4) {
+                count = 0;
+                xOffset = width - tabSpacing - 4;
+            }
+        }
+        return null;
+    }
+    
+    public boolean isTabLeft(int index) {
+        int count = 0;
+        for (int i = 0; i < tabs.size(); i++) {
+            if (tabs.get(i).visible) {
+                if (i == index) {
+                    return count < 5;
+                }
+                count++;
+            }
+        }
+        return true;
+    }
+    
     public GuiTab getActiveTab() {
         if (activeTab >= 0 & activeTab < tabs.size()) {
             return tabs.get(activeTab);
@@ -108,43 +149,29 @@ public class GuiTabController extends GuiButtonExt {
     
     @Override
     public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
-        int yOffset = (int) ((float)height / 2F - ((float)tabs.size() * tabSpacing) / 2F);
-        if (!fullscreen) {
-            yOffset = 5;
-        }
-        int count = 0;
         for (int i = 0; i < tabs.size(); i++) {
-            GuiTab tab = tabs.get(i);
-            if (tab.visible) {
-                if (tab.isMouseOver(this.x - 4, this.y + count * tabSpacing  + yOffset, mouseX, mouseY)) {
-                    if (tab.mousePress(this.x - 4, this.y + count * tabSpacing  + yOffset, mouseX, mouseY)) {
+            Point point = getTabPos(i);
+            if (point != null) {
+                if (tabs.get(i).isMouseOver(point.x, point.y, mouseX, mouseY)) {
+                    if (tabs.get(i).mousePress(point.x, point.y, mouseX, mouseY)) {
                         activeTab = i;
                     }
                     return true;
                 }
-                count++;
             }
         }
+        
         return false;
     }
     
     @Override
     public void drawButton(Minecraft mc, int mouseX, int mouseY, float partial) {
-        mc.renderEngine.bindTexture(TEXTURE);
-        GL11.glColor4f(1, 1, 1, 1);
-        int yOffset = (int) ((float)height / 2F - ((float)tabs.size() * tabSpacing) / 2F);
-        
-        if (!fullscreen) {
-            yOffset = 5;
-        }
-        
-        int count = 0;
+        GlStateManager.color(1F, 1F, 1F, 1F);
         for (int i = 0; i < tabs.size(); i++) {
-            GuiTab tab = tabs.get(i);
-            if (tab.visible) {
+            Point point = getTabPos(i);
+            if (point != null) {
                 mc.renderEngine.bindTexture(TEXTURE);
-                tab.render(i, this.x - 4, this.y + count * tabSpacing + yOffset, mouseX, mouseY, activeTab == i, ICONS);
-                count++;
+                tabs.get(i).render(i, point.x, point.y, mouseX, mouseY, activeTab == i, ICONS, isTabLeft(i));
             }
         }
     }
@@ -158,21 +185,14 @@ public class GuiTabController extends GuiButtonExt {
     }
     
     public void drawHoverText(Minecraft mc, int mouseX, int mouseY) {
-        int yOffset = (int) ((float)height / 2F - ((float)tabs.size() * tabSpacing) / 2F);
-        
-        if (!fullscreen) {
-            yOffset = 5;
-        }
-        
         GuiTab hoverTab = null;
-        int count = 0;
+        GlStateManager.color(1F, 1F, 1F, 1F);
         for (int i = 0; i < tabs.size(); i++) {
-            GuiTab tab = tabs.get(i);
-            if (tab.visible) {
-                if (tab.isMouseOver(this.x - 4, this.y + count * tabSpacing + yOffset, mouseX, mouseY)) {
-                    hoverTab = tab;
+            Point point = getTabPos(i);
+            if (point != null) {
+                if (tabs.get(i).isMouseOver(point.x, point.y, mouseX, mouseY)) {
+                    hoverTab = tabs.get(i);
                 }
-                count++;
             }
         }
         

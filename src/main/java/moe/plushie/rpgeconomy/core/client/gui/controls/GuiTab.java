@@ -40,7 +40,7 @@ public class GuiTab extends Gui {
         return name;
     }
     
-    public void render(int index, int x, int y, int mouseX, int mouseY, boolean activeTab, ResourceLocation tabIcons) {
+    public void render(int index, int x, int y, int mouseX, int mouseY, boolean activeTab, ResourceLocation tabIcons, boolean left) {
         int textureOffsetX = 0;
         int textureOffsetY = tabTextureHeight;
         if (isMouseOver(x, y, mouseX, mouseY)) {
@@ -52,10 +52,35 @@ public class GuiTab extends Gui {
         if (activeTab) {
             textureOffsetY = 0;
         }
+        if (!left) {
+            textureOffsetX += tabTextureWidth * 2;
+        }
         drawTexturedModalRect(x, y, textureOffsetX, textureOffsetY, tabTextureWidth, tabTextureHeight);
+        
+        if (parent.isEditMode() & left) {
+            // Up
+            drawTexturedModalRect(x - 2, y + 3, 0, 248, 8, 8);
+            // Delete
+            drawTexturedModalRect(x - 2, y + 11, 16, 240, 8, 8);
+            // Down
+            drawTexturedModalRect(x - 2, y + 19, 0, 240, 8, 8);
+        }
+        if (parent.isEditMode() & !left) {
+            // Up
+            drawTexturedModalRect(x + 19, y + 3, 0, 248, 8, 8);
+            // Delete
+            drawTexturedModalRect(x + 19, y + 11, 16, 240, 8, 8);
+            // Down
+            drawTexturedModalRect(x + 19, y + 19, 0, 240, 8, 8);
+        }
+        
         Minecraft.getMinecraft().renderEngine.bindTexture(tabIcons);
         renderIcon(x, y, mouseX, mouseY);
+        
+        
     }
+    
+    // TODO Add render overlay option
     
     public GuiTab setEnabled(boolean enabled) {
         this.enabled = enabled;
