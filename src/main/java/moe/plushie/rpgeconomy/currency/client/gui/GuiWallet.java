@@ -10,6 +10,7 @@ import moe.plushie.rpgeconomy.core.client.gui.json.GuiJsonInfo;
 import moe.plushie.rpgeconomy.core.client.lib.LibGuiResources;
 import moe.plushie.rpgeconomy.core.common.config.ConfigHandler;
 import moe.plushie.rpgeconomy.core.common.init.ModItems;
+import moe.plushie.rpgeconomy.core.common.init.ModSounds;
 import moe.plushie.rpgeconomy.core.common.inventory.slot.SlotCurrency;
 import moe.plushie.rpgeconomy.core.common.lib.LibModInfo;
 import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
@@ -38,6 +39,7 @@ public class GuiWallet extends GuiContainer {
     private static final int TEXTURE_SIZE_Y = 97;
 
     private final GuiJsonInfo guiJson;
+    private final EntityPlayer player;
     private final ItemStack walletStack;
     private final Currency currency;
     private final IWallet wallet;
@@ -45,9 +47,17 @@ public class GuiWallet extends GuiContainer {
     public GuiWallet(EntityPlayer entityPlayer, Currency currency) {
         super(new ContainerWallet(entityPlayer, currency));
         this.guiJson = GuiResourceManager.getGuiJsonInfo(GUI_JSON);
-        this.walletStack = entityPlayer.getHeldItemMainhand();
+        this.player = entityPlayer;
+        this.walletStack = player.getHeldItemMainhand();
         this.currency = currency;
-        this.wallet = CurrencyCapability.get(entityPlayer).getWallet(currency);
+        this.wallet = CurrencyCapability.get(player).getWallet(currency);
+        player.playSound(ModSounds.WALLET_OPEN, 0.2F, 0.5F + (player.getRNG().nextFloat() * 1F));
+    }
+    
+    @Override
+    public void onGuiClosed() {
+        player.playSound(ModSounds.WALLET_CLOSE, 0.2F, 0.5F + (player.getRNG().nextFloat() * 1F));
+        super.onGuiClosed();
     }
 
     @Override
@@ -61,7 +71,7 @@ public class GuiWallet extends GuiContainer {
         buttonList.clear();
         int slotSpacing = 1;
         int slotSize = 18;
-
+        
         int halfSizeX = (int) ((float) xSize / 2F);
         int slotCount = currency.getCurrencyVariants().length;
         int slotTotalWidth = (slotSize + slotSpacing) * slotCount - 1;
@@ -73,17 +83,20 @@ public class GuiWallet extends GuiContainer {
             buttonList.add(new GuiIconButton(this, i, getGuiLeft() + startX + (slotSize + slotSpacing) * i, getGuiTop() + 33, 18, 18, TEXTURE)
                     .setIconLocation(0, 220, 18, 18)
                     .setHoverText("+" + String.valueOf(variant.getValue()))
-                    .setDrawButtonBackground(false));
+                    .setDrawButtonBackground(false)
+                    .setPlayPressSound(false));
             buttonList.add(new GuiIconButton(this, i + slotCount, getGuiLeft() + startX + (slotSize + slotSpacing) * i, getGuiTop() + 73, 18, 18, TEXTURE)
                     .setIconLocation(0, 238, 18, 18)
                     .setHoverText("-" + String.valueOf(variant.getValue()))
-                    .setDrawButtonBackground(false));
+                    .setDrawButtonBackground(false)
+                    .setPlayPressSound(false));
         }
         
         buttonList.add(new GuiIconButton(this, -1, getGuiLeft() + startX - slotSize - slotSpacing * 2, getGuiTop() + 33, 18, 18, TEXTURE)
                 .setIconLocation(0, 202, 18, 18)
                 .setHoverText("+*")
-                .setDrawButtonBackground(false));
+                .setDrawButtonBackground(false)
+                .setPlayPressSound(false));
     }
 
     @Override

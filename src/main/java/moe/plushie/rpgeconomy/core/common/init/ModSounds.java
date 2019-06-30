@@ -14,7 +14,10 @@ public class ModSounds {
 
     public static final ArrayList<SoundEvent> SOUND_LIST = new ArrayList<SoundEvent>();
     
-    //public static final SoundEvent COIN = createSoundEvent("coin");
+    public static final SoundEvent COIN_DEPOSIT = createSoundEvent("coin_deposit");
+    public static final SoundEvent COIN_WITHDRAW = createSoundEvent("coin_withdraw");
+    public static final SoundEvent WALLET_CLOSE = createSoundEvent("wallet_close");
+    public static final SoundEvent WALLET_OPEN = createSoundEvent("wallet_open");
     
     public ModSounds() {
         MinecraftForge.EVENT_BUS.register(this);

@@ -3,6 +3,7 @@ package moe.plushie.rpgeconomy.currency.common.inventory;
 import moe.plushie.rpgeconomy.api.currency.ICurrencyCapability;
 import moe.plushie.rpgeconomy.api.currency.IWallet;
 import moe.plushie.rpgeconomy.core.common.config.ConfigHandler;
+import moe.plushie.rpgeconomy.core.common.init.ModSounds;
 import moe.plushie.rpgeconomy.core.common.inventory.ModContainer;
 import moe.plushie.rpgeconomy.core.common.inventory.ModInventory;
 import moe.plushie.rpgeconomy.core.common.inventory.slot.SlotCurrency;
@@ -13,6 +14,7 @@ import moe.plushie.rpgeconomy.currency.common.CurrencyWalletHelper;
 import moe.plushie.rpgeconomy.currency.common.capability.CurrencyCapability;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.SoundCategory;
 
 public class ContainerWallet extends ModContainer implements IButtonPress {
 
@@ -56,6 +58,7 @@ public class ContainerWallet extends ModContainer implements IButtonPress {
         boolean withdraw = false;
         if (buttonID < 0) {
             int amount = CurrencyWalletHelper.consumeAllFromInventory(currency, player.inventory);
+            player.getEntityWorld().playSound((EntityPlayer)null, player.posX, player.posY, player.posZ, ModSounds.COIN_DEPOSIT, SoundCategory.PLAYERS, 0.5F, 0.8F + (player.getRNG().nextFloat() * 0.4F));
             wallet.addAmount(amount);
             currencyCap.syncToOwner((EntityPlayerMP) player);
             return;
@@ -69,12 +72,14 @@ public class ContainerWallet extends ModContainer implements IButtonPress {
             if (wallet.getAmount() >= variant.getValue()) {
                 if (player.addItemStackToInventory(variant.getItem().getItemStack().copy())) {
                     wallet.setAmount(wallet.getAmount() - variant.getValue());
+                    player.getEntityWorld().playSound((EntityPlayer)null, player.posX, player.posY, player.posZ, ModSounds.COIN_WITHDRAW, SoundCategory.PLAYERS, 0.3F, 0.8F + (player.getRNG().nextFloat() * 0.4F));
                     currencyCap.syncToOwner((EntityPlayerMP) player);
                 }
             }
         } else {
             if (CurrencyWalletHelper.consumeAmountFromInventory(currency, player.inventory, variant.getValue(), true)) {
                 CurrencyWalletHelper.consumeAmountFromInventory(currency, player.inventory, variant.getValue(), false);
+                player.getEntityWorld().playSound((EntityPlayer)null, player.posX, player.posY, player.posZ, ModSounds.COIN_DEPOSIT, SoundCategory.PLAYERS, 0.3F, 0.8F + (player.getRNG().nextFloat() * 0.4F));
                 wallet.setAmount(wallet.getAmount() + variant.getValue());
                 currencyCap.syncToOwner((EntityPlayerMP) player);
             }

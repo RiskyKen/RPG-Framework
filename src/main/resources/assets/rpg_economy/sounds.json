@@ -1,0 +1,38 @@
+{
+  "coin_deposit": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "rpg_economy:wallet/coin_deposit",
+        "stream": false
+      }
+    ]
+  },
+  "coin_withdraw": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "rpg_economy:wallet/coin_withdraw",
+        "stream": false
+      }
+    ]
+  },
+  "wallet_close": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "rpg_economy:wallet/wallet_close",
+        "stream": false
+      }
+    ]
+  },
+  "wallet_open": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "rpg_economy:wallet/wallet_open",
+        "stream": false
+      }
+    ]
+  }
+}

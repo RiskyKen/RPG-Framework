@@ -6,6 +6,7 @@ import org.lwjgl.opengl.GL11;
 
 import moe.plushie.rpgeconomy.core.client.gui.GuiHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
@@ -27,6 +28,7 @@ public class GuiIconButton extends GuiButtonExt {
     private boolean isPressed;
     private boolean horizontal = true;
     private boolean drawButtonBackground = true;
+    private boolean playSound = true;
     
     public GuiIconButton(GuiScreen parent, int id, int xPos, int yPos, int width, int height, ResourceLocation iconTexture) {
         super(id, xPos, yPos, width, height, "");
@@ -50,6 +52,11 @@ public class GuiIconButton extends GuiButtonExt {
     
     public GuiIconButton setHorizontal(boolean value) {
         this.horizontal = value;
+        return this;
+    }
+    
+    public GuiIconButton setPlayPressSound(boolean value) {
+        this.playSound = value;
         return this;
     }
     
@@ -120,6 +127,13 @@ public class GuiIconButton extends GuiButtonExt {
                 textList.add(hoverText);
                 GuiHelper.drawHoveringText(textList, mouseX, mouseY, mc.fontRenderer, parent.width, parent.height, zLevel);
             }
+        }
+    }
+    
+    @Override
+    public void playPressSound(SoundHandler soundHandlerIn) {
+        if (playSound) {
+            super.playPressSound(soundHandlerIn);
         }
     }
 }
