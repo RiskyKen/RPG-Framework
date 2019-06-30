@@ -149,8 +149,9 @@ public class ContainerShop extends ModTileContainer<TileEntityShop> {
     public void changeTab(int index) {
         if (shop != null) {
             activeTabIndex = MathHelper.clamp(index, 0, shop.getTabCount() - 1);
+        } else {
+            activeTabIndex = -1;
         }
-        activeTabIndex = -1;
         setSlotForTab();
     }
 
