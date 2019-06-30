@@ -65,6 +65,8 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
     private GuiIconButton buttonEditTabUp;
     private GuiIconButton buttonEditTabDown;
 
+    private GuiIconButton[] buttonCostEdit;
+
     private boolean editMode = false;
 
     public GuiShop(EntityPlayer entityPlayer, TileEntityShop tileEntity) {
@@ -99,6 +101,12 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
         buttonEditTabUp = new GuiIconButton(this, 0, getGuiLeft() + getXSize() - 16, getGuiTop() + 147 + 17 * 3, 16, 16, TEXTURE);
         buttonEditTabDown = new GuiIconButton(this, 0, getGuiLeft() + getXSize() - 16, getGuiTop() + 147 + 17 * 4, 16, 16, TEXTURE);
 
+        buttonCostEdit = new GuiIconButton[8];
+        for (int i = 0; i < 4; i++) {
+            buttonCostEdit[i] = new GuiIconButton(this, 0, getGuiLeft() + 144, getGuiTop() + 20 + i * 31, 13, 9, TEXTURE);
+            buttonCostEdit[i + 4] = new GuiIconButton(this, 0, getGuiLeft() + 280, getGuiTop() + 20 + i * 31, 13, 9, TEXTURE);
+        }
+
         buttonShopList.setDrawButtonBackground(false).setIconLocation(208, 240, 16, 16);
         buttonStats.setDrawButtonBackground(false).setIconLocation(208, 224, 16, 16);
         buttonEditMode.setDrawButtonBackground(false).setIconLocation(208, 208, 16, 16);
@@ -111,12 +119,16 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
         buttonEditTabUp.setDrawButtonBackground(false).setIconLocation(208, 128, 16, 16);
         buttonEditTabDown.setDrawButtonBackground(false).setIconLocation(208, 112, 16, 16);
 
+        for (int i = 0; i < buttonCostEdit.length; i++) {
+            buttonCostEdit[i].setDrawButtonBackground(false).setIconLocation(101, 91, 13, 9).setHoverText("Edit Cost");
+        }
+
         buttonShopList.setHoverText("Shop List...");
         buttonStats.setHoverText("Stats...");
         buttonEditMode.setHoverText("Edit Mode").setDisableText(ChatFormatting.RED + "Shop must be LINKED to use this option.");
         buttonRename.setHoverText("Rename Shop...").setDisableText(ChatFormatting.RED + "Shop must be in EDIT MODE to use this option.");
         buttonSave.setHoverText("Save Shop").setDisableText(ChatFormatting.RED + "Shop must be in EDIT MODE to use this option.");
-        
+
         buttonEditTabAdd.setHoverText("Add Tab");
         buttonEditTabRemove.setHoverText("Remove Tab");
         buttonEditTabEdit.setHoverText("Edit Tab");
@@ -137,6 +149,10 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
             buttonList.add(buttonEditTabEdit);
             buttonList.add(buttonEditTabUp);
             buttonList.add(buttonEditTabDown);
+
+            for (int i = 0; i < buttonCostEdit.length; i++) {
+                buttonList.add(buttonCostEdit[i]);
+            }
         }
     }
 
@@ -151,6 +167,12 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
         buttonEditTabEdit.enabled = editMode;
         buttonEditTabUp.enabled = editMode;
         buttonEditTabDown.enabled = editMode;
+
+        for (int i = 0; i < buttonCostEdit.length; i++) {
+            buttonCostEdit[i].visible = editMode;
+            Slot slot = inventorySlots.inventorySlots.get(i);
+            buttonCostEdit[i].enabled = slot.getHasStack();
+        }
 
         if (isShopLinked()) {
             buttonStats.setHoverText("Stats").setDisableText(ChatFormatting.RED + "Coming soon. \u2122");
@@ -217,6 +239,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+        updateEditButtons();
         String title = "Loading...";
         int titleColour = 0x333333;
         if (shop != null) {
@@ -271,6 +294,9 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
 
     private void renderItemDetails(int index) {
         Slot slot = inventorySlots.inventorySlots.get(index);
+        if (!slot.getHasStack()) {
+            return;
+        }
         if (shop != null && activeTabIndex != -1) {
             if (shop.getTabCount() > activeTabIndex && index < shop.getTabs().get(activeTabIndex).getItemCount()) {
                 fontRenderer.drawString("Stock: \u221E", slot.xPos + 23, slot.yPos - 4, 0x888888, false);
@@ -415,6 +441,14 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
             PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.TAB_MOVE_DOWN));
             setActiveTab(getActiveTab() + 1);
             tabController.setActiveTabIndex(activeTabIndex);
+        }
+        for (int i = 0; i < buttonCostEdit.length; i++) {
+            if (activeTabIndex == -1) {
+                return;
+            }
+            if (button == buttonCostEdit[i]) {
+                openDialog(new GuiShopDialogEditCost(this, "editCost", this, 310, 230, i, shop.getTabs().get(activeTabIndex).getItems().get(i).getCost()));
+            }
         }
     }
 
