@@ -2,6 +2,7 @@ package moe.plushie.rpgeconomy.shop.client.gui;
 
 import moe.plushie.rpgeconomy.api.shop.IShop.IShopTab;
 import moe.plushie.rpgeconomy.core.client.gui.AbstractGuiDialog;
+import moe.plushie.rpgeconomy.core.client.gui.IDialogCallback;
 import moe.plushie.rpgeconomy.core.client.lib.LibGuiResources;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -11,19 +12,19 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
 
 public class GuiShopDialogTabRemove extends AbstractGuiDialog {
-    
+
     private final static ResourceLocation ICONS = new ResourceLocation(LibGuiResources.ICONS);
-    
+
     private final IShopTab shopTab;
-    
+
     private GuiButtonExt buttonCancel;
     private GuiButtonExt buttonOK;
-    
+
     public GuiShopDialogTabRemove(GuiScreen parent, String name, IDialogCallback callback, int width, int height, IShopTab shopTab) {
         super(parent, name, callback, width, height);
         this.shopTab = shopTab;
     }
-    
+
     @Override
     public void initGui() {
         super.initGui();
@@ -45,7 +46,7 @@ public class GuiShopDialogTabRemove extends AbstractGuiDialog {
             returnDialogResult(DialogResult.OK);
         }
     }
-    
+
     @Override
     public void drawForeground(int mouseX, int mouseY, float partialTickTime) {
         super.drawForeground(mouseX, mouseY, partialTickTime);
@@ -53,12 +54,12 @@ public class GuiShopDialogTabRemove extends AbstractGuiDialog {
         int titleWidth = fontRenderer.getStringWidth(title);
         fontRenderer.drawString(title, x + width / 2 - titleWidth / 2, y + 6, 4210752);
         // drawTitle();
-        
+
         GlStateManager.color(1F, 1F, 1F, 1F);
         mc.renderEngine.bindTexture(ICONS);
         int iconY = MathHelper.floor(shopTab.getIconIndex() / 16);
         int iconX = shopTab.getIconIndex() - (y * 16);
-        
+
         String iconText = shopTab.getName();
         int textWidth = fontRenderer.getStringWidth(iconText);
         drawTexturedModalRect(x + width / 2 - 8, y + 35, 16 * iconX, 16 * iconY, 16, 16);

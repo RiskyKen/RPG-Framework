@@ -2,6 +2,7 @@ package moe.plushie.rpgeconomy.shop.client.gui;
 
 import moe.plushie.rpgeconomy.api.shop.IShop.IShopTab;
 import moe.plushie.rpgeconomy.core.client.gui.AbstractGuiDialog;
+import moe.plushie.rpgeconomy.core.client.gui.IDialogCallback;
 import moe.plushie.rpgeconomy.core.client.lib.LibGuiResources;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;

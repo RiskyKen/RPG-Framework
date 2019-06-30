@@ -1,6 +1,7 @@
 package moe.plushie.rpgeconomy.shop.client.gui;
 
 import moe.plushie.rpgeconomy.core.client.gui.AbstractGuiDialog;
+import moe.plushie.rpgeconomy.core.client.gui.IDialogCallback;
 import net.minecraft.client.gui.GuiScreen;
 
 public class GuiShopDialogEditCost extends AbstractGuiDialog {

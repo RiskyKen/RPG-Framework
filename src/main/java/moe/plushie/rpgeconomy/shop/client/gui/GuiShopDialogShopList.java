@@ -1,6 +1,7 @@
 package moe.plushie.rpgeconomy.shop.client.gui;
 
 import moe.plushie.rpgeconomy.core.client.gui.AbstractGuiDialog;
+import moe.plushie.rpgeconomy.core.client.gui.IDialogCallback;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiList;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiList.IGuiListItem;
 import moe.plushie.rpgeconomy.core.common.network.PacketHandler;

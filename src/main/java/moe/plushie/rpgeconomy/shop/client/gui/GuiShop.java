@@ -13,9 +13,8 @@ import moe.plushie.rpgeconomy.api.currency.IWallet;
 import moe.plushie.rpgeconomy.api.shop.IShop;
 import moe.plushie.rpgeconomy.api.shop.IShop.IShopTab;
 import moe.plushie.rpgeconomy.core.client.gui.AbstractGuiDialog;
-import moe.plushie.rpgeconomy.core.client.gui.AbstractGuiDialog.DialogResult;
-import moe.plushie.rpgeconomy.core.client.gui.AbstractGuiDialog.IDialogCallback;
 import moe.plushie.rpgeconomy.core.client.gui.GuiHelper;
+import moe.plushie.rpgeconomy.core.client.gui.IDialogCallback;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiIconButton;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTab;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTabbed;
@@ -381,7 +380,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
             setEditMode(!editMode);
         }
         if (button == buttonShopList) {
-            openDialog(new GuiShopDialogShopList(this, "shopList", this, 300, 200));
+            openDialog(new GuiShopDialogShopList(this, "shopList", this, 310, 230));
         }
         if (button == buttonSave) {
             PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.SHOP_SAVE));
@@ -469,7 +468,11 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
 
     @Override
     protected void setActiveTab(int value) {
-        activeTabIndex = MathHelper.clamp(value, -1, tabController.getTabCount() - 1);
+        if (tabController.getTabCount() > 0) {
+            activeTabIndex = MathHelper.clamp(value, 0, tabController.getTabCount() - 1);
+        } else {
+            activeTabIndex = -1;
+        }
         PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.TAB_CHANGED).setTabIndex(value));
     }
 
