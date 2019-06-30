@@ -204,15 +204,4 @@ public class GuiTabController extends GuiButtonExt {
             GuiHelper.drawHoveringText(textList, mouseX, mouseY, mc.fontRenderer, parent.width, parent.height, zLevel);
         }
     }
-    
-    public static interface ITabEditCallback {
-        
-        public void tabAdded();
-        
-        public void tabRemoved(int index);
-        
-        public void tabMovedBack(int index);
-        
-        public void tabMovedForward(int index);
-    }
 }

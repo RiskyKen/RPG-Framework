@@ -86,7 +86,7 @@ public class BlockShop extends AbstractModBlockContainer {
             if (tileEntity != null && tileEntity instanceof TileEntityShop) {
                 shop = ((TileEntityShop)tileEntity).getShop();
             }
-            PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerShop(shop), (EntityPlayerMP) playerIn);
+            PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerShop(shop, false), (EntityPlayerMP) playerIn);
         }
         return true;
     }

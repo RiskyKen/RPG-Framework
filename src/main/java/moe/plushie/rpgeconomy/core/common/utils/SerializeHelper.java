@@ -2,7 +2,9 @@ package moe.plushie.rpgeconomy.core.common.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 import org.apache.commons.io.IOUtils;
@@ -39,7 +41,7 @@ public final class SerializeHelper {
         }
         return text;
     }
-    
+
     public static JsonElement readJsonFile(File file) {
         return readJsonFile(file, Charsets.UTF_8);
     }
@@ -47,7 +49,29 @@ public final class SerializeHelper {
     public static JsonElement readJsonFile(File file, Charset encoding) {
         return stringToJson(readFile(file, encoding));
     }
-    
+
+    public static void writeFile(File file, Charset encoding, String text) {
+        OutputStream outputStream = null;
+        try {
+            outputStream = new FileOutputStream(file, false);
+            byte[] data = text.getBytes(encoding);
+            outputStream.write(data);
+            outputStream.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            IOUtils.closeQuietly(outputStream);
+        }
+    }
+
+    public static void writeJsonFile(File file, Charset encoding, JsonElement json) {
+        writeFile(file, encoding, json.toString());
+    }
+
+    public static void writeJsonFile(JsonElement json, File file) {
+        writeFile(file, Charsets.UTF_8, json.toString());
+    }
+
     public static JsonElement stringToJson(String jsonString) {
         try {
             JsonParser parser = new JsonParser();
@@ -58,10 +82,10 @@ public final class SerializeHelper {
             return null;
         }
     }
-    
+
     public static JsonObject writeItemToJson(ItemStack itemStack) {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("id", Item.getIdFromItem(itemStack.getItem()));
+        jsonObject.addProperty("id", itemStack.getItem().getRegistryName().toString());
         jsonObject.addProperty("count", itemStack.getCount());
         jsonObject.addProperty("damage", itemStack.getItemDamage());
         if (itemStack.getItem().isDamageable() || itemStack.getItem().getShareTag()) {
@@ -71,11 +95,11 @@ public final class SerializeHelper {
         }
         return jsonObject;
     }
-    
+
     public static ItemStack readItemFromJson(JsonElement jsonElement) throws NBTException {
         return readItemFromJson(jsonElement.getAsJsonObject());
     }
-    
+
     public static ItemStack readItemFromJson(JsonObject jsonObject) throws NBTException {
         if (!jsonObject.has("id")) {
             return ItemStack.EMPTY;

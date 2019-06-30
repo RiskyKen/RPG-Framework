@@ -1,5 +1,6 @@
 package moe.plushie.rpgeconomy.api.shop;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import moe.plushie.rpgeconomy.api.currency.ICost;
@@ -11,7 +12,7 @@ public interface IShop {
 	
 	public String getName();
 
-	public IShopTab[] getTabs();
+	public ArrayList<IShopTab> getTabs();
 	
 	public int getTabCount();
 
@@ -21,9 +22,9 @@ public interface IShop {
 
 		public int getIconIndex();
 
-		public IShopItem[] getPageItems(int pageIndex);
+		public ArrayList<IShopItem> getPageItems(int pageIndex);
 		
-		public IShopItem[] getItems();
+		public ArrayList<IShopItem> getItems();
 		
 		public int getItemCount();
 

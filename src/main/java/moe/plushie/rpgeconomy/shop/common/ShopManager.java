@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.HashMap;
 
+import com.google.common.base.Charsets;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 
 import moe.plushie.rpgeconomy.api.shop.IShop;
@@ -55,6 +58,13 @@ public class ShopManager implements IShopManager {
             	shopMap.put(shop.getIdentifier(), shop);
             }
         }
+    }
+    
+    public void saveShop(IShop shop) {
+        RpgEconomy.getLogger().info("Saving shop: " + shop.getIdentifier());
+        JsonElement jsonData = ShopSerializer.serializeJson(shop);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        SerializeHelper.writeFile(new File(currencyDirectory, shop.getIdentifier()), Charsets.UTF_8, gson.toJson(jsonData));
     }
     
 	@Override

@@ -7,124 +7,134 @@ import org.apache.commons.lang3.NotImplementedException;
 
 import moe.plushie.rpgeconomy.api.currency.ICost;
 import moe.plushie.rpgeconomy.api.shop.IShop;
+import moe.plushie.rpgeconomy.currency.common.Cost;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 
 public class Shop implements IShop {
 
-	public static final int ITEMS_PER_PAGE = 8;
+    public static final int ITEMS_PER_PAGE = 8;
 
-	private final String identifier;
-	private final String name;
-	private final ArrayList<IShopTab> shopTabs;
+    private final String identifier;
+    private final String name;
+    private final ArrayList<IShopTab> shopTabs;
 
-	public Shop(String identifier, String name, ArrayList<IShopTab> shopTabs) {
-		this.identifier = identifier;
-		this.name = name;
-		this.shopTabs = shopTabs;
-	}
+    public Shop(String identifier, String name, ArrayList<IShopTab> shopTabs) {
+        this.identifier = identifier;
+        this.name = name;
+        this.shopTabs = shopTabs;
+    }
 
-	@Override
-	public String getIdentifier() {
-		return identifier;
-	}
+    @Override
+    public String getIdentifier() {
+        return identifier;
+    }
 
-	@Override
-	public String getName() {
-		return name;
-	}
+    @Override
+    public String getName() {
+        return name;
+    }
 
-	@Override
-	public IShopTab[] getTabs() {
-		return shopTabs.toArray(new IShopTab[shopTabs.size()]);
-	}
+    @Override
+    public ArrayList<IShopTab> getTabs() {
+        return shopTabs;
+    }
 
-	@Override
-	public int getTabCount() {
-		return shopTabs.size();
-	}
+    @Override
+    public int getTabCount() {
+        return shopTabs.size();
+    }
 
-	public static class ShopTab implements IShopTab {
+    public static class ShopTab implements IShopTab {
 
-		private final String name;
-		private final int iconIndex;
-		private final ArrayList<IShopItem> shopItems;
+        private final String name;
+        private final int iconIndex;
+        private final ArrayList<IShopItem> shopItems;
 
-		public ShopTab(String name,  int iconIndex, ArrayList<IShopItem> shopItems) {
-			this.name = name;
-			this.iconIndex = iconIndex;
-			this.shopItems = shopItems;
-		}
+        public ShopTab(String name, int iconIndex) {
+            this.name = name;
+            this.iconIndex = iconIndex;
+            this.shopItems = new ArrayList<IShop.IShopItem>();
+            for (int i = 0; i < 8; i++) {
+                shopItems.add(new ShopItem(ItemStack.EMPTY, new Cost(null, null)));
+            }
+        }
 
-		@Override
-		public String getName() {
-			return name;
-		}
+        public ShopTab(String name, int iconIndex, ArrayList<IShopItem> shopItems) {
+            this.name = name;
+            this.iconIndex = iconIndex;
+            this.shopItems = shopItems;
+        }
 
-		@Override
-		public int getIconIndex() {
-			return iconIndex;
-		}
+        @Override
+        public String getName() {
+            return name;
+        }
 
-		@Override
-		public IShopItem[] getPageItems(int pageIndex) {
-			return null;
-		}
+        @Override
+        public int getIconIndex() {
+            return iconIndex;
+        }
 
-		@Override
-		public IShopItem[] getItems() {
-			return shopItems.toArray(new IShopItem[shopItems.size()]);
-		}
+        @Override
+        public ArrayList<IShopItem> getPageItems(int pageIndex) {
+            return null;
+        }
 
-		@Override
-		public int getItemCount() {
-			return shopItems.size();
-		}
+        @Override
+        public ArrayList<IShopItem> getItems() {
+            return shopItems;
+        }
 
-		@Override
-		public int getPageCount() {
-			return MathHelper.ceil((double) getItemCount() / (double) ITEMS_PER_PAGE);
-		}
-	}
+        @Override
+        public int getItemCount() {
+            return shopItems.size();
+        }
 
-	public static class ShopItem implements IShopItem {
+        @Override
+        public int getPageCount() {
+            return MathHelper.ceil((double) getItemCount() / (double) ITEMS_PER_PAGE);
+        }
+    }
 
-		private final ItemStack item;
-		private final ICost cost;
+    public static class ShopItem implements IShopItem {
 
-		public ShopItem(ItemStack item, ICost cost) {
-			this.item = item;
-			this.cost = cost;
-		}
+        private final ItemStack item;
+        private final ICost cost;
 
-		@Override
-		public ItemStack getItem() {
-			return item;
-		}
+        public ShopItem(ItemStack item, ICost cost) {
+            this.item = item;
+            this.cost = cost;
+        }
 
-		@Override
-		public ICost getCost() {
-			return cost;
-		}
+        @Override
+        public ItemStack getItem() {
+            return item;
+        }
 
-		@Override
-		public int getStock() {
-			throw new NotImplementedException("getStock() is not implemented yet.");
-		}
+        @Override
+        public ICost getCost() {
+            return cost;
+        }
 
-		@Override
-		public RestockType getRestockType() {
-			throw new NotImplementedException("getRestockType() is not implemented yet.");
-		}
+        @Override
+        public int getStock() {
+            throw new NotImplementedException("getStock() is not implemented yet.");
+        }
 
-		@Override
-		public Date getLastPurchase() {
-			throw new NotImplementedException("getLastPurchase() is not implemented yet.");
-		}
+        @Override
+        public RestockType getRestockType() {
+            throw new NotImplementedException("getRestockType() is not implemented yet.");
+        }
 
-		@Override
-		public int getTotalSold() {
-			throw new NotImplementedException("getTotalSold() is not implemented yet.");
-		}
-	}
+        @Override
+        public Date getLastPurchase() {
+            throw new NotImplementedException("getLastPurchase() is not implemented yet.");
+        }
+
+        @Override
+        public int getTotalSold() {
+            throw new NotImplementedException("getTotalSold() is not implemented yet.");
+        }
+    }
 }

@@ -19,16 +19,19 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class MessageServerShop implements IMessage, IMessageHandler<MessageServerShop, IMessage> {
 
     private IShop shop = null;
-
+    private boolean update = false;
+    
     public MessageServerShop() {
     }
 
-    public MessageServerShop(IShop shop) {
+    public MessageServerShop(IShop shop, boolean update) {
         this.shop = shop;
+        this.update = update;
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
+        buf.writeBoolean(update);
         buf.writeBoolean(shop != null);
         if (shop != null) {
             ByteBufUtils.writeUTF8String(buf, shop.getIdentifier());
@@ -39,6 +42,7 @@ public class MessageServerShop implements IMessage, IMessageHandler<MessageServe
 
     @Override
     public void fromBytes(ByteBuf buf) {
+        update = buf.readBoolean();
         if (buf.readBoolean()) {
             String identifier = ByteBufUtils.readUTF8String(buf);
             String jsonString = ByteBufUtils.readUTF8String(buf);
@@ -49,22 +53,24 @@ public class MessageServerShop implements IMessage, IMessageHandler<MessageServe
 
     @Override
     public IMessage onMessage(MessageServerShop message, MessageContext ctx) {
-        sendShopToGui(message.shop);
+        sendShopToGui(message.shop, message.update);
         return null;
     }
 
     @SideOnly(Side.CLIENT)
-    private void sendShopToGui(IShop shop) {
-        Minecraft.getMinecraft().addScheduledTask(new ShopToGui(shop));
+    private void sendShopToGui(IShop shop, boolean update) {
+        Minecraft.getMinecraft().addScheduledTask(new ShopToGui(shop, update));
     }
 
     @SideOnly(Side.CLIENT)
     public static class ShopToGui implements Runnable {
 
         private final IShop shop;
-
-        public ShopToGui(IShop shop) {
+        private final boolean update;
+        
+        public ShopToGui(IShop shop, boolean update) {
             this.shop = shop;
+            this.update = update;
         }
 
         @Override
@@ -72,7 +78,7 @@ public class MessageServerShop implements IMessage, IMessageHandler<MessageServe
             GuiScreen guiScreen = Minecraft.getMinecraft().currentScreen;
             //RpgEconomy.getLogger().info(guiScreen);
             if (guiScreen instanceof GuiShop) {
-                ((GuiShop) guiScreen).gotShopFromServer(shop);
+                ((GuiShop) guiScreen).gotShopFromServer(shop, update);
             }
         }
     }

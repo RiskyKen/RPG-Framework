@@ -18,7 +18,6 @@ import moe.plushie.rpgeconomy.core.client.gui.AbstractGuiDialog.IDialogCallback;
 import moe.plushie.rpgeconomy.core.client.gui.GuiHelper;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiIconButton;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTab;
-import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTabController.ITabEditCallback;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTabbed;
 import moe.plushie.rpgeconomy.core.client.lib.LibGuiResources;
 import moe.plushie.rpgeconomy.core.common.config.ConfigHandler;
@@ -41,7 +40,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class GuiShop extends GuiTabbed implements IDialogCallback, ITabEditCallback {
+public class GuiShop extends GuiTabbed implements IDialogCallback {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation(LibGuiResources.SHOP);
     private static final int TEXTURE_SIZE_X = 176;
@@ -59,7 +58,8 @@ public class GuiShop extends GuiTabbed implements IDialogCallback, ITabEditCallb
     private GuiIconButton buttonStats;
     private GuiIconButton buttonEditMode;
     private GuiIconButton buttonRename;
-    
+    private GuiIconButton buttonSave;
+
     private GuiIconButton buttonEditTabAdd;
     private GuiIconButton buttonEditTabRemove;
     private GuiIconButton buttonEditTabEdit;
@@ -92,35 +92,38 @@ public class GuiShop extends GuiTabbed implements IDialogCallback, ITabEditCallb
         buttonStats = new GuiIconButton(this, 0, getGuiLeft(), getGuiTop() + 147 + 17 * 1, 16, 16, TEXTURE);
         buttonEditMode = new GuiIconButton(this, 0, getGuiLeft(), getGuiTop() + 147 + 17 * 2, 16, 16, TEXTURE);
         buttonRename = new GuiIconButton(this, 0, getGuiLeft(), getGuiTop() + 147 + 17 * 3, 16, 16, TEXTURE);
-        
+        buttonSave = new GuiIconButton(this, 0, getGuiLeft(), getGuiTop() + 147 + 17 * 4, 16, 16, TEXTURE);
+
         buttonEditTabAdd = new GuiIconButton(this, 0, getGuiLeft() + getXSize() - 16, getGuiTop() + 147 + 17 * 0, 16, 16, TEXTURE);
         buttonEditTabRemove = new GuiIconButton(this, 0, getGuiLeft() + getXSize() - 16, getGuiTop() + 147 + 17 * 1, 16, 16, TEXTURE);
         buttonEditTabEdit = new GuiIconButton(this, 0, getGuiLeft() + getXSize() - 16, getGuiTop() + 147 + 17 * 2, 16, 16, TEXTURE);
         buttonEditTabUp = new GuiIconButton(this, 0, getGuiLeft() + getXSize() - 16, getGuiTop() + 147 + 17 * 3, 16, 16, TEXTURE);
         buttonEditTabDown = new GuiIconButton(this, 0, getGuiLeft() + getXSize() - 16, getGuiTop() + 147 + 17 * 4, 16, 16, TEXTURE);
 
-        buttonShopList.setDrawButtonBackground(false).setIconLocation(208, 240, 16, 16);;
+        buttonShopList.setDrawButtonBackground(false).setIconLocation(208, 240, 16, 16);
         buttonStats.setDrawButtonBackground(false).setIconLocation(208, 224, 16, 16);
         buttonEditMode.setDrawButtonBackground(false).setIconLocation(208, 208, 16, 16);
-        buttonRename.setDrawButtonBackground(false).setIconLocation(208, 192, 16, 16);;
-        
+        buttonRename.setDrawButtonBackground(false).setIconLocation(208, 192, 16, 16);
+        buttonSave.setDrawButtonBackground(false).setIconLocation(208, 96, 16, 16);
+
         buttonEditTabAdd.setDrawButtonBackground(false).setIconLocation(208, 176, 16, 16);
         buttonEditTabRemove.setDrawButtonBackground(false).setIconLocation(208, 160, 16, 16);
         buttonEditTabEdit.setDrawButtonBackground(false).setIconLocation(208, 144, 16, 16);
         buttonEditTabUp.setDrawButtonBackground(false).setIconLocation(208, 128, 16, 16);
         buttonEditTabDown.setDrawButtonBackground(false).setIconLocation(208, 112, 16, 16);
-        
+
         buttonShopList.setHoverText("Shop List...");
         buttonStats.setHoverText("Stats...");
         buttonEditMode.setHoverText("Edit Mode").setDisableText(ChatFormatting.RED + "Shop must be LINKED to use this option.");
         buttonRename.setHoverText("Rename Shop...").setDisableText(ChatFormatting.RED + "Shop must be in EDIT MODE to use this option.");
+        buttonSave.setHoverText("Save Shop").setDisableText(ChatFormatting.RED + "Shop must be in EDIT MODE to use this option.");
         
         buttonEditTabAdd.setHoverText("Add Tab");
         buttonEditTabRemove.setHoverText("Remove Tab");
         buttonEditTabEdit.setHoverText("Edit Tab");
         buttonEditTabUp.setHoverText("Move Tab Up");
         buttonEditTabDown.setHoverText("Move Tab Down");
-        
+
         updateEditButtons();
 
         if (entityPlayer.capabilities.isCreativeMode) {
@@ -128,7 +131,8 @@ public class GuiShop extends GuiTabbed implements IDialogCallback, ITabEditCallb
             buttonList.add(buttonStats);
             buttonList.add(buttonEditMode);
             buttonList.add(buttonRename);
-            
+            buttonList.add(buttonSave);
+
             buttonList.add(buttonEditTabAdd);
             buttonList.add(buttonEditTabRemove);
             buttonList.add(buttonEditTabEdit);
@@ -136,24 +140,25 @@ public class GuiShop extends GuiTabbed implements IDialogCallback, ITabEditCallb
             buttonList.add(buttonEditTabDown);
         }
     }
-    
+
     private void updateEditButtons() {
         buttonEditMode.enabled = isShopLinked();
         buttonStats.enabled = false;
         buttonRename.enabled = editMode;
-        
+        buttonSave.enabled = editMode;
+
         buttonEditTabAdd.enabled = editMode;
         buttonEditTabRemove.enabled = editMode;
         buttonEditTabEdit.enabled = editMode;
         buttonEditTabUp.enabled = editMode;
         buttonEditTabDown.enabled = editMode;
-        
+
         if (isShopLinked()) {
             buttonStats.setHoverText("Stats").setDisableText(ChatFormatting.RED + "Coming soon. \u2122");
         } else {
             buttonStats.setDisableText(ChatFormatting.RED + "Shop must be LINKED to use this option.");
         }
-        
+
         if (editMode) {
             buttonEditTabAdd.setDisableText(ChatFormatting.RED + "Tab list is full.");
             buttonEditTabRemove.setDisableText(ChatFormatting.RED + "Must have one tab to use this option.");
@@ -268,9 +273,9 @@ public class GuiShop extends GuiTabbed implements IDialogCallback, ITabEditCallb
     private void renderItemDetails(int index) {
         Slot slot = inventorySlots.inventorySlots.get(index);
         if (shop != null && activeTabIndex != -1) {
-            if (shop.getTabCount() > activeTabIndex && index < shop.getTabs()[activeTabIndex].getItemCount()) {
+            if (shop.getTabCount() > activeTabIndex && index < shop.getTabs().get(activeTabIndex).getItemCount()) {
                 fontRenderer.drawString("Stock: \u221E", slot.xPos + 23, slot.yPos - 4, 0x888888, false);
-                ICost cost = shop.getTabs()[activeTabIndex].getItems()[index].getCost();
+                ICost cost = shop.getTabs().get(activeTabIndex).getItems().get(index).getCost();
                 renderCost(slot.xPos, slot.yPos, cost);
                 // fontRenderer.drawString("Stock: " + amount, slot.xPos + 23, slot.yPos - 4, 0x888888, false);
             }
@@ -331,17 +336,17 @@ public class GuiShop extends GuiTabbed implements IDialogCallback, ITabEditCallb
             }
         }
     }
-    
+
     public boolean isShopLinked() {
         return shop != null;
     }
 
-    public void gotShopFromServer(IShop shop) {
+    public void gotShopFromServer(IShop shop, boolean update) {
         this.shop = shop;
         tabController.clearTabs();
         if (isShopLinked()) {
             for (int i = 0; i < shop.getTabCount(); i++) {
-                IShopTab shopTab = shop.getTabs()[i];
+                IShopTab shopTab = shop.getTabs().get(i);
                 int y = MathHelper.floor(shopTab.getIconIndex() / 16);
                 int x = shopTab.getIconIndex() - (y * 16);
                 tabController.addTab(new GuiTab(tabController, shopTab.getName()).setIconLocation(x * 16, y * 16).setTabTextureSize(26, 30).setPadding(0, 4, 3, 3));
@@ -349,11 +354,17 @@ public class GuiShop extends GuiTabbed implements IDialogCallback, ITabEditCallb
         } else {
             editMode = false;
         }
-        
+
+        ((ContainerShop) inventorySlots).setShop(shop);
         updateEditButtons();
-        
-        activeTabIndex = 0;
-        tabController.setActiveTabIndex(getActiveTab());
+
+        if (!update) {
+            activeTabIndex = 0;
+            tabController.setActiveTabIndex(getActiveTab());
+        } else {
+            setActiveTab(getActiveTab());
+            tabController.setActiveTabIndex(activeTabIndex);
+        }
         tabChanged();
     }
 
@@ -372,6 +383,66 @@ public class GuiShop extends GuiTabbed implements IDialogCallback, ITabEditCallb
         if (button == buttonShopList) {
             openDialog(new GuiShopDialogShopList(this, "shopList", this, 300, 200));
         }
+        if (button == buttonSave) {
+            PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.SHOP_SAVE));
+        }
+        if (button == buttonEditTabAdd) {
+            openDialog(new GuiShopDialogTabAdd(this, "tabAdd", this, 190, 100));
+        }
+        if (button == buttonEditTabRemove) {
+            if (activeTabIndex == -1) {
+                return;
+            }
+            openDialog(new GuiShopDialogTabRemove(this, "tabRemove", this, 190, 100, shop.getTabs().get(activeTabIndex)));
+        }
+        if (button == buttonEditTabEdit) {
+            if (activeTabIndex == -1) {
+                return;
+            }
+            openDialog(new GuiShopDialogTabEdit(this, "tabEdit", this, 190, 100, shop.getTabs().get(activeTabIndex)));
+        }
+        if (button == buttonEditTabUp) {
+            if (activeTabIndex == -1) {
+                return;
+            }
+            PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.TAB_MOVE_UP));
+            setActiveTab(getActiveTab() - 1);
+            tabController.setActiveTabIndex(activeTabIndex);
+        }
+        if (button == buttonEditTabDown) {
+            if (activeTabIndex == -1) {
+                return;
+            }
+            PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.TAB_MOVE_DOWN));
+            setActiveTab(getActiveTab() + 1);
+            tabController.setActiveTabIndex(activeTabIndex);
+        }
+    }
+
+    @Override
+    public void dialogResult(AbstractGuiDialog dialog, DialogResult result) {
+        if (result == DialogResult.OK) {
+            if (dialog instanceof GuiShopDialogShopList) {
+                String shopIdentifier = ((GuiShopDialogShopList) dialog).getSelectedShopIdentifier();
+                PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.SHOP_CHANGE).setShopIdentifier(shopIdentifier));
+            }
+            if (dialog instanceof GuiShopDialogTabAdd) {
+                String name = ((GuiShopDialogTabAdd) dialog).getTabName();
+                int iconIndex = ((GuiShopDialogTabAdd) dialog).getTabIconIndex();
+                PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.TAB_ADD).setTabName(name).setTabIconIndex(iconIndex));
+            }
+            if (dialog instanceof GuiShopDialogTabRemove) {
+                PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.TAB_REMOVE).setTabIndex(activeTabIndex));
+                setActiveTab(getActiveTab());
+                tabController.setActiveTabIndex(activeTabIndex);
+            }
+            if (dialog instanceof GuiShopDialogTabEdit) {
+                String name = ((GuiShopDialogTabEdit) dialog).getTabName();
+                int iconIndex = ((GuiShopDialogTabEdit) dialog).getTabIconIndex();
+                PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.TAB_EDIT).setTabName(name).setTabIconIndex(iconIndex));
+            }
+        }
+        this.dialog = null;
     }
 
     private void setEditMode(boolean editMode) {
@@ -379,8 +450,10 @@ public class GuiShop extends GuiTabbed implements IDialogCallback, ITabEditCallb
         updateEditButtons();
         if (editMode) {
             PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.EDIT_MODE_ON));
+            ((ContainerShop) inventorySlots).setEditMode(true);
         } else {
             PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.EDIT_MODE_OFF));
+            ((ContainerShop) inventorySlots).setEditMode(false);
         }
     }
 
@@ -396,7 +469,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback, ITabEditCallb
 
     @Override
     protected void setActiveTab(int value) {
-        activeTabIndex = value;
+        activeTabIndex = MathHelper.clamp(value, -1, tabController.getTabCount() - 1);
         PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.TAB_CHANGED).setTabIndex(value));
     }
 
@@ -443,40 +516,5 @@ public class GuiShop extends GuiTabbed implements IDialogCallback, ITabEditCallb
 
     protected boolean isDialogOpen() {
         return dialog != null;
-    }
-
-    @Override
-    public void dialogResult(AbstractGuiDialog dialog, DialogResult result) {
-        if (result == DialogResult.OK) {
-            if (dialog instanceof GuiShopDialogShopList) {
-                String shopIdentifier = ((GuiShopDialogShopList) dialog).getSelectedShopIdentifier();
-                PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.SHOP_CHANGE).setShopIdentifier(shopIdentifier));
-            }
-        }
-        this.dialog = null;
-    }
-
-    @Override
-    public void tabAdded() {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void tabRemoved(int index) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void tabMovedBack(int index) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void tabMovedForward(int index) {
-        // TODO Auto-generated method stub
-
     }
 }

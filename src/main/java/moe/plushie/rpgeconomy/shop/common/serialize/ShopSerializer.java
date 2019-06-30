@@ -11,6 +11,7 @@ import moe.plushie.rpgeconomy.api.shop.IShop;
 import moe.plushie.rpgeconomy.api.shop.IShop.IShopItem;
 import moe.plushie.rpgeconomy.api.shop.IShop.IShopTab;
 import moe.plushie.rpgeconomy.core.common.utils.SerializeHelper;
+import moe.plushie.rpgeconomy.currency.common.Cost;
 import moe.plushie.rpgeconomy.currency.common.serialize.CostSerializer;
 import moe.plushie.rpgeconomy.shop.common.Shop;
 import moe.plushie.rpgeconomy.shop.common.Shop.ShopItem;
@@ -92,8 +93,11 @@ public class ShopSerializer {
 		int iconIndex = jsonObject.get(PROP_TAB_ICON_INDEX).getAsInt();
 		JsonArray jsonArrayItems = jsonObject.get(PROP_TAB_ITEMS).getAsJsonArray();
 		ArrayList<IShopItem> tabItems = new ArrayList<IShopItem>();
+        for (int i = 0; i < 8; i++) {
+            tabItems.add(new ShopItem(ItemStack.EMPTY, new Cost(null, null)));
+        }
 		for (int i = 0; i < jsonArrayItems.size(); i++) {
-			tabItems.add(deserializeItem(jsonArrayItems.get(i).getAsJsonObject()));
+			tabItems.set(i, deserializeItem(jsonArrayItems.get(i).getAsJsonObject()));
 		}
 		
 		return new ShopTab(name, iconIndex, tabItems);
