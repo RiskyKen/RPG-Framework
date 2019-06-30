@@ -227,7 +227,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
             titleColour = 0xAA0000;
         }
         if (editMode) {
-            title = "EDIT MODE - " + title + " - EDIT MODE";
+            title = ChatFormatting.DARK_RED + "EDIT MODE - " + ChatFormatting.RESET + title + ChatFormatting.DARK_RED + " - EDIT MODE";
         }
         int titleWidth = fontRenderer.getStringWidth(title);
         fontRenderer.drawString(title, xSize / 2 - titleWidth / 2, 6, titleColour);
@@ -306,8 +306,8 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
                     if (used) {
                         GlStateManager.pushMatrix();
                         GlStateManager.pushAttrib();
-                        GlStateManager.translate(108 + slotX + renderCount * -17, 5 + slotY, 0);
-                        // GlStateManager.scale(0.5, 0.5, 0.5);
+                        GlStateManager.translate(22 + slotX + renderCount * 17, 5 + slotY, 0);
+                        // GlStateManager.scale(0.75, 0.75, 0.75);
                         ItemStack stack = variant.getItem().getItemStack().copy();
                         stack.setCount(1);
                         itemRender.renderItemAndEffectIntoGUI(stack, 0, 0);
@@ -324,7 +324,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
             for (int i = 0; i < itemCost.length; i++) {
                 GlStateManager.pushMatrix();
                 GlStateManager.pushAttrib();
-                GlStateManager.translate(108 + slotX + i * -17, 5 + slotY, 0);
+                GlStateManager.translate(22 + slotX + i * 17, 5 + slotY, 0);
                 // GlStateManager.scale(0.5, 0.5, 0.5);
                 ItemStack stack = itemCost[i].getItemStack();
                 // stack.setCount(1);
@@ -473,7 +473,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
         } else {
             activeTabIndex = -1;
         }
-        PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.TAB_CHANGED).setTabIndex(value));
+        PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.TAB_CHANGED).setTabIndex(activeTabIndex));
     }
 
     @Override
