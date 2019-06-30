@@ -20,13 +20,13 @@ public final class ItemMacherSerializer {
     private ItemMacherSerializer() {
     }
 
-    public static JsonObject serializeJson(IItemMatcher matcher) {
+    public static JsonObject serializeJson(IItemMatcher matcher, boolean compact) {
         JsonObject jsonObject = new JsonObject();
 
         if (matcher instanceof ItemMatcherStack) {
             ItemMatcherStack matcherStack = (ItemMatcherStack) matcher;
             JsonObject jsonStack = new JsonObject();
-            jsonStack.add(PROP_ITEM, SerializeHelper.writeItemToJson(matcher.getItemStack()));
+            jsonStack.add(PROP_ITEM, SerializeHelper.writeItemToJson(matcher.getItemStack(), compact));
             jsonStack.addProperty(PROP_MATCH_META, matcherStack.isMatchMeta());
             jsonStack.addProperty(PROP_MATCH_NBT, matcherStack.isMatchNBT());
             jsonObject.add(PROP_TYPE_STACK, jsonStack);

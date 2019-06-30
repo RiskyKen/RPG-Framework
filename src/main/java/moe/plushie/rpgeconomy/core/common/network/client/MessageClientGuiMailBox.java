@@ -24,7 +24,7 @@ public class MessageClientGuiMailBox implements IMessage, IMessageHandler<Messag
     
     @Override
     public void toBytes(ByteBuf buf) {
-        JsonElement jsonElement = MailMessageSerializer.serialize(mailMessage);
+        JsonElement jsonElement = MailMessageSerializer.serialize(mailMessage, true);
         RpgEconomy.getLogger().info("Sending json to server. " + jsonElement.toString());
         ByteBufUtils.writeUTF8String(buf, jsonElement.toString());
     }

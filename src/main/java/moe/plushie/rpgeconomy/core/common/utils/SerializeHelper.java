@@ -83,9 +83,13 @@ public final class SerializeHelper {
         }
     }
 
-    public static JsonObject writeItemToJson(ItemStack itemStack) {
+    public static JsonObject writeItemToJson(ItemStack itemStack, boolean compact) {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("id", itemStack.getItem().getRegistryName().toString());
+        if (compact) {
+            jsonObject.addProperty("id", Item.getIdFromItem(itemStack.getItem()));
+        } else {
+            jsonObject.addProperty("id", itemStack.getItem().getRegistryName().toString());
+        }
         jsonObject.addProperty("count", itemStack.getCount());
         jsonObject.addProperty("damage", itemStack.getItemDamage());
         if (itemStack.getItem().isDamageable() || itemStack.getItem().getShareTag()) {

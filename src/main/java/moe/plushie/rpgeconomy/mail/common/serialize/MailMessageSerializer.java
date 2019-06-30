@@ -34,7 +34,7 @@ public final class MailMessageSerializer {
     private MailMessageSerializer() {
     }
     
-    public static JsonElement serialize(MailMessage mailMessage) {
+    public static JsonElement serialize(MailMessage mailMessage, boolean compact) {
         if (mailMessage == null) {
             return null;
         }
@@ -50,7 +50,7 @@ public final class MailMessageSerializer {
         JsonArray jsonArray = new JsonArray();
         for (int i = 0; i < mailMessage.getAttachments().size(); i++) {
             ItemStack itemStack = mailMessage.getAttachments().get(i);
-            jsonArray.add(SerializeHelper.writeItemToJson(itemStack));
+            jsonArray.add(SerializeHelper.writeItemToJson(itemStack, compact));
         }
         jsonObject.add(PROP_ATTACHMENTS, jsonArray);
 

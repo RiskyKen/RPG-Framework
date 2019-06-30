@@ -27,7 +27,7 @@ public class MessageServerSyncCurrencies implements IMessage, IMessageHandler<Me
     public void toBytes(ByteBuf buf) {
         buf.writeInt(currencies.length);
         for (int i = 0; i < currencies.length; i++) {
-            JsonElement jsonCurrency = CurrencySerializer.serializeJson(currencies[i]);
+            JsonElement jsonCurrency = CurrencySerializer.serializeJson(currencies[i], true);
             ByteBufUtils.writeUTF8String(buf, jsonCurrency.toString());
         }
     }

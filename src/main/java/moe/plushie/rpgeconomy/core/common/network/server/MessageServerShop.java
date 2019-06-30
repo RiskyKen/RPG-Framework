@@ -35,7 +35,7 @@ public class MessageServerShop implements IMessage, IMessageHandler<MessageServe
         buf.writeBoolean(shop != null);
         if (shop != null) {
             ByteBufUtils.writeUTF8String(buf, shop.getIdentifier());
-            JsonElement jsonShop = ShopSerializer.serializeJson(shop);
+            JsonElement jsonShop = ShopSerializer.serializeJson(shop, true);
             ByteBufUtils.writeUTF8String(buf, jsonShop.toString());
         }
     }

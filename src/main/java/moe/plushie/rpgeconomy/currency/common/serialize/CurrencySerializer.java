@@ -34,7 +34,7 @@ public final class CurrencySerializer {
     private CurrencySerializer() {
     }
 
-    public static JsonElement serializeJson(Currency currency) {
+    public static JsonElement serializeJson(Currency currency, boolean compact) {
         JsonObject jsonObject = new JsonObject();
 
         jsonObject.addProperty(PROP_NAME, currency.getName());
@@ -44,17 +44,17 @@ public final class CurrencySerializer {
         JsonArray jsonVariants = new JsonArray();
         CurrencyVariant[] variants = currency.getCurrencyVariants();
         for (int i = 0; i < variants.length; i++) {
-            jsonVariants.add(serializeCurrencyVariant(variants[i]));
+            jsonVariants.add(serializeCurrencyVariant(variants[i], compact));
         }
         jsonObject.add(PROP_VARIANTS, jsonVariants);
         return jsonObject;
     }
 
-    public static JsonObject serializeCurrencyVariant(CurrencyVariant variant) {
+    public static JsonObject serializeCurrencyVariant(CurrencyVariant variant, boolean compact) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty(PROP_VAR_NAME, variant.getName());
         jsonObject.addProperty(PROP_VAR_VALUE, variant.getValue());
-        jsonObject.add(ItemMacherSerializer.PROP_ITEM_MATCHER, ItemMacherSerializer.serializeJson(variant.getItem()));
+        jsonObject.add(ItemMacherSerializer.PROP_ITEM_MATCHER, ItemMacherSerializer.serializeJson(variant.getItem(), compact));
         return jsonObject;
     }
 

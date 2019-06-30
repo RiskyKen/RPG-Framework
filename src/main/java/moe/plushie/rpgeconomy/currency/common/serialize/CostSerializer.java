@@ -19,13 +19,13 @@ public final class CostSerializer {
     private CostSerializer() {
     }
 
-    public static JsonObject serializeJson(ICost cost) {
+    public static JsonObject serializeJson(ICost cost, boolean compact) {
         JsonObject jsonObject = new JsonObject();
         // Write items
         JsonArray arrayItems = new JsonArray();
         if (cost.hasItemCost()) {
             for (int i = 0; i < cost.getItemCost().length; i++) {
-                arrayItems.add(ItemMacherSerializer.serializeJson(cost.getItemCost()[i]));
+                arrayItems.add(ItemMacherSerializer.serializeJson(cost.getItemCost()[i], compact));
             }
             jsonObject.add(PROP_ITEMS, arrayItems);
         }

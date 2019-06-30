@@ -62,7 +62,7 @@ public class ShopManager implements IShopManager {
     
     public void saveShop(IShop shop) {
         RpgEconomy.getLogger().info("Saving shop: " + shop.getIdentifier());
-        JsonElement jsonData = ShopSerializer.serializeJson(shop);
+        JsonElement jsonData = ShopSerializer.serializeJson(shop, false);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         SerializeHelper.writeFile(new File(currencyDirectory, shop.getIdentifier()), Charsets.UTF_8, gson.toJson(jsonData));
     }
