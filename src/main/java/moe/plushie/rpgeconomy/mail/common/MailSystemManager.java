@@ -84,7 +84,7 @@ public class MailSystemManager implements IMailSystemManager {
         RpgEconomy.getLogger().info("Loading mail system: " + mailSystemFile.getName());
         JsonElement jsonElement = SerializeHelper.readJsonFile(mailSystemFile);
         if (jsonElement != null) {
-            MailSystem mailSystem = MailSystemSerializer.deserializeJson(jsonElement);
+            MailSystem mailSystem = MailSystemSerializer.deserializeJson(jsonElement, mailSystemFile.getName());
             if (mailSystem != null) {
                 mailSystemMap.put(mailSystem.getIdentifier(), mailSystem);
             }

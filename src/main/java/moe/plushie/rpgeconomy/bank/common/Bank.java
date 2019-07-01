@@ -72,6 +72,11 @@ public class Bank implements IBank {
     public int getTabMaxCount() {
         return tabMaxCount;
     }
+    
+    @Override
+    public int getTabUnlockableCount() {
+        return getTabMaxCount() - getTabStartingCount();
+    }
 
     @Override
     public ICost getTabUnlockCost(int index) {

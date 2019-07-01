@@ -85,18 +85,21 @@ public final class SerializeHelper {
 
     public static JsonObject writeItemToJson(ItemStack itemStack, boolean compact) {
         JsonObject jsonObject = new JsonObject();
-        if (compact) {
-            jsonObject.addProperty("id", Item.getIdFromItem(itemStack.getItem()));
-        } else {
-            jsonObject.addProperty("id", itemStack.getItem().getRegistryName().toString());
-        }
-        jsonObject.addProperty("count", itemStack.getCount());
-        jsonObject.addProperty("damage", itemStack.getItemDamage());
-        if (itemStack.getItem().isDamageable() || itemStack.getItem().getShareTag()) {
-            if (itemStack.hasTagCompound()) {
-                jsonObject.addProperty("nbt", itemStack.getTagCompound().toString());
+        if (!itemStack.isEmpty()) {
+            if (compact) {
+                jsonObject.addProperty("id", Item.getIdFromItem(itemStack.getItem()));
+            } else {
+                jsonObject.addProperty("id", itemStack.getItem().getRegistryName().toString());
+            }
+            jsonObject.addProperty("count", itemStack.getCount());
+            jsonObject.addProperty("damage", itemStack.getItemDamage());
+            if (itemStack.getItem().isDamageable() || itemStack.getItem().getShareTag()) {
+                if (itemStack.hasTagCompound()) {
+                    jsonObject.addProperty("nbt", itemStack.getTagCompound().toString());
+                }
             }
         }
+
         return jsonObject;
     }
 

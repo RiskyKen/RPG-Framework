@@ -3,6 +3,7 @@ package moe.plushie.rpgeconomy.core.common.init;
 import java.util.ArrayList;
 
 import moe.plushie.rpgeconomy.auction.common.blocks.BlockAuction;
+import moe.plushie.rpgeconomy.bank.common.blocks.BlockBank;
 import moe.plushie.rpgeconomy.core.common.blocks.ICustomItemBlock;
 import moe.plushie.rpgeconomy.mail.common.blocks.BlockMailBox;
 import moe.plushie.rpgeconomy.shop.common.blocks.BlockShop;
@@ -20,6 +21,7 @@ public final class ModBlocks {
     public static final Block MAIL_BOX = new BlockMailBox();
     public static final Block AUCTION = new BlockAuction();
     public static final Block SHOP = new BlockShop();
+    public static final Block BANK = new BlockBank();
     
     public ModBlocks() {
         MinecraftForge.EVENT_BUS.register(this);

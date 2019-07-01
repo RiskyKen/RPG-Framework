@@ -1,5 +1,6 @@
 package moe.plushie.rpgeconomy.core.common.init;
 
+import moe.plushie.rpgeconomy.bank.tileentities.TileEntityBank;
 import moe.plushie.rpgeconomy.core.common.lib.LibBlockNames;
 import moe.plushie.rpgeconomy.core.common.lib.LibModInfo;
 import moe.plushie.rpgeconomy.mail.common.tileentities.TileEntityMailBox;
@@ -13,6 +14,7 @@ public class ModTiles {
     public static void registerTileEntities() {
         registerTileEntity(TileEntityMailBox.class, LibBlockNames.MAIL_BOX);
         registerTileEntity(TileEntityShop.class, LibBlockNames.SHOP);
+        registerTileEntity(TileEntityBank.class, LibBlockNames.BANK);
     }
     
     private static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id) {

@@ -9,16 +9,38 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import javax.sql.PooledConnection;
+
+import org.sqlite.javax.SQLiteConnectionPoolDataSource;
+
 import moe.plushie.rpgeconomy.core.RpgEconomy;
 
 public final class SQLiteDriver {
 
 	private static final String FILE_NAME = "rpg.sqlite3";
-
+	private static PooledConnection pooledConnection;
+	
+	private static String getConnectionUrl() {
+	    File file = new File(RpgEconomy.getProxy().getModDirectory(), FILE_NAME);
+	    return "jdbc:sqlite:" + file.getAbsolutePath();
+	}
+	
+	private static PooledConnection makePool() throws SQLException {
+	    SQLiteConnectionPoolDataSource ds = new SQLiteConnectionPoolDataSource();
+	    ds.setUrl(getConnectionUrl());
+	    return ds.getPooledConnection();
+	}
+	
+	public static Connection getPoolConnection() throws SQLException {
+	    if (pooledConnection == null) {
+	        pooledConnection = makePool();
+	    }
+	    return pooledConnection.getConnection();
+	}
+	
 	public static Connection getConnection() throws SQLException {
-		File file = new File(RpgEconomy.getProxy().getModDirectory(), FILE_NAME);
-		String url = "jdbc:sqlite:" + file.getAbsolutePath();
-		return DriverManager.getConnection(url);
+	    //return getPoolConnection();
+		return DriverManager.getConnection(getConnectionUrl());
 	}
 	
 	public static PreparedStatement getPreparedStatement(String sql) {

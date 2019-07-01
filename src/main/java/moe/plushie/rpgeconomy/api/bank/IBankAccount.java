@@ -5,10 +5,6 @@ import net.minecraft.inventory.IInventory;
 
 public interface IBankAccount {
     
-    public int getDatabaseId();
-    
-    public void setDatabaseId(int id);
-    
     public IBank getBank();
     
     public int getTabUnlockCount();
@@ -20,6 +16,8 @@ public interface IBankAccount {
     public void unlockTab();
     
     public void removeTab(int index);
+    
+    public int getTabCount();
     
     public void syncToOwner(EntityPlayerMP entityPlayer);
 }

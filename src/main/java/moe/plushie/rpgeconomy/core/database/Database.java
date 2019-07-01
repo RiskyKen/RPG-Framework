@@ -15,7 +15,7 @@ public final class Database {
     public static final PlayersTable PLAYERS_TABLE = new PlayersTable();
     public static final HeatmapsTable HEATMAPS_TABLE = new HeatmapsTable();
     public static final BanksTable BANKS_TABLE = new BanksTable();
-    
+
     public static final class PlayersTable {
 
         private PlayersTable() {
@@ -114,7 +114,7 @@ public final class Database {
             sql += "last_change DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL)";
             SQLiteDriver.executeUpdate(sql);
         }
-        
+
         public String getAccountTabs(EntityPlayer player, String bankIdentifier) {
             int playerId = PLAYERS_TABLE.getPlayerId(player);
             String sql = "SELECT * FROM banks WHERE bank_identifier=? AND player_id=?";
@@ -131,7 +131,7 @@ public final class Database {
             }
             return tabs;
         }
-        
+
         public int setAccount(EntityPlayer player, String bankIdentifier, String tabs) {
             int playerId = PLAYERS_TABLE.getPlayerId(player);
             int id = -1;
@@ -144,19 +144,38 @@ public final class Database {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            
+
             return id;
         }
-        
-        public void updateAccount(int id, String tabs) {
-            String sql = "UPDATE banks SET tabs=?, last_change=datetime('now') WHERE id=?";
+
+        public void updateAccount(EntityPlayer player, String bankIdentifier, String tabs) {
+            int playerId = PLAYERS_TABLE.getPlayerId(player);
+            String sql = "UPDATE banks SET tabs=?, last_change=datetime('now') WHERE player_id=? AND bank_identifier=?";
             try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, tabs);
-                ps.setInt(2, id);
+                ps.setInt(2, playerId);
+                ps.setString(3, bankIdentifier);
                 ps.executeUpdate();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+        }
+
+        public boolean isAccountInDatabase(EntityPlayer player, String bankIdentifier) {
+            boolean foundAccount = false;
+            int playerId = PLAYERS_TABLE.getPlayerId(player);
+            String sql = "SELECT * FROM banks WHERE bank_identifier=? AND player_id=?";
+            try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, bankIdentifier);
+                ps.setInt(2, playerId);
+                ResultSet resultSet = ps.executeQuery();
+                while (resultSet.next()) {
+                    foundAccount = true;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return foundAccount;
         }
     }
 }

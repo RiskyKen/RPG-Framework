@@ -1,5 +1,8 @@
 package moe.plushie.rpgeconomy.core.common.network;
 
+import moe.plushie.rpgeconomy.bank.client.GuiBank;
+import moe.plushie.rpgeconomy.bank.common.inventory.ContainerBank;
+import moe.plushie.rpgeconomy.bank.tileentities.TileEntityBank;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.lib.LibGuiIds;
 import moe.plushie.rpgeconomy.currency.client.gui.GuiWallet;
@@ -56,6 +59,11 @@ public class GuiHandler implements IGuiHandler {
                 return new ContainerShop(player, (TileEntityShop) te);
             }
             break;
+        case LibGuiIds.BANK:
+            if (te != null && te instanceof TileEntityBank) {
+                return new ContainerBank(player, ((TileEntityBank) te).getBank());
+            }
+            break;
         }
         return null;
     }
@@ -89,6 +97,11 @@ public class GuiHandler implements IGuiHandler {
         case LibGuiIds.SHOP:
             if (te != null && te instanceof TileEntityShop) {
                 return new GuiShop(player, (TileEntityShop) te);
+            }
+            break;
+        case LibGuiIds.BANK:
+            if (te != null && te instanceof TileEntityBank) {
+                return new GuiBank(player, ((TileEntityBank) te).getBank());
             }
             break;
         }

@@ -35,7 +35,7 @@ public class MailSystemSerializer {
         return jsonObject;
     }
 
-    public static MailSystem deserializeJson(JsonElement json) {
+    public static MailSystem deserializeJson(JsonElement json, String identifier) {
         try {
             JsonObject jsonObject = json.getAsJsonObject();
 
@@ -46,7 +46,7 @@ public class MailSystemSerializer {
             int inboxSize = jsonObject.get(PROP_INBOX_SIZE).getAsInt();
             int maxAttachments = jsonObject.get(PROP_MAX_ATTACHMENTS).getAsInt();
 
-            MailSystem mailSystem = new MailSystem(name, name)
+            MailSystem mailSystem = new MailSystem(identifier, name)
                     .setCharacterLimit(characterLimit)
                     .setMessageCost(messageCost)
                     .setAttachmentCost(attachmentCost)

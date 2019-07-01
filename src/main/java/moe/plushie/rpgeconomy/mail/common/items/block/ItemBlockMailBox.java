@@ -69,7 +69,7 @@ public class ItemBlockMailBox extends ModItemBlock {
         if (!itemStack.hasTagCompound()) {
             itemStack.setTagCompound(new NBTTagCompound());
         }
-        itemStack.getTagCompound().setString(TAG_MAIL_SYSTEM, mailSystem.getName());
+        itemStack.getTagCompound().setString(TAG_MAIL_SYSTEM, mailSystem.getIdentifier());
     }
     
     @Override

@@ -28,6 +28,7 @@ public class MessageServerSyncMailSystems implements IMessage, IMessageHandler<M
         buf.writeInt(mailSystems.length);
         for (int i = 0; i < mailSystems.length; i++) {
             JsonElement jsonCurrency = MailSystemSerializer.serializeJson(mailSystems[i]);
+            ByteBufUtils.writeUTF8String(buf, mailSystems[i].getIdentifier());
             ByteBufUtils.writeUTF8String(buf, jsonCurrency.toString());
         }
     }
@@ -37,10 +38,11 @@ public class MessageServerSyncMailSystems implements IMessage, IMessageHandler<M
         int size = buf.readInt();
         mailSystems = new MailSystem[size];
         for (int i = 0; i < size; i++) {
+            String identifier = ByteBufUtils.readUTF8String(buf);
             String jsonString = ByteBufUtils.readUTF8String(buf);
             JsonElement jsonCurrency = SerializeHelper.stringToJson(jsonString);
             if (jsonCurrency != null) {
-                mailSystems[i] = MailSystemSerializer.deserializeJson(jsonCurrency);
+                mailSystems[i] = MailSystemSerializer.deserializeJson(jsonCurrency, identifier);
             }
         }
     }

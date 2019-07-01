@@ -14,28 +14,16 @@ public class BankAccount implements IBankAccount {
 
     private final IBank parentBank;
     private final ArrayList<IInventory> tabs;
-    private int databaseId;
 
     public BankAccount(IBank parentBank) {
         this.parentBank = parentBank;
         this.tabs = new ArrayList<IInventory>();
-        this.databaseId = -1;
     }
     
-    public BankAccount(IBank parentBank, ArrayList<IInventory> tabs, int databaseId) {
-        this.parentBank = parentBank;
-        this.tabs = tabs;
-        this.databaseId = databaseId;
-    }
-    
-    @Override
-    public int getDatabaseId() {
-        return databaseId;
-    }
-    
-    @Override
-    public void setDatabaseId(int id) {
-        this.databaseId = id;
+    public void setNewAccount() {
+        for (int i = 0; i < parentBank.getTabStartingCount(); i++) {
+            unlockTab();
+        }
     }
 
     @Override
@@ -66,6 +54,11 @@ public class BankAccount implements IBankAccount {
     @Override
     public void removeTab(int index) {
         tabs.remove(index);
+    }
+    
+    @Override
+    public int getTabCount() {
+        return tabs.size();
     }
 
     @Override
