@@ -3,12 +3,11 @@ package moe.plushie.rpgeconomy.core.database;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-
-import org.apache.commons.io.IOUtils;
 
 import moe.plushie.rpgeconomy.core.RpgEconomy;
 
@@ -16,10 +15,19 @@ public final class SQLiteDriver {
 
 	private static final String FILE_NAME = "rpg.sqlite3";
 
-	private static Connection getConnection() throws SQLException {
+	public static Connection getConnection() throws SQLException {
 		File file = new File(RpgEconomy.getProxy().getModDirectory(), FILE_NAME);
 		String url = "jdbc:sqlite:" + file.getAbsolutePath();
 		return DriverManager.getConnection(url);
+	}
+	
+	public static PreparedStatement getPreparedStatement(String sql) {
+	    try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+	        return ps;
+	    } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
 	}
 	
 	public static void executeUpdate(String sql) {
