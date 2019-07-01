@@ -87,8 +87,6 @@ public class GuiTab extends Gui {
 
     }
 
-    // TODO Add render overlay option
-
     public GuiTab setEnabled(boolean enabled) {
         this.enabled = enabled;
         return this;
