@@ -1,5 +1,6 @@
 package moe.plushie.rpgeconomy.bank;
 
+import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.module.ModModule;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -31,6 +32,7 @@ public class ModuleBank extends ModModule {
 
     @Override
     public void serverAboutToStart(FMLServerAboutToStartEvent event) {
+        RpgEconomy.getProxy().getBankManager().reload(false);
     }
 
     @Override

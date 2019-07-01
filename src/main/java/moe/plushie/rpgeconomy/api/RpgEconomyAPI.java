@@ -1,11 +1,10 @@
 package moe.plushie.rpgeconomy.api;
 
+import moe.plushie.rpgeconomy.api.bank.IBankManager;
 import moe.plushie.rpgeconomy.api.currency.ICurrencyManager;
 import moe.plushie.rpgeconomy.api.mail.IMailSystemManager;
 import moe.plushie.rpgeconomy.api.shop.IShopManager;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 public final class RpgEconomyAPI {
 
@@ -14,7 +13,8 @@ public final class RpgEconomyAPI {
     private static ICurrencyManager currencyManager;
     private static IMailSystemManager mailSystemManager;
     private static IShopManager shopManager;
-
+    private static IBankManager bankManager;
+    
     private RpgEconomyAPI() {
     }
 
@@ -32,5 +32,9 @@ public final class RpgEconomyAPI {
 
     public static IShopManager getShopManager() {
         return shopManager;
+    }
+    
+    public static IBankManager getBankManager() {
+        return bankManager;
     }
 }

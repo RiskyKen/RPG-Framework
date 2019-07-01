@@ -6,6 +6,8 @@ import moe.plushie.rpgeconomy.api.currency.IWallet;
 
 public class Cost implements ICost {
 
+    public static final ICost NO_COST = new Cost(null, null);
+    
     private final IWallet walletCost;
     private final IItemMatcher[] itemCost;
     

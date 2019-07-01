@@ -7,6 +7,8 @@ import moe.plushie.rpgeconomy.core.common.network.client.MessageClientGuiShopUpd
 import moe.plushie.rpgeconomy.core.common.network.client.MessageClientKeyPress;
 import moe.plushie.rpgeconomy.core.common.network.client.MessageClientRequestSync;
 import moe.plushie.rpgeconomy.core.common.network.server.MessageServerShop;
+import moe.plushie.rpgeconomy.core.common.network.server.MessageServerSyncBankAccount;
+import moe.plushie.rpgeconomy.core.common.network.server.MessageServerSyncBanks;
 import moe.plushie.rpgeconomy.core.common.network.server.MessageServerSyncCurrencies;
 import moe.plushie.rpgeconomy.core.common.network.server.MessageServerSyncMailSystems;
 import moe.plushie.rpgeconomy.core.common.network.server.MessageServerSyncShops;
@@ -36,6 +38,8 @@ public class PacketHandler {
         registerMessage(MessageServerSyncMailSystems.class, MessageServerSyncMailSystems.class, Side.CLIENT);
         registerMessage(MessageServerShop.class, MessageServerShop.class, Side.CLIENT);
         registerMessage(MessageServerSyncShops.class, MessageServerSyncShops.class, Side.CLIENT);
+        registerMessage(MessageServerSyncBanks.class, MessageServerSyncBanks.class, Side.CLIENT);
+        registerMessage(MessageServerSyncBankAccount.class, MessageServerSyncBankAccount.class, Side.CLIENT);
     }
 
     private <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Class<? extends IMessageHandler<REQ, REPLY>> messageHandler, Class<REQ> requestMessageType, Side side) {

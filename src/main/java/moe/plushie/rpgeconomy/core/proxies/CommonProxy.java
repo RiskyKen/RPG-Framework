@@ -6,6 +6,8 @@ import moe.plushie.rpgeconomy.api.RpgEconomyAPI;
 import moe.plushie.rpgeconomy.api.currency.ICurrency;
 import moe.plushie.rpgeconomy.auction.ModuleAuction;
 import moe.plushie.rpgeconomy.bank.ModuleBank;
+import moe.plushie.rpgeconomy.bank.common.BankManager;
+import moe.plushie.rpgeconomy.bank.common.capability.BankCapabilityManager;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.command.CommandRpg;
 import moe.plushie.rpgeconomy.core.common.config.ConfigHandler;
@@ -54,6 +56,7 @@ public class CommonProxy {
     private CurrencyManager currencyManager;
     private MailSystemManager mailSystemManager;
     private ShopManager shopManager;
+    private BankManager bankManager;
     
     private IModModule moduleCurrency = new ModuleCurrency();
     private IModModule moduleMail = new ModuleMail();
@@ -76,16 +79,19 @@ public class CommonProxy {
         currencyManager = new CurrencyManager(modDirectory);
         mailSystemManager = new MailSystemManager(modDirectory);
         shopManager = new ShopManager(modDirectory);
+        bankManager = new BankManager(modDirectory);
         
         ReflectionHelper.setPrivateValue(RpgEconomyAPI.class, null, currencyManager, "currencyManager");
         ReflectionHelper.setPrivateValue(RpgEconomyAPI.class, null, mailSystemManager, "mailSystemManager");
         ReflectionHelper.setPrivateValue(RpgEconomyAPI.class, null, shopManager, "shopManager");
+        ReflectionHelper.setPrivateValue(RpgEconomyAPI.class, null, bankManager, "bankManager");
         
         modBlocks = new ModBlocks();
         modItems = new ModItems();
         modSounds = new ModSounds();
         
         CurrencyCapabilityManager.register();
+        BankCapabilityManager.register();
         
         for (IModModule module : ModModule.MOD_MODULES) {
             module.preInit(event);
@@ -145,6 +151,10 @@ public class CommonProxy {
     public ShopManager getShopManager() {
 		return shopManager;
 	}
+    
+    public BankManager getBankManager() {
+        return bankManager;
+    }
 
     public void onClentKeyPress(EntityPlayerMP player, ModKey modKey) {
         if (modKey.getName().startsWith("open_wallet_")) {
