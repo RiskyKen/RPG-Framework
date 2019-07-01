@@ -5,6 +5,7 @@ import java.io.File;
 import moe.plushie.rpgeconomy.api.RpgEconomyAPI;
 import moe.plushie.rpgeconomy.api.currency.ICurrency;
 import moe.plushie.rpgeconomy.auction.ModuleAuction;
+import moe.plushie.rpgeconomy.bank.ModuleBank;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.command.CommandRpg;
 import moe.plushie.rpgeconomy.core.common.config.ConfigHandler;
@@ -19,7 +20,6 @@ import moe.plushie.rpgeconomy.core.common.module.IModModule;
 import moe.plushie.rpgeconomy.core.common.module.ModModule;
 import moe.plushie.rpgeconomy.core.common.network.GuiHandler;
 import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
-import moe.plushie.rpgeconomy.core.database.SQLiteDriver;
 import moe.plushie.rpgeconomy.currency.ModuleCurrency;
 import moe.plushie.rpgeconomy.currency.common.Currency;
 import moe.plushie.rpgeconomy.currency.common.CurrencyManager;
@@ -58,6 +58,7 @@ public class CommonProxy {
     private IModModule moduleCurrency = new ModuleCurrency();
     private IModModule moduleMail = new ModuleMail();
     private IModModule moduleShop = new ModuleShop();
+    private IModModule moduleBank = new ModuleBank();
     private IModModule moduleAuction = new ModuleAuction();
     
     public void preInit(FMLPreInitializationEvent event) {
