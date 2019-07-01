@@ -110,6 +110,7 @@ public final class Database {
             sql += "player_id INTEGER NOT NULL,";
             sql += "bank_identifier TEXT NOT NULL,";
             sql += "tabs TEXT NOT NULL,";
+            sql += "times_opened INTEGER NOT NULL,";
             sql += "last_access DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,";
             sql += "last_change DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL)";
             SQLiteDriver.executeUpdate(sql);
@@ -117,14 +118,23 @@ public final class Database {
 
         public String getAccountTabs(EntityPlayer player, String bankIdentifier) {
             int playerId = PLAYERS_TABLE.getPlayerId(player);
-            String sql = "SELECT * FROM banks WHERE bank_identifier=? AND player_id=?";
             String tabs = null;
-            try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setString(1, bankIdentifier);
-                ps.setInt(2, playerId);
-                ResultSet resultSet = ps.executeQuery();
-                while (resultSet.next()) {
-                    tabs = resultSet.getString("tabs");
+            try (Connection conn = SQLiteDriver.getConnection(); ) {
+                String sqlUpdate = "UPDATE banks SET times_opened = times_opened + 1, last_access=datetime('now') WHERE bank_identifier=? AND player_id=?";
+                try(PreparedStatement ps = conn.prepareStatement(sqlUpdate)) {
+                    ps.setString(1, bankIdentifier);
+                    ps.setInt(2, playerId);
+                    ps.executeUpdate();
+                }
+                
+                String sqlGetTabs = "SELECT * FROM banks WHERE bank_identifier=? AND player_id=?";
+                try(PreparedStatement ps = conn.prepareStatement(sqlGetTabs)) {
+                    ps.setString(1, bankIdentifier);
+                    ps.setInt(2, playerId);
+                    ResultSet resultSet = ps.executeQuery();
+                    while (resultSet.next()) {
+                        tabs = resultSet.getString("tabs");
+                    }
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -135,7 +145,7 @@ public final class Database {
         public int setAccount(EntityPlayer player, String bankIdentifier, String tabs) {
             int playerId = PLAYERS_TABLE.getPlayerId(player);
             int id = -1;
-            String sql = "INSERT INTO banks (id, player_id, bank_identifier, tabs, last_access, last_change) VALUES (NULL, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
+            String sql = "INSERT INTO banks (id, player_id, bank_identifier, tabs, times_opened, last_access, last_change) VALUES (NULL, ?, ?, ?, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
             try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setInt(1, playerId);
                 ps.setString(2, bankIdentifier);
@@ -150,7 +160,7 @@ public final class Database {
 
         public void updateAccount(EntityPlayer player, String bankIdentifier, String tabs) {
             int playerId = PLAYERS_TABLE.getPlayerId(player);
-            String sql = "UPDATE banks SET tabs=?, last_change=datetime('now') WHERE player_id=? AND bank_identifier=?";
+            String sql = "UPDATE banks SET tabs=?, last_access=datetime('now'), last_change=datetime('now') WHERE player_id=? AND bank_identifier=?";
             try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, tabs);
                 ps.setInt(2, playerId);
