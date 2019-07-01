@@ -35,8 +35,8 @@ public class GuiMailBox extends GuiTabbed {
         tabList.add(tabReading);
         tabList.add(tabSending);
 
-        tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalizedControlName(getName(), "tab.reading.name")).setIconLocation(0, 0).setTabTextureSize(26, 30).setPadding(0, 4, 3, 3).setAnimation(1, 150));
-        tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalizedControlName(getName(), "tab.sending.name")).setIconLocation(0, 0).setTabTextureSize(26, 30).setPadding(0, 4, 3, 3).setAnimation(1, 150));
+        tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalizedControlName(getName(), "tab.reading.name")).setIconLocation(16, 16).setTabTextureSize(26, 30).setPadding(0, 4, 3, 3).setAnimation(1, 150));
+        tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalizedControlName(getName(), "tab.sending.name")).setIconLocation(32, 16).setTabTextureSize(26, 30).setPadding(0, 4, 3, 3).setAnimation(1, 150));
 
         tabController.setActiveTabIndex(getActiveTab());
         tabChanged();

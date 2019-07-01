@@ -3,8 +3,8 @@ package moe.plushie.rpgeconomy.mail.common.serialize;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import moe.plushie.rpgeconomy.currency.common.Wallet;
-import moe.plushie.rpgeconomy.currency.common.serialize.WalletSerializer;
+import moe.plushie.rpgeconomy.api.currency.ICost;
+import moe.plushie.rpgeconomy.currency.common.serialize.CostSerializer;
 import moe.plushie.rpgeconomy.mail.common.MailSystem;
 
 public class MailSystemSerializer {
@@ -27,8 +27,8 @@ public class MailSystemSerializer {
 
         jsonObject.addProperty(PROP_NAME, mailSystem.getName());
         jsonObject.addProperty(PROP_CHARACTER_LIMIT, mailSystem.getCharacterLimit());
-        jsonObject.add(PROP_MESSAGE_COST, WalletSerializer.serializeJson(mailSystem.getMessageCost()));
-        jsonObject.add(PROP_ATTACHMENT_COST, WalletSerializer.serializeJson(mailSystem.getAttachmentCost()));
+        jsonObject.add(PROP_MESSAGE_COST, CostSerializer.serializeJson(mailSystem.getMessageCost(), false));
+        jsonObject.add(PROP_ATTACHMENT_COST, CostSerializer.serializeJson(mailSystem.getAttachmentCost(), false));
         jsonObject.addProperty(PROP_INBOX_SIZE, mailSystem.getInboxSize());
         jsonObject.addProperty(PROP_MAX_ATTACHMENTS, mailSystem.getMaxAttachments());
 
@@ -41,8 +41,8 @@ public class MailSystemSerializer {
 
             String name = jsonObject.get(PROP_NAME).getAsString();
             int characterLimit = jsonObject.get(PROP_CHARACTER_LIMIT).getAsInt();
-            Wallet messageCost = WalletSerializer.deserializeJson(jsonObject.get(PROP_MESSAGE_COST));
-            Wallet attachmentCost = WalletSerializer.deserializeJson(jsonObject.get(PROP_ATTACHMENT_COST));
+            ICost messageCost = CostSerializer.deserializeJson(jsonObject.get(PROP_MESSAGE_COST));
+            ICost attachmentCost = CostSerializer.deserializeJson(jsonObject.get(PROP_ATTACHMENT_COST));
             int inboxSize = jsonObject.get(PROP_INBOX_SIZE).getAsInt();
             int maxAttachments = jsonObject.get(PROP_MAX_ATTACHMENTS).getAsInt();
 

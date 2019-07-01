@@ -1,6 +1,6 @@
 package moe.plushie.rpgeconomy.api.mail;
 
-import moe.plushie.rpgeconomy.api.currency.IWallet;
+import moe.plushie.rpgeconomy.api.currency.ICost;
 
 public interface IMailSystem {
 
@@ -10,9 +10,9 @@ public interface IMailSystem {
     
     public int getCharacterLimit();
     
-    public IWallet getMessageCost();
+    public ICost getMessageCost();
     
-    public IWallet getAttachmentCost();
+    public ICost getAttachmentCost();
     
     public int getInboxSize();
     
