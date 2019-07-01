@@ -319,7 +319,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
                     // variant = cost.getCurrency().getCurrencyVariants()[i];
 
                     int count = 0;
-                    for (int j = 0; j < 64; j++) {
+                    for (int j = 0; j < 22000; j++) {
                         if (variant.getValue() <= amount) {
                             amount -= variant.getValue();
                             count++;
@@ -337,7 +337,11 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
                         ItemStack stack = variant.getItem().getItemStack().copy();
                         stack.setCount(1);
                         itemRender.renderItemAndEffectIntoGUI(stack, 0, 0);
-                        itemRender.renderItemOverlayIntoGUI(fontRenderer, stack, 0, 0, String.valueOf(count));
+                        if (count >= 1000) {
+                            itemRender.renderItemOverlayIntoGUI(fontRenderer, stack, 0, 0, String.valueOf(count / 1000) + "K");
+                        } else {
+                            itemRender.renderItemOverlayIntoGUI(fontRenderer, stack, 0, 0, String.valueOf(count));
+                        }
                         GlStateManager.popAttrib();
                         GlStateManager.popMatrix();
                         renderCount++;
