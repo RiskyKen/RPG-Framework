@@ -412,6 +412,9 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
         if (button == buttonShopList) {
             openDialog(new GuiShopDialogShopList(this, "shopList", this, 310, 230));
         }
+        if (button == buttonRename) {
+            openDialog(new GuiShopDialogRename(this, "shopRename", this, 190, 100, shop.getName()));
+        }
         if (button == buttonSave) {
             PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.SHOP_SAVE));
         }
@@ -462,6 +465,10 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
             if (dialog instanceof GuiShopDialogShopList) {
                 String shopIdentifier = ((GuiShopDialogShopList) dialog).getSelectedShopIdentifier();
                 PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.SHOP_CHANGE).setShopIdentifier(shopIdentifier));
+            }
+            if (dialog instanceof GuiShopDialogRename) {
+                String shopName = ((GuiShopDialogRename) dialog).getShopName();
+                PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.SHOP_RENAME).setShopName(shopName));
             }
             if (dialog instanceof GuiShopDialogTabAdd) {
                 String name = ((GuiShopDialogTabAdd) dialog).getTabName();

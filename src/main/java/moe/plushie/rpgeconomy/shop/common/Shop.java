@@ -16,7 +16,7 @@ public class Shop implements IShop {
     public static final int ITEMS_PER_PAGE = 8;
 
     private final String identifier;
-    private final String name;
+    private String name;
     private final ArrayList<IShopTab> shopTabs;
 
     public Shop(String identifier, String name, ArrayList<IShopTab> shopTabs) {
@@ -33,6 +33,11 @@ public class Shop implements IShop {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override

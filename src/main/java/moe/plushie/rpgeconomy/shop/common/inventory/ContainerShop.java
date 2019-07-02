@@ -138,6 +138,11 @@ public class ContainerShop extends ModTileContainer<TileEntityShop> {
         RpgEconomy.getProxy().getShopManager().saveShop(shop);
     }
 
+    public void shopRename(String shopName) {
+        shop.setName(shopName);
+        sendShopToListeners(true);
+    }
+
     public boolean isEditMode() {
         return editMode;
     }

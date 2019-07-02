@@ -1,7 +1,6 @@
 package moe.plushie.rpgeconomy.core.common.network.client;
 
 import io.netty.buffer.ByteBuf;
-import moe.plushie.rpgeconomy.api.shop.IShop;
 import moe.plushie.rpgeconomy.shop.common.inventory.ContainerShop;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -13,7 +12,7 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
 
     private ShopMessageType type;
     private String shopIdentifier;
-    private IShop shop;
+    private String shopName;
     private int tabIndex;
     private String tabName;
     private int tabIconIndex;
@@ -30,8 +29,8 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
         return this;
     }
 
-    public MessageClientGuiShopUpdate setShop(IShop shop) {
-        this.shop = shop;
+    public MessageClientGuiShopUpdate setShopName(String shopName) {
+        this.shopName = shopName;
         return this;
     }
 
@@ -83,6 +82,9 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
             break;
         case SHOP_SAVE:
             break;
+        case SHOP_RENAME:
+            ByteBufUtils.writeUTF8String(buf, shopName);
+            break;
         case TAB_CHANGED:
             buf.writeInt(tabIndex);
             break;
@@ -120,6 +122,9 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
             }
             break;
         case SHOP_SAVE:
+            break;
+        case SHOP_RENAME:
+            shopName = ByteBufUtils.readUTF8String(buf);
             break;
         case TAB_CHANGED:
             tabIndex = buf.readInt();
@@ -162,6 +167,9 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
             case SHOP_SAVE:
                 containerShop.saveShop();
                 break;
+            case SHOP_RENAME:
+                containerShop.shopRename(message.shopName);
+                break; 
             case TAB_CHANGED:
                 containerShop.changeTab(message.tabIndex);
                 break;
@@ -177,7 +185,7 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
         EDIT_MODE_OFF,
         SHOP_ADD,
         SHOP_REMOVE,
-        SHOP_EDIT,
+        SHOP_RENAME,
         SHOP_CHANGE,
         SHOP_SAVE,
         ITEM_UPDATE,

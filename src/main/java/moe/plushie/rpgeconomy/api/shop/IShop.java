@@ -8,45 +8,47 @@ import net.minecraft.item.ItemStack;
 
 public interface IShop {
 
-	public String getIdentifier();
-	
-	public String getName();
+    public String getIdentifier();
 
-	public ArrayList<IShopTab> getTabs();
-	
-	public int getTabCount();
+    public String getName();
 
-	public static interface IShopTab {
+    public void setName(String name);
 
-		public String getName();
+    public ArrayList<IShopTab> getTabs();
 
-		public int getIconIndex();
+    public int getTabCount();
 
-		public ArrayList<IShopItem> getPageItems(int pageIndex);
-		
-		public ArrayList<IShopItem> getItems();
-		
-		public int getItemCount();
+    public static interface IShopTab {
 
-		public int getPageCount();
-	}
+        public String getName();
 
-	public static interface IShopItem {
-		
-		public ItemStack getItem();
-		
-		public ICost getCost();
+        public int getIconIndex();
 
-		public int getStock();
+        public ArrayList<IShopItem> getPageItems(int pageIndex);
 
-		public RestockType getRestockType();
+        public ArrayList<IShopItem> getItems();
 
-		public Date getLastPurchase();
+        public int getItemCount();
 
-		public int getTotalSold();
-	}
+        public int getPageCount();
+    }
 
-	public static enum RestockType {
-		NONE, TRIGGER, TIME
-	}
+    public static interface IShopItem {
+
+        public ItemStack getItem();
+
+        public ICost getCost();
+
+        public int getStock();
+
+        public RestockType getRestockType();
+
+        public Date getLastPurchase();
+
+        public int getTotalSold();
+    }
+
+    public static enum RestockType {
+        NONE, TRIGGER, TIME
+    }
 }
