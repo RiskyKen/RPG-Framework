@@ -83,8 +83,12 @@ public class GuiTab extends Gui {
         }
 
         Minecraft.getMinecraft().renderEngine.bindTexture(tabIcons);
-        renderIcon(x, y, mouseX, mouseY);
 
+        if (left) {
+            renderIcon(x - 1, y, mouseX, mouseY);
+        } else {
+            renderIcon(x, y, mouseX, mouseY);
+        }
     }
 
     public GuiTab setEnabled(boolean enabled) {
