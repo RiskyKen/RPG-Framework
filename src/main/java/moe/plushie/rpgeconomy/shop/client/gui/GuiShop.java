@@ -12,7 +12,6 @@ import moe.plushie.rpgeconomy.api.currency.ICurrency.ICurrencyVariant;
 import moe.plushie.rpgeconomy.api.currency.IWallet;
 import moe.plushie.rpgeconomy.api.shop.IShop;
 import moe.plushie.rpgeconomy.api.shop.IShop.IShopTab;
-import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpgeconomy.core.client.gui.GuiHelper;
 import moe.plushie.rpgeconomy.core.client.gui.IDialogCallback;
@@ -489,7 +488,6 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
             if (dialog instanceof GuiShopDialogEditCost) {
                 ICost cost = ((GuiShopDialogEditCost)dialog).getCost();
                 int slotIndex = ((GuiShopDialogEditCost)dialog).getSlotIndex();
-                RpgEconomy.getLogger().info(cost.getWalletCost());
                 PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.ITEM_UPDATE).setCost(slotIndex, cost));
             }
         }

@@ -115,6 +115,9 @@ public class GuiShopDialogEditCost extends AbstractGuiDialog implements IDropDow
     public void onDropDownListChanged(GuiDropDownList dropDownList) {
         buttonEditType.enabled = dropDownList.getListSelectedIndex() > 0;
         this.costNew = cost;
+        if (dropDownList.getListSelectedIndex() == 0) {
+            this.costNew = Cost.NO_COST;
+        }
     }
     
     @Override
