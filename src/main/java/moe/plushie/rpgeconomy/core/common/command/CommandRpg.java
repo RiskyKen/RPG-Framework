@@ -1,5 +1,8 @@
 package moe.plushie.rpgeconomy.core.common.command;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import moe.plushie.rpgeconomy.bank.common.command.CommandBank;
 import moe.plushie.rpgeconomy.core.common.lib.LibModInfo;
 import moe.plushie.rpgeconomy.currency.common.command.CommandCurrency;
@@ -15,5 +18,12 @@ public class CommandRpg extends ModSubCommands {
         addSubCommand(new CommandShop(this));
         addSubCommand(new CommandDev(this));
         addSubCommand(new CommandBank(this));
+    }
+
+    @Override
+    public List<String> getAliases() {
+        ArrayList<String> aliases = new ArrayList<String>();
+        aliases.add("rpg");
+        return aliases;
     }
 }
