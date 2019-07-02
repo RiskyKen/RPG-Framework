@@ -2,6 +2,7 @@ package moe.plushie.rpgeconomy.currency.common;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import com.google.gson.JsonElement;
@@ -99,7 +100,9 @@ public class CurrencyManager implements ICurrencyManager {
 
     @Override
     public Currency[] getCurrencies() {
-        return currencyMap.values().toArray(new Currency[currencyMap.size()]);
+        Currency[] currencies = currencyMap.values().toArray(new Currency[currencyMap.size()]);
+        Arrays.sort(currencies);
+        return currencies;
     }
     
     @Override

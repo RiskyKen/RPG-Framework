@@ -1,6 +1,11 @@
 package moe.plushie.rpgeconomy.core.common.network.client;
 
+import com.google.gson.JsonElement;
+
 import io.netty.buffer.ByteBuf;
+import moe.plushie.rpgeconomy.api.currency.ICost;
+import moe.plushie.rpgeconomy.core.common.utils.SerializeHelper;
+import moe.plushie.rpgeconomy.currency.common.serialize.CostSerializer;
 import moe.plushie.rpgeconomy.shop.common.inventory.ContainerShop;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -16,6 +21,8 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
     private int tabIndex;
     private String tabName;
     private int tabIconIndex;
+    private ICost cost;
+    private int slotIndex;
     
     public MessageClientGuiShopUpdate() {
     }
@@ -46,6 +53,12 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
     
     public MessageClientGuiShopUpdate setTabIconIndex(int tabIconIndex) {
         this.tabIconIndex = tabIconIndex;
+        return this;
+    }
+    
+    public MessageClientGuiShopUpdate setCost(int slotIndex, ICost cost) {
+        this.slotIndex = slotIndex;
+        this.cost = cost;
         return this;
     }
     
@@ -88,6 +101,10 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
         case TAB_CHANGED:
             buf.writeInt(tabIndex);
             break;
+        case ITEM_UPDATE:
+            buf.writeInt(slotIndex);
+            ByteBufUtils.writeUTF8String(buf, CostSerializer.serializeJson(cost, true).toString());
+            break;
         default:
             break;
         }
@@ -128,6 +145,11 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
             break;
         case TAB_CHANGED:
             tabIndex = buf.readInt();
+            break;
+        case ITEM_UPDATE:
+            slotIndex = buf.readInt();
+            JsonElement json = SerializeHelper.stringToJson(ByteBufUtils.readUTF8String(buf));
+            cost = CostSerializer.deserializeJson(json);
             break;
         default:
             break;
@@ -172,6 +194,9 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
                 break; 
             case TAB_CHANGED:
                 containerShop.changeTab(message.tabIndex);
+                break;
+            case ITEM_UPDATE:
+                containerShop.updateItem(message.slotIndex, message.cost);
                 break;
             default:
                 break;

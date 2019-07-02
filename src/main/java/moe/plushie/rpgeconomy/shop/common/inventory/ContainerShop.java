@@ -2,6 +2,7 @@ package moe.plushie.rpgeconomy.shop.common.inventory;
 
 import moe.plushie.rpgeconomy.api.currency.ICost;
 import moe.plushie.rpgeconomy.api.shop.IShop;
+import moe.plushie.rpgeconomy.api.shop.IShop.IShopItem;
 import moe.plushie.rpgeconomy.api.shop.IShop.IShopTab;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.config.ConfigHandler;
@@ -140,6 +141,13 @@ public class ContainerShop extends ModTileContainer<TileEntityShop> {
 
     public void shopRename(String shopName) {
         shop.setName(shopName);
+        sendShopToListeners(true);
+    }
+    
+    public void updateItem(int slotIndex, ICost cost) {
+        IShopItem shopItem = shop.getTabs().get(activeTabIndex).getItems().get(slotIndex);
+        shopItem = new ShopItem(shopItem.getItem(), cost);
+        shop.getTabs().get(activeTabIndex).getItems().set(slotIndex, shopItem);
         sendShopToListeners(true);
     }
 

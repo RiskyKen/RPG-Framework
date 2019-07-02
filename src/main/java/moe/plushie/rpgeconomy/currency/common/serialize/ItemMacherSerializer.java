@@ -4,8 +4,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import moe.plushie.rpgeconomy.api.core.IItemMatcher;
+import moe.plushie.rpgeconomy.core.common.ItemMatcherStack;
 import moe.plushie.rpgeconomy.core.common.utils.SerializeHelper;
-import moe.plushie.rpgeconomy.currency.common.ItemMatcherStack;
 import net.minecraft.item.ItemStack;
 
 public final class ItemMacherSerializer {

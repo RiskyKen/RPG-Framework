@@ -1,13 +1,13 @@
 package moe.plushie.rpgeconomy.shop.client.gui;
 
+import moe.plushie.rpgeconomy.api.core.IItemMatcher;
 import moe.plushie.rpgeconomy.api.currency.ICost;
-import moe.plushie.rpgeconomy.api.currency.ICurrency;
-import moe.plushie.rpgeconomy.core.RpgEconomy;
+import moe.plushie.rpgeconomy.api.currency.IWallet;
 import moe.plushie.rpgeconomy.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpgeconomy.core.client.gui.IDialogCallback;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiDropDownList;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiDropDownList.IDropDownListCallback;
-import moe.plushie.rpgeconomy.currency.common.CurrencyManager;
+import moe.plushie.rpgeconomy.currency.common.Cost;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
@@ -18,15 +18,18 @@ public class GuiShopDialogEditCost extends AbstractGuiDialog implements IDropDow
     private GuiButtonExt buttonClose;
     private GuiButtonExt buttonEdit;
     private GuiDropDownList dropDownCostTypes;
-    private GuiDropDownList dropDownCurrencyTypes;
-
+    private GuiButtonExt buttonEditType;
+    
     private final int slotIndex;
     private ICost cost;
-
+    
+    private ICost costNew;
+    
     public GuiShopDialogEditCost(GuiScreen parent, String name, IDialogCallback callback, int width, int height, int index, ICost cost) {
         super(parent, name, callback, width, height);
         this.slotIndex = index;
         this.cost = cost;
+        this.costNew = cost;
     }
 
     @Override
@@ -37,22 +40,11 @@ public class GuiShopDialogEditCost extends AbstractGuiDialog implements IDropDow
         buttonClose = new GuiButtonExt(-1, x + width - 80 - 10, y + height - 30, 80, 20, "Close");
         buttonEdit = new GuiButtonExt(-1, x + width - 160 - 20, y + height - 30, 80, 20, "Edit");
         dropDownCostTypes = new GuiDropDownList(0, x + 10, y + 25, 100, "", this);
-        dropDownCurrencyTypes = new GuiDropDownList(0, x + width - 110, y + 25, 100, "", this);
-
+        buttonEditType = new GuiButtonExt(-1, x + 120, y + 25, 80, 20, "Edit Cost"); 
+        
         String[] costTypes = new String[] { "Free", "Currency", "Items" };
         for (String type : costTypes) {
             dropDownCostTypes.addListItem(type);
-        }
-
-        CurrencyManager currencyManager = RpgEconomy.getProxy().getCurrencyManager();
-        for (int i = 0; i < currencyManager.getCurrencies().length; i++) {
-            ICurrency currency = currencyManager.getCurrencies()[i];
-            dropDownCurrencyTypes.addListItem(currency.getName(), currency.getIdentifier(), true);
-            if (cost != null && cost.hasWalletCost()) {
-                if (currency == cost.getWalletCost().getCurrency()) {
-                    dropDownCurrencyTypes.setListSelectedIndex(i);
-                }
-            }
         }
 
         dropDownCostTypes.setListSelectedIndex(0);
@@ -63,16 +55,13 @@ public class GuiShopDialogEditCost extends AbstractGuiDialog implements IDropDow
         if (cost != null && cost.hasItemCost()) {
             dropDownCostTypes.setListSelectedIndex(2);
         }
+        
+        buttonEditType.enabled = dropDownCostTypes.getListSelectedIndex() > 0;
 
         buttonList.add(buttonClose);
         buttonList.add(buttonEdit);
         buttonList.add(dropDownCostTypes);
-        buttonList.add(dropDownCurrencyTypes);
-        setVisibleItems();
-    }
-
-    private void setVisibleItems() {
-        dropDownCurrencyTypes.visible = dropDownCostTypes.getListSelectedIndex() == 1;
+        buttonList.add(buttonEditType);
     }
 
     @Override
@@ -82,6 +71,22 @@ public class GuiShopDialogEditCost extends AbstractGuiDialog implements IDropDow
         }
         if (button == buttonEdit) {
             returnDialogResult(DialogResult.OK);
+        }
+        if (button == buttonEditType) {
+            if (dropDownCostTypes.getListSelectedIndex() == 1) {
+                IWallet wallet = null;
+                if (costNew != null) {
+                    wallet = costNew.getWalletCost();
+                }
+                openDialog(new GuiShopDialogEditCostCurrency(parent, "editCurrency", this, 280, 130, wallet));
+            }
+            if (dropDownCostTypes.getListSelectedIndex() == 2) {
+                IItemMatcher[] itemCost = null;
+                if (costNew != null) {
+                    itemCost = costNew.getItemCost();
+                }
+                openDialog(new GuiShopDialogEditCostItems(parent, "editItems", this, 190, 80, itemCost));
+            }
         }
     }
 
@@ -96,15 +101,33 @@ public class GuiShopDialogEditCost extends AbstractGuiDialog implements IDropDow
         GlStateManager.color(1F, 1F, 1F, 1F);
         mc.renderEngine.bindTexture(ICONS);
         dropDownCostTypes.drawForeground(mc, mouseX, mouseY, partialTickTime);
-        dropDownCurrencyTypes.drawForeground(mc, mouseX, mouseY, partialTickTime);
     }
 
     public ICost getCost() {
-        return cost;
+        return costNew;
+    }
+    
+    public int getSlotIndex() {
+        return slotIndex;
     }
 
     @Override
     public void onDropDownListChanged(GuiDropDownList dropDownList) {
-        setVisibleItems();
+        buttonEditType.enabled = dropDownList.getListSelectedIndex() > 0;
+        this.costNew = cost;
+    }
+    
+    @Override
+    public void dialogResult(AbstractGuiDialog dialog, DialogResult result) {
+        if (result == DialogResult.CANCEL) {
+            closeDialog();
+        }
+        if (result == DialogResult.OK) {
+            if (dialog instanceof GuiShopDialogEditCostCurrency) {
+                IWallet wallet = ((GuiShopDialogEditCostCurrency)dialog).getWallet();
+                costNew = new Cost(wallet, null);
+                closeDialog();
+            }
+        }
     }
 }

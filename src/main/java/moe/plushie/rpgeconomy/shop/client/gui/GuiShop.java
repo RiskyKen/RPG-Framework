@@ -12,6 +12,7 @@ import moe.plushie.rpgeconomy.api.currency.ICurrency.ICurrencyVariant;
 import moe.plushie.rpgeconomy.api.currency.IWallet;
 import moe.plushie.rpgeconomy.api.shop.IShop;
 import moe.plushie.rpgeconomy.api.shop.IShop.IShopTab;
+import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpgeconomy.core.client.gui.GuiHelper;
 import moe.plushie.rpgeconomy.core.client.gui.IDialogCallback;
@@ -454,7 +455,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
                 return;
             }
             if (button == buttonCostEdit[i]) {
-                openDialog(new GuiShopDialogEditCost(this, "editCost", this, 310, 230, i, shop.getTabs().get(activeTabIndex).getItems().get(i).getCost()));
+                openDialog(new GuiShopDialogEditCost(this, "editCost", this, 210, 120, i, shop.getTabs().get(activeTabIndex).getItems().get(i).getCost()));
             }
         }
     }
@@ -484,6 +485,12 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
                 String name = ((GuiShopDialogTabEdit) dialog).getTabName();
                 int iconIndex = ((GuiShopDialogTabEdit) dialog).getTabIconIndex();
                 PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.TAB_EDIT).setTabName(name).setTabIconIndex(iconIndex));
+            }
+            if (dialog instanceof GuiShopDialogEditCost) {
+                ICost cost = ((GuiShopDialogEditCost)dialog).getCost();
+                int slotIndex = ((GuiShopDialogEditCost)dialog).getSlotIndex();
+                RpgEconomy.getLogger().info(cost.getWalletCost());
+                PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.ITEM_UPDATE).setCost(slotIndex, cost));
             }
         }
         this.dialog = null;

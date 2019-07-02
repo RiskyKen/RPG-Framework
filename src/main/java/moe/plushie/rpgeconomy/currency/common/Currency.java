@@ -3,7 +3,7 @@ package moe.plushie.rpgeconomy.currency.common;
 import moe.plushie.rpgeconomy.api.core.IItemMatcher;
 import moe.plushie.rpgeconomy.api.currency.ICurrency;
 
-public class Currency implements ICurrency {
+public class Currency implements ICurrency, Comparable<Currency> {
 
 	private final String identifier;
 	
@@ -50,6 +50,10 @@ public class Currency implements ICurrency {
         return variants;
     }
     
+    @Override
+    public int compareTo(Currency o) {
+        return name.compareTo(o.name);
+    }
 
     public static class CurrencyVariant implements ICurrencyVariant, Comparable<CurrencyVariant> {
 

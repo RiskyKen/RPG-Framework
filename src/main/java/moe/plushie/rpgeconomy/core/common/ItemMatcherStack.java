@@ -1,4 +1,4 @@
-package moe.plushie.rpgeconomy.currency.common;
+package moe.plushie.rpgeconomy.core.common;
 
 import moe.plushie.rpgeconomy.api.core.IItemMatcher;
 import net.minecraft.item.ItemStack;

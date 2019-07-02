@@ -182,6 +182,10 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
     protected boolean isDialogOpen() {
         return dialog != null;
     }
+    
+    protected void closeDialog() {
+        this.dialog = null;
+    }
 
     public void update() {
     }
@@ -189,7 +193,7 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
     @Override
     public void dialogResult(AbstractGuiDialog dialog, DialogResult result) {
         if (result == DialogResult.CANCEL) {
-            dialog = null;
+            closeDialog();
         }
     }
 }

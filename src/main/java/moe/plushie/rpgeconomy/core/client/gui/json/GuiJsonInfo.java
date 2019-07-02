@@ -9,8 +9,6 @@ public class GuiJsonInfo {
     private final GuiJsonStyle style;
     private final HashMap<String, ResourceLocation> textureMap;
     
-    
-    
     public GuiJsonInfo(GuiJsonStyle style, HashMap<String, ResourceLocation> textureMap) {
         this.style = style;
         this.textureMap = textureMap;

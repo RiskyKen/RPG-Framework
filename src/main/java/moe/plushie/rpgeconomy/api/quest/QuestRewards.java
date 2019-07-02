@@ -10,5 +10,7 @@ public enum QuestRewards {
     /** Player receives currency. */
     CURRENCY_RECEIVE,
     /** Player receives reputation. */
-    REPUTAION_RECEIVE
+    REPUTAION_RECEIVE,
+    /** Runs a command */
+    COMMAND
 }
