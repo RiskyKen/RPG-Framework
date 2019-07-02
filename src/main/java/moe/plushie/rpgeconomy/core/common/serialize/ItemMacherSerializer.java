@@ -1,4 +1,4 @@
-package moe.plushie.rpgeconomy.currency.common.serialize;
+package moe.plushie.rpgeconomy.core.common.serialize;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

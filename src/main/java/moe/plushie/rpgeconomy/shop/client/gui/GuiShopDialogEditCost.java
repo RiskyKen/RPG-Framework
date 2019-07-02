@@ -42,7 +42,7 @@ public class GuiShopDialogEditCost extends AbstractGuiDialog implements IDropDow
         dropDownCostTypes = new GuiDropDownList(0, x + 10, y + 25, 100, "", this);
         buttonEditType = new GuiButtonExt(-1, x + 120, y + 25, 80, 20, "Edit Cost"); 
         
-        String[] costTypes = new String[] { "Free", "Currency", "Items" };
+        String[] costTypes = new String[] { "Free", "Currency", "Items", "Ore Dictionary"};
         for (String type : costTypes) {
             dropDownCostTypes.addListItem(type);
         }
@@ -113,7 +113,7 @@ public class GuiShopDialogEditCost extends AbstractGuiDialog implements IDropDow
 
     @Override
     public void onDropDownListChanged(GuiDropDownList dropDownList) {
-        buttonEditType.enabled = dropDownList.getListSelectedIndex() > 0;
+        buttonEditType.enabled = dropDownList.getListSelectedIndex() > 0 & dropDownList.getListSelectedIndex() < 3;
         this.costNew = cost;
         if (dropDownList.getListSelectedIndex() == 0) {
             this.costNew = Cost.NO_COST;

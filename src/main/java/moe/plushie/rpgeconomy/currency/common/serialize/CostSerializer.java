@@ -8,6 +8,7 @@ import moe.plushie.rpgeconomy.api.core.IItemMatcher;
 import moe.plushie.rpgeconomy.api.currency.ICost;
 import moe.plushie.rpgeconomy.api.currency.IWallet;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
+import moe.plushie.rpgeconomy.core.common.serialize.ItemMacherSerializer;
 import moe.plushie.rpgeconomy.currency.common.Cost;
 import moe.plushie.rpgeconomy.currency.common.CurrencyManager;
 
