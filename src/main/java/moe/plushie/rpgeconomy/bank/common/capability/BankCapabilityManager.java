@@ -28,6 +28,9 @@ public final class BankCapabilityManager {
             return;
         }
         EntityPlayer player = (EntityPlayer) event.getObject();
+        if (player.getEntityWorld().isRemote) {
+            return;
+        }
         event.addCapability(KEY_BANK_PROVIDER, new BankCapability.Provider(player));
     }
 }
