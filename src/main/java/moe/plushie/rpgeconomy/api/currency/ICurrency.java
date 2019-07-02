@@ -1,5 +1,7 @@
 package moe.plushie.rpgeconomy.api.currency;
 
+import moe.plushie.rpgeconomy.api.core.IItemMatcher;
+
 public interface ICurrency {
 
     public String getIdentifier();

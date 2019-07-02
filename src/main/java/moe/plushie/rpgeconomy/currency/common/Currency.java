@@ -1,7 +1,7 @@
 package moe.plushie.rpgeconomy.currency.common;
 
+import moe.plushie.rpgeconomy.api.core.IItemMatcher;
 import moe.plushie.rpgeconomy.api.currency.ICurrency;
-import moe.plushie.rpgeconomy.api.currency.IItemMatcher;
 
 public class Currency implements ICurrency {
 

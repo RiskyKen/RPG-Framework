@@ -1,6 +1,6 @@
 package moe.plushie.rpgeconomy.currency.common;
 
-import moe.plushie.rpgeconomy.api.currency.IItemMatcher;
+import moe.plushie.rpgeconomy.api.core.IItemMatcher;
 import net.minecraft.item.ItemStack;
 
 public class ItemMatcherStack implements IItemMatcher {

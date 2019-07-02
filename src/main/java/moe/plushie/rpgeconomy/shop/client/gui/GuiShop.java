@@ -6,9 +6,9 @@ import org.lwjgl.opengl.GL11;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
 
+import moe.plushie.rpgeconomy.api.core.IItemMatcher;
 import moe.plushie.rpgeconomy.api.currency.ICost;
 import moe.plushie.rpgeconomy.api.currency.ICurrency.ICurrencyVariant;
-import moe.plushie.rpgeconomy.api.currency.IItemMatcher;
 import moe.plushie.rpgeconomy.api.currency.IWallet;
 import moe.plushie.rpgeconomy.api.shop.IShop;
 import moe.plushie.rpgeconomy.api.shop.IShop.IShopTab;

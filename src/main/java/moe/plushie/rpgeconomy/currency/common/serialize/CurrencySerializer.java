@@ -7,8 +7,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import moe.plushie.rpgeconomy.api.core.IItemMatcher;
 import moe.plushie.rpgeconomy.api.currency.ICurrency.ICurrencyWalletInfo;
-import moe.plushie.rpgeconomy.api.currency.IItemMatcher;
 import moe.plushie.rpgeconomy.currency.common.Currency;
 import moe.plushie.rpgeconomy.currency.common.Currency.CurrencyVariant;
 import moe.plushie.rpgeconomy.currency.common.Currency.CurrencyWalletInfo;
