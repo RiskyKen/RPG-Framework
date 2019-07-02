@@ -50,6 +50,16 @@ public final class Database {
             sql = String.format(sql, player.getGameProfile().getId().toString());
             SQLiteDriver.executeUpdate(sql);
         }
+        
+        public int getPlayerId(String username) {
+            String sql = "SELECT id FROM players WHERE username='%s'";
+            sql = String.format(sql, username);
+            ArrayList<String> results = SQLiteDriver.executeQueryArrayList(sql);
+            if (!results.isEmpty()) {
+                return Integer.parseInt(results.get(0));
+            }
+            return -1;
+        }
 
         public int getPlayerId(EntityPlayer player) {
             String sql = "SELECT id FROM players WHERE uuid='%s'";

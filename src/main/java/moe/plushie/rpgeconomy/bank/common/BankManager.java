@@ -92,6 +92,27 @@ public class BankManager implements IBankManager {
         }
     }
     
+    public int getBankIndex(IBank bank) {
+        if (bank == null) {
+            return -1;
+        }
+        IBank[] banks = getBanks();
+        for (int i = 0; i < banks.length; i++) {
+            if (bank == banks[i]) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    
+    public IBank getBank(int index) {
+        IBank[] banks = getBanks();
+        if (index >= 0 & index < banks.length) {
+            return banks[index];
+        }
+        return null;
+    }
+    
     @Override
     public IBank getBank(String identifier) {
         return bankMap.get(identifier);

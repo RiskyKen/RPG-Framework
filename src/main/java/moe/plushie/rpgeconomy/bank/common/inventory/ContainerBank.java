@@ -20,7 +20,7 @@ public class ContainerBank extends ModContainer implements IInventoryChangedList
     private int activeTab = 0;
     private boolean updatingSlots = false;
 
-    public ContainerBank(EntityPlayer player, IBank bank) {
+    public ContainerBank(EntityPlayer player, IBank bank, int playerId) {
         super(player.inventory);
         this.player = player;
         this.bank = bank;
