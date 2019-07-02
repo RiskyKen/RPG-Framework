@@ -1,19 +1,31 @@
 package moe.plushie.rpgeconomy.core.database;
 
-import java.sql.ResultSet;
 import java.util.Date;
-import java.util.UUID;
 
-public class DBPlayerInfo {
+import com.mojang.authlib.GameProfile;
 
-	private int id;
-	public UUID uuid;
-	private Date firstSeen;
-	private Date lastLogin;
-	private long playTime;
+public class DBPlayerInfo extends DBPlayer {
+
+	private final GameProfile gameProfile;
+	private final Date firstSeen;
+	private final Date lastLogin;
 	
-	
-	public DBPlayerInfo(ResultSet resultSet) {
-		//this.uuid = uuid;
-	}
+    public DBPlayerInfo(int id, GameProfile gameProfile, Date firstSeen, Date lastLogin) {
+        super(id);
+        this.gameProfile = gameProfile;
+        this.firstSeen = firstSeen;
+        this.lastLogin = lastLogin;
+    }
+
+    public GameProfile getGameProfile() {
+        return gameProfile;
+    }
+
+    public Date getFirstSeen() {
+        return firstSeen;
+    }
+
+    public Date getLastLogin() {
+        return lastLogin;
+    }
 }

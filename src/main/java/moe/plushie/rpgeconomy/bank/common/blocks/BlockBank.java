@@ -7,6 +7,7 @@ import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.blocks.AbstractModBlockContainer;
 import moe.plushie.rpgeconomy.core.common.lib.LibBlockNames;
 import moe.plushie.rpgeconomy.core.common.lib.LibGuiIds;
+import moe.plushie.rpgeconomy.core.database.DBPlayer;
 import moe.plushie.rpgeconomy.core.database.Database;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.properties.IProperty;
@@ -87,8 +88,8 @@ public class BlockBank extends AbstractModBlockContainer {
             if (tileEntity != null && tileEntity instanceof TileEntityBank) {
                 IBank bank = ((TileEntityBank)tileEntity).getBank();
                 int index = RpgEconomy.getProxy().getBankManager().getBankIndex(bank);
-                int playerId = Database.PLAYERS_TABLE.getPlayerId(playerIn);
-                FMLNetworkHandler.openGui(playerIn, RpgEconomy.getInstance(), LibGuiIds.BANK, worldIn, index, playerId, 0);
+                DBPlayer dbPlayer = Database.PLAYERS_TABLE.getPlayer(playerIn);
+                FMLNetworkHandler.openGui(playerIn, RpgEconomy.getInstance(), LibGuiIds.BANK, worldIn, index, dbPlayer.getId(), 0);
             }
         }
         return true;

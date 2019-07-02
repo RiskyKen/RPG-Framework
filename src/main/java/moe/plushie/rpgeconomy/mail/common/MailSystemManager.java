@@ -107,7 +107,7 @@ public class MailSystemManager implements IMailSystemManager {
     }
 
     public void onClientSendMailMessage(EntityPlayerMP entityPlayer, MailMessage mailMessage) {
-        MailSystem mailSystem = getMailSystem(mailMessage.getMailSystem().getName());
+        MailSystem mailSystem = getMailSystem(mailMessage.getMailSystem().getIdentifier());
         if (mailSystem != null) {
             mailSystem.onClientSendMailMessage(entityPlayer, mailMessage);
         }

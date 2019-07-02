@@ -40,7 +40,7 @@ public final class MailMessageSerializer {
         }
         JsonObject jsonObject = new JsonObject();
         
-        jsonObject.addProperty(PROP_MAIL_SYSTEM, mailMessage.getMailSystem().getName());
+        jsonObject.addProperty(PROP_MAIL_SYSTEM, mailMessage.getMailSystem().getIdentifier());
         jsonObject.addProperty(PROP_SENDER, NBTUtil.writeGameProfile(new NBTTagCompound(), mailMessage.getSender()).toString());
         jsonObject.addProperty(PROP_RECEIVER, NBTUtil.writeGameProfile(new NBTTagCompound(), mailMessage.getReceiver()).toString());
         jsonObject.addProperty(PROP_SEND_DATE_TIME, SDF.format(mailMessage.getSendDateTime()));

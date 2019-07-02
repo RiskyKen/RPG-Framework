@@ -6,7 +6,6 @@ import moe.plushie.rpgeconomy.api.bank.IBank;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.command.ModCommand;
 import moe.plushie.rpgeconomy.core.common.lib.LibGuiIds;
-import moe.plushie.rpgeconomy.core.database.Database;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
@@ -71,7 +70,7 @@ public class CommandOpen extends ModCommand {
         IBank bank = RpgEconomy.getProxy().getBankManager().getBank(bankIdentifier);
         EntityPlayer player = getCommandSenderAsPlayer(sender);
         
-        int playerId = Database.PLAYERS_TABLE.getPlayerId(player);
+        //DBPlayer dbPlayer = Database.PLAYERS_TABLE.getPlayer(player);
 
         if (args.length > getParentCount()) {
             //playerId = Database.PLAYERS_TABLE.getPlayerId(args[getParentCount() + 1]);

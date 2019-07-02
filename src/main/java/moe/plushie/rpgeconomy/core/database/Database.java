@@ -5,8 +5,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.UUID;
+
+import com.mojang.authlib.GameProfile;
 
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -32,10 +35,7 @@ public final class Database {
         }
 
         public boolean isPlayerInDatabase(EntityPlayer player) {
-            String sql = "SELECT * FROM players WHERE uuid='%s'";
-            sql = String.format(sql, player.getGameProfile().getId().toString());
-            ArrayList<String> results = SQLiteDriver.executeQueryArrayList(sql);
-            return !results.isEmpty();
+            return getPlayer(player.getGameProfile()) != null;
         }
 
         public void addPlayerToDatabase(EntityPlayer player) {
@@ -51,24 +51,64 @@ public final class Database {
             SQLiteDriver.executeUpdate(sql);
         }
         
-        public int getPlayerId(String username) {
-            String sql = "SELECT id FROM players WHERE username='%s'";
-            sql = String.format(sql, username);
-            ArrayList<String> results = SQLiteDriver.executeQueryArrayList(sql);
-            if (!results.isEmpty()) {
-                return Integer.parseInt(results.get(0));
-            }
-            return -1;
+        public DBPlayerInfo getPlayerInfo(EntityPlayer player) {
+            return getPlayerInfo(player.getGameProfile());
         }
-
-        public int getPlayerId(EntityPlayer player) {
-            String sql = "SELECT id FROM players WHERE uuid='%s'";
-            sql = String.format(sql, player.getGameProfile().getId().toString());
-            ArrayList<String> results = SQLiteDriver.executeQueryArrayList(sql);
-            if (!results.isEmpty()) {
-                return Integer.parseInt(results.get(0));
+        
+        public DBPlayerInfo getPlayerInfo(GameProfile gameProfile) {
+            String sql = "SELECT * FROM players WHERE ";
+            String searchValue;
+            if (gameProfile.getId() != null) {
+                sql += "uuid=?";
+                searchValue = gameProfile.getId().toString();
+            } else {
+                sql += "username=?";
+                searchValue = gameProfile.getName();
             }
-            return -1;
+            DBPlayerInfo playerInfo = null;
+            try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, searchValue);
+                ResultSet resultSet = ps.executeQuery();
+                if (resultSet.next()) {
+                    int id = resultSet.getInt("id");
+                    UUID uuid = UUID.fromString(resultSet.getString("uuid"));
+                    String username = resultSet.getString("username");
+                    Date firstSeen = resultSet.getDate("first_seen");
+                    Date lastLogin = resultSet.getDate("last_seen");
+                    playerInfo = new DBPlayerInfo(id, new GameProfile(uuid, username), firstSeen, lastLogin);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return playerInfo;
+        }
+        
+        public DBPlayer getPlayer(EntityPlayer player) {
+            return getPlayer(player.getGameProfile());
+        }
+        
+        public DBPlayer getPlayer(GameProfile gameProfile) {
+            String sql = "SELECT id FROM players WHERE ";
+            String searchValue;
+            if (gameProfile.getId() != null) {
+                sql += "uuid=?";
+                searchValue = gameProfile.getId().toString();
+            } else {
+                sql += "username=?";
+                searchValue = gameProfile.getName();
+            }
+            DBPlayer playerInfo = DBPlayer.MISSING;
+            try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, searchValue);
+                ResultSet resultSet = ps.executeQuery();
+                if (resultSet.next()) {
+                    int id = resultSet.getInt("id");
+                    playerInfo = new DBPlayer(id);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return playerInfo;
         }
     }
 
@@ -90,14 +130,10 @@ public final class Database {
         }
 
         public void addHeatmapData(EntityPlayer player) {
-            int playerId = PLAYERS_TABLE.getPlayerId(player);
-            if (playerId == -1) {
-                return;
-            }
+            DBPlayer dbPlayer = PLAYERS_TABLE.getPlayer(player);
             String sql = "INSERT INTO heatmaps (id, player_id, x, y, z, dimension, date) VALUES (NULL, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
-
             try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setInt(1, playerId);
+                ps.setInt(1, dbPlayer.getId());
                 ps.setDouble(2, player.posX);
                 ps.setDouble(3, player.posY);
                 ps.setDouble(4, player.posZ);
@@ -127,20 +163,20 @@ public final class Database {
         }
 
         public String getAccountTabs(EntityPlayer player, String bankIdentifier) {
-            int playerId = PLAYERS_TABLE.getPlayerId(player);
+            DBPlayer dbPlayer = PLAYERS_TABLE.getPlayer(player);
             String tabs = null;
             try (Connection conn = SQLiteDriver.getConnection(); ) {
                 String sqlUpdate = "UPDATE banks SET times_opened = times_opened + 1, last_access=datetime('now') WHERE bank_identifier=? AND player_id=?";
                 try(PreparedStatement ps = conn.prepareStatement(sqlUpdate)) {
                     ps.setString(1, bankIdentifier);
-                    ps.setInt(2, playerId);
+                    ps.setInt(2, dbPlayer.getId());
                     ps.executeUpdate();
                 }
                 
                 String sqlGetTabs = "SELECT * FROM banks WHERE bank_identifier=? AND player_id=?";
                 try(PreparedStatement ps = conn.prepareStatement(sqlGetTabs)) {
                     ps.setString(1, bankIdentifier);
-                    ps.setInt(2, playerId);
+                    ps.setInt(2, dbPlayer.getId());
                     ResultSet resultSet = ps.executeQuery();
                     while (resultSet.next()) {
                         tabs = resultSet.getString("tabs");
@@ -153,11 +189,11 @@ public final class Database {
         }
 
         public int setAccount(EntityPlayer player, String bankIdentifier, String tabs) {
-            int playerId = PLAYERS_TABLE.getPlayerId(player);
+            DBPlayer dbPlayer = PLAYERS_TABLE.getPlayer(player);
             int id = -1;
             String sql = "INSERT INTO banks (id, player_id, bank_identifier, tabs, times_opened, last_access, last_change) VALUES (NULL, ?, ?, ?, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
             try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setInt(1, playerId);
+                ps.setInt(1, dbPlayer.getId());
                 ps.setString(2, bankIdentifier);
                 ps.setString(3, tabs);
                 id = ps.executeUpdate();
@@ -169,11 +205,11 @@ public final class Database {
         }
 
         public void updateAccount(EntityPlayer player, String bankIdentifier, String tabs) {
-            int playerId = PLAYERS_TABLE.getPlayerId(player);
+            DBPlayer dbPlayer = PLAYERS_TABLE.getPlayer(player);
             String sql = "UPDATE banks SET tabs=?, last_access=datetime('now'), last_change=datetime('now') WHERE player_id=? AND bank_identifier=?";
             try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, tabs);
-                ps.setInt(2, playerId);
+                ps.setInt(2, dbPlayer.getId());
                 ps.setString(3, bankIdentifier);
                 ps.executeUpdate();
             } catch (SQLException e) {
@@ -183,11 +219,11 @@ public final class Database {
 
         public boolean isAccountInDatabase(EntityPlayer player, String bankIdentifier) {
             boolean foundAccount = false;
-            int playerId = PLAYERS_TABLE.getPlayerId(player);
+            DBPlayer dbPlayer = PLAYERS_TABLE.getPlayer(player);
             String sql = "SELECT * FROM banks WHERE bank_identifier=? AND player_id=?";
             try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, bankIdentifier);
-                ps.setInt(2, playerId);
+                ps.setInt(2, dbPlayer.getId());
                 ResultSet resultSet = ps.executeQuery();
                 while (resultSet.next()) {
                     foundAccount = true;
