@@ -1,6 +1,7 @@
 package moe.plushie.rpgeconomy.shop.client.gui;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.lwjgl.opengl.GL11;
 
@@ -24,6 +25,7 @@ import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTabbed;
 import moe.plushie.rpgeconomy.core.client.lib.LibGuiResources;
 import moe.plushie.rpgeconomy.core.common.config.ConfigHandler;
 import moe.plushie.rpgeconomy.core.common.inventory.slot.SlotCurrency;
+import moe.plushie.rpgeconomy.core.common.inventory.slot.SlotHidable;
 import moe.plushie.rpgeconomy.core.common.lib.LibBlockNames;
 import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
 import moe.plushie.rpgeconomy.core.common.network.client.MessageClientGuiShopUpdate;
@@ -82,6 +84,12 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
         this.entityPlayer = entityPlayer;
         tabController.setActiveTabIndex(getActiveTab());
         tabChanged();
+        
+        ContainerShop containerShop = (ContainerShop) inventorySlots;
+        ArrayList<Slot> playerSlots = containerShop.getSlotsPlayer();
+        for (Slot slot : containerShop.getSlotsPrice()) {
+            ((SlotHidable)slot).setVisible(false);
+        }
     }
 
     @Override
@@ -480,6 +488,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
                 return;
             }
             if (button == buttonCostEdit[i]) {
+                //((ContainerShop)inventorySlots).gotCostRequest(i);
                 openDialog(new GuiShopDialogEditCost(this, "editCost", this, 210, 120, i, shop.getTabs().get(activeTabIndex).getItems().get(i).getCost()));
             }
         }
@@ -551,7 +560,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
         }
         PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.TAB_CHANGED).setTabIndex(activeTabIndex));
     }
-
+    
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int button) throws IOException {
         if (isDialogOpen()) {

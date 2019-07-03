@@ -124,6 +124,7 @@ public class GuiShopDialogEditCostItems extends AbstractGuiDialog {
     
     @Override
     public void mouseClicked(int mouseX, int mouseY, int button) {
+        super.mouseClicked(mouseX, mouseY, button);
         try {
             updateSlots(false);
             slotHandler.mouseClicked(mouseX, mouseY, button);
@@ -131,23 +132,22 @@ public class GuiShopDialogEditCostItems extends AbstractGuiDialog {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        super.mouseClicked(mouseX, mouseY, button);
     }
     
     @Override
     public void mouseClickMove(int mouseX, int mouseY, int lastButtonClicked, long timeSinceMouseClick) {
+        super.mouseClickMove(mouseX, mouseY, lastButtonClicked, timeSinceMouseClick);
         updateSlots(false);
         slotHandler.mouseClickMove(mouseX, mouseY, lastButtonClicked, timeSinceMouseClick);
         updateSlots(true);
-        super.mouseClickMove(mouseX, mouseY, lastButtonClicked, timeSinceMouseClick);
     }
     
     @Override
     public void mouseMovedOrUp(int mouseX, int mouseY, int button) {
+        super.mouseMovedOrUp(mouseX, mouseY, button);
         updateSlots(false);
         slotHandler.mouseReleased(mouseX, mouseY, button);
         updateSlots(true);
-        super.mouseMovedOrUp(mouseX, mouseY, button);
     }
     
     @Override
@@ -243,12 +243,18 @@ public class GuiShopDialogEditCostItems extends AbstractGuiDialog {
         GlStateManager.color(1F, 1F, 1F, 1F);
         mc.renderEngine.bindTexture(ICONS);
         
+        GlStateManager.pushAttrib();
+        
         updateSlots(false);
         slotHandler.drawScreen(mouseX, mouseY, partialTickTime);
         updateSlots(true);
+        
+        GlStateManager.popAttrib();
+        
         GlStateManager.disableDepth();
         GlStateManager.enableBlend();
         GlStateManager.color(1F, 1F, 1F, 1F);
+        
         RenderHelper.enableGUIStandardItemLighting();
     }
 
@@ -259,7 +265,7 @@ public class GuiShopDialogEditCostItems extends AbstractGuiDialog {
         for (int i = 0; i < slotsPrice.size(); i++) {
             ItemStack stack = slotsPrice.get(i).getStack();
             if (!stack.isEmpty()) {
-                matchers.add(new ItemMatcherStack(stack, matchMeta[i], matchNbt[i]));
+                matchers.add(new ItemMatcherStack(stack.copy(), matchMeta[i], matchNbt[i]));
             }
         }
         return matchers.toArray(new IItemMatcher[matchers.size()]);

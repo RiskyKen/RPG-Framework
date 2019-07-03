@@ -42,8 +42,8 @@ public class ContainerShop extends ModTileContainer<TileEntityShop> {
 
     public ContainerShop(EntityPlayer entityPlayer, TileEntityShop tileEntity) {
         super(entityPlayer, tileEntity);
-        invShop = new InventoryBasic("", false, 8);
-        invPrice = new InventoryBasic("", false, 5);
+        invShop = new InventoryBasic("shop", false, 8);
+        invPrice = new InventoryBasic("price", false, 5);
         slotsShop = new ArrayList<Slot>();
         slotsPrice = new ArrayList<Slot>();
 
@@ -59,14 +59,16 @@ public class ContainerShop extends ModTileContainer<TileEntityShop> {
             addSlotToContainerAndList(new SlotShop(invShop, i + 4, 168, 25 + i * 31, this), slotsShop);
         }
         
-        for (int i = 0; i < invPrice.getSizeInventory(); i++) {
-            SlotHidable slotHidable = new SlotHidable(invPrice, i, 76 + i * 38, 33);
-            addSlotToContainerAndList(slotHidable, slotsPrice);
-            slotHidable.setVisible(false);
-        }
+
 
         if (ConfigHandler.showPlayerInventoryInShopGUI) {
             addPlayerSlots(24, 162);
+        }
+        
+        for (int i = 0; i < invPrice.getSizeInventory(); i++) {
+            SlotHidable slotHidable = new SlotHidable(invPrice, i, 76 + i * 38, 33);
+            addSlotToContainerAndList(slotHidable, slotsPrice);
+            slotHidable.setVisible(true);
         }
     }
 
@@ -133,9 +135,11 @@ public class ContainerShop extends ModTileContainer<TileEntityShop> {
     }
     
     private void setSlotsForPrice(int slotIndex) {
+        //detectAndSendChanges();
         for (int i = 0; i < invPrice.getSizeInventory(); i++) {
             invPrice.setInventorySlotContents(i, ItemStack.EMPTY);
         }
+        //detectAndSendChanges();
         if (shop != null && shop.getTabCount() > 0) {
             if (activeTabIndex != -1) {
                 IShopItem shopItem = shop.getTabs().get(activeTabIndex).getItems().get(slotIndex);
@@ -151,7 +155,7 @@ public class ContainerShop extends ModTileContainer<TileEntityShop> {
                 }
             }
         }
-        detectAndSendChanges();
+        //detectAndSendChanges();
     }
 
     public IShop getShop() {
