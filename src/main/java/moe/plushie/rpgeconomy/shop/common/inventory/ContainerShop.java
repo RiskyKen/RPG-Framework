@@ -1,5 +1,7 @@
 package moe.plushie.rpgeconomy.shop.common.inventory;
 
+import java.util.ArrayList;
+
 import moe.plushie.rpgeconomy.api.currency.ICost;
 import moe.plushie.rpgeconomy.api.shop.IShop;
 import moe.plushie.rpgeconomy.api.shop.IShop.IShopItem;
@@ -8,6 +10,7 @@ import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.config.ConfigHandler;
 import moe.plushie.rpgeconomy.core.common.init.ModSounds;
 import moe.plushie.rpgeconomy.core.common.inventory.ModTileContainer;
+import moe.plushie.rpgeconomy.core.common.inventory.slot.SlotHidable;
 import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
 import moe.plushie.rpgeconomy.core.common.network.server.MessageServerShop;
 import moe.plushie.rpgeconomy.core.common.utils.UtilItems;
@@ -19,6 +22,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.InventoryBasic;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
@@ -26,7 +30,11 @@ import net.minecraft.world.World;
 
 public class ContainerShop extends ModTileContainer<TileEntityShop> {
 
-    private final InventoryBasic inventory;
+    private final InventoryBasic invShop;
+    private final InventoryBasic invPrice;
+    private final ArrayList<Slot> slotsShop;
+    private final ArrayList<Slot> slotsPrice;
+
     private IShop shop;
     private boolean editMode = false;
     private int activeTabIndex = 0;
@@ -34,25 +42,42 @@ public class ContainerShop extends ModTileContainer<TileEntityShop> {
 
     public ContainerShop(EntityPlayer entityPlayer, TileEntityShop tileEntity) {
         super(entityPlayer, tileEntity);
-        inventory = new InventoryBasic("shop", false, 8);
+        invShop = new InventoryBasic("", false, 8);
+        invPrice = new InventoryBasic("", false, 5);
+        slotsShop = new ArrayList<Slot>();
+        slotsPrice = new ArrayList<Slot>();
 
         if (!entityPlayer.getEntityWorld().isRemote) {
             setShopFromTile();
         }
 
         for (int i = 0; i < 4; i++) {
-            addSlotToContainer(new SlotShop(inventory, i, 32, 25 + i * 31, this));
+            addSlotToContainerAndList(new SlotShop(invShop, i, 32, 25 + i * 31, this), slotsShop);
         }
 
         for (int i = 0; i < 4; i++) {
-            addSlotToContainer(new SlotShop(inventory, i + 4, 168, 25 + i * 31, this));
+            addSlotToContainerAndList(new SlotShop(invShop, i + 4, 168, 25 + i * 31, this), slotsShop);
+        }
+        
+        for (int i = 0; i < invPrice.getSizeInventory(); i++) {
+            SlotHidable slotHidable = new SlotHidable(invPrice, i, 76 + i * 38, 33);
+            addSlotToContainerAndList(slotHidable, slotsPrice);
+            slotHidable.setVisible(false);
         }
 
         if (ConfigHandler.showPlayerInventoryInShopGUI) {
             addPlayerSlots(24, 162);
         }
     }
-    
+
+    public ArrayList<Slot> getSlotsShop() {
+        return slotsShop;
+    }
+
+    public ArrayList<Slot> getSlotsPrice() {
+        return slotsPrice;
+    }
+
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
         World world = player.getEntityWorld();
@@ -88,18 +113,45 @@ public class ContainerShop extends ModTileContainer<TileEntityShop> {
     }
 
     private void setSlotForTab() {
-        for (int i = 0; i < inventory.getSizeInventory(); i++) {
-            inventory.setInventorySlotContents(i, ItemStack.EMPTY);
+        for (int i = 0; i < invShop.getSizeInventory(); i++) {
+            invShop.setInventorySlotContents(i, ItemStack.EMPTY);
         }
         if (shop != null && shop.getTabCount() > 0) {
             if (activeTabIndex != -1) {
                 for (int i = 0; i < shop.getTabs().get(activeTabIndex).getItemCount(); i++) {
                     if (i < 8) {
-                        inventory.setInventorySlotContents(i, shop.getTabs().get(activeTabIndex).getItems().get(i).getItem());
+                        invShop.setInventorySlotContents(i, shop.getTabs().get(activeTabIndex).getItems().get(i).getItem());
                     }
                 }
             }
         }
+    }
+    
+
+    public void gotCostRequest(int slotIndex) {
+        setSlotsForPrice(slotIndex);
+    }
+    
+    private void setSlotsForPrice(int slotIndex) {
+        for (int i = 0; i < invPrice.getSizeInventory(); i++) {
+            invPrice.setInventorySlotContents(i, ItemStack.EMPTY);
+        }
+        if (shop != null && shop.getTabCount() > 0) {
+            if (activeTabIndex != -1) {
+                IShopItem shopItem = shop.getTabs().get(activeTabIndex).getItems().get(slotIndex);
+                if (!shopItem.getItem().isEmpty()) {
+                    ICost cost = shopItem.getCost();
+                    if (cost != null && cost.hasItemCost()) {
+                        for (int i = 0; i < cost.getItemCost().length; i++) {
+                            if (i < invPrice.getSizeInventory()) {
+                                invPrice.setInventorySlotContents(i, cost.getItemCost()[i].getItemStack().copy());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        detectAndSendChanges();
     }
 
     public IShop getShop() {

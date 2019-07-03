@@ -1,5 +1,8 @@
 package moe.plushie.rpgeconomy.core.common.inventory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Nonnull;
 
 import moe.plushie.rpgeconomy.core.common.inventory.slot.SlotHidable;
@@ -12,12 +15,19 @@ import net.minecraft.item.ItemStack;
 public class ModContainer extends Container {
 
     protected final InventoryPlayer invPlayer;
+    private final ArrayList<Slot> slotsPlayer;
     
     private int playerInvStartIndex;
     private int playerInvEndIndex;
     
     public ModContainer(InventoryPlayer invPlayer) {
         this.invPlayer = invPlayer;
+        this.slotsPlayer = new ArrayList<Slot>();
+    }
+    
+    protected void addSlotToContainerAndList(Slot slot, List<Slot> list) {
+        addSlotToContainer(slot);
+        list.add(slot);
     }
     
     protected void addPlayerSlots(int posX, int posY) {
@@ -25,11 +35,11 @@ public class ModContainer extends Container {
         int playerInvY = posY;
         int hotBarY = playerInvY + 58;
         for (int x = 0; x < 9; x++) {
-            addSlotToContainer(new SlotHidable(invPlayer, x, posX + 18 * x, hotBarY));
+            addSlotToContainerAndList(new SlotHidable(invPlayer, x, posX + 18 * x, hotBarY), slotsPlayer);
         }
         for (int y = 0; y < 3; y++) {
             for (int x = 0; x < 9; x++) {
-                addSlotToContainer(new SlotHidable(invPlayer, x + y * 9 + 9, posX + 18 * x, playerInvY + y * 18));
+                addSlotToContainerAndList(new SlotHidable(invPlayer, x + y * 9 + 9, posX + 18 * x, playerInvY + y * 18), slotsPlayer);
             }
         }
         playerInvEndIndex  = inventorySlots.size();
@@ -41,6 +51,10 @@ public class ModContainer extends Container {
     
     public int getPlayerInvEndIndex() {
         return playerInvEndIndex;
+    }
+    
+    public ArrayList<Slot> getSlotsPlayer() {
+        return slotsPlayer;
     }
     
     public boolean isSlotPlayerInv(int index) {

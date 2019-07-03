@@ -30,6 +30,9 @@ public class GuiShopDialogEditCost extends AbstractGuiDialog implements IDropDow
         this.slotIndex = index;
         this.cost = cost;
         this.costNew = cost;
+        if (costNew == null) {
+            costNew = Cost.NO_COST;
+        }
     }
 
     @Override
@@ -85,7 +88,7 @@ public class GuiShopDialogEditCost extends AbstractGuiDialog implements IDropDow
                 if (costNew != null) {
                     itemCost = costNew.getItemCost();
                 }
-                openDialog(new GuiShopDialogEditCostItems(parent, "editItems", this, 190, 80, itemCost));
+                openDialog(new GuiShopDialogEditCostItems(parent, "editItems", this, 190, 220, slotIndex, itemCost));
             }
         }
     }
@@ -129,6 +132,11 @@ public class GuiShopDialogEditCost extends AbstractGuiDialog implements IDropDow
             if (dialog instanceof GuiShopDialogEditCostCurrency) {
                 IWallet wallet = ((GuiShopDialogEditCostCurrency)dialog).getWallet();
                 costNew = new Cost(wallet, null);
+                closeDialog();
+            }
+            if (dialog instanceof GuiShopDialogEditCostItems) {
+                IItemMatcher[] matchers = ((GuiShopDialogEditCostItems)dialog).getCost();
+                costNew = new Cost(null, matchers);
                 closeDialog();
             }
         }

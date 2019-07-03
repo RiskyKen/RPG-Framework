@@ -1,5 +1,7 @@
 package moe.plushie.rpgeconomy.shop.client.gui;
 
+import java.util.Random;
+
 import moe.plushie.rpgeconomy.api.currency.ICurrency;
 import moe.plushie.rpgeconomy.api.currency.ICurrency.ICurrencyVariant;
 import moe.plushie.rpgeconomy.api.currency.IWallet;
@@ -10,8 +12,10 @@ import moe.plushie.rpgeconomy.core.client.gui.controls.GuiDropDownList;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiDropDownList.IDropDownListCallback;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiIconButton;
 import moe.plushie.rpgeconomy.core.client.lib.LibGuiResources;
+import moe.plushie.rpgeconomy.core.common.init.ModSounds;
 import moe.plushie.rpgeconomy.currency.common.CurrencyManager;
 import moe.plushie.rpgeconomy.currency.common.Wallet;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
@@ -106,6 +110,13 @@ public class GuiShopDialogEditCostCurrency extends AbstractGuiDialog implements 
             }
             if (GuiScreen.isShiftKeyDown()) {
                 change = change * 10;
+            }
+            
+            Random random = mc.player.getRNG();
+            if (remove) {
+                mc.getSoundHandler().playSound(PositionedSoundRecord.getRecord(ModSounds.COIN_WITHDRAW, 0.8F + (random.nextFloat() * 0.4F), 0.3F));
+            } else {
+                mc.getSoundHandler().playSound(PositionedSoundRecord.getRecord(ModSounds.COIN_DEPOSIT, 0.8F + (random.nextFloat() * 0.4F), 0.3F));
             }
             
             amount = MathHelper.clamp(amount + change, 0, Integer.MAX_VALUE);

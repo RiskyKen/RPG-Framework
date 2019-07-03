@@ -1,5 +1,6 @@
 package moe.plushie.rpgeconomy.core.common.handler;
 
+import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.config.ConfigHandler;
 import moe.plushie.rpgeconomy.core.common.lib.LibModInfo;
 import moe.plushie.rpgeconomy.core.database.Database;
@@ -10,6 +11,8 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 @Mod.EventBusSubscriber(modid = LibModInfo.ID)
@@ -27,8 +30,18 @@ public final class PlayerStatsHandler {
     }
     
     @SubscribeEvent
+    public static void onClientConnectedToServerEvent(ClientConnectedToServerEvent event) {
+        RpgEconomy.getLogger().info("Client connect");
+    }
+    
+    @SubscribeEvent
+    public static void onClientDisconnectionFromServerEvent(ClientDisconnectionFromServerEvent event) {
+        RpgEconomy.getLogger().info("Client disconnect");
+    }
+    
+    @SubscribeEvent
     public static void onPlayerLogout(PlayerLoggedOutEvent event) {
-        // RpgEconomy.getLogger().info("onPlayerLogout");
+        RpgEconomy.getLogger().info("Player logout: " + event.player);
     }
     
     @SubscribeEvent

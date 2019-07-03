@@ -56,6 +56,9 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
     public void initGui() {
         this.x = this.parent.width / 2 - this.width / 2;
         this.y = this.parent.height / 2 - this.height / 2;
+        if (isDialogOpen()) {
+            dialog.initGui();
+        }
     }
 
     public void mouseClicked(int mouseX, int mouseY, int button) {
@@ -71,7 +74,7 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
                     GuiButton guiButton = this.buttonList.get(i);
                     if (guiButton.mousePressed(this.mc, mouseX, mouseY)) {
                         this.selectedButton = guiButton;
-                        // guiButton.func_146113_a(this.mc.getSoundHandler());
+                        guiButton.playPressSound(this.mc.getSoundHandler());
                         this.actionPerformed(guiButton);
                     }
                 }

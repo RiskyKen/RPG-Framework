@@ -62,6 +62,11 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
         return this;
     }
     
+    public MessageClientGuiShopUpdate setSlotIndex(int slotIndex) {
+        this.slotIndex = slotIndex;
+        return this;
+    }
+    
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(type.ordinal());
@@ -104,6 +109,9 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
         case ITEM_UPDATE:
             buf.writeInt(slotIndex);
             ByteBufUtils.writeUTF8String(buf, CostSerializer.serializeJson(cost, true).toString());
+            break;
+        case ITEM_COST_REQUEST:
+            buf.writeInt(slotIndex);
             break;
         default:
             break;
@@ -150,6 +158,9 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
             slotIndex = buf.readInt();
             JsonElement json = SerializeHelper.stringToJson(ByteBufUtils.readUTF8String(buf));
             cost = CostSerializer.deserializeJson(json);
+            break;
+        case ITEM_COST_REQUEST:
+            slotIndex = buf.readInt();
             break;
         default:
             break;
@@ -198,6 +209,9 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
             case ITEM_UPDATE:
                 containerShop.updateItem(message.slotIndex, message.cost);
                 break;
+            case ITEM_COST_REQUEST:
+                containerShop.gotCostRequest(message.slotIndex);
+                break;
             default:
                 break;
             }
@@ -206,14 +220,20 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
     }
 
     public static enum ShopMessageType {
+        /** Edit mode turned on. */
         EDIT_MODE_ON,
+        /** Edit mode turned off. */
         EDIT_MODE_OFF,
         SHOP_ADD,
         SHOP_REMOVE,
+        /** Shop renamed. */
         SHOP_RENAME,
+        /** Change linked shop. */
         SHOP_CHANGE,
+        /** Force shop save. */
         SHOP_SAVE,
         ITEM_UPDATE,
+        ITEM_COST_REQUEST,
         TAB_ADD,
         TAB_REMOVE,
         TAB_EDIT,

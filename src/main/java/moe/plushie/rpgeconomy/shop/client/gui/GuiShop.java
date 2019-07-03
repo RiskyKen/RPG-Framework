@@ -385,7 +385,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
                 ItemStack stack = itemCost[i].getItemStack();
                 // stack.setCount(1);
                 itemRender.renderItemAndEffectIntoGUI(stack, 0, 0);
-                itemRender.renderItemOverlayIntoGUI(fontRenderer, stack, 0, 0, String.valueOf(stack.getCount()));
+                itemRender.renderItemOverlays(fontRenderer, stack, 0, 0);
                 GlStateManager.popAttrib();
                 GlStateManager.popMatrix();
             }
