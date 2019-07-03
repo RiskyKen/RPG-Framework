@@ -16,7 +16,7 @@ import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 
-@Mod(modid = LibModInfo.ID, version = LibModInfo.VERSION)
+@Mod(modid = LibModInfo.ID, version = LibModInfo.VERSION, updateJSON = LibModInfo.UPDATE_JSON_URL)
 public class RpgEconomy {
 
     @Instance(LibModInfo.ID)
