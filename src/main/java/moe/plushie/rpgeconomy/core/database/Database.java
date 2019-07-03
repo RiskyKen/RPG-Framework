@@ -35,7 +35,7 @@ public final class Database {
         }
 
         public boolean isPlayerInDatabase(EntityPlayer player) {
-            return getPlayer(player.getGameProfile()) != null;
+            return getPlayer(player.getGameProfile()) != DBPlayer.MISSING;
         }
 
         public void addPlayerToDatabase(EntityPlayer player) {
