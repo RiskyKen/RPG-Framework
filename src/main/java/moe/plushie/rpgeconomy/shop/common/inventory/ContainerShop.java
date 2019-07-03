@@ -25,6 +25,7 @@ public class ContainerShop extends ModTileContainer<TileEntityShop> {
     private IShop shop;
     private boolean editMode = false;
     private int activeTabIndex = 0;
+    private boolean dirty = false;
 
     public ContainerShop(EntityPlayer entityPlayer, TileEntityShop tileEntity) {
         super(entityPlayer, tileEntity);
@@ -50,6 +51,14 @@ public class ContainerShop extends ModTileContainer<TileEntityShop> {
     private void setShopFromTile() {
         this.shop = tileEntity.getShop();
         changeTab(0);
+    }
+
+    @Override
+    public void onContainerClosed(EntityPlayer playerIn) {
+        super.onContainerClosed(playerIn);
+        if (!playerIn.getEntityWorld().isRemote & dirty & shop != null) {
+            saveShop();
+        }
     }
 
     private void setSlotForTab() {
@@ -85,7 +94,7 @@ public class ContainerShop extends ModTileContainer<TileEntityShop> {
         if (activeTabIndex == -1) {
             return;
         }
-
+        dirty = true;
         IShopTab shopTab = shop.getTabs().get(activeTabIndex);
         ICost cost = shopTab.getItems().get(slotIndex).getCost();
 
@@ -143,7 +152,7 @@ public class ContainerShop extends ModTileContainer<TileEntityShop> {
         shop.setName(shopName);
         sendShopToListeners(true);
     }
-    
+
     public void updateItem(int slotIndex, ICost cost) {
         IShopItem shopItem = shop.getTabs().get(activeTabIndex).getItems().get(slotIndex);
         shopItem = new ShopItem(shopItem.getItem(), cost);
@@ -179,6 +188,7 @@ public class ContainerShop extends ModTileContainer<TileEntityShop> {
     }
 
     private void sendShopToListeners(boolean update) {
+        dirty = true;
         for (int j = 0; j < this.listeners.size(); ++j) {
             if (listeners.get(j) instanceof EntityPlayerMP) {
                 PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerShop(getTileEntity().getShop(), update), (EntityPlayerMP) listeners.get(j));
