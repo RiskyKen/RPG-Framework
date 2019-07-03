@@ -31,6 +31,9 @@ minecraft {
     version = "$project.minecraftVersion-$project.forgeVersion"
     runDir = "run"
     
+    replaceIn "core/common/lib/LibModInfo.java"
+    replace "@VERSION@", project.version
+    
     // the mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   snapshot are built nightly.
     // stable_#            stables are built at the discretion of the MCP team.
