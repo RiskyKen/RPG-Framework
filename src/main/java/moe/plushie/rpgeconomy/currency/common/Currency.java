@@ -1,58 +1,65 @@
 package moe.plushie.rpgeconomy.currency.common;
 
+import java.util.Arrays;
+
 import moe.plushie.rpgeconomy.api.core.IItemMatcher;
 import moe.plushie.rpgeconomy.api.currency.ICurrency;
 
 public class Currency implements ICurrency, Comparable<Currency> {
 
-	private final String identifier;
-	
+    private final String identifier;
+
     /** Name of the currency. (this is used as the currency ID) */
     private final String name;
 
     private final String displayFormat;
-    
+
     private final CurrencyWalletInfo walletInfo;
 
     /** Different variants of this currency. */
     private final CurrencyVariant[] variants;
 
-    public Currency(String identifier, String name,  String displayFormat, CurrencyWalletInfo walletInfo, CurrencyVariant[] variants) {
-    	this.identifier = identifier;
+    public Currency(String identifier, String name, String displayFormat, CurrencyWalletInfo walletInfo, CurrencyVariant[] variants) {
+        this.identifier = identifier;
         this.name = name;
         this.displayFormat = displayFormat;
         this.walletInfo = walletInfo;
         this.variants = variants;
     }
-    
+
     @Override
     public String getIdentifier() {
-    	return identifier;
+        return identifier;
     }
 
     @Override
     public String getName() {
         return name;
     }
-    
+
     @Override
     public String getDisplayFormat() {
         return displayFormat;
     }
-    
+
     @Override
     public ICurrencyWalletInfo getCurrencyWalletInfo() {
         return walletInfo;
     }
-    
+
     @Override
     public CurrencyVariant[] getCurrencyVariants() {
         return variants;
     }
-    
+
     @Override
     public int compareTo(Currency o) {
         return name.compareTo(o.name);
+    }
+
+    @Override
+    public String toString() {
+        return "Currency [identifier=" + identifier + ", name=" + name + ", displayFormat=" + displayFormat + ", walletInfo=" + walletInfo + ", variants=" + Arrays.toString(variants) + "]";
     }
 
     public static class CurrencyVariant implements ICurrencyVariant, Comparable<CurrencyVariant> {
@@ -92,9 +99,9 @@ public class Currency implements ICurrency, Comparable<Currency> {
             return value - o.value;
         }
     }
-    
+
     public static class CurrencyWalletInfo implements ICurrencyWalletInfo {
-        
+
         /** Will a wallet item be generated for this currency. */
         private final boolean createWalletItem;
 
@@ -106,9 +113,9 @@ public class Currency implements ICurrency, Comparable<Currency> {
 
         /** Should picked up items be auto added to the wallet. */
         private final boolean pickupIntoWallet;
-        
+
         private final float deathPercentageDropped;
-        
+
         private final float deathPercentageLost;
 
         public CurrencyWalletInfo(boolean createWalletItem, boolean needItemToAccess, String modKeybind, boolean pickupIntoWallet, float deathPercentageDropped, float deathPercentageLost) {

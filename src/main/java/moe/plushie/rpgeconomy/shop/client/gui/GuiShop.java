@@ -8,10 +8,13 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 
 import moe.plushie.rpgeconomy.api.core.IItemMatcher;
 import moe.plushie.rpgeconomy.api.currency.ICost;
+import moe.plushie.rpgeconomy.api.currency.ICurrency;
 import moe.plushie.rpgeconomy.api.currency.ICurrency.ICurrencyVariant;
+import moe.plushie.rpgeconomy.api.currency.ICurrencyCapability;
 import moe.plushie.rpgeconomy.api.currency.IWallet;
 import moe.plushie.rpgeconomy.api.shop.IShop;
 import moe.plushie.rpgeconomy.api.shop.IShop.IShopTab;
+import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpgeconomy.core.client.gui.GuiHelper;
 import moe.plushie.rpgeconomy.core.client.gui.IDialogCallback;
@@ -25,6 +28,11 @@ import moe.plushie.rpgeconomy.core.common.lib.LibBlockNames;
 import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
 import moe.plushie.rpgeconomy.core.common.network.client.MessageClientGuiShopUpdate;
 import moe.plushie.rpgeconomy.core.common.network.client.MessageClientGuiShopUpdate.ShopMessageType;
+import moe.plushie.rpgeconomy.currency.common.Cost;
+import moe.plushie.rpgeconomy.currency.common.CurrencyManager;
+import moe.plushie.rpgeconomy.currency.common.CurrencyWalletHelper;
+import moe.plushie.rpgeconomy.currency.common.Wallet;
+import moe.plushie.rpgeconomy.currency.common.capability.CurrencyCapability;
 import moe.plushie.rpgeconomy.shop.common.inventory.ContainerShop;
 import moe.plushie.rpgeconomy.shop.common.tileentities.TileEntityShop;
 import net.minecraft.client.gui.GuiButton;
@@ -57,7 +65,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
     private GuiIconButton buttonStats;
     private GuiIconButton buttonEditMode;
     private GuiIconButton buttonRename;
-    private GuiIconButton buttonSave;
+    // private GuiIconButton buttonSave;
 
     private GuiIconButton buttonEditTabAdd;
     private GuiIconButton buttonEditTabRemove;
@@ -93,7 +101,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
         buttonStats = new GuiIconButton(this, 0, getGuiLeft(), getGuiTop() + 147 + 17 * 1, 16, 16, TEXTURE);
         buttonEditMode = new GuiIconButton(this, 0, getGuiLeft(), getGuiTop() + 147 + 17 * 2, 16, 16, TEXTURE);
         buttonRename = new GuiIconButton(this, 0, getGuiLeft(), getGuiTop() + 147 + 17 * 3, 16, 16, TEXTURE);
-        buttonSave = new GuiIconButton(this, 0, getGuiLeft(), getGuiTop() + 147 + 17 * 4, 16, 16, TEXTURE);
+        // buttonSave = new GuiIconButton(this, 0, getGuiLeft(), getGuiTop() + 147 + 17 * 4, 16, 16, TEXTURE);
 
         buttonEditTabAdd = new GuiIconButton(this, 0, getGuiLeft() + getXSize() - 16, getGuiTop() + 147 + 17 * 0, 16, 16, TEXTURE);
         buttonEditTabRemove = new GuiIconButton(this, 0, getGuiLeft() + getXSize() - 16, getGuiTop() + 147 + 17 * 1, 16, 16, TEXTURE);
@@ -111,7 +119,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
         buttonStats.setDrawButtonBackground(false).setIconLocation(208, 224, 16, 16);
         buttonEditMode.setDrawButtonBackground(false).setIconLocation(208, 208, 16, 16);
         buttonRename.setDrawButtonBackground(false).setIconLocation(208, 192, 16, 16);
-        buttonSave.setDrawButtonBackground(false).setIconLocation(208, 96, 16, 16);
+        // buttonSave.setDrawButtonBackground(false).setIconLocation(208, 96, 16, 16);
 
         buttonEditTabAdd.setDrawButtonBackground(false).setIconLocation(208, 176, 16, 16);
         buttonEditTabRemove.setDrawButtonBackground(false).setIconLocation(208, 160, 16, 16);
@@ -127,7 +135,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
         buttonStats.setHoverText("Stats...");
         buttonEditMode.setHoverText("Edit Mode").setDisableText(ChatFormatting.RED + "Shop must be LINKED to use this option.");
         buttonRename.setHoverText("Rename Shop...").setDisableText(ChatFormatting.RED + "Shop must be in EDIT MODE to use this option.");
-        buttonSave.setHoverText("Save Shop").setDisableText(ChatFormatting.RED + "Shop must be in EDIT MODE to use this option.");
+        // buttonSave.setHoverText("Save Shop").setDisableText(ChatFormatting.RED + "Shop must be in EDIT MODE to use this option.");
 
         buttonEditTabAdd.setHoverText("Add Tab");
         buttonEditTabRemove.setHoverText("Remove Tab");
@@ -142,7 +150,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
             buttonList.add(buttonStats);
             buttonList.add(buttonEditMode);
             buttonList.add(buttonRename);
-            buttonList.add(buttonSave);
+            // buttonList.add(buttonSave);
 
             buttonList.add(buttonEditTabAdd);
             buttonList.add(buttonEditTabRemove);
@@ -160,7 +168,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
         buttonEditMode.enabled = isShopLinked();
         buttonStats.enabled = false;
         buttonRename.enabled = editMode;
-        buttonSave.enabled = editMode;
+        // buttonSave.enabled = editMode;
 
         buttonEditTabAdd.enabled = editMode;
         buttonEditTabRemove.enabled = editMode;
@@ -215,7 +223,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
         GuiUtils.drawContinuousTexturedBox(getGuiLeft() + 21, getGuiTop(), 0, 0, 278, 145, 100, 100, 4, zLevel);
 
         // Render money background.
-        GuiUtils.drawContinuousTexturedBox(getGuiLeft() + 21 + 177, getGuiTop() + 146, 0, 0, 101, 98, 100, 100, 4, zLevel);
+        GuiUtils.drawContinuousTexturedBox(getGuiLeft() + 19 + 174, getGuiTop() + 146, 0, 0, 111, 98, 100, 100, 4, zLevel);
 
         // Render title.
         GuiUtils.drawContinuousTexturedBox(getGuiLeft() + 21 + 38, getGuiTop() + 4, 0, 132, 200, 13, 100, 13, 2, zLevel);
@@ -233,7 +241,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
             }
         }
         if (ConfigHandler.showPlayerInventoryInShopGUI) {
-            GuiHelper.renderPlayerInvTexture(getGuiLeft() + 21, getGuiTop() + 145 + 1);
+            GuiHelper.renderPlayerInvTexture(getGuiLeft() + 16, getGuiTop() + 145 + 1);
         }
     }
 
@@ -256,14 +264,32 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
         fontRenderer.drawString(title, xSize / 2 - titleWidth / 2, 6, titleColour);
 
         if (ConfigHandler.showPlayerInventoryInShopGUI) {
-            GuiHelper.renderPlayerInvlabel(21, 145 + 1, fontRenderer);
+            GuiHelper.renderPlayerInvlabel(16, 145 + 1, fontRenderer);
         }
 
+        // Render shop item labels.
         for (int i = 0; i < 8; i++) {
             renderItemDetails(i);
         }
 
-        fontRenderer.drawString("Player Munie!", 206, 151, 0x333333);
+        fontRenderer.drawString("Player Money", 200, 151, 0x333333);
+        CurrencyManager currencyManager = RpgEconomy.getProxy().getCurrencyManager();
+        ICurrency[] currencies = currencyManager.getCurrencies();
+        int yCur = 0;
+        ICurrencyCapability cap = CurrencyCapability.get(entityPlayer);
+        for (int i = 0; i < currencies.length; i++) {
+            ICurrency currency = currencies[i];
+            int amount = 0;
+            if (!currency.getCurrencyWalletInfo().getNeedItemToAccess() | CurrencyWalletHelper.haveWalletForCurrency(entityPlayer, currency)) {
+                IWallet playerWallet = cap.getWallet(currency);
+                amount += playerWallet.getAmount();
+            }
+            amount += CurrencyWalletHelper.getAmountInInventory(currency, entityPlayer.inventory);
+            if (amount > 0) {
+                renderCost(176, 156 + yCur * 18, new Cost(new Wallet(currency, amount), null));
+                yCur++;
+            }
+        }
 
         GlStateManager.pushMatrix();
         GlStateManager.translate(-guiLeft, -guiTop, 0);
@@ -415,9 +441,9 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
         if (button == buttonRename) {
             openDialog(new GuiShopDialogRename(this, "shopRename", this, 190, 100, shop.getName()));
         }
-        if (button == buttonSave) {
-            PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.SHOP_SAVE));
-        }
+        // if (button == buttonSave) {
+        // PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.SHOP_SAVE));
+        // }
         if (button == buttonEditTabAdd) {
             openDialog(new GuiShopDialogTabAdd(this, "tabAdd", this, 190, 100));
         }
@@ -486,8 +512,8 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
                 PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.TAB_EDIT).setTabName(name).setTabIconIndex(iconIndex));
             }
             if (dialog instanceof GuiShopDialogEditCost) {
-                ICost cost = ((GuiShopDialogEditCost)dialog).getCost();
-                int slotIndex = ((GuiShopDialogEditCost)dialog).getSlotIndex();
+                ICost cost = ((GuiShopDialogEditCost) dialog).getCost();
+                int slotIndex = ((GuiShopDialogEditCost) dialog).getSlotIndex();
                 PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.ITEM_UPDATE).setCost(slotIndex, cost));
             }
         }

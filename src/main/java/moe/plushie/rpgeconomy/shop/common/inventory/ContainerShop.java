@@ -6,18 +6,23 @@ import moe.plushie.rpgeconomy.api.shop.IShop.IShopItem;
 import moe.plushie.rpgeconomy.api.shop.IShop.IShopTab;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.config.ConfigHandler;
+import moe.plushie.rpgeconomy.core.common.init.ModSounds;
 import moe.plushie.rpgeconomy.core.common.inventory.ModTileContainer;
 import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
 import moe.plushie.rpgeconomy.core.common.network.server.MessageServerShop;
+import moe.plushie.rpgeconomy.core.common.utils.UtilItems;
 import moe.plushie.rpgeconomy.shop.common.Shop.ShopItem;
 import moe.plushie.rpgeconomy.shop.common.Shop.ShopTab;
 import moe.plushie.rpgeconomy.shop.common.inventory.slot.SlotShop;
 import moe.plushie.rpgeconomy.shop.common.tileentities.TileEntityShop;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
 
 public class ContainerShop extends ModTileContainer<TileEntityShop> {
 
@@ -44,8 +49,29 @@ public class ContainerShop extends ModTileContainer<TileEntityShop> {
         }
 
         if (ConfigHandler.showPlayerInventoryInShopGUI) {
-            addPlayerSlots(29, 162);
+            addPlayerSlots(24, 162);
         }
+    }
+    
+    @Override
+    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
+        World world = player.getEntityWorld();
+        if (!editMode & clickTypeIn == ClickType.PICKUP & !world.isRemote & shop != null & slotId >= 0 & slotId < 8) {
+            ItemStack itemStack = inventorySlots.get(slotId).getStack();
+            if (!itemStack.isEmpty()) {
+                IShopItem shopItem = shop.getTabs().get(activeTabIndex).getItems().get(slotId);
+                ICost cost = shopItem.getCost();
+                if (cost.canAfford(player)) {
+                    cost.pay(player);
+                    world.playSound(null, player.posX, player.posY, player.posZ, ModSounds.COIN_WITHDRAW, SoundCategory.PLAYERS, 0.3F, 0.8F + (player.getRNG().nextFloat() * 0.4F));
+                    if (!player.inventory.addItemStackToInventory(shopItem.getItem().copy())) {
+                        UtilItems.spawnItemAtEntity(player, shopItem.getItem().copy(), true);
+                    }
+                    detectAndSendChanges();
+                }
+            }
+        }
+        return super.slotClick(slotId, dragType, clickTypeIn, player);
     }
 
     private void setShopFromTile() {

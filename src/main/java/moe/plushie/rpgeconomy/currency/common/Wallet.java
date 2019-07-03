@@ -51,6 +51,6 @@ public class Wallet implements IWallet {
     
     @Override
     public String toString() {
-        return "Wallet [currency=" + currency + ", amount=" + amount + "]";
+        return "Wallet [currency=" + currency.getIdentifier() + ", amount=" + amount + "]";
     }
 }
