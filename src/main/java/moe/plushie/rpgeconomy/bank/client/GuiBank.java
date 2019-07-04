@@ -1,7 +1,5 @@
 package moe.plushie.rpgeconomy.bank.client;
 
-import com.mojang.realmsclient.gui.ChatFormatting;
-
 import moe.plushie.rpgeconomy.api.bank.IBank;
 import moe.plushie.rpgeconomy.bank.common.inventory.ContainerBank;
 import moe.plushie.rpgeconomy.core.client.gui.GuiHelper;
@@ -18,9 +16,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class GuiBank extends GuiTabbed {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation(LibGuiResources.BANK);
-
     private static int activeTabIndex = 0;
-    private final EntityPlayer player;
+
     private final IBank bank;
 
     private int panelSizeX;
@@ -28,7 +25,6 @@ public class GuiBank extends GuiTabbed {
 
     public GuiBank(EntityPlayer player, IBank bank, int playerId) {
         super(new ContainerBank(player, bank, playerId), false);
-        this.player = player;
         this.bank = bank;
     }
 
@@ -71,13 +67,10 @@ public class GuiBank extends GuiTabbed {
         // Render shop background.
         GuiUtils.drawContinuousTexturedBox(getGuiLeft(), getGuiTop(), 0, 0, panelSizeX, panelSizeY, 100, 100, 4, zLevel);
 
-        String title = ChatFormatting.RED + "Error Invalid Bank";
-        if (bank != null) {
-            title = bank.getName();
-        }
+        String title = getTitle();
         int titleWidth = fontRenderer.getStringWidth(title);
 
-        // Render title.
+        // Render title box.
         GuiUtils.drawContinuousTexturedBox(getGuiLeft() + xSize / 2 - titleWidth / 2 - 5, getGuiTop() + 4, 0, 100, titleWidth + 10, 13, 100, 13, 2, zLevel);
 
         // Render slots.
@@ -95,13 +88,19 @@ public class GuiBank extends GuiTabbed {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        String title = ChatFormatting.RED + "Error Invalid Bank";
-        if (bank != null) {
-            title = bank.getName();
-        }
+        String title = getTitle();
         int titleWidth = fontRenderer.getStringWidth(title);
+        // Render title text.
         fontRenderer.drawString(title, xSize / 2 - titleWidth / 2, 6, 0x333333);
 
         GuiHelper.renderPlayerInvlabel(xSize / 2 - 176 / 2, panelSizeY + 1, fontRenderer);
+    }
+
+    private String getTitle() {
+        if (bank != null) {
+            return bank.getName();
+        } else {
+            return GuiHelper.getLocalControlName(getName(), "invalidBank");
+        }
     }
 }

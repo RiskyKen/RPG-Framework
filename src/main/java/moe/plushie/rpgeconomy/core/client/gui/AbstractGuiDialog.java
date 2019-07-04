@@ -172,7 +172,7 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
     }
 
     protected void drawTitle() {
-        String title = GuiHelper.getLocalizedControlName(name, "title");
+        String title = GuiHelper.getLocalControlName(name, "title");
         int titleWidth = fontRenderer.getStringWidth(title);
         fontRenderer.drawString(title, x + width / 2 - titleWidth / 2, y + 6, 4210752);
     }

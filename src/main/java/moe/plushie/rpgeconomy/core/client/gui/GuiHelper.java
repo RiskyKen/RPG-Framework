@@ -64,13 +64,8 @@ public final class GuiHelper {
         fontRenderer.drawString(renderText, xPos, 6, colour);
     }
     
-    public static String getLocalizedControlName(String guiName, String controlName) {
-        String unlocalizedName = "inventory." + LibModInfo.ID.toLowerCase() + ":" + guiName + "." + controlName;
-        String localizedName = I18n.format(unlocalizedName);
-        if (!unlocalizedName.equals(localizedName)){
-            return localizedName;
-        }
-        return unlocalizedName;
+    public static String getLocalControlName(String guiName, String controlName) {
+        return I18n.format("inventory." + LibModInfo.ID.toLowerCase() + ":" + guiName + "." + controlName);
     }
     
     public static void drawHoveringText(List textList, int xPos, int yPos, FontRenderer font, int width, int height, float zLevel) {
