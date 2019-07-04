@@ -14,12 +14,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class MessageServerSyncShops implements IMessage, IMessageHandler<MessageServerSyncShops, IMessage> {
 
     private String[] shopIdentifiers;
+    private String[] shopNames;
     
     public MessageServerSyncShops() {
     }
     
-    public MessageServerSyncShops(String[] shopIdentifiers) {
+    public MessageServerSyncShops(String[] shopIdentifiers, String[] shopNames) {
         this.shopIdentifiers = shopIdentifiers;
+        this.shopNames = shopNames;
     }
     
     @Override
@@ -27,6 +29,7 @@ public class MessageServerSyncShops implements IMessage, IMessageHandler<Message
         buf.writeInt(shopIdentifiers.length);
         for (int i = 0; i < shopIdentifiers.length; i++) {
             ByteBufUtils.writeUTF8String(buf, shopIdentifiers[i]);
+            ByteBufUtils.writeUTF8String(buf, shopNames[i]);
         }
     }
 
@@ -34,36 +37,40 @@ public class MessageServerSyncShops implements IMessage, IMessageHandler<Message
     public void fromBytes(ByteBuf buf) {
         int shopCount = buf.readInt();
         shopIdentifiers = new String[shopCount];
+        shopNames = new String[shopCount];
         for (int i = 0; i < shopIdentifiers.length; i++) {
             shopIdentifiers[i] = ByteBufUtils.readUTF8String(buf);
+            shopNames[i] = ByteBufUtils.readUTF8String(buf);
         }
     }
 
     @Override
     public IMessage onMessage(MessageServerSyncShops message, MessageContext ctx) {
-        sendShopsToGui(message.shopIdentifiers);
+        sendShopsToGui(message.shopIdentifiers, message.shopNames);
         return null;
     }
     
     @SideOnly(Side.CLIENT)
-    private void sendShopsToGui(String[] shopIdentifiers) {
-        Minecraft.getMinecraft().addScheduledTask(new ShopsIdentifiersToGui(shopIdentifiers));
+    private void sendShopsToGui(String[] shopIdentifiers, String[] shopNames) {
+        Minecraft.getMinecraft().addScheduledTask(new ShopsIdentifiersToGui(shopIdentifiers, shopNames));
     }
 
     @SideOnly(Side.CLIENT)
     public static class ShopsIdentifiersToGui implements Runnable {
 
         private final String[] shopIdentifiers;
-
-        public ShopsIdentifiersToGui(String[] shopIdentifiers) {
+        private final String[] shopNames;
+        
+        public ShopsIdentifiersToGui(String[] shopIdentifiers, String[] shopNames) {
             this.shopIdentifiers = shopIdentifiers;
+            this.shopNames = shopNames;
         }
 
         @Override
         public void run() {
             GuiScreen guiScreen = Minecraft.getMinecraft().currentScreen;
             if (guiScreen instanceof GuiShop) {
-                ((GuiShop) guiScreen).gotShopIdentifiersFromServer(shopIdentifiers);
+                ((GuiShop) guiScreen).gotShopIdentifiersFromServer(shopIdentifiers, shopNames);
             }
         }
     }

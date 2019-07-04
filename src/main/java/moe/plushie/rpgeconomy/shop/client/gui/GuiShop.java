@@ -439,9 +439,9 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
         tabChanged();
     }
 
-    public void gotShopIdentifiersFromServer(String[] shopIdentifiers) {
+    public void gotShopIdentifiersFromServer(String[] shopIdentifiers, String[] shopNames) {
         if (isDialogOpen() && dialog instanceof GuiShopDialogShopList) {
-            ((GuiShopDialogShopList) dialog).gotShopIdentifiersFromServer(shopIdentifiers);
+            ((GuiShopDialogShopList) dialog).gotShopIdentifiersFromServer(shopIdentifiers, shopNames);
         }
     }
 

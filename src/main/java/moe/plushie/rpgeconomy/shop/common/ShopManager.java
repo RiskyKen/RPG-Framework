@@ -79,13 +79,23 @@ public class ShopManager implements IShopManager {
 	    Arrays.sort(shops);
 		return shops;
 	}
-
+	
 	@Override
-	public String[] getShopNames() {
+	public String[] getShopIdentifier() {
 		return shopMap.keySet().toArray(new String[shopMap.size()]);
 	}
-
+	
+    @Override
+    public String[] getShopNames() {
+        String[] names = new String[shopMap.size()];
+        IShop[] shops = shopMap.values().toArray(new IShop[names.length]);
+        for (int i = 0; i < shops.length; i++) {
+            names[i] = shops[i].getName();
+        }
+        return names;
+    }
+    
     public void syncToClient(EntityPlayerMP player) {
-        PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerSyncShops(getShopNames()), player);
+        PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerSyncShops(getShopIdentifier(), getShopNames()), player);
     }
 }

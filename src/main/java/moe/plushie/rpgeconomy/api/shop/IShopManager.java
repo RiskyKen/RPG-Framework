@@ -6,5 +6,7 @@ public interface IShopManager {
     
     public IShop[] getShops();
     
+    public String[] getShopIdentifier();
+    
     public String[] getShopNames();
 }

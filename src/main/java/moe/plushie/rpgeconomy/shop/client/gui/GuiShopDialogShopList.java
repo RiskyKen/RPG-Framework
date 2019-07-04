@@ -68,17 +68,17 @@ public class GuiShopDialogShopList extends AbstractGuiDialog {
         //drawTitle();
     }
     
-    public void gotShopIdentifiersFromServer(String[] shopIdentifiers) {
+    public void gotShopIdentifiersFromServer(String[] shopIdentifiers, String[] shopNames) {
         listShops.clearList();
-        for (String identifier : shopIdentifiers) {
-            listShops.addListItem(new ListItem(identifier));
+        for (int i = 0; i < shopIdentifiers.length; i++) {
+            listShops.addListItem(new ListItem(shopNames[i], shopIdentifiers[i]));
         }
     }
     
     public String getSelectedShopIdentifier() {
         IGuiListItem listItem = listShops.getSelectedListEntry();
         if (listItem != null) {
-            return listItem.getDisplayName();
+            return ((ListItem)listItem).getTag();
         } else {
             return null;
         }
@@ -87,9 +87,11 @@ public class GuiShopDialogShopList extends AbstractGuiDialog {
     public static class ListItem implements IGuiListItem {
 
         private final String name;
+        private final String tag;
         
-        public ListItem(String name) {
+        public ListItem(String name, String tag) {
             this.name = name;
+            this.tag = tag;
         }
         
         @Override
@@ -124,6 +126,10 @@ public class GuiShopDialogShopList extends AbstractGuiDialog {
         @Override
         public String getDisplayName() {
             return name;
+        }
+        
+        public String getTag() {
+            return tag;
         }
     }
  }
