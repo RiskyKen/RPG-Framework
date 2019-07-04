@@ -1,9 +1,12 @@
 package moe.plushie.rpgeconomy.shop.client.gui;
 
+import java.util.ArrayList;
+
 import moe.plushie.rpgeconomy.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpgeconomy.core.client.gui.IDialogCallback;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiList;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiList.IGuiListItem;
+import moe.plushie.rpgeconomy.core.client.gui.controls.GuiScrollbar;
 import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
 import moe.plushie.rpgeconomy.core.common.network.client.MessageClientRequestSync;
 import moe.plushie.rpgeconomy.core.common.network.client.MessageClientRequestSync.SyncType;
@@ -16,7 +19,11 @@ public class GuiShopDialogShopList extends AbstractGuiDialog {
 
     private GuiButtonExt buttonClose;
     private GuiButtonExt buttonSet;
+    
     private GuiList listShops;
+    private GuiScrollbar scrollbar;
+    
+    private final ArrayList<IGuiListItem> items = new ArrayList<IGuiListItem>();
     
     public GuiShopDialogShopList(GuiScreen parent, String name, IDialogCallback callback, int width, int height) {
         super(parent, name, callback, width, height);
@@ -30,10 +37,18 @@ public class GuiShopDialogShopList extends AbstractGuiDialog {
         
         buttonClose = new GuiButtonExt(-1, x + width - 80 - 10, y + height - 30, 80, 20, "Close");
         buttonSet = new GuiButtonExt(-1, x + width - 160 - 20, y + height - 30, 80, 20, "Set");
-        listShops = new GuiList(x + 5, y + 15, width - 10, height - 50, 12);
+        
+        listShops = new GuiList(x + 5, y + 15, width - 20, height - 50, 12);
+        for (IGuiListItem listItem : items) {
+            listShops.addListItem(listItem);
+        }
+        scrollbar = new GuiScrollbar(-1, x + width - 15, y + 15, 10, height - 50, "", false);
+        scrollbar.setSliderMaxValue(listShops.getTotalListHeight() - listShops.getVisibleHeight());
+        scrollbar.setAmount(listShops.getSlotHeight());
         
         buttonList.add(buttonClose);
         buttonList.add(buttonSet);
+        buttonList.add(scrollbar);
     }
     
     @Override
@@ -64,15 +79,17 @@ public class GuiShopDialogShopList extends AbstractGuiDialog {
         String title = "Shop List";
         int titleWidth = fontRenderer.getStringWidth(title);
         fontRenderer.drawString(title, x + width / 2 - titleWidth / 2, y + 6, 4210752);
+        listShops.setScrollAmount(scrollbar.getValue());
         listShops.drawList(mouseX, mouseY, partialTickTime);
         //drawTitle();
     }
     
     public void gotShopIdentifiersFromServer(String[] shopIdentifiers, String[] shopNames) {
-        listShops.clearList();
+        items.clear();
         for (int i = 0; i < shopIdentifiers.length; i++) {
-            listShops.addListItem(new ListItem(shopNames[i], shopIdentifiers[i]));
+            items.add(new ListItem(shopNames[i], shopIdentifiers[i]));
         }
+        initGui();
     }
     
     public String getSelectedShopIdentifier() {
