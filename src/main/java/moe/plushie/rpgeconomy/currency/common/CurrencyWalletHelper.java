@@ -1,5 +1,6 @@
 package moe.plushie.rpgeconomy.currency.common;
 
+import moe.plushie.rpgeconomy.api.core.IItemMatcher;
 import moe.plushie.rpgeconomy.api.currency.ICurrency;
 import moe.plushie.rpgeconomy.api.currency.ICurrency.ICurrencyVariant;
 import moe.plushie.rpgeconomy.currency.common.items.ItemWallet;
@@ -136,14 +137,52 @@ public final class CurrencyWalletHelper {
         return false;
     }
 
-    private static InventoryPlayer copyInventory(InventoryPlayer inventory) {
+    public static boolean payWithItems(InventoryPlayer inventoryPlayer, IItemMatcher[] itemCost, boolean simulate) {
+        InventoryPlayer inv = inventoryPlayer;
+        if (simulate) {
+            inv = copyInventory(inventoryPlayer);
+        }
+
+        int[] neededAmounts = new int[itemCost.length];
+        for (int i = 0; i < neededAmounts.length; i++) {
+            if (!itemCost[i].getItemStack().isEmpty()) {
+                neededAmounts[i] = itemCost[i].getItemStack().getCount();
+            } else {
+                neededAmounts[i] = 0;
+            }
+        }
+
+        for (int i = 0; i < neededAmounts.length; i++) {
+            for (int j = 0; j < inv.mainInventory.size(); j++) {
+                ItemStack stack = inv.mainInventory.get(j);
+                if (!stack.isEmpty()) {
+                    if (itemCost[i].matches(stack)) {
+                        int takeAmount = Math.min(stack.getCount(), neededAmounts[i]);
+
+                        neededAmounts[i] -= takeAmount;
+                        stack.shrink(takeAmount);
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < neededAmounts.length; i++) {
+            if (neededAmounts[i] > 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static InventoryPlayer copyInventory(InventoryPlayer inventory) {
         InventoryPlayer inventoryPlayer = new InventoryPlayer(null);
         for (int i = 0; i < inventoryPlayer.getSizeInventory(); i++) {
             inventoryPlayer.setInventorySlotContents(i, inventory.getStackInSlot(i).copy());
         }
         return inventoryPlayer;
     }
-    
+
     public static boolean haveWalletForCurrency(EntityPlayer player, ICurrency currency) {
         ItemStack stack = ItemWallet.getWallet(currency);
         if (!stack.isEmpty()) {

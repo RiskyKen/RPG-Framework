@@ -11,8 +11,6 @@ import moe.plushie.rpgeconomy.api.currency.IWallet;
 import moe.plushie.rpgeconomy.currency.common.capability.CurrencyCapability;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.item.ItemStack;
 
 public class Cost implements ICost {
 
@@ -73,13 +71,7 @@ public class Cost implements ICost {
 
         }
         if (hasItemCost() & !hasWalletCost()) {
-            InventoryPlayer inv = player.inventory;
-            for (int i = 0; i < inv.mainInventory.size(); i++) {
-                ItemStack stack = inv.mainInventory.get(i);
-                if (!stack.isEmpty()) {
-                    
-                }
-            }
+            return CurrencyWalletHelper.payWithItems(player.inventory, itemCost, true);
         }
         if (!hasWalletCost() & !hasItemCost()) {
             return true;
@@ -115,8 +107,9 @@ public class Cost implements ICost {
                 }
             }
         }
-        if (hasItemCost() & !hasWalletCost()) {
 
+        if (hasItemCost() & !hasWalletCost()) {
+            CurrencyWalletHelper.payWithItems(player.inventory, itemCost, false);
         }
     }
 

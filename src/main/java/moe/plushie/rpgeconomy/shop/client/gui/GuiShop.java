@@ -39,6 +39,7 @@ import moe.plushie.rpgeconomy.shop.common.inventory.ContainerShop;
 import moe.plushie.rpgeconomy.shop.common.tileentities.TileEntityShop;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -342,6 +343,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
     }
 
     private void renderCost(int slotX, int slotY, ICost cost) {
+        
         if (cost.hasWalletCost()) {
             IWallet wallet = cost.getWalletCost();
             int amount = wallet.getAmount();
@@ -366,6 +368,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
                     if (used) {
                         GlStateManager.pushMatrix();
                         GlStateManager.pushAttrib();
+                        RenderHelper.enableGUIStandardItemLighting();
                         GlStateManager.translate(22 + slotX + renderCount * 17, 5 + slotY, 0);
                         // GlStateManager.scale(0.75, 0.75, 0.75);
                         ItemStack stack = variant.getItem().getItemStack().copy();
@@ -376,6 +379,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
                         } else {
                             itemRender.renderItemOverlayIntoGUI(fontRenderer, stack, 0, 0, String.valueOf(count));
                         }
+                        RenderHelper.disableStandardItemLighting();
                         GlStateManager.popAttrib();
                         GlStateManager.popMatrix();
                         renderCount++;
@@ -386,16 +390,20 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
         if (cost.hasItemCost()) {
             IItemMatcher[] itemCost = cost.getItemCost();
             for (int i = 0; i < itemCost.length; i++) {
+                
                 GlStateManager.pushMatrix();
                 GlStateManager.pushAttrib();
+                RenderHelper.enableGUIStandardItemLighting();
                 GlStateManager.translate(22 + slotX + i * 17, 5 + slotY, 0);
                 // GlStateManager.scale(0.5, 0.5, 0.5);
                 ItemStack stack = itemCost[i].getItemStack();
                 // stack.setCount(1);
                 itemRender.renderItemAndEffectIntoGUI(stack, 0, 0);
                 itemRender.renderItemOverlays(fontRenderer, stack, 0, 0);
+                RenderHelper.disableStandardItemLighting();
                 GlStateManager.popAttrib();
                 GlStateManager.popMatrix();
+                
             }
         }
     }
