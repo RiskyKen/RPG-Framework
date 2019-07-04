@@ -34,7 +34,7 @@ public final class MailMessageSerializer {
     private MailMessageSerializer() {
     }
     
-    public static JsonElement serialize(MailMessage mailMessage, boolean compact) {
+    public static JsonElement serializeJson(MailMessage mailMessage, boolean compact) {
         if (mailMessage == null) {
             return null;
         }
@@ -57,7 +57,7 @@ public final class MailMessageSerializer {
         return jsonObject;
     }
     
-    public static MailMessage deserialize(JsonElement json) {
+    public static MailMessage deserializeJson(JsonElement json) {
         try {
             JsonObject jsonObject = json.getAsJsonObject();
             
@@ -89,6 +89,14 @@ public final class MailMessageSerializer {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
+    }
+    
+    public static void serializeDatabase(MailMessage mailMessage) {
+        
+    }
+    
+    public static MailMessage deserializeDatabase(int messageId) {
         return null;
     }
 }
