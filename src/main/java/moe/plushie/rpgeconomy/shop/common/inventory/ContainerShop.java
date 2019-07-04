@@ -89,6 +89,7 @@ public class ContainerShop extends ModTileContainer<TileEntityShop> {
                 IShopItem shopItem = shop.getTabs().get(activeTabIndex).getItems().get(slotId);
                 ICost cost = shopItem.getCost();
                 if (cost.canAfford(player)) {
+                    RpgEconomy.getLogger().info("sound");
                     cost.pay(player);
                     world.playSound(null, player.posX, player.posY, player.posZ, ModSounds.COIN_WITHDRAW, SoundCategory.PLAYERS, 0.3F, 0.8F + (player.getRNG().nextFloat() * 0.4F));
                     if (!player.inventory.addItemStackToInventory(shopItem.getItem().copy())) {

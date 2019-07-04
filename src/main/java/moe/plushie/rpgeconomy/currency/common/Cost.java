@@ -11,19 +11,21 @@ import moe.plushie.rpgeconomy.api.currency.IWallet;
 import moe.plushie.rpgeconomy.currency.common.capability.CurrencyCapability;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.ItemStack;
 
 public class Cost implements ICost {
 
     public static final ICost NO_COST = new Cost(null, null);
-    
+
     private final IWallet walletCost;
     private final IItemMatcher[] itemCost;
-    
+
     public Cost(IWallet walletCost, IItemMatcher[] itemCost) {
         this.walletCost = walletCost;
         this.itemCost = itemCost;
     }
-    
+
     @Override
     public IWallet getWalletCost() {
         return walletCost;
@@ -33,25 +35,25 @@ public class Cost implements ICost {
     public IItemMatcher[] getItemCost() {
         return itemCost;
     }
-    
+
     @Override
     public boolean hasWalletCost() {
         return walletCost != null;
     }
-    
+
     @Override
     public boolean hasItemCost() {
         return itemCost != null;
     }
-    
+
     @Override
     public boolean canAfford(EntityPlayer player) {
-        if (hasWalletCost()) {
+        if (hasWalletCost() & !hasItemCost()) {
             ICurrency currency = walletCost.getCurrency();
             if (CurrencyWalletHelper.consumeAmountFromInventory(currency, player.inventory, walletCost.getAmount(), true)) {
                 return true;
             }
-            
+
             ICurrencyWalletInfo walletInfo = currency.getCurrencyWalletInfo();
             if (walletInfo.getNeedItemToAccess()) {
                 if (!CurrencyWalletHelper.haveWalletForCurrency(player, currency)) {
@@ -62,32 +64,40 @@ public class Cost implements ICost {
             if (capability != null) {
                 IWallet playerWallet = capability.getWallet(currency);
                 if (playerWallet != null) {
-                    
+
                     if (playerWallet.getAmount() >= walletCost.getAmount()) {
                         return true;
                     }
                 }
             }
-            
+
         }
-        
-        if (!hasWalletCost() & ! hasItemCost()) {
+        if (hasItemCost() & !hasWalletCost()) {
+            InventoryPlayer inv = player.inventory;
+            for (int i = 0; i < inv.mainInventory.size(); i++) {
+                ItemStack stack = inv.mainInventory.get(i);
+                if (!stack.isEmpty()) {
+                    
+                }
+            }
+        }
+        if (!hasWalletCost() & !hasItemCost()) {
             return true;
         }
         return false;
     }
-    
+
     @Override
     public void pay(EntityPlayer player) {
-        if (hasWalletCost()) {
+        if (hasWalletCost() & !hasItemCost()) {
             ICurrency currency = walletCost.getCurrency();
-            
+
             if (CurrencyWalletHelper.consumeAmountFromInventory(currency, player.inventory, walletCost.getAmount(), true)) {
                 if (CurrencyWalletHelper.consumeAmountFromInventory(currency, player.inventory, walletCost.getAmount(), false)) {
                     return;
                 }
             }
-            
+
             ICurrencyWalletInfo walletInfo = currency.getCurrencyWalletInfo();
             if (walletInfo.getNeedItemToAccess()) {
                 if (!CurrencyWalletHelper.haveWalletForCurrency(player, currency)) {
@@ -104,6 +114,9 @@ public class Cost implements ICost {
                     }
                 }
             }
+        }
+        if (hasItemCost() & !hasWalletCost()) {
+
         }
     }
 

@@ -2,6 +2,7 @@ package moe.plushie.rpgeconomy.core.common.network.client;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.inventory.Container;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -29,7 +30,12 @@ public class MessageClientGuiButton implements IMessage, IMessageHandler<Message
     public IMessage onMessage(MessageClientGuiButton message, MessageContext ctx) {
         Container container = ctx.getServerHandler().player.openContainer;
         if (container != null && container instanceof IButtonPress) {
-            ((IButtonPress) container).buttonPress(message.buttonID);
+            FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(new Runnable() {
+                @Override
+                public void run() {
+                    ((IButtonPress) container).buttonPress(message.buttonID);
+                }
+            });
         }
         return null;
     }
