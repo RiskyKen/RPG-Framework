@@ -4,7 +4,7 @@ import moe.plushie.rpgeconomy.api.bank.IBank;
 import moe.plushie.rpgeconomy.api.currency.ICost;
 import moe.plushie.rpgeconomy.currency.common.Cost;
 
-public class Bank implements IBank {
+public class Bank implements IBank, Comparable<IBank> {
 
     private final String identifier;
     private final String name;
@@ -84,5 +84,10 @@ public class Bank implements IBank {
             return tabUnlockCosts[index];
         }
         return Cost.NO_COST;
+    }
+
+    @Override
+    public int compareTo(IBank o) {
+        return this.name.compareTo(o.getName());
     }
 }

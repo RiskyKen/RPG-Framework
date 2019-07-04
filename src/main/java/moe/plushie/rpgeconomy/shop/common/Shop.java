@@ -11,7 +11,7 @@ import moe.plushie.rpgeconomy.currency.common.Cost;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 
-public class Shop implements IShop {
+public class Shop implements IShop, Comparable<IShop> {
 
     public static final int ITEMS_PER_PAGE = 8;
 
@@ -48,6 +48,11 @@ public class Shop implements IShop {
     @Override
     public int getTabCount() {
         return shopTabs.size();
+    }
+    
+    @Override
+    public int compareTo(IShop o) {
+        return name.compareTo(o.getName());
     }
 
     public static class ShopTab implements IShopTab {

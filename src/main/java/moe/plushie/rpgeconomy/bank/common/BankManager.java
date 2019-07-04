@@ -2,6 +2,7 @@ package moe.plushie.rpgeconomy.bank.common;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import com.google.gson.JsonElement;
@@ -120,7 +121,9 @@ public class BankManager implements IBankManager {
 
     @Override
     public IBank[] getBanks() {
-        return bankMap.values().toArray(new Bank[bankMap.size()]);
+        IBank[] banks = bankMap.values().toArray(new IBank[bankMap.size()]);
+        Arrays.sort(banks);
+        return banks;
     }
 
     @Override

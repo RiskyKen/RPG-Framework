@@ -6,7 +6,7 @@ import moe.plushie.rpgeconomy.core.RpgEconomy;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 
-public class MailSystem implements IMailSystem {
+public class MailSystem implements IMailSystem, Comparable<IMailSystem> {
 
 	private final String identifier;
     private final String name;
@@ -74,6 +74,11 @@ public class MailSystem implements IMailSystem {
     @Override
     public int getMaxAttachments() {
         return maxAttachments;
+    }
+    
+    @Override
+    public int compareTo(IMailSystem o) {
+        return name.compareTo(o.getName());
     }
 
     public MailSystem setMaxAttachments(int maxAttachments) {

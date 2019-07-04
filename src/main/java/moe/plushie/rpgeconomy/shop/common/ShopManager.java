@@ -2,6 +2,7 @@ package moe.plushie.rpgeconomy.shop.common;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import com.google.common.base.Charsets;
@@ -74,7 +75,9 @@ public class ShopManager implements IShopManager {
 
 	@Override
 	public IShop[] getShops() {
-		return shopMap.values().toArray(new Shop[shopMap.size()]);
+	    IShop[] shops = shopMap.values().toArray(new Shop[shopMap.size()]);
+	    Arrays.sort(shops);
+		return shops;
 	}
 
 	@Override

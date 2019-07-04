@@ -2,6 +2,7 @@ package moe.plushie.rpgeconomy.mail.common;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import com.google.gson.JsonElement;
@@ -98,7 +99,9 @@ public class MailSystemManager implements IMailSystemManager {
 
     @Override
     public MailSystem[] getMailSystems() {
-        return mailSystemMap.values().toArray(new MailSystem[mailSystemMap.size()]);
+        MailSystem[] mailSystems = mailSystemMap.values().toArray(new MailSystem[mailSystemMap.size()]);
+        Arrays.sort(mailSystems);
+        return mailSystems;
     }
     
     @Override

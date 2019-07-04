@@ -5,7 +5,7 @@ import java.util.Arrays;
 import moe.plushie.rpgeconomy.api.core.IItemMatcher;
 import moe.plushie.rpgeconomy.api.currency.ICurrency;
 
-public class Currency implements ICurrency, Comparable<Currency> {
+public class Currency implements ICurrency, Comparable<ICurrency> {
 
     private final String identifier;
 
@@ -53,8 +53,8 @@ public class Currency implements ICurrency, Comparable<Currency> {
     }
 
     @Override
-    public int compareTo(Currency o) {
-        return name.compareTo(o.name);
+    public int compareTo(ICurrency o) {
+        return name.compareTo(o.getName());
     }
 
     @Override
