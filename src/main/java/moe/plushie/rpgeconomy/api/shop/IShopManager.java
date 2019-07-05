@@ -1,12 +1,14 @@
 package moe.plushie.rpgeconomy.api.shop;
 
+import moe.plushie.rpgeconomy.api.core.IIdentifier;
+
 public interface IShopManager {
     
-    public IShop getShop(String identifier);
+    public IShop getShop(IIdentifier identifier);
     
     public IShop[] getShops();
     
-    public String[] getShopIdentifier();
+    public IIdentifier[] getShopIdentifier();
     
     public String[] getShopNames();
 }

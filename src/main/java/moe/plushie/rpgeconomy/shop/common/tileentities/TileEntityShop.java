@@ -1,17 +1,19 @@
 package moe.plushie.rpgeconomy.shop.common.tileentities;
 
+import moe.plushie.rpgeconomy.api.core.IIdentifier;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
+import moe.plushie.rpgeconomy.core.common.serialize.IdentifierSerialize;
 import moe.plushie.rpgeconomy.core.common.tileentities.ModAutoSyncTileEntity;
+import moe.plushie.rpgeconomy.core.common.utils.SerializeHelper;
 import moe.plushie.rpgeconomy.shop.common.Shop;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.StringUtils;
 import net.minecraftforge.common.util.Constants.NBT;
 
 public class TileEntityShop extends ModAutoSyncTileEntity {
 
     private static final String TAG_SHOP = "shop";
 
-    private String shopIdentifier;
+    private IIdentifier shopIdentifier;
 
     public TileEntityShop() {
     }
@@ -24,12 +26,12 @@ public class TileEntityShop extends ModAutoSyncTileEntity {
     public Shop getShop() {
         return RpgEconomy.getProxy().getShopManager().getShop(shopIdentifier);
     }
-    
-    public void setShop(String shopIdentifier) {
+
+    public void setShop(IIdentifier shopIdentifier) {
         this.shopIdentifier = shopIdentifier;
         dirtySync();
     }
-    
+
     public void setShop(Shop shop) {
         this.shopIdentifier = shop.getIdentifier();
         dirtySync();
@@ -39,7 +41,7 @@ public class TileEntityShop extends ModAutoSyncTileEntity {
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         if (compound.hasKey(TAG_SHOP, NBT.TAG_STRING)) {
-            shopIdentifier = compound.getString(TAG_SHOP);
+            shopIdentifier = IdentifierSerialize.deserializeJson(SerializeHelper.stringToJson(compound.getString(TAG_SHOP)));
         } else {
             shopIdentifier = null;
         }
@@ -48,8 +50,8 @@ public class TileEntityShop extends ModAutoSyncTileEntity {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound = super.writeToNBT(compound);
-        if (!StringUtils.isNullOrEmpty(shopIdentifier)) {
-            compound.setString(TAG_SHOP, shopIdentifier);
+        if (shopIdentifier != null) {
+            compound.setString(TAG_SHOP, IdentifierSerialize.serializeJson(shopIdentifier).toString());
         }
         return compound;
     }

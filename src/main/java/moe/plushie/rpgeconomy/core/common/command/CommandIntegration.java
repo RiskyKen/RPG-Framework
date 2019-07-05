@@ -30,10 +30,10 @@ public class CommandIntegration extends ModSubCommands {
                     player.sendMessage(new TextComponentString("File was not found."));
                     return;
                 }
-                
+
                 int totalCount = 0;
                 int importCount = 0;
-                
+
                 String fileData = SerializeHelper.readFile(fantasticPlayersFile, Charsets.UTF_8);
                 String[] lines = fileData.split("\r\n");
                 for (String line : lines) {
@@ -42,7 +42,7 @@ public class CommandIntegration extends ModSubCommands {
                         try {
                             String[] split = line.split(" = ");
                             GameProfile gameProfile = new GameProfile(UUID.fromString(split[0]), split[1]);
-                            
+
                             if (importPlayer(gameProfile)) {
                                 player.sendMessage(new TextComponentString(String.format("Importing user profile %s.", gameProfile.getName())));
                                 importCount++;
@@ -52,10 +52,10 @@ public class CommandIntegration extends ModSubCommands {
                         }
                     }
                 }
-                
+
                 player.sendMessage(new TextComponentString(String.format("Imported %d profile(s) of %d total.", importCount, totalCount)));
             }
-            
+
             private boolean importPlayer(GameProfile gameProfile) {
                 if (TablePlayers.isPlayerInDatabase(gameProfile)) {
                     return false;
@@ -66,5 +66,4 @@ public class CommandIntegration extends ModSubCommands {
             }
         }));
     }
-
 }

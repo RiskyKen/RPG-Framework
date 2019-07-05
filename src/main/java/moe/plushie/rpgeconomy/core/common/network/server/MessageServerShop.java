@@ -3,7 +3,9 @@ package moe.plushie.rpgeconomy.core.common.network.server;
 import com.google.gson.JsonElement;
 
 import io.netty.buffer.ByteBuf;
+import moe.plushie.rpgeconomy.api.core.IIdentifier;
 import moe.plushie.rpgeconomy.api.shop.IShop;
+import moe.plushie.rpgeconomy.core.common.serialize.IdentifierSerialize;
 import moe.plushie.rpgeconomy.core.common.utils.SerializeHelper;
 import moe.plushie.rpgeconomy.shop.client.gui.GuiShop;
 import moe.plushie.rpgeconomy.shop.common.serialize.ShopSerializer;
@@ -34,7 +36,7 @@ public class MessageServerShop implements IMessage, IMessageHandler<MessageServe
         buf.writeBoolean(update);
         buf.writeBoolean(shop != null);
         if (shop != null) {
-            ByteBufUtils.writeUTF8String(buf, shop.getIdentifier());
+            ByteBufUtils.writeUTF8String(buf, IdentifierSerialize.serializeJson(shop.getIdentifier()).toString());
             JsonElement jsonShop = ShopSerializer.serializeJson(shop, true);
             ByteBufUtils.writeUTF8String(buf, jsonShop.toString());
         }
@@ -44,7 +46,7 @@ public class MessageServerShop implements IMessage, IMessageHandler<MessageServe
     public void fromBytes(ByteBuf buf) {
         update = buf.readBoolean();
         if (buf.readBoolean()) {
-            String identifier = ByteBufUtils.readUTF8String(buf);
+            IIdentifier identifier = IdentifierSerialize.deserializeJson(SerializeHelper.stringToJson(ByteBufUtils.readUTF8String(buf)));
             String jsonString = ByteBufUtils.readUTF8String(buf);
             JsonElement jsonShop = SerializeHelper.stringToJson(jsonString);
             shop = ShopSerializer.deserializeJson(jsonShop, identifier);

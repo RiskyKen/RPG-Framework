@@ -2,6 +2,7 @@ package moe.plushie.rpgeconomy.shop.common.inventory;
 
 import java.util.ArrayList;
 
+import moe.plushie.rpgeconomy.api.core.IIdentifier;
 import moe.plushie.rpgeconomy.api.currency.ICost;
 import moe.plushie.rpgeconomy.api.shop.IShop;
 import moe.plushie.rpgeconomy.api.shop.IShop.IShopItem;
@@ -264,8 +265,8 @@ public class ContainerShop extends ModTileContainer<TileEntityShop> {
         return activeTabIndex;
     }
 
-    public void setShopIdentifier(String shopIdentifier) {
-        getTileEntity().setShop(shopIdentifier);
+    public void setShopIdentifier(IIdentifier identifier) {
+        getTileEntity().setShop(identifier);
         setShopFromTile();
         sendShopToListeners(false);
     }

@@ -10,9 +10,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 
+import moe.plushie.rpgeconomy.api.core.IIdentifier;
 import moe.plushie.rpgeconomy.api.shop.IShop;
 import moe.plushie.rpgeconomy.api.shop.IShopManager;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
+import moe.plushie.rpgeconomy.core.common.IdentifierString;
 import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
 import moe.plushie.rpgeconomy.core.common.network.server.MessageServerSyncShops;
 import moe.plushie.rpgeconomy.core.common.utils.SerializeHelper;
@@ -25,14 +27,14 @@ public class ShopManager implements IShopManager {
     private static final String DIRECTORY_NAME = "shop";
 
     private final File currencyDirectory;
-    private final HashMap<String, Shop> shopMap;
+    private final HashMap<IIdentifier, Shop> shopMap;
 
     public ShopManager(File modDirectory) {
         currencyDirectory = new File(modDirectory, DIRECTORY_NAME);
         if (!currencyDirectory.exists()) {
             currencyDirectory.mkdir();
         }
-        shopMap = new HashMap<String, Shop>();
+        shopMap = new HashMap<IIdentifier, Shop>();
         MinecraftForge.EVENT_BUS.register(this);
     }
 
@@ -54,7 +56,7 @@ public class ShopManager implements IShopManager {
         RpgEconomy.getLogger().info("Loading shop: " + shopFile.getName());
         JsonElement jsonElement = SerializeHelper.readJsonFile(shopFile);
         if (jsonElement != null) {
-            Shop shop = ShopSerializer.deserializeJson(jsonElement, shopFile.getName());
+            Shop shop = ShopSerializer.deserializeJson(jsonElement, new IdentifierString(shopFile.getName()));
             if (shop != null) {
             	shopMap.put(shop.getIdentifier(), shop);
             }
@@ -65,11 +67,11 @@ public class ShopManager implements IShopManager {
         RpgEconomy.getLogger().info("Saving shop: " + shop.getIdentifier());
         JsonElement jsonData = ShopSerializer.serializeJson(shop, false);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        SerializeHelper.writeFile(new File(currencyDirectory, shop.getIdentifier()), Charsets.UTF_8, gson.toJson(jsonData));
+        SerializeHelper.writeFile(new File(currencyDirectory, String.valueOf(shop.getIdentifier().getValue())), Charsets.UTF_8, gson.toJson(jsonData));
     }
     
 	@Override
-	public Shop getShop(String identifier) {
+	public Shop getShop(IIdentifier identifier) {
 		return shopMap.get(identifier);
 	}
 
@@ -81,8 +83,8 @@ public class ShopManager implements IShopManager {
 	}
 	
 	@Override
-	public String[] getShopIdentifier() {
-		return shopMap.keySet().toArray(new String[shopMap.size()]);
+	public IIdentifier[] getShopIdentifier() {
+		return shopMap.keySet().toArray(new IIdentifier[shopMap.size()]);
 	}
 	
     @Override

@@ -5,6 +5,7 @@ import java.util.Date;
 
 import org.apache.commons.lang3.NotImplementedException;
 
+import moe.plushie.rpgeconomy.api.core.IIdentifier;
 import moe.plushie.rpgeconomy.api.currency.ICost;
 import moe.plushie.rpgeconomy.api.shop.IShop;
 import moe.plushie.rpgeconomy.currency.common.Cost;
@@ -15,18 +16,18 @@ public class Shop implements IShop, Comparable<IShop> {
 
     public static final int ITEMS_PER_PAGE = 8;
 
-    private final String identifier;
+    private transient final IIdentifier identifier;
     private String name;
     private final ArrayList<IShopTab> shopTabs;
 
-    public Shop(String identifier, String name, ArrayList<IShopTab> shopTabs) {
+    public Shop(IIdentifier identifier, String name, ArrayList<IShopTab> shopTabs) {
         this.identifier = identifier;
         this.name = name;
         this.shopTabs = shopTabs;
     }
 
     @Override
-    public String getIdentifier() {
+    public IIdentifier getIdentifier() {
         return identifier;
     }
 

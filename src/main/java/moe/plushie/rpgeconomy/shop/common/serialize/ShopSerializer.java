@@ -6,6 +6,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import moe.plushie.rpgeconomy.api.core.IIdentifier;
 import moe.plushie.rpgeconomy.api.currency.ICost;
 import moe.plushie.rpgeconomy.api.shop.IShop;
 import moe.plushie.rpgeconomy.api.shop.IShop.IShopItem;
@@ -68,7 +69,7 @@ public class ShopSerializer {
 		return jsonObject;
 	}
 	
-	public static Shop deserializeJson(JsonElement json, String identifier) {
+	public static Shop deserializeJson(JsonElement json, IIdentifier identifier) {
         try {
             JsonObject jsonObject = json.getAsJsonObject();
 

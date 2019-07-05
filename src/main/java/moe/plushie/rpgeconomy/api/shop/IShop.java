@@ -3,12 +3,13 @@ package moe.plushie.rpgeconomy.api.shop;
 import java.util.ArrayList;
 import java.util.Date;
 
+import moe.plushie.rpgeconomy.api.core.IIdentifier;
 import moe.plushie.rpgeconomy.api.currency.ICost;
 import net.minecraft.item.ItemStack;
 
 public interface IShop {
 
-    public String getIdentifier();
+    public IIdentifier getIdentifier();
 
     public String getName();
 

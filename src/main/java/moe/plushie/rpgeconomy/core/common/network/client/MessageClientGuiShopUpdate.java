@@ -3,7 +3,9 @@ package moe.plushie.rpgeconomy.core.common.network.client;
 import com.google.gson.JsonElement;
 
 import io.netty.buffer.ByteBuf;
+import moe.plushie.rpgeconomy.api.core.IIdentifier;
 import moe.plushie.rpgeconomy.api.currency.ICost;
+import moe.plushie.rpgeconomy.core.common.serialize.IdentifierSerialize;
 import moe.plushie.rpgeconomy.core.common.utils.SerializeHelper;
 import moe.plushie.rpgeconomy.currency.common.serialize.CostSerializer;
 import moe.plushie.rpgeconomy.shop.common.inventory.ContainerShop;
@@ -16,7 +18,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<MessageClientGuiShopUpdate, IMessage> {
 
     private ShopMessageType type;
-    private String shopIdentifier;
+    private IIdentifier shopIdentifier;
     private String shopName;
     private int tabIndex;
     private String tabName;
@@ -31,7 +33,7 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
         this.type = type;
     }
 
-    public MessageClientGuiShopUpdate setShopIdentifier(String shopIdentifier) {
+    public MessageClientGuiShopUpdate setShopIdentifier(IIdentifier shopIdentifier) {
         this.shopIdentifier = shopIdentifier;
         return this;
     }
@@ -93,7 +95,7 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
         case SHOP_CHANGE:
             if (shopIdentifier != null) {
                 buf.writeBoolean(true);
-                ByteBufUtils.writeUTF8String(buf, shopIdentifier);
+                ByteBufUtils.writeUTF8String(buf, IdentifierSerialize.serializeJson(shopIdentifier).toString());
             } else {
                 buf.writeBoolean(false);
             }
@@ -143,7 +145,7 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
             break;
         case SHOP_CHANGE:
             if (buf.readBoolean()) {
-                shopIdentifier = ByteBufUtils.readUTF8String(buf);
+                shopIdentifier = IdentifierSerialize.deserializeJson(SerializeHelper.stringToJson(ByteBufUtils.readUTF8String(buf)));
             }
             break;
         case SHOP_SAVE:

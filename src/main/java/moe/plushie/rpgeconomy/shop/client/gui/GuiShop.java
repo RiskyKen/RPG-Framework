@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL11;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
 
+import moe.plushie.rpgeconomy.api.core.IIdentifier;
 import moe.plushie.rpgeconomy.api.core.IItemMatcher;
 import moe.plushie.rpgeconomy.api.currency.ICost;
 import moe.plushie.rpgeconomy.api.currency.ICurrency;
@@ -439,7 +440,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
         tabChanged();
     }
 
-    public void gotShopIdentifiersFromServer(String[] shopIdentifiers, String[] shopNames) {
+    public void gotShopIdentifiersFromServer(IIdentifier[] shopIdentifiers, String[] shopNames) {
         if (isDialogOpen() && dialog instanceof GuiShopDialogShopList) {
             ((GuiShopDialogShopList) dialog).gotShopIdentifiersFromServer(shopIdentifiers, shopNames);
         }
@@ -506,7 +507,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
     public void dialogResult(AbstractGuiDialog dialog, DialogResult result) {
         if (result == DialogResult.OK) {
             if (dialog instanceof GuiShopDialogShopList) {
-                String shopIdentifier = ((GuiShopDialogShopList) dialog).getSelectedShopIdentifier();
+                IIdentifier shopIdentifier = ((GuiShopDialogShopList) dialog).getSelectedShopIdentifier();
                 PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.SHOP_CHANGE).setShopIdentifier(shopIdentifier));
             }
             if (dialog instanceof GuiShopDialogRename) {

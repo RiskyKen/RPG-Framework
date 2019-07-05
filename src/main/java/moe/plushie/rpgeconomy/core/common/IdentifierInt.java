@@ -1,11 +1,18 @@
 package moe.plushie.rpgeconomy.core.common;
 
-public class IdentifierInt {
-    
+import moe.plushie.rpgeconomy.api.core.IIdentifier;
+
+public class IdentifierInt implements IIdentifier<Integer> {
+
     public final int id;
-    
+
     public IdentifierInt(int id) {
         this.id = id;
+    }
+    
+    @Override
+    public Integer getValue() {
+        return id;
     }
 
     @Override
