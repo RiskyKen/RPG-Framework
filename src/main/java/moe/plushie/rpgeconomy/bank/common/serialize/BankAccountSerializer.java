@@ -7,7 +7,7 @@ import moe.plushie.rpgeconomy.api.bank.IBank;
 import moe.plushie.rpgeconomy.api.bank.IBankAccount;
 import moe.plushie.rpgeconomy.bank.common.BankAccount;
 import moe.plushie.rpgeconomy.core.common.utils.SerializeHelper;
-import moe.plushie.rpgeconomy.core.database.TableBanks;
+import moe.plushie.rpgeconomy.core.database.TableBankAccounts;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 
@@ -51,19 +51,19 @@ public final class BankAccountSerializer {
     }
 
     public static void serializeDatabase(EntityPlayer player, IBankAccount account) {
-        TableBanks.create();
+        TableBankAccounts.create();
         String tabs = serializeJson(account, true).toString();
-        if (!TableBanks.isAccountInDatabase(player, account.getBank().getIdentifier())) {
-            TableBanks.setAccount(player, account.getBank().getIdentifier(), tabs);
+        if (!TableBankAccounts.isAccountInDatabase(player, account.getBank().getIdentifier())) {
+            TableBankAccounts.setAccount(player, account.getBank().getIdentifier(), tabs);
         } else {
-            TableBanks.updateAccount(player, account.getBank().getIdentifier(), tabs);
+            TableBankAccounts.updateAccount(player, account.getBank().getIdentifier(), tabs);
         }
     }
 
     public static BankAccount deserializeDatabase(EntityPlayer player, IBank bank) {
-        TableBanks.create();
-        if (TableBanks.isAccountInDatabase(player, bank.getIdentifier())) {
-            String tabs = TableBanks.getAccountTabs(player, bank.getIdentifier());
+        TableBankAccounts.create();
+        if (TableBankAccounts.isAccountInDatabase(player, bank.getIdentifier())) {
+            String tabs = TableBankAccounts.getAccountTabs(player, bank.getIdentifier());
             JsonElement tabsJson = SerializeHelper.stringToJson(tabs);
             deserializeJson(tabsJson, bank);
             return deserializeJson(tabsJson, bank);
