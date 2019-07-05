@@ -10,7 +10,6 @@ import moe.plushie.rpgeconomy.core.client.gui.json.GuiJsonInfo;
 import moe.plushie.rpgeconomy.core.client.lib.LibGuiResources;
 import moe.plushie.rpgeconomy.core.common.config.ConfigHandler;
 import moe.plushie.rpgeconomy.core.common.init.ModItems;
-import moe.plushie.rpgeconomy.core.common.init.ModSounds;
 import moe.plushie.rpgeconomy.core.common.inventory.slot.SlotCurrency;
 import moe.plushie.rpgeconomy.core.common.lib.LibModInfo;
 import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
@@ -51,13 +50,6 @@ public class GuiWallet extends GuiContainer {
         this.walletStack = player.getHeldItemMainhand();
         this.currency = currency;
         this.wallet = CurrencyCapability.get(player).getWallet(currency);
-        player.playSound(ModSounds.WALLET_OPEN, 0.2F, 0.5F + (player.getRNG().nextFloat() * 1F));
-    }
-    
-    @Override
-    public void onGuiClosed() {
-        player.playSound(ModSounds.WALLET_CLOSE, 0.2F, 0.5F + (player.getRNG().nextFloat() * 1F));
-        super.onGuiClosed();
     }
 
     @Override

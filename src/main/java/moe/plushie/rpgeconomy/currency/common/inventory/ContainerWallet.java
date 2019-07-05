@@ -51,6 +51,13 @@ public class ContainerWallet extends ModContainer implements IButtonPress {
             addSlotToContainer(new SlotCurrency(currency, currency.getCurrencyVariants()[i], inventoryWallet, i, halfSizeX - halfSlotTotalWidth + i * (slotSize + slotSpacing), 54));
             inventoryWallet.setInventorySlotContents(i, currency.getCurrencyVariants()[i].getItem().getItemStack().copy());
         }
+        player.playSound(ModSounds.WALLET_OPEN, 0.3F, 0.8F + (player.getRNG().nextFloat() * 0.4F));
+    }
+    
+    @Override
+    public void onContainerClosed(EntityPlayer playerIn) {
+        player.playSound(ModSounds.WALLET_CLOSE, 0.3F, 0.8F + (player.getRNG().nextFloat() * 0.4F));
+        super.onContainerClosed(playerIn);
     }
 
     @Override

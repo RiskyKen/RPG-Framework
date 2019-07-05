@@ -25,7 +25,9 @@ public class ModSounds {
     
     private static SoundEvent createSoundEvent(String soundName) {
         ResourceLocation resourceLocation = new ResourceLocation(LibModInfo.ID, soundName);
-        return new SoundEvent(resourceLocation).setRegistryName(resourceLocation);
+        SoundEvent soundEvent = new SoundEvent(resourceLocation).setRegistryName(resourceLocation);
+        SOUND_LIST.add(soundEvent);
+        return soundEvent;
     }
     
     @SubscribeEvent
