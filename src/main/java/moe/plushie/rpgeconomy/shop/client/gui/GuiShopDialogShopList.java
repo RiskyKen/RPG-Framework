@@ -11,7 +11,6 @@ import moe.plushie.rpgeconomy.core.client.gui.controls.GuiList.IGuiListItem;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiScrollbar;
 import moe.plushie.rpgeconomy.core.client.lib.LibGuiResources;
 import moe.plushie.rpgeconomy.core.common.IdentifierInt;
-import moe.plushie.rpgeconomy.core.common.IdentifierString;
 import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
 import moe.plushie.rpgeconomy.core.common.network.client.MessageClientGuiShopUpdate;
 import moe.plushie.rpgeconomy.core.common.network.client.MessageClientGuiShopUpdate.ShopMessageType;
@@ -124,7 +123,8 @@ public class GuiShopDialogShopList extends AbstractGuiDialog {
     public void gotShopIdentifiersFromServer(IIdentifier[] shopIdentifiers, String[] shopNames) {
         items.clear();
         for (int i = 0; i < shopIdentifiers.length; i++) {
-            items.add(new ListItem(shopNames[i], String.valueOf(shopIdentifiers[i].getValue())));
+            String id = String.valueOf(shopIdentifiers[i].getValue());
+            items.add(new ListItem(id + ": " + shopNames[i], id));
         }
         initGui();
     }
@@ -132,7 +132,8 @@ public class GuiShopDialogShopList extends AbstractGuiDialog {
     public IIdentifier getSelectedShopIdentifier() {
         IGuiListItem listItem = listShops.getSelectedListEntry();
         if (listItem != null) {
-            return new IdentifierString(((ListItem) listItem).getTag());
+            ListItem item = (ListItem) listItem;
+            return new IdentifierInt(Integer.parseInt(item.tag));
         } else {
             return null;
         }

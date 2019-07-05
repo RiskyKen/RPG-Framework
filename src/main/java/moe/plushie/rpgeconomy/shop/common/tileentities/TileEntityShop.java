@@ -3,14 +3,24 @@ package moe.plushie.rpgeconomy.shop.common.tileentities;
 import moe.plushie.rpgeconomy.api.core.IIdentifier;
 import moe.plushie.rpgeconomy.api.shop.IShop;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
+import moe.plushie.rpgeconomy.core.common.inventory.IGuiFactory;
 import moe.plushie.rpgeconomy.core.common.serialize.IdentifierSerialize;
 import moe.plushie.rpgeconomy.core.common.tileentities.ModAutoSyncTileEntity;
 import moe.plushie.rpgeconomy.core.common.utils.SerializeHelper;
+import moe.plushie.rpgeconomy.shop.client.gui.GuiShop;
 import moe.plushie.rpgeconomy.shop.common.Shop;
+import moe.plushie.rpgeconomy.shop.common.inventory.ContainerShop;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TileEntityShop extends ModAutoSyncTileEntity {
+public class TileEntityShop extends ModAutoSyncTileEntity implements IGuiFactory {
 
     private static final String TAG_SHOP = "shop";
 
@@ -55,5 +65,16 @@ public class TileEntityShop extends ModAutoSyncTileEntity {
             compound.setString(TAG_SHOP, IdentifierSerialize.serializeJson(shopIdentifier).toString());
         }
         return compound;
+    }
+    
+    @Override
+    public Container getServerGuiElement(EntityPlayer player, World world, BlockPos pos) {
+        return new ContainerShop(player, getShop(), this);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public GuiScreen getClientGuiElement(EntityPlayer player, World world, BlockPos pos) {
+        return new GuiShop(player, true);
     }
 }

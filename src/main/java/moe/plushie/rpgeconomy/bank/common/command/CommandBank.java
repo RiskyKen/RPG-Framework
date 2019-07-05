@@ -19,6 +19,6 @@ public class CommandBank extends ModSubCommands {
                 RpgEconomy.getProxy().getBankManager().reload(true);
             }
         }));
-        addSubCommand(new CommandOpen(this, "open"));
+        addSubCommand(new CommandOpenBank(this, "open"));
     }
 }

@@ -1,8 +1,8 @@
 package moe.plushie.rpgeconomy.mail.common.blocks;
 
 import moe.plushie.rpgeconomy.core.common.blocks.AbstractModBlockContainer;
+import moe.plushie.rpgeconomy.core.common.lib.EnumGuiId;
 import moe.plushie.rpgeconomy.core.common.lib.LibBlockNames;
-import moe.plushie.rpgeconomy.core.common.lib.LibGuiIds;
 import moe.plushie.rpgeconomy.mail.common.MailSystem;
 import moe.plushie.rpgeconomy.mail.common.items.block.ItemBlockMailBox;
 import moe.plushie.rpgeconomy.mail.common.tileentities.TileEntityMailBox;
@@ -84,7 +84,7 @@ public class BlockMailBox extends AbstractModBlockContainer {
         if (!playerIn.canPlayerEdit(pos, facing, stack)) {
             return false;
         }
-        openGui(playerIn, LibGuiIds.MAIL_BOX, worldIn, pos, state, facing);
+        openGui(playerIn, EnumGuiId.MAIL_BOX.ordinal(), worldIn, pos, state, facing);
         return true;
     }
 

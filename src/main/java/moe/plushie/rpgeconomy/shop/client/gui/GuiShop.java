@@ -36,7 +36,6 @@ import moe.plushie.rpgeconomy.currency.common.CurrencyWalletHelper;
 import moe.plushie.rpgeconomy.currency.common.Wallet;
 import moe.plushie.rpgeconomy.currency.common.capability.CurrencyCapability;
 import moe.plushie.rpgeconomy.shop.common.inventory.ContainerShop;
-import moe.plushie.rpgeconomy.shop.common.tileentities.TileEntityShop;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -57,6 +56,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
     private static final int TEXTURE_SIZE_Y = 152;
 
     private final EntityPlayer entityPlayer;
+    private final boolean hasTile;
     private int activeTabIndex = 0;
     private IShop shop;
 
@@ -80,9 +80,10 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
 
     private boolean editMode = false;
 
-    public GuiShop(EntityPlayer entityPlayer, TileEntityShop tileEntity) {
-        super(new ContainerShop(entityPlayer, tileEntity), false);
+    public GuiShop(EntityPlayer entityPlayer, boolean hasTile) {
+        super(new ContainerShop(entityPlayer, null, null), false);
         this.entityPlayer = entityPlayer;
+        this.hasTile = hasTile;
         tabController.setActiveTabIndex(getActiveTab());
         tabChanged();
 
@@ -139,7 +140,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
             buttonCostEdit[i].setDrawButtonBackground(false).setIconLocation(101, 91, 13, 9).setHoverText("Edit Cost");
         }
 
-        buttonShopList.setHoverText("Shop List...");
+        buttonShopList.setHoverText("Shop List...").setDisableText(ChatFormatting.RED + "Shop must be opened from a block to use this option.");
         buttonStats.setHoverText("Stats...");
         buttonEditMode.setHoverText("Edit Mode").setDisableText(ChatFormatting.RED + "Shop must be LINKED to use this option.");
         buttonRename.setHoverText("Rename Shop...").setDisableText(ChatFormatting.RED + "Shop must be in EDIT MODE to use this option.");
@@ -173,6 +174,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
     }
 
     private void updateEditButtons() {
+        buttonShopList.enabled = hasTile;
         buttonEditMode.enabled = isShopLinked();
         buttonStats.enabled = false;
         buttonRename.enabled = editMode;

@@ -1,12 +1,22 @@
 package moe.plushie.rpgeconomy.bank.tileentities;
 
 import moe.plushie.rpgeconomy.api.bank.IBank;
+import moe.plushie.rpgeconomy.bank.client.GuiBank;
+import moe.plushie.rpgeconomy.bank.common.inventory.ContainerBank;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
+import moe.plushie.rpgeconomy.core.common.inventory.IGuiFactory;
 import moe.plushie.rpgeconomy.core.common.tileentities.ModAutoSyncTileEntity;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TileEntityBank extends ModAutoSyncTileEntity {
+public class TileEntityBank extends ModAutoSyncTileEntity implements IGuiFactory {
     
     private static final String TAG_MAIL_SYSTEM = "mailSystem";
 
@@ -53,5 +63,16 @@ public class TileEntityBank extends ModAutoSyncTileEntity {
             compound.setString(TAG_MAIL_SYSTEM, bankIdentifier);
         }
         return compound;
+    }
+
+    @Override
+    public Container getServerGuiElement(EntityPlayer player, World world, BlockPos pos) {
+        return new ContainerBank(player, getBank());
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public GuiScreen getClientGuiElement(EntityPlayer player, World world, BlockPos pos) {
+        return new GuiBank(player, getBank());
     }
 }

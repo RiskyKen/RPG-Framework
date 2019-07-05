@@ -1,20 +1,18 @@
 package moe.plushie.rpgeconomy.core.common.network;
 
-import moe.plushie.rpgeconomy.api.bank.IBank;
+import moe.plushie.rpgeconomy.api.core.IIdentifier;
 import moe.plushie.rpgeconomy.bank.client.GuiBank;
 import moe.plushie.rpgeconomy.bank.common.inventory.ContainerBank;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
-import moe.plushie.rpgeconomy.core.common.lib.LibGuiIds;
+import moe.plushie.rpgeconomy.core.common.IdentifierInt;
+import moe.plushie.rpgeconomy.core.common.inventory.IGuiFactory;
+import moe.plushie.rpgeconomy.core.common.lib.EnumGuiId;
 import moe.plushie.rpgeconomy.currency.client.gui.GuiWallet;
 import moe.plushie.rpgeconomy.currency.common.Currency;
 import moe.plushie.rpgeconomy.currency.common.CurrencyWalletHelper;
 import moe.plushie.rpgeconomy.currency.common.inventory.ContainerWallet;
-import moe.plushie.rpgeconomy.mail.client.gui.GuiMailBox;
-import moe.plushie.rpgeconomy.mail.common.inventory.ContainerMailBox;
-import moe.plushie.rpgeconomy.mail.common.tileentities.TileEntityMailBox;
 import moe.plushie.rpgeconomy.shop.client.gui.GuiShop;
 import moe.plushie.rpgeconomy.shop.common.inventory.ContainerShop;
-import moe.plushie.rpgeconomy.shop.common.tileentities.TileEntityShop;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -30,20 +28,21 @@ public class GuiHandler implements IGuiHandler {
 
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        TileEntity te = null;
-        BlockPos pos = new BlockPos(x, y, z);
-
-        if (world.isBlockLoaded(pos)) {
-            te = world.getTileEntity(pos);
+        EnumGuiId guiId = EnumGuiId.values()[ID];
+        if (guiId.isTile()) {
+            TileEntity te = null;
+            BlockPos pos = new BlockPos(x, y, z);
+            if (world.isBlockLoaded(pos)) {
+                te = world.getTileEntity(pos);
+                if (te != null && te instanceof IGuiFactory) {
+                    return ((IGuiFactory) te).getServerGuiElement(player, world, pos);
+                }
+            }
+            return null;
         }
 
-        switch (ID) {
-        case LibGuiIds.MAIL_BOX:
-            if (te != null && te instanceof TileEntityMailBox) {
-                return new ContainerMailBox((TileEntityMailBox) te, player);
-            }
-            break;
-        case LibGuiIds.WALLET:
+        switch (guiId) {
+        case WALLET:
             Currency currency = RpgEconomy.getProxy().getCurrencyManager().getCurrencyFromID(x);
             if (currency != null) {
                 if (currency.getCurrencyWalletInfo().getNeedItemToAccess()) {
@@ -54,34 +53,35 @@ public class GuiHandler implements IGuiHandler {
                 return new ContainerWallet(player, currency);
             }
             break;
-        case LibGuiIds.SHOP:
-            if (te != null && te instanceof TileEntityShop) {
-                return new ContainerShop(player, (TileEntityShop) te);
-            }
+        case BANK_COMMAND:
+            return new ContainerBank(player, RpgEconomy.getProxy().getBankManager().getBank(x));
+        case SHOP_COMMAND:
+            IIdentifier identifier = new IdentifierInt(x);
+            return new ContainerShop(player, RpgEconomy.getProxy().getShopManager().getShop(identifier), null);
+        default:
             break;
-        case LibGuiIds.BANK:
-            IBank bank = RpgEconomy.getProxy().getBankManager().getBank(x);
-            return new ContainerBank(player, bank, y);
         }
+
         return null;
     }
 
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        TileEntity te = null;
-        BlockPos pos = new BlockPos(x, y, z);
-
-        if (world.isBlockLoaded(pos)) {
-            te = world.getTileEntity(pos);
+        EnumGuiId guiId = EnumGuiId.values()[ID];
+        if (guiId.isTile()) {
+            TileEntity te = null;
+            BlockPos pos = new BlockPos(x, y, z);
+            if (world.isBlockLoaded(pos)) {
+                te = world.getTileEntity(pos);
+                if (te != null && te instanceof IGuiFactory) {
+                    return ((IGuiFactory) te).getClientGuiElement(player, world, pos);
+                }
+            }
+            return null;
         }
 
-        switch (ID) {
-        case LibGuiIds.MAIL_BOX:
-            if (te != null && te instanceof TileEntityMailBox) {
-                return new GuiMailBox((TileEntityMailBox) te, player);
-            }
-            break;
-        case LibGuiIds.WALLET:
+        switch (guiId) {
+        case WALLET:
             Currency currency = RpgEconomy.getProxy().getCurrencyManager().getCurrencyFromID(x);
             if (currency != null) {
                 if (currency.getCurrencyWalletInfo().getNeedItemToAccess()) {
@@ -92,14 +92,12 @@ public class GuiHandler implements IGuiHandler {
                 return new GuiWallet(player, currency);
             }
             break;
-        case LibGuiIds.SHOP:
-            if (te != null && te instanceof TileEntityShop) {
-                return new GuiShop(player, (TileEntityShop) te);
-            }
+        case BANK_COMMAND:
+            return new GuiBank(player, RpgEconomy.getProxy().getBankManager().getBank(x));
+        case SHOP_COMMAND:
+            return new GuiShop(player, false);
+        default:
             break;
-        case LibGuiIds.BANK:
-            IBank bank = RpgEconomy.getProxy().getBankManager().getBank(x);
-            return new GuiBank(player, bank, y);
         }
         return null;
     }

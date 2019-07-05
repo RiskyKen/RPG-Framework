@@ -10,7 +10,7 @@ import moe.plushie.rpgeconomy.api.shop.IShop.IShopTab;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.config.ConfigHandler;
 import moe.plushie.rpgeconomy.core.common.init.ModSounds;
-import moe.plushie.rpgeconomy.core.common.inventory.ModTileContainer;
+import moe.plushie.rpgeconomy.core.common.inventory.ModContainer;
 import moe.plushie.rpgeconomy.core.common.inventory.slot.SlotHidable;
 import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
 import moe.plushie.rpgeconomy.core.common.network.server.MessageServerShop;
@@ -30,27 +30,32 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
-public class ContainerShop extends ModTileContainer<TileEntityShop> {
+public class ContainerShop extends ModContainer {
 
     private final InventoryBasic invShop;
     private final InventoryBasic invPrice;
     private final ArrayList<Slot> slotsShop;
     private final ArrayList<Slot> slotsPrice;
 
+    private final EntityPlayer player;
     private IShop shop;
+    private TileEntityShop tileEntity;
     private boolean editMode = false;
     private int activeTabIndex = 0;
     private boolean dirty = false;
 
-    public ContainerShop(EntityPlayer entityPlayer, TileEntityShop tileEntity) {
-        super(entityPlayer, tileEntity);
+    public ContainerShop(EntityPlayer entityPlayer, IShop shop, TileEntityShop tileEntityShop) {
+        super(entityPlayer.inventory);
+        this.player = entityPlayer;
+        this.shop = shop;
+        this.tileEntity = tileEntityShop;
         invShop = new InventoryBasic("shop", false, 8);
         invPrice = new InventoryBasic("price", false, 5);
         slotsShop = new ArrayList<Slot>();
         slotsPrice = new ArrayList<Slot>();
 
         if (!entityPlayer.getEntityWorld().isRemote) {
-            setShopFromTile();
+            changeTab(0);
         }
 
         for (int i = 0; i < 4; i++) {
@@ -60,13 +65,11 @@ public class ContainerShop extends ModTileContainer<TileEntityShop> {
         for (int i = 0; i < 4; i++) {
             addSlotToContainerAndList(new SlotShop(invShop, i + 4, 168, 25 + i * 31, this), slotsShop);
         }
-        
-
 
         if (ConfigHandler.showPlayerInventoryInShopGUI) {
             addPlayerSlots(24, 162);
         }
-        
+
         for (int i = 0; i < invPrice.getSizeInventory(); i++) {
             SlotHidable slotHidable = new SlotHidable(invPrice, i, 76 + i * 38, 33);
             addSlotToContainerAndList(slotHidable, slotsPrice);
@@ -103,11 +106,6 @@ public class ContainerShop extends ModTileContainer<TileEntityShop> {
         return super.slotClick(slotId, dragType, clickTypeIn, player);
     }
 
-    private void setShopFromTile() {
-        this.shop = tileEntity.getShop();
-        changeTab(0);
-    }
-
     @Override
     public void onContainerClosed(EntityPlayer playerIn) {
         super.onContainerClosed(playerIn);
@@ -130,18 +128,17 @@ public class ContainerShop extends ModTileContainer<TileEntityShop> {
             }
         }
     }
-    
 
     public void gotCostRequest(int slotIndex) {
         setSlotsForPrice(slotIndex);
     }
-    
+
     private void setSlotsForPrice(int slotIndex) {
-        //detectAndSendChanges();
+        // detectAndSendChanges();
         for (int i = 0; i < invPrice.getSizeInventory(); i++) {
             invPrice.setInventorySlotContents(i, ItemStack.EMPTY);
         }
-        //detectAndSendChanges();
+        // detectAndSendChanges();
         if (shop != null && shop.getTabCount() > 0) {
             if (activeTabIndex != -1) {
                 IShopItem shopItem = shop.getTabs().get(activeTabIndex).getItems().get(slotIndex);
@@ -157,7 +154,7 @@ public class ContainerShop extends ModTileContainer<TileEntityShop> {
                 }
             }
         }
-        //detectAndSendChanges();
+        // detectAndSendChanges();
     }
 
     public IShop getShop() {
@@ -266,8 +263,11 @@ public class ContainerShop extends ModTileContainer<TileEntityShop> {
     }
 
     public void setShopIdentifier(IIdentifier identifier) {
-        getTileEntity().setShop(identifier);
-        setShopFromTile();
+        if (tileEntity != null) {
+            tileEntity.setShop(identifier);
+            changeTab(0);
+        }
+        shop = RpgEconomy.getProxy().getShopManager().getShop(identifier);
         sendShopToListeners(false);
     }
 
@@ -283,12 +283,12 @@ public class ContainerShop extends ModTileContainer<TileEntityShop> {
     public void addShop(String shopName) {
         ShopManager shopManager = RpgEconomy.getProxy().getShopManager();
         shopManager.addShop(shopName);
-        shopManager.syncToClient((EntityPlayerMP) getEntityPlayer());
+        shopManager.syncToClient((EntityPlayerMP) player);
     }
 
     public void removeShop(IIdentifier shopIdentifier) {
         ShopManager shopManager = RpgEconomy.getProxy().getShopManager();
         shopManager.removeShop(shopIdentifier);
-        shopManager.syncToClient((EntityPlayerMP) getEntityPlayer());
+        shopManager.syncToClient((EntityPlayerMP) player);
     }
 }

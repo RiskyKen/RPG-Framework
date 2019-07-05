@@ -13,6 +13,7 @@ public class CommandShop extends ModSubCommands {
 
     public CommandShop(ModCommand parent) {
         super(parent, "shop");
+        addSubCommand(new CommandOpenShop(this, "open"));
         addSubCommand(new CommandExecute(this, "import", new ICommandExecute() {
             @Override
             public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {

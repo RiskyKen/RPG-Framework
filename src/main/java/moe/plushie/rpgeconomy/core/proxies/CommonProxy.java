@@ -15,7 +15,7 @@ import moe.plushie.rpgeconomy.core.common.init.ModBlocks;
 import moe.plushie.rpgeconomy.core.common.init.ModItems;
 import moe.plushie.rpgeconomy.core.common.init.ModSounds;
 import moe.plushie.rpgeconomy.core.common.init.ModTiles;
-import moe.plushie.rpgeconomy.core.common.lib.LibGuiIds;
+import moe.plushie.rpgeconomy.core.common.lib.EnumGuiId;
 import moe.plushie.rpgeconomy.core.common.lib.LibModInfo;
 import moe.plushie.rpgeconomy.core.common.lib.LibModKeys.ModKey;
 import moe.plushie.rpgeconomy.core.common.module.IModModule;
@@ -184,7 +184,7 @@ public class CommonProxy {
     public void openCurrencyWalletGui(EntityPlayer player, ICurrency currency) {
         if (currency != null) {
             int id = RpgEconomy.getProxy().getCurrencyManager().getCurrencyID(currency);
-            FMLNetworkHandler.openGui(player, RpgEconomy.getInstance(), LibGuiIds.WALLET, player.getEntityWorld(), id, 0, 0);
+            FMLNetworkHandler.openGui(player, RpgEconomy.getInstance(), EnumGuiId.WALLET.ordinal(), player.getEntityWorld(), id, 0, 0);
         }
     }
 }
