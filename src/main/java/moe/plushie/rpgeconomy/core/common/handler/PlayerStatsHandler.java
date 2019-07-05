@@ -3,7 +3,8 @@ package moe.plushie.rpgeconomy.core.common.handler;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.config.ConfigHandler;
 import moe.plushie.rpgeconomy.core.common.lib.LibModInfo;
-import moe.plushie.rpgeconomy.core.database.Database;
+import moe.plushie.rpgeconomy.core.database.TableHeatmaps;
+import moe.plushie.rpgeconomy.core.database.TablePlayers;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -20,30 +21,30 @@ public final class PlayerStatsHandler {
 
     @SubscribeEvent
     public static void onPlayerLogin(PlayerLoggedInEvent event) {
-        Database.PLAYERS_TABLE.create();
+        TablePlayers.create();
         EntityPlayer player = event.player;
-        if (Database.PLAYERS_TABLE.isPlayerInDatabase(player)) {
-            Database.PLAYERS_TABLE.updatePlayerLastLogin(player);
+        if (TablePlayers.isPlayerInDatabase(player)) {
+            TablePlayers.updatePlayerLastLogin(player);
         } else {
-            Database.PLAYERS_TABLE.addPlayerToDatabase(player);
+            TablePlayers.addPlayerToDatabase(player);
         }
     }
-    
+
     @SubscribeEvent
     public static void onClientConnectedToServerEvent(ClientConnectedToServerEvent event) {
         RpgEconomy.getLogger().info("Client connect");
     }
-    
+
     @SubscribeEvent
     public static void onClientDisconnectionFromServerEvent(ClientDisconnectionFromServerEvent event) {
         RpgEconomy.getLogger().info("Client disconnect");
     }
-    
+
     @SubscribeEvent
     public static void onPlayerLogout(PlayerLoggedOutEvent event) {
         RpgEconomy.getLogger().info("Player logout: " + event.player);
     }
-    
+
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent event) {
         if (event.side == Side.CLIENT | event.phase == Phase.START) {
@@ -59,7 +60,7 @@ public final class PlayerStatsHandler {
         if ((player.getEntityWorld().getTotalWorldTime() % (20L * ((long) ConfigHandler.heatmapTrackingRate))) != 0) {
             return;
         }
-        Database.HEATMAPS_TABLE.create();
-        Database.HEATMAPS_TABLE.addHeatmapData(player);
+        TableHeatmaps.create();
+        TableHeatmaps.addHeatmapData(player);
     }
 }

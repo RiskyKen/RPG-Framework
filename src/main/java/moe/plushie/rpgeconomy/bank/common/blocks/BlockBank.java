@@ -8,7 +8,7 @@ import moe.plushie.rpgeconomy.core.common.blocks.AbstractModBlockContainer;
 import moe.plushie.rpgeconomy.core.common.lib.LibBlockNames;
 import moe.plushie.rpgeconomy.core.common.lib.LibGuiIds;
 import moe.plushie.rpgeconomy.core.database.DBPlayer;
-import moe.plushie.rpgeconomy.core.database.Database;
+import moe.plushie.rpgeconomy.core.database.TablePlayers;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
@@ -29,11 +29,11 @@ import net.minecraftforge.registries.IForgeRegistry;
 public class BlockBank extends AbstractModBlockContainer {
 
     public static final PropertyDirection STATE_FACING = BlockHorizontal.FACING;
-    
+
     public BlockBank() {
         super(LibBlockNames.BANK);
     }
-    
+
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, new IProperty[] { STATE_FACING });
@@ -76,7 +76,7 @@ public class BlockBank extends AbstractModBlockContainer {
         EnumFacing enumfacing = placer.getHorizontalFacing().getOpposite();
         return getDefaultState().withProperty(STATE_FACING, enumfacing);
     }
-    
+
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack stack = playerIn.getHeldItem(hand);
@@ -86,9 +86,9 @@ public class BlockBank extends AbstractModBlockContainer {
         if (!worldIn.isRemote) {
             TileEntity tileEntity = worldIn.getTileEntity(pos);
             if (tileEntity != null && tileEntity instanceof TileEntityBank) {
-                IBank bank = ((TileEntityBank)tileEntity).getBank();
+                IBank bank = ((TileEntityBank) tileEntity).getBank();
                 int index = RpgEconomy.getProxy().getBankManager().getBankIndex(bank);
-                DBPlayer dbPlayer = Database.PLAYERS_TABLE.getPlayer(playerIn);
+                DBPlayer dbPlayer = TablePlayers.getPlayer(playerIn);
                 FMLNetworkHandler.openGui(playerIn, RpgEconomy.getInstance(), LibGuiIds.BANK, worldIn, index, dbPlayer.getId(), 0);
             }
         }
@@ -99,7 +99,7 @@ public class BlockBank extends AbstractModBlockContainer {
     public void registerItemBlock(IForgeRegistry<Item> registry) {
         registry.register(new ItemBlockBank(this).setRegistryName(getRegistryName()));
     }
-    
+
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
         return new TileEntityBank();
