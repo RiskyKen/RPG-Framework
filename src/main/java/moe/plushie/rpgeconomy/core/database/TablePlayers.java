@@ -11,8 +11,6 @@ import java.util.UUID;
 
 import com.mojang.authlib.GameProfile;
 
-import net.minecraft.entity.player.EntityPlayer;
-
 public final class TablePlayers {
 
     private TablePlayers() {
@@ -28,25 +26,21 @@ public final class TablePlayers {
         SQLiteDriver.executeUpdate(sql);
     }
 
-    public static boolean isPlayerInDatabase(EntityPlayer player) {
-        return getPlayer(player.getGameProfile()) != DBPlayer.MISSING;
+    public static boolean isPlayerInDatabase(GameProfile gameProfile) {
+        return getPlayer(gameProfile) != DBPlayer.MISSING;
     }
 
-    public static void addPlayerToDatabase(EntityPlayer player) {
+    public static void addPlayerToDatabase(GameProfile gameProfile) {
         String sql = "INSERT INTO players (id, uuid, username, first_seen, last_seen) VALUES (NULL, '%s', '%s', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
-        sql = String.format(sql, player.getGameProfile().getId().toString(), player.getGameProfile().getName());
+        sql = String.format(sql, gameProfile.getId().toString(), gameProfile.getName());
         SQLiteDriver.executeUpdate(sql);
     }
 
-    public static void updatePlayerLastLogin(EntityPlayer player) {
+    public static void updatePlayerLastLogin(GameProfile gameProfile) {
         String sql = "UPDATE players SET username='%s', last_seen=datetime('now') WHERE uuid='%s'";
         Timestamp timestamp = new Timestamp(Calendar.getInstance().getTimeInMillis());
-        sql = String.format(sql, player.getGameProfile().getName(), player.getGameProfile().getId().toString());
+        sql = String.format(sql, gameProfile.getName(), gameProfile.getId().toString());
         SQLiteDriver.executeUpdate(sql);
-    }
-
-    public static DBPlayerInfo getPlayerInfo(EntityPlayer player) {
-        return getPlayerInfo(player.getGameProfile());
     }
 
     public static DBPlayerInfo getPlayerInfo(GameProfile gameProfile) {

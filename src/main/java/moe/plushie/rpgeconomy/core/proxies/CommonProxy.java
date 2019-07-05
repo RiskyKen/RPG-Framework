@@ -46,6 +46,7 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 public class CommonProxy {
 
     private File modConfigDirectory;
+    private File configDirectory;
     private File instanceDirectory;
     private File modDirectory;
 
@@ -70,7 +71,8 @@ public class CommonProxy {
             modConfigDirectory.mkdir();
         }
         ConfigHandler.init(new File(modConfigDirectory, "common.cfg"));
-        instanceDirectory = event.getSuggestedConfigurationFile().getParentFile().getParentFile();
+        configDirectory = event.getSuggestedConfigurationFile().getParentFile();
+        instanceDirectory = configDirectory.getParentFile();
         modDirectory = new File(instanceDirectory, LibModInfo.ID);
         if (!modDirectory.exists()) {
             modDirectory.mkdir();
@@ -134,6 +136,14 @@ public class CommonProxy {
         for (IModModule module : ModModule.MOD_MODULES) {
             module.serverStopping(event);
         }
+    }
+    
+    public File getInstanceDirectory() {
+        return instanceDirectory;
+    }
+    
+    public File getConfigDirectory() {
+        return configDirectory;
     }
 
     public File getModDirectory() {

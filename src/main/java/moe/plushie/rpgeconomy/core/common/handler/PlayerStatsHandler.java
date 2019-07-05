@@ -24,10 +24,10 @@ public final class PlayerStatsHandler {
     public void onPlayerLogin(PlayerLoggedInEvent event) {
         TablePlayers.create();
         EntityPlayer player = event.player;
-        if (TablePlayers.isPlayerInDatabase(player)) {
-            TablePlayers.updatePlayerLastLogin(player);
+        if (TablePlayers.isPlayerInDatabase(player.getGameProfile())) {
+            TablePlayers.updatePlayerLastLogin(player.getGameProfile());
         } else {
-            TablePlayers.addPlayerToDatabase(player);
+            TablePlayers.addPlayerToDatabase(player.getGameProfile());
         }
     }
 
