@@ -7,7 +7,6 @@ import org.lwjgl.opengl.GL11;
 
 import moe.plushie.rpgeconomy.core.common.lib.LibModInfo;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
@@ -89,7 +88,6 @@ public class GuiList extends Gui {
             int yLocation = y - scrollAmount + 2 + i * slotHeight;
             if (mouseY >= y & mouseY <= y + height - 2) {
                 if (listItems.get(i).mousePressed(fontRenderer, x + 2, yLocation, mouseX, mouseY, button, width)) {
-                    SoundHandler sh = mc.getSoundHandler();
                     //sh.playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1.0F));
                     selectedIndex = i;
                     return true;

@@ -10,20 +10,21 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public interface IModModule {
-    
+
+    public String getName();
 
     public void preInit(FMLPreInitializationEvent event);
-    
+
     public void init(FMLInitializationEvent event);
-    
+
     @SideOnly(Side.CLIENT)
     public void initRenderers();
-    
+
     public void postInit(FMLPostInitializationEvent event);
-    
+
     public void serverAboutToStart(FMLServerAboutToStartEvent event);
-    
+
     public void serverStarting(FMLServerStartingEvent event);
-    
+
     public void serverStopping(FMLServerStoppingEvent event);
 }

@@ -7,10 +7,8 @@ import com.google.gson.JsonObject;
 import moe.plushie.rpgeconomy.api.core.IItemMatcher;
 import moe.plushie.rpgeconomy.api.currency.ICost;
 import moe.plushie.rpgeconomy.api.currency.IWallet;
-import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.serialize.ItemMacherSerializer;
 import moe.plushie.rpgeconomy.currency.common.Cost;
-import moe.plushie.rpgeconomy.currency.common.CurrencyManager;
 
 public final class CostSerializer {
     
@@ -43,7 +41,6 @@ public final class CostSerializer {
     }
     
     public static Cost deserializeJson(JsonObject jsonObject) {
-        CurrencyManager currencyManager = RpgEconomy.getProxy().getCurrencyManager();
         try {
             IItemMatcher[] itemCost = null;
             IWallet walletCost = null;

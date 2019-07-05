@@ -18,7 +18,6 @@ import moe.plushie.rpgeconomy.core.common.network.client.MessageClientGuiShopUpd
 import moe.plushie.rpgeconomy.shop.common.inventory.ContainerShop;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -182,7 +181,6 @@ public class GuiShopDialogEditCostItems extends AbstractGuiDialog {
     
     private void updateSlots(boolean restore) {
         ContainerShop containerShop = (ContainerShop) slotHandler.inventorySlots;
-        ScaledResolution sr = new ScaledResolution(mc);
         GuiShop gui = (GuiShop) parent;
         if (!restore) {
             ArrayList<Slot> playerSlots = containerShop.getSlotsPlayer();

@@ -1,4 +1,4 @@
-package moe.plushie.rpgeconomy.auction;
+package moe.plushie.rpgeconomy.loot;
 
 import moe.plushie.rpgeconomy.core.common.module.ModModule;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -10,10 +10,10 @@ import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ModuleAuction extends ModModule {
+public class ModuleLoot extends ModModule {
 
-    public ModuleAuction() {
-        super("auction");
+    public ModuleLoot() {
+        super("loot");
     }
 
     @Override

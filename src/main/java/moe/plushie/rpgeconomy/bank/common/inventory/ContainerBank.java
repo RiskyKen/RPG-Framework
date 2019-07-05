@@ -24,7 +24,7 @@ public class ContainerBank extends ModContainer implements IInventoryChangedList
         super(player.inventory);
         this.player = player;
         this.bank = bank;
-        
+
         int panelSizeX = 176;
         int panelSizeY = 21;
 
@@ -32,7 +32,6 @@ public class ContainerBank extends ModContainer implements IInventoryChangedList
             panelSizeX = Math.max(bank.getTabSlotCountWidth() * 18 + 10, panelSizeX);
             panelSizeY += bank.getTabSlotCountHeight() * 18 + 4;
 
-            int posX = 8;
             int posY = 21;
             this.inventory = new InventoryBasic("bank", false, bank.getTabSlotCount());
             inventory.addInventoryChangeListener(this);
@@ -42,7 +41,7 @@ public class ContainerBank extends ModContainer implements IInventoryChangedList
                     addSlotToContainer(new SlotHidable(inventory, x + y * bank.getTabSlotCountWidth(), xOff + 18 * x, posY + y * 18));
                 }
             }
-            
+
             updateSlotForTab();
         }
 
@@ -84,7 +83,7 @@ public class ContainerBank extends ModContainer implements IInventoryChangedList
         if (updatingSlots) {
             return;
         }
-        
+
         IBankCapability bankCapability = BankCapability.get(player);
         if (bankCapability != null) {
             IBankAccount account = bankCapability.getBank(bank);

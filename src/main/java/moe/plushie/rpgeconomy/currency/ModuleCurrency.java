@@ -14,6 +14,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ModuleCurrency extends ModModule {
 
+    public ModuleCurrency() {
+        super("currency");
+    }
+
     @Override
     public void preInit(FMLPreInitializationEvent event) {
     }
@@ -22,7 +26,7 @@ public class ModuleCurrency extends ModModule {
     public void init(FMLInitializationEvent event) {
         new CurrencyPickupHelper();
     }
-    
+
     @SideOnly(Side.CLIENT)
     @Override
     public void initRenderers() {
@@ -31,16 +35,16 @@ public class ModuleCurrency extends ModModule {
     @Override
     public void postInit(FMLPostInitializationEvent event) {
     }
-    
+
     @Override
     public void serverAboutToStart(FMLServerAboutToStartEvent event) {
         RpgEconomy.getProxy().getCurrencyManager().reload(false);
     }
-    
+
     @Override
     public void serverStarting(FMLServerStartingEvent event) {
     }
-    
+
     @Override
     public void serverStopping(FMLServerStoppingEvent event) {
     }

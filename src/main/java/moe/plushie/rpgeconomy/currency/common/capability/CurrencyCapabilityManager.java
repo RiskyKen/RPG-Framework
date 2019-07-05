@@ -7,7 +7,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -34,7 +33,6 @@ public final class CurrencyCapabilityManager {
         if (!(event.getObject() instanceof EntityPlayer)) {
             return;
         }
-        EntityPlayer player = (EntityPlayer) event.getObject();
         event.addCapability(KEY_CURRENCY_PROVIDER, new CurrencyCapability.Provider());
     }
 
@@ -48,7 +46,6 @@ public final class CurrencyCapabilityManager {
 
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event) {
-        World world = event.getEntityPlayer().getEntityWorld();
         if (event.isWasDeath()) {
             NBTBase nbt = null;
             ICurrencyCapability currencyCapOld = CurrencyCapability.get(event.getOriginal());

@@ -13,6 +13,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ModuleMail extends ModModule {
 
+    public ModuleMail() {
+        super("mail");
+    }
+
     @Override
     public void preInit(FMLPreInitializationEvent event) {
     }
@@ -20,7 +24,7 @@ public class ModuleMail extends ModModule {
     @Override
     public void init(FMLInitializationEvent event) {
     }
-    
+
     @SideOnly(Side.CLIENT)
     @Override
     public void initRenderers() {
@@ -29,16 +33,16 @@ public class ModuleMail extends ModModule {
     @Override
     public void postInit(FMLPostInitializationEvent event) {
     }
-    
+
     @Override
     public void serverAboutToStart(FMLServerAboutToStartEvent event) {
         RpgEconomy.getProxy().getMailSystemManager().reload(false);
     }
-    
+
     @Override
     public void serverStarting(FMLServerStartingEvent event) {
     }
-    
+
     @Override
     public void serverStopping(FMLServerStoppingEvent event) {
     }

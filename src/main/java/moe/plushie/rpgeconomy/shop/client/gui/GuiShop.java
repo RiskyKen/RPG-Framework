@@ -1,7 +1,6 @@
 package moe.plushie.rpgeconomy.shop.client.gui;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import org.lwjgl.opengl.GL11;
 
@@ -86,11 +85,10 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
         this.entityPlayer = entityPlayer;
         tabController.setActiveTabIndex(getActiveTab());
         tabChanged();
-        
+
         ContainerShop containerShop = (ContainerShop) inventorySlots;
-        ArrayList<Slot> playerSlots = containerShop.getSlotsPlayer();
         for (Slot slot : containerShop.getSlotsPrice()) {
-            ((SlotHidable)slot).setVisible(false);
+            ((SlotHidable) slot).setVisible(false);
         }
     }
 
@@ -344,7 +342,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
     }
 
     private void renderCost(int slotX, int slotY, ICost cost) {
-        
+
         if (cost.hasWalletCost()) {
             IWallet wallet = cost.getWalletCost();
             int amount = wallet.getAmount();
@@ -391,7 +389,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
         if (cost.hasItemCost()) {
             IItemMatcher[] itemCost = cost.getItemCost();
             for (int i = 0; i < itemCost.length; i++) {
-                
+
                 GlStateManager.pushMatrix();
                 GlStateManager.pushAttrib();
                 RenderHelper.enableGUIStandardItemLighting();
@@ -404,7 +402,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
                 RenderHelper.disableStandardItemLighting();
                 GlStateManager.popAttrib();
                 GlStateManager.popMatrix();
-                
+
             }
         }
     }
@@ -497,7 +495,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
                 return;
             }
             if (button == buttonCostEdit[i]) {
-                //((ContainerShop)inventorySlots).gotCostRequest(i);
+                // ((ContainerShop)inventorySlots).gotCostRequest(i);
                 openDialog(new GuiShopDialogEditCost(this, "editCost", this, 210, 120, i, shop.getTabs().get(activeTabIndex).getItems().get(i).getCost()));
             }
         }
@@ -569,7 +567,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
         }
         PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.TAB_CHANGED).setTabIndex(activeTabIndex));
     }
-    
+
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int button) throws IOException {
         if (isDialogOpen()) {

@@ -12,8 +12,6 @@ import moe.plushie.rpgeconomy.core.client.gui.GuiHelper;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiLabeledTextField;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTabPanel;
 import moe.plushie.rpgeconomy.core.client.lib.LibGuiResources;
-import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
-import moe.plushie.rpgeconomy.core.common.network.client.MessageClientGuiMailBox;
 import moe.plushie.rpgeconomy.mail.common.MailMessage;
 import moe.plushie.rpgeconomy.mail.common.MailSystem;
 import net.minecraft.client.gui.GuiButton;
@@ -110,12 +108,12 @@ public class GuiTabMailBoxSending extends GuiTabPanel<GuiMailBox> {
             
             MailMessage mailMessage = new MailMessage(mailSystem, sender, receiver, sendDateTime, subject, message, attachments);
             
-            //sendMail(mailSystem, sender, receiver, sendDateTime, subject, message, attachments);
+            sendMail(mailMessage);
         }
     }
     
     private void sendMail(MailMessage mailMessage) {
-        PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiMailBox(mailMessage));
+        //PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiMailBox(mailMessage));
     }
 
     @Override

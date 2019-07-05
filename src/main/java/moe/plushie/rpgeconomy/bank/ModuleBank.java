@@ -13,6 +13,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ModuleBank extends ModModule {
 
+    public ModuleBank() {
+        super("bank");
+    }
+
     @Override
     public void preInit(FMLPreInitializationEvent event) {
     }

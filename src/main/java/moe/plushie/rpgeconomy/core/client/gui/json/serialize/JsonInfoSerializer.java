@@ -44,12 +44,12 @@ public final class JsonInfoSerializer {
 
     public static GuiJsonInfo deserializeJson(JsonElement json) {
         try {
-            JsonObject jsonGuiInfo = json.getAsJsonObject();
+            //JsonObject jsonGuiInfo = json.getAsJsonObject();
             
-            JsonObject jsonStyle = jsonGuiInfo.get(PROP_STYLE).getAsJsonObject();
-            JsonObject jsonTextures = jsonGuiInfo.get(PROP_TEXTURES).getAsJsonObject();
-            JsonObject jsonControls = jsonGuiInfo.get(PROP_CONTROLS).getAsJsonObject();
-            JsonObject jsonLayout = jsonGuiInfo.get(PROP_LAYOUT).getAsJsonObject();
+            //JsonObject jsonStyle = jsonGuiInfo.get(PROP_STYLE).getAsJsonObject();
+            //JsonObject jsonTextures = jsonGuiInfo.get(PROP_TEXTURES).getAsJsonObject();
+            //JsonObject jsonControls = jsonGuiInfo.get(PROP_CONTROLS).getAsJsonObject();
+            //JsonObject jsonLayout = jsonGuiInfo.get(PROP_LAYOUT).getAsJsonObject();
 
             GuiJsonStyle style = new GuiJsonStyle();
             HashMap<String, ResourceLocation> textureMap = new HashMap<String, ResourceLocation>(); 

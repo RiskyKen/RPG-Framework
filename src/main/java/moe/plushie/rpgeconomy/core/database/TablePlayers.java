@@ -4,8 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
@@ -38,7 +36,6 @@ public final class TablePlayers {
 
     public static void updatePlayerLastLogin(GameProfile gameProfile) {
         String sql = "UPDATE players SET username='%s', last_seen=datetime('now') WHERE uuid='%s'";
-        Timestamp timestamp = new Timestamp(Calendar.getInstance().getTimeInMillis());
         sql = String.format(sql, gameProfile.getName(), gameProfile.getId().toString());
         SQLiteDriver.executeUpdate(sql);
     }
