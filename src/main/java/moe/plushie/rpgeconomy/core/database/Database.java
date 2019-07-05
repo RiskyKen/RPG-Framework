@@ -45,16 +45,16 @@ public final class Database {
         }
 
         public void updatePlayerLastLogin(EntityPlayer player) {
-            String sql = "UPDATE players SET last_seen=datetime('now') WHERE uuid='%s'";
+            String sql = "UPDATE players SET username='%s', last_seen=datetime('now') WHERE uuid='%s'";
             Timestamp timestamp = new Timestamp(Calendar.getInstance().getTimeInMillis());
-            sql = String.format(sql, player.getGameProfile().getId().toString());
+            sql = String.format(sql, player.getGameProfile().getName(), player.getGameProfile().getId().toString());
             SQLiteDriver.executeUpdate(sql);
         }
-        
+
         public DBPlayerInfo getPlayerInfo(EntityPlayer player) {
             return getPlayerInfo(player.getGameProfile());
         }
-        
+
         public DBPlayerInfo getPlayerInfo(GameProfile gameProfile) {
             String sql = "SELECT * FROM players WHERE ";
             String searchValue;
@@ -82,11 +82,11 @@ public final class Database {
             }
             return playerInfo;
         }
-        
+
         public DBPlayer getPlayer(EntityPlayer player) {
             return getPlayer(player.getGameProfile());
         }
-        
+
         public DBPlayer getPlayer(GameProfile gameProfile) {
             String sql = "SELECT id FROM players WHERE ";
             String searchValue;
@@ -165,16 +165,16 @@ public final class Database {
         public String getAccountTabs(EntityPlayer player, String bankIdentifier) {
             DBPlayer dbPlayer = PLAYERS_TABLE.getPlayer(player);
             String tabs = null;
-            try (Connection conn = SQLiteDriver.getConnection(); ) {
+            try (Connection conn = SQLiteDriver.getConnection();) {
                 String sqlUpdate = "UPDATE banks SET times_opened = times_opened + 1, last_access=datetime('now') WHERE bank_identifier=? AND player_id=?";
-                try(PreparedStatement ps = conn.prepareStatement(sqlUpdate)) {
+                try (PreparedStatement ps = conn.prepareStatement(sqlUpdate)) {
                     ps.setString(1, bankIdentifier);
                     ps.setInt(2, dbPlayer.getId());
                     ps.executeUpdate();
                 }
-                
+
                 String sqlGetTabs = "SELECT * FROM banks WHERE bank_identifier=? AND player_id=?";
-                try(PreparedStatement ps = conn.prepareStatement(sqlGetTabs)) {
+                try (PreparedStatement ps = conn.prepareStatement(sqlGetTabs)) {
                     ps.setString(1, bankIdentifier);
                     ps.setInt(2, dbPlayer.getId());
                     ResultSet resultSet = ps.executeQuery();
