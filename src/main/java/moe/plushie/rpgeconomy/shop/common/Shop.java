@@ -25,6 +25,12 @@ public class Shop implements IShop, Comparable<IShop> {
         this.name = name;
         this.shopTabs = shopTabs;
     }
+    
+    public Shop(IIdentifier identifier, String name) {
+        this.identifier = identifier;
+        this.name = name;
+        this.shopTabs = new ArrayList<IShopTab>();
+    }
 
     @Override
     public IIdentifier getIdentifier() {

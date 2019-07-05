@@ -1,6 +1,7 @@
 package moe.plushie.rpgeconomy.shop.common.tileentities;
 
 import moe.plushie.rpgeconomy.api.core.IIdentifier;
+import moe.plushie.rpgeconomy.api.shop.IShop;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.serialize.IdentifierSerialize;
 import moe.plushie.rpgeconomy.core.common.tileentities.ModAutoSyncTileEntity;
@@ -23,7 +24,7 @@ public class TileEntityShop extends ModAutoSyncTileEntity {
         this.shopIdentifier = shop.getIdentifier();
     }
 
-    public Shop getShop() {
+    public IShop getShop() {
         return RpgEconomy.getProxy().getShopManager().getShop(shopIdentifier);
     }
 

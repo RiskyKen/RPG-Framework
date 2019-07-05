@@ -2,6 +2,7 @@ package moe.plushie.rpgeconomy.shop.common;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -18,6 +19,7 @@ import moe.plushie.rpgeconomy.core.common.IdentifierString;
 import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
 import moe.plushie.rpgeconomy.core.common.network.server.MessageServerSyncShops;
 import moe.plushie.rpgeconomy.core.common.utils.SerializeHelper;
+import moe.plushie.rpgeconomy.core.database.TableShops;
 import moe.plushie.rpgeconomy.shop.common.serialize.ShopSerializer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.MinecraftForge;
@@ -37,8 +39,18 @@ public class ShopManager implements IShopManager {
         shopMap = new HashMap<IIdentifier, Shop>();
         MinecraftForge.EVENT_BUS.register(this);
     }
-
-    public void reload() {
+    
+    public void exportShops() {
+        RpgEconomy.getLogger().info("Exporting Shops");
+        ArrayList<IIdentifier> identifiers = new ArrayList<IIdentifier>();
+        TableShops.getShopList(identifiers, null, null);
+        for (IIdentifier identifier : identifiers) {
+            exportShop(getShop(identifier));
+        }
+    }
+    
+    public void importShops() {
+        RpgEconomy.getLogger().info("Importing Shops");
         RpgEconomy.getLogger().info("Loading Shops");
         File[] files = currencyDirectory.listFiles(new FilenameFilter() {
             @Override
@@ -48,31 +60,39 @@ public class ShopManager implements IShopManager {
         });
         shopMap.clear();
         for (File file : files) {
-            loadShop(file);
-        }
-    }
-    
-    private void loadShop(File shopFile) {
-        RpgEconomy.getLogger().info("Loading shop: " + shopFile.getName());
-        JsonElement jsonElement = SerializeHelper.readJsonFile(shopFile);
-        if (jsonElement != null) {
-            Shop shop = ShopSerializer.deserializeJson(jsonElement, new IdentifierString(shopFile.getName()));
-            if (shop != null) {
-            	shopMap.put(shop.getIdentifier(), shop);
-            }
+            importShop(file);
         }
     }
     
     public void saveShop(IShop shop) {
         RpgEconomy.getLogger().info("Saving shop: " + shop.getIdentifier());
+        TableShops.updateShop(shop);
+    }
+    
+    public void exportShop(IShop shop) {
+        RpgEconomy.getLogger().info("Exporting shop: " + shop.getIdentifier());
         JsonElement jsonData = ShopSerializer.serializeJson(shop, false);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        SerializeHelper.writeFile(new File(currencyDirectory, String.valueOf(shop.getIdentifier().getValue())), Charsets.UTF_8, gson.toJson(jsonData));
+        SerializeHelper.writeFile(new File(currencyDirectory, String.valueOf(shop.getIdentifier().getValue()) + ".json"), Charsets.UTF_8, gson.toJson(jsonData));
+    }
+    
+    public void importShop(File shopFile) {
+        RpgEconomy.getLogger().info("Importing shop: " + shopFile.getName());
+        JsonElement jsonElement = SerializeHelper.readJsonFile(shopFile);
+        if (jsonElement != null) {
+            Shop shop = ShopSerializer.deserializeJson(jsonElement, new IdentifierString(shopFile.getName()));
+            if (shop != null) {
+                TableShops.addNewShop(shop);
+            }
+        }
     }
     
 	@Override
-	public Shop getShop(IIdentifier identifier) {
-		return shopMap.get(identifier);
+	public IShop getShop(IIdentifier identifier) {
+	    if (identifier == null) {
+	        return null;
+	    }
+		return TableShops.getShop(identifier);
 	}
 
 	@Override
@@ -98,6 +118,17 @@ public class ShopManager implements IShopManager {
     }
     
     public void syncToClient(EntityPlayerMP player) {
-        PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerSyncShops(getShopIdentifier(), getShopNames()), player);
+        ArrayList<IIdentifier> identifiers = new ArrayList<IIdentifier>();
+        ArrayList<String> names = new ArrayList<String>();
+        TableShops.getShopList(identifiers, names, null);
+        PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerSyncShops(identifiers.toArray(new IIdentifier[identifiers.size()]), names.toArray(new String[names.size()])), player);
+    }
+
+    public void addShop(String shopName) {
+        TableShops.createNewShop(shopName);
+    }
+
+    public void removeShop(IIdentifier shopIdentifier) {
+        TableShops.deleteShop(shopIdentifier);
     }
 }

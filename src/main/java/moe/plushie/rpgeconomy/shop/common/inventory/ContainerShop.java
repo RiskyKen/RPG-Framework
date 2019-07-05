@@ -17,6 +17,7 @@ import moe.plushie.rpgeconomy.core.common.network.server.MessageServerShop;
 import moe.plushie.rpgeconomy.core.common.utils.UtilItems;
 import moe.plushie.rpgeconomy.shop.common.Shop.ShopItem;
 import moe.plushie.rpgeconomy.shop.common.Shop.ShopTab;
+import moe.plushie.rpgeconomy.shop.common.ShopManager;
 import moe.plushie.rpgeconomy.shop.common.inventory.slot.SlotShop;
 import moe.plushie.rpgeconomy.shop.common.tileentities.TileEntityShop;
 import net.minecraft.entity.player.EntityPlayer;
@@ -90,7 +91,6 @@ public class ContainerShop extends ModTileContainer<TileEntityShop> {
                 IShopItem shopItem = shop.getTabs().get(activeTabIndex).getItems().get(slotId);
                 ICost cost = shopItem.getCost();
                 if (cost.canAfford(player)) {
-                    RpgEconomy.getLogger().info("sound");
                     cost.pay(player);
                     world.playSound(null, player.posX, player.posY, player.posZ, ModSounds.COIN_WITHDRAW, SoundCategory.PLAYERS, 0.3F, 0.8F + (player.getRNG().nextFloat() * 0.4F));
                     if (!player.inventory.addItemStackToInventory(shopItem.getItem().copy())) {
@@ -275,8 +275,20 @@ public class ContainerShop extends ModTileContainer<TileEntityShop> {
         dirty = true;
         for (int j = 0; j < this.listeners.size(); ++j) {
             if (listeners.get(j) instanceof EntityPlayerMP) {
-                PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerShop(getTileEntity().getShop(), update), (EntityPlayerMP) listeners.get(j));
+                PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerShop(shop, update), (EntityPlayerMP) listeners.get(j));
             }
         }
+    }
+
+    public void addShop(String shopName) {
+        ShopManager shopManager = RpgEconomy.getProxy().getShopManager();
+        shopManager.addShop(shopName);
+        shopManager.syncToClient((EntityPlayerMP) getEntityPlayer());
+    }
+
+    public void removeShop(IIdentifier shopIdentifier) {
+        ShopManager shopManager = RpgEconomy.getProxy().getShopManager();
+        shopManager.removeShop(shopIdentifier);
+        shopManager.syncToClient((EntityPlayerMP) getEntityPlayer());
     }
 }

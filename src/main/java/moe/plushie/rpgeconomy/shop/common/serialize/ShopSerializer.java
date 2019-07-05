@@ -39,14 +39,18 @@ public class ShopSerializer {
         JsonObject jsonObject = new JsonObject();
 
         jsonObject.addProperty(PROP_NAME, shop.getName());
-        JsonArray jsonArrayTabs = new JsonArray();
-        for (IShopTab tab: shop.getTabs()) {
-        	JsonObject tabJson = serializeTab(tab, compact);
-        	jsonArrayTabs.add(tabJson);
-        }
-        jsonObject.add(PROP_TABS, jsonArrayTabs);
+        jsonObject.add(PROP_TABS, serializeTabs(shop.getTabs(), compact));
         
         return jsonObject;
+	}
+	
+	public static JsonArray serializeTabs(ArrayList<IShopTab> shopTabs, boolean compact) {
+	    JsonArray jsonArrayTabs = new JsonArray();
+        for (IShopTab tab: shopTabs) {
+            JsonObject tabJson = serializeTab(tab, compact);
+            jsonArrayTabs.add(tabJson);
+        }
+        return jsonArrayTabs;
 	}
 	
 	private static JsonObject serializeTab(IShopTab tab, boolean compact) {
@@ -75,11 +79,7 @@ public class ShopSerializer {
 
             String name = jsonObject.get(PROP_NAME).getAsString();
             JsonArray jsonArrayTabs = jsonObject.get(PROP_TABS).getAsJsonArray();
-            ArrayList<IShopTab> shopTabs = new ArrayList<IShopTab>();
-            for (int i = 0; i < jsonArrayTabs.size(); i++) {
-            	shopTabs.add(deserializeTab(jsonArrayTabs.get(i).getAsJsonObject()));
-            }
-            
+            ArrayList<IShopTab> shopTabs = deserializeTabs(jsonArrayTabs);
             Shop shop = new Shop(identifier, name, shopTabs);
             
             return shop;
@@ -87,6 +87,14 @@ public class ShopSerializer {
             e.printStackTrace();
         }
         return null;
+	}
+	
+	public static ArrayList<IShopTab> deserializeTabs(JsonArray jsonArray) throws NBTException {
+	    ArrayList<IShopTab> shopTabs = new ArrayList<IShopTab>();
+        for (int i = 0; i < jsonArray.size(); i++) {
+            shopTabs.add(deserializeTab(jsonArray.get(i).getAsJsonObject()));
+        }
+	    return shopTabs;
 	}
 	
 	private static IShopTab deserializeTab(JsonObject jsonObject) throws NBTException {

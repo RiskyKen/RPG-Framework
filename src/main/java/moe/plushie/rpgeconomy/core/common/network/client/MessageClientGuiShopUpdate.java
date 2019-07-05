@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import io.netty.buffer.ByteBuf;
 import moe.plushie.rpgeconomy.api.core.IIdentifier;
 import moe.plushie.rpgeconomy.api.currency.ICost;
-import moe.plushie.rpgeconomy.core.common.serialize.IdentifierSerialize;
+import moe.plushie.rpgeconomy.core.common.utils.ByteBufHelper;
 import moe.plushie.rpgeconomy.core.common.utils.SerializeHelper;
 import moe.plushie.rpgeconomy.currency.common.serialize.CostSerializer;
 import moe.plushie.rpgeconomy.shop.common.inventory.ContainerShop;
@@ -95,7 +95,7 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
         case SHOP_CHANGE:
             if (shopIdentifier != null) {
                 buf.writeBoolean(true);
-                ByteBufUtils.writeUTF8String(buf, IdentifierSerialize.serializeJson(shopIdentifier).toString());
+                ByteBufHelper.writeIdentifier(buf, shopIdentifier);
             } else {
                 buf.writeBoolean(false);
             }
@@ -115,7 +115,11 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
         case ITEM_COST_REQUEST:
             buf.writeInt(slotIndex);
             break;
-        default:
+        case SHOP_ADD:
+            ByteBufUtils.writeUTF8String(buf, shopName);
+            break;
+        case SHOP_REMOVE:
+            ByteBufHelper.writeIdentifier(buf, shopIdentifier);
             break;
         }
     }
@@ -145,7 +149,7 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
             break;
         case SHOP_CHANGE:
             if (buf.readBoolean()) {
-                shopIdentifier = IdentifierSerialize.deserializeJson(SerializeHelper.stringToJson(ByteBufUtils.readUTF8String(buf)));
+                shopIdentifier = ByteBufHelper.readIdentifier(buf);
             }
             break;
         case SHOP_SAVE:
@@ -163,6 +167,12 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
             break;
         case ITEM_COST_REQUEST:
             slotIndex = buf.readInt();
+            break;
+        case SHOP_ADD:
+            shopName = ByteBufUtils.readUTF8String(buf);
+            break;
+        case SHOP_REMOVE:
+            shopIdentifier = ByteBufHelper.readIdentifier(buf);
             break;
         default:
             break;
@@ -213,6 +223,12 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
                 break;
             case ITEM_COST_REQUEST:
                 containerShop.gotCostRequest(message.slotIndex);
+                break;
+            case SHOP_ADD:
+                containerShop.addShop(message.shopName);
+                break;
+            case SHOP_REMOVE:
+                containerShop.removeShop(message.shopIdentifier);
                 break;
             default:
                 break;
