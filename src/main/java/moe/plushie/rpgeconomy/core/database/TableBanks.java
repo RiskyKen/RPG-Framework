@@ -25,7 +25,7 @@ public final class TableBanks {
     }
 
     public static String getAccountTabs(EntityPlayer player, String bankIdentifier) {
-        DBPlayer dbPlayer = TablePlayers.getPlayer(player);
+        DBPlayer dbPlayer = TablePlayers.getPlayer(player.getGameProfile());
         String tabs = null;
         try (Connection conn = SQLiteDriver.getConnection();) {
             String sqlUpdate = "UPDATE banks SET times_opened = times_opened + 1, last_access=datetime('now') WHERE bank_identifier=? AND player_id=?";
@@ -51,7 +51,7 @@ public final class TableBanks {
     }
 
     public static int setAccount(EntityPlayer player, String bankIdentifier, String tabs) {
-        DBPlayer dbPlayer = TablePlayers.getPlayer(player);
+        DBPlayer dbPlayer = TablePlayers.getPlayer(player.getGameProfile());
         int id = -1;
         String sql = "INSERT INTO banks (id, player_id, bank_identifier, tabs, times_opened, last_access, last_change) VALUES (NULL, ?, ?, ?, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
         try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -67,7 +67,7 @@ public final class TableBanks {
     }
 
     public static void updateAccount(EntityPlayer player, String bankIdentifier, String tabs) {
-        DBPlayer dbPlayer = TablePlayers.getPlayer(player);
+        DBPlayer dbPlayer = TablePlayers.getPlayer(player.getGameProfile());
         String sql = "UPDATE banks SET tabs=?, last_access=datetime('now'), last_change=datetime('now') WHERE player_id=? AND bank_identifier=?";
         try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, tabs);
@@ -81,7 +81,7 @@ public final class TableBanks {
 
     public static boolean isAccountInDatabase(EntityPlayer player, String bankIdentifier) {
         boolean foundAccount = false;
-        DBPlayer dbPlayer = TablePlayers.getPlayer(player);
+        DBPlayer dbPlayer = TablePlayers.getPlayer(player.getGameProfile());
         String sql = "SELECT * FROM banks WHERE bank_identifier=? AND player_id=?";
         try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, bankIdentifier);

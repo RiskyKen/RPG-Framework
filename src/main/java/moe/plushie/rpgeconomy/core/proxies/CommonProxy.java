@@ -44,26 +44,26 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 @Mod.EventBusSubscriber(modid = LibModInfo.ID)
 public class CommonProxy {
-    
+
     private File modConfigDirectory;
     private File instanceDirectory;
     private File modDirectory;
-    
+
     private ModBlocks modBlocks;
     private ModItems modItems;
     private ModSounds modSounds;
-    
+
     private CurrencyManager currencyManager;
     private MailSystemManager mailSystemManager;
     private ShopManager shopManager;
     private BankManager bankManager;
-    
+
     private IModModule moduleCurrency = new ModuleCurrency();
     private IModModule moduleMail = new ModuleMail();
     private IModModule moduleShop = new ModuleShop();
     private IModModule moduleBank = new ModuleBank();
     private IModModule moduleAuction = new ModuleAuction();
-    
+
     public void preInit(FMLPreInitializationEvent event) {
         modConfigDirectory = new File(event.getSuggestedConfigurationFile().getParentFile(), LibModInfo.ID);
         if (!modConfigDirectory.exists()) {
@@ -75,83 +75,83 @@ public class CommonProxy {
         if (!modDirectory.exists()) {
             modDirectory.mkdir();
         }
-        
+
         currencyManager = new CurrencyManager(modDirectory);
         mailSystemManager = new MailSystemManager(modDirectory);
         shopManager = new ShopManager(modDirectory);
         bankManager = new BankManager(modDirectory);
-        
+
         ReflectionHelper.setPrivateValue(RpgEconomyAPI.class, null, currencyManager, "currencyManager");
         ReflectionHelper.setPrivateValue(RpgEconomyAPI.class, null, mailSystemManager, "mailSystemManager");
         ReflectionHelper.setPrivateValue(RpgEconomyAPI.class, null, shopManager, "shopManager");
         ReflectionHelper.setPrivateValue(RpgEconomyAPI.class, null, bankManager, "bankManager");
-        
+
         modBlocks = new ModBlocks();
         modItems = new ModItems();
         modSounds = new ModSounds();
-        
+
         CurrencyCapabilityManager.register();
         BankCapabilityManager.register();
-        
+
         for (IModModule module : ModModule.MOD_MODULES) {
             module.preInit(event);
         }
     }
-    
+
     public void init(FMLInitializationEvent event) {
         ModTiles.registerTileEntities();
         new GuiHandler();
         new PacketHandler();
-        
+
         for (IModModule module : ModModule.MOD_MODULES) {
             module.init(event);
         }
     }
-    
+
     public void initRenderers() {
     }
-    
+
     public void postInit(FMLPostInitializationEvent event) {
         for (IModModule module : ModModule.MOD_MODULES) {
             module.postInit(event);
         }
     }
-    
+
     public void serverAboutToStart(FMLServerAboutToStartEvent event) {
         for (IModModule module : ModModule.MOD_MODULES) {
             module.serverAboutToStart(event);
         }
     }
-    
+
     public void serverStarting(FMLServerStartingEvent event) {
         event.registerServerCommand(new CommandRpg());
         for (IModModule module : ModModule.MOD_MODULES) {
             module.serverStarting(event);
         }
     }
-    
+
     public void serverStopping(FMLServerStoppingEvent event) {
         for (IModModule module : ModModule.MOD_MODULES) {
             module.serverStopping(event);
         }
     }
-    
+
     public File getModDirectory() {
-		return modDirectory;
-	}
-    
+        return modDirectory;
+    }
+
     public CurrencyManager getCurrencyManager() {
         return currencyManager;
     }
-    
+
     public MailSystemManager getMailSystemManager() {
         return mailSystemManager;
     }
-    
+
     public ShopManager getShopManager() {
-		return shopManager;
-	}
-    
+        return shopManager;
+    }
+
     public BankManager getBankManager() {
         return bankManager;
     }
@@ -170,7 +170,7 @@ public class CommonProxy {
             }
         }
     }
-    
+
     public void openCurrencyWalletGui(EntityPlayer player, ICurrency currency) {
         if (currency != null) {
             int id = RpgEconomy.getProxy().getCurrencyManager().getCurrencyID(currency);

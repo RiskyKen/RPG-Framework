@@ -76,28 +76,44 @@ public final class TablePlayers {
         }
         return playerInfo;
     }
-
-    public static DBPlayer getPlayer(EntityPlayer player) {
-        return getPlayer(player.getGameProfile());
-    }
-
+    
     public static DBPlayer getPlayer(GameProfile gameProfile) {
-        String sql = "SELECT id FROM players WHERE ";
-        String searchValue;
-        if (gameProfile.getId() != null) {
-            sql += "uuid=?";
-            searchValue = gameProfile.getId().toString();
-        } else {
-            sql += "username=?";
-            searchValue = gameProfile.getName();
-        }
         DBPlayer playerInfo = DBPlayer.MISSING;
-        try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, searchValue);
+        try (Connection conn = SQLiteDriver.getConnection()) {
+            if (gameProfile.getId() != null) {
+                playerInfo = getPlayer(conn, gameProfile.getId());
+            } else {
+                playerInfo = getPlayer(conn, gameProfile.getName());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return playerInfo;
+    }
+    
+    private static final String SQL_GET_PLAYER_USERNAME = "SELECT id FROM players WHERE username=?";
+    public static DBPlayer getPlayer(Connection conn, String username) {
+        DBPlayer playerInfo = DBPlayer.MISSING;
+        try (PreparedStatement ps = conn.prepareStatement(SQL_GET_PLAYER_USERNAME)) {
+            ps.setString(1, username);
             ResultSet resultSet = ps.executeQuery();
             if (resultSet.next()) {
-                int id = resultSet.getInt("id");
-                playerInfo = new DBPlayer(id);
+                playerInfo = new DBPlayer(resultSet.getInt("id"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return playerInfo;
+    }
+    
+    private static final String SQL_GET_PLAYER_UUID = "SELECT id FROM players WHERE uuid=?";
+    public static DBPlayer getPlayer(Connection conn, UUID uuid) {
+        DBPlayer playerInfo = DBPlayer.MISSING;
+        try (PreparedStatement ps = conn.prepareStatement(SQL_GET_PLAYER_UUID)) {
+            ps.setString(1, uuid.toString());
+            ResultSet resultSet = ps.executeQuery();
+            if (resultSet.next()) {
+                playerInfo = new DBPlayer(resultSet.getInt("id"));
             }
         } catch (SQLException e) {
             e.printStackTrace();

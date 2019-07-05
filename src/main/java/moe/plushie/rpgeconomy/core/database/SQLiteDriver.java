@@ -2,7 +2,6 @@ package moe.plushie.rpgeconomy.core.database;
 
 import java.io.File;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -39,8 +38,8 @@ public final class SQLiteDriver {
 	}
 	
 	public static Connection getConnection() throws SQLException {
-	    //return getPoolConnection();
-		return DriverManager.getConnection(getConnectionUrl());
+	    return getPoolConnection();
+		//return DriverManager.getConnection(getConnectionUrl());
 	}
 	
 	public static PreparedStatement getPreparedStatement(String sql) {

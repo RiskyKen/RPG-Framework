@@ -88,7 +88,7 @@ public class BlockBank extends AbstractModBlockContainer {
             if (tileEntity != null && tileEntity instanceof TileEntityBank) {
                 IBank bank = ((TileEntityBank) tileEntity).getBank();
                 int index = RpgEconomy.getProxy().getBankManager().getBankIndex(bank);
-                DBPlayer dbPlayer = TablePlayers.getPlayer(playerIn);
+                DBPlayer dbPlayer = TablePlayers.getPlayer(playerIn.getGameProfile());
                 FMLNetworkHandler.openGui(playerIn, RpgEconomy.getInstance(), LibGuiIds.BANK, worldIn, index, dbPlayer.getId(), 0);
             }
         }
