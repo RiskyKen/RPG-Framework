@@ -48,7 +48,7 @@ public final class PlayerStatsHandler {
     
     @SubscribeEvent
     public static void onWorldTickEvent(WorldTickEvent event) {
-        if (event.phase == Phase.START | event.side == Side.CLIENT) {
+        if (event.phase == Phase.START | event.side == Side.CLIENT | ConfigHandler.heatmapTrackingRate == 0) {
             return;
         }
         World world = event.world;
