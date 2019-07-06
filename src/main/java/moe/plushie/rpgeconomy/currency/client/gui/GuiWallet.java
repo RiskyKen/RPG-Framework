@@ -56,7 +56,7 @@ public class GuiWallet extends GuiContainer {
     public void initGui() {
         this.xSize = TEXTURE_SIZE_X;
         this.ySize = TEXTURE_SIZE_Y;
-        if (ConfigHandler.showPlayerInventoryInWalletGUI) {
+        if (ConfigHandler.options.showPlayerInventoryInWalletGUI) {
             this.ySize += 98 + 1;
         }
         super.initGui();
@@ -113,7 +113,7 @@ public class GuiWallet extends GuiContainer {
                 drawTexturedModalRect(getGuiLeft() + slot.xPos - 1, getGuiTop() + slot.yPos - 1, 238, 0, 18, 18);
             }
         }
-        if (ConfigHandler.showPlayerInventoryInWalletGUI) {
+        if (ConfigHandler.options.showPlayerInventoryInWalletGUI) {
             GuiHelper.renderPlayerInvTexture(getGuiLeft(), getGuiTop() + TEXTURE_SIZE_Y + 1);
         }
     }
@@ -128,7 +128,7 @@ public class GuiWallet extends GuiContainer {
         int valueWidth = fontRenderer.getStringWidth(value);
         fontRenderer.drawString(value, 139 - valueWidth, 21, 0x333333);
         
-        if (ConfigHandler.showPlayerInventoryInWalletGUI) {
+        if (ConfigHandler.options.showPlayerInventoryInWalletGUI) {
             GuiHelper.renderPlayerInvlabel(0, TEXTURE_SIZE_Y + 1, fontRenderer);
         }
         GlStateManager.pushMatrix();

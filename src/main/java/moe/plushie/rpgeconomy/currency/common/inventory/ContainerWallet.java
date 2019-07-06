@@ -34,7 +34,7 @@ public class ContainerWallet extends ModContainer implements IButtonPress {
 
         inventoryWallet = new ModInventory("wallet", currency.getCurrencyVariants().length);
 
-        if (ConfigHandler.showPlayerInventoryInWalletGUI) {
+        if (ConfigHandler.options.showPlayerInventoryInWalletGUI) {
             addPlayerSlots(8, 114);
         }
 

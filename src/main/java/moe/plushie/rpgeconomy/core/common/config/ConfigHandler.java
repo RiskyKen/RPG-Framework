@@ -14,22 +14,7 @@ public class ConfigHandler {
     public static final String CATEGORY_SHOP = "Shop ";
     
     public static Configuration config;
-
-    // General
-    public static int heatmapTrackingRate = 0;
-
-    // Currency
-    public static boolean showPlayerInventoryInWalletGUI = true;
-
-    // Mail
-    public static boolean showPlayerInventoryInMailGUI = true;
-
-    // Shop
-    public static boolean showPlayerInventoryInShopGUI = true;
-
-    // Other
-    public static String lastVersion;
-    public static boolean hasUpdated;
+    public static ConfigOptions options = new ConfigOptions();
 
     public static void init(File file) {
         if (config == null) {
@@ -53,15 +38,15 @@ public class ConfigHandler {
         if (LibModInfo.VERSION.startsWith("@VER")) {
             return;
         }
-        if (versionCompare(lastVersion.replaceAll("-", "."), localVersion.replaceAll("-", ".")) < 0) {
-            RpgEconomy.getLogger().info(String.format("Updated from version %s to version %s.", lastVersion, localVersion));
+        if (versionCompare(options.lastVersion.replaceAll("-", "."), localVersion.replaceAll("-", ".")) < 0) {
+            RpgEconomy.getLogger().info(String.format("Updated from version %s to version %s.", options.lastVersion, localVersion));
             config.getCategory(CATEGORY_GENERAL).get("lastVersion").set(localVersion);
             if (config.hasChanged()) {
                 config.save();
             }
-            hasUpdated = true;
+            options.hasUpdated = true;
         } else {
-            hasUpdated = false;
+            options.hasUpdated = false;
         }
     }
     
@@ -69,25 +54,25 @@ public class ConfigHandler {
         config.setCategoryComment(CATEGORY_GENERAL, "General settings.");
         
         if (!LibModInfo.VERSION.startsWith("@VER")) {
-            lastVersion = config.getString("lastVersion", CATEGORY_GENERAL, "0.0",
+            options.lastVersion = config.getString("lastVersion", CATEGORY_GENERAL, "0.0",
                     "Used by the mod to check if it has been updated.");
         }
         
-        heatmapTrackingRate = config.getInt("heatmapTrackingRate", CATEGORY_GENERAL, 5, 0, 300,
+        options.heatmapTrackingRate = config.getInt("heatmapTrackingRate", CATEGORY_GENERAL, 5, 0, 300,
                 "How often in seconds a players location is added to the heatmap. 0 = Disabled.");
     }
     
     private static void loadCategoryCurrency() {
         config.setCategoryComment(CATEGORY_CURRENCY, "Setting to do with the currency system.");
         
-        showPlayerInventoryInWalletGUI = config.getBoolean("showPlayerInventoryInWalletGUI", CATEGORY_CURRENCY, true, 
+        options.showPlayerInventoryInWalletGUI = config.getBoolean("showPlayerInventoryInWalletGUI", CATEGORY_CURRENCY, true, 
                 "Is the players inventory shown in the wallet GUI.");
     }
     
     private static void loadCategoryShop() {
         config.setCategoryComment(CATEGORY_SHOP, "Setting to do with the shop system.");
         
-        showPlayerInventoryInShopGUI = config.getBoolean("showPlayerInventoryInShopGUI", CATEGORY_SHOP, true,
+        options.showPlayerInventoryInShopGUI = config.getBoolean("showPlayerInventoryInShopGUI", CATEGORY_SHOP, true,
                 "Is the players inventory shown in the shop GUI.");
     }
 

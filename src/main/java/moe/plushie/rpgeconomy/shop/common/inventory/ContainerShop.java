@@ -66,7 +66,7 @@ public class ContainerShop extends ModContainer {
             addSlotToContainerAndList(new SlotShop(invShop, i + 4, 168, 25 + i * 31, this), slotsShop);
         }
 
-        if (ConfigHandler.showPlayerInventoryInShopGUI) {
+        if (ConfigHandler.options.showPlayerInventoryInShopGUI) {
             addPlayerSlots(24, 162);
         }
 
