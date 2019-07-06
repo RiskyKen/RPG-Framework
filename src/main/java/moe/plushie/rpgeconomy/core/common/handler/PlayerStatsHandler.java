@@ -13,15 +13,13 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
-import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
-import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 @Mod.EventBusSubscriber(modid = LibModInfo.ID)
 public final class PlayerStatsHandler {
     
     @SubscribeEvent
-    public void onPlayerLogin(PlayerLoggedInEvent event) {
+    public static void onPlayerLogin(PlayerLoggedInEvent event) {
         TablePlayers.create();
         EntityPlayer player = event.player;
         if (TablePlayers.isPlayerInDatabase(player.getGameProfile())) {
@@ -29,16 +27,6 @@ public final class PlayerStatsHandler {
         } else {
             TablePlayers.addPlayerToDatabase(player.getGameProfile());
         }
-    }
-
-    @SubscribeEvent
-    public static void onClientConnectedToServerEvent(ClientConnectedToServerEvent event) {
-        RpgEconomy.getLogger().info("Client connect");
-    }
-
-    @SubscribeEvent
-    public static void onClientDisconnectionFromServerEvent(ClientDisconnectionFromServerEvent event) {
-        RpgEconomy.getLogger().info("Client disconnect");
     }
 
     @SubscribeEvent
