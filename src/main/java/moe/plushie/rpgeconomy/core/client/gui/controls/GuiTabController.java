@@ -25,6 +25,7 @@ public class GuiTabController extends GuiButtonExt {
     private ArrayList<GuiTab> tabs = new ArrayList<GuiTab>();
     private int tabSpacing = 27;
     private boolean editMode = false;
+    private int tabsPerSide = 5;
     
     public GuiTabController(GuiScreen parent, boolean fullscreen, int xPos, int yPos, int width, int height) {
         super(0, xPos, yPos, width, height, "");
@@ -120,7 +121,7 @@ public class GuiTabController extends GuiButtonExt {
                 }
                 count++;
             }
-            if (count > 4 & !movedRight) {
+            if (count >= getTabsPerSide() & !movedRight) {
                 count = 0;
                 xOffset += width - tabSpacing;
                 movedRight = true;
@@ -134,12 +135,20 @@ public class GuiTabController extends GuiButtonExt {
         for (int i = 0; i < tabs.size(); i++) {
             if (tabs.get(i).visible) {
                 if (i == index) {
-                    return count < 5;
+                    return count < getTabsPerSide();
                 }
                 count++;
             }
         }
         return true;
+    }
+    
+    public int getTabsPerSide() {
+        return tabsPerSide ;
+    }
+    
+    public void setTabsPerSide(int count) {
+        tabsPerSide = count;
     }
     
     public GuiTab getActiveTab() {

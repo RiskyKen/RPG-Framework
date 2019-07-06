@@ -2,6 +2,7 @@ package moe.plushie.rpgeconomy.core.common.lib;
 
 public enum EnumGuiId {
     
+    MANAGER(false),
     MAIL_BOX(true),
     WALLET(false),
     SHOP_TILE(true),

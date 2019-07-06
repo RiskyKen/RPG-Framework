@@ -4,7 +4,9 @@ import moe.plushie.rpgeconomy.api.core.IIdentifier;
 import moe.plushie.rpgeconomy.bank.client.GuiBank;
 import moe.plushie.rpgeconomy.bank.common.inventory.ContainerBank;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
+import moe.plushie.rpgeconomy.core.client.gui.manager.GuiManager;
 import moe.plushie.rpgeconomy.core.common.IdentifierInt;
+import moe.plushie.rpgeconomy.core.common.inventory.ContainerManager;
 import moe.plushie.rpgeconomy.core.common.inventory.IGuiFactory;
 import moe.plushie.rpgeconomy.core.common.lib.EnumGuiId;
 import moe.plushie.rpgeconomy.currency.client.gui.GuiWallet;
@@ -42,6 +44,8 @@ public class GuiHandler implements IGuiHandler {
         }
 
         switch (guiId) {
+        case MANAGER:
+            return new ContainerManager(player);
         case WALLET:
             Currency currency = RpgEconomy.getProxy().getCurrencyManager().getCurrencyFromID(x);
             if (currency != null) {
@@ -81,6 +85,8 @@ public class GuiHandler implements IGuiHandler {
         }
 
         switch (guiId) {
+        case MANAGER:
+            return new GuiManager(player);
         case WALLET:
             Currency currency = RpgEconomy.getProxy().getCurrencyManager().getCurrencyFromID(x);
             if (currency != null) {

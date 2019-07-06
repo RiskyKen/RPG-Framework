@@ -22,7 +22,7 @@ public class GuiTab extends Gui {
     private int iconTextureHeight = 16;
 
     private int tabTextureWidth = 26;
-    private int tabTextureHeight = 26;
+    private int tabTextureHeight = 30;
 
     private int padLeft, padRight, padTop, padBottom = 0;
 

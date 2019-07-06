@@ -40,6 +40,7 @@ item.rpg_economy:currency.3.name=Platinum Coin
 item.rpg_economy:currency.4.name=Emerald Coin
 item.rpg_economy:currency.5.name=Diamond Coin
 item.rpg_economy:wallet.name=Wallet
+item.rpg_economy:loot_bag.name=Loot Bag
 
 # Item tooltips
 #item.rpg_economy:currency.0.tooltip=Test

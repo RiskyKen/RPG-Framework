@@ -13,7 +13,8 @@ public class LibGuiResources {
     public static final String ICONS = PREFIX_RESOURCE + "icons.png";
     public static final String TABS = PREFIX_RESOURCE + "controls/tabs.png";
     
-    public static final String MAIL_BOX_TABS = PREFIX_RESOURCE + "mail_box/mail_tabs.png";
+    public static final String MANAGER = PREFIX_RESOURCE + "manager/panel.png";
+    
     public static final String MAIL_BOX_READING = PREFIX_RESOURCE + "mail_box/reading_mail.png";
     public static final String MAIL_BOX_SENDING = PREFIX_RESOURCE + "mail_box/send_mail.png";
     

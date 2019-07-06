@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Container;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -33,12 +32,12 @@ public abstract class GuiTabbed extends GuiContainer {
         super.initGui();
         buttonList.clear();
 
-        tabController.initGui(getGuiLeft() - 17, guiTop, xSize, ySize);
+        tabController.initGui(getGuiLeft() + 4, guiTop, xSize, ySize);
 
         tabController.setActiveTabIndex(getActiveTab());
 
         for (int i = 0; i < tabList.size(); i++) {
-            tabList.get(i).initGui(guiLeft, guiTop, xSize, ySize);
+            tabList.get(i).initGui(getGuiLeft() + 21, getGuiTop(), xSize - 42, ySize);
         }
         buttonList.add(tabController);
 
