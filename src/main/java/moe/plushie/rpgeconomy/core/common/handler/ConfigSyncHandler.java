@@ -17,6 +17,6 @@ public final class ConfigSyncHandler {
 
     @SubscribeEvent
     public static void onPlayerLogin(PlayerLoggedInEvent event) {
-        PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerSyncConfig(ConfigHandler.options), (EntityPlayerMP) event.player);
+        PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerSyncConfig(ConfigHandler.loaded), (EntityPlayerMP) event.player);
     }
 }

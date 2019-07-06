@@ -14,8 +14,10 @@ public class ConfigHandler {
     public static final String CATEGORY_SHOP = "Shop ";
     
     public static Configuration config;
+    
     public static ConfigOptions options = new ConfigOptions();
-
+    public static ConfigOptions loaded = new ConfigOptions();
+    
     public static void init(File file) {
         if (config == null) {
             config = new Configuration(file, "1");
@@ -31,6 +33,7 @@ public class ConfigHandler {
         if (config.hasChanged()) {
             config.save();
         }
+        loaded = options;
     }
 
     private static void checkIfUpdated() {
