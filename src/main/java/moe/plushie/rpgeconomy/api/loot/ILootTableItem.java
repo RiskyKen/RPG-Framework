@@ -1,5 +1,10 @@
 package moe.plushie.rpgeconomy.api.loot;
 
-public interface ILootTableItem {
+import net.minecraft.item.ItemStack;
 
+public interface ILootTableItem {
+    
+    public ItemStack getItem();
+    
+    public int getWeight();
 }

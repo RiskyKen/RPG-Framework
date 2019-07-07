@@ -4,15 +4,13 @@ public interface IModuleManager<T> {
     
     public String getName();
     
-    public String getIdentifier();
-
-    public void reload();
+    public IIdentifier getIdentifier();
     
-    public T get(String identifier);
+    public T get(IIdentifier identifier);
 
     public T getAll();
     
-    public String[] getIdentifiers();
+    public IIdentifier[] getIdentifiers();
     
     public String[] getNames();
 }

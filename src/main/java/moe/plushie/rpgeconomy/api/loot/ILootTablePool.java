@@ -7,7 +7,7 @@ import moe.plushie.rpgeconomy.api.core.IIdentifier;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 
-public interface ILootTable {
+public interface ILootTablePool {
 
     public IIdentifier getIdentifier();
 
@@ -15,7 +15,7 @@ public interface ILootTable {
 
     public String getCategory();
 
-    public ArrayList<ILootTablePool> getLootPools();
+    public ArrayList<ILootTableItem> getPoolItems();
 
-    public NonNullList<ItemStack> getLoot(Random random);
+    public void getLoot(NonNullList<ItemStack> items, Random random);
 }
