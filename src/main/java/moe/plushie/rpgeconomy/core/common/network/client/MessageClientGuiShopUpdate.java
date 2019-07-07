@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import io.netty.buffer.ByteBuf;
 import moe.plushie.rpgeconomy.api.core.IIdentifier;
 import moe.plushie.rpgeconomy.api.currency.ICost;
+import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.utils.ByteBufHelper;
 import moe.plushie.rpgeconomy.core.common.utils.SerializeHelper;
 import moe.plushie.rpgeconomy.currency.common.serialize.CostSerializer;
@@ -182,6 +183,12 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
     @Override
     public IMessage onMessage(MessageClientGuiShopUpdate message, MessageContext ctx) {
         EntityPlayerMP player = ctx.getServerHandler().player;
+        if (message.type.getNeedsCreative()) {
+            if (!player.capabilities.isCreativeMode) {
+                RpgEconomy.getLogger().warn(String.format("Player %s tried to use the shop action %s without creative mode.", player.getName(), message.type.toString()));
+                return null;
+            }
+        }
         if (player.openContainer != null && player.openContainer instanceof ContainerShop) {
             ContainerShop containerShop = (ContainerShop) player.openContainer;
             switch (message.type) {
@@ -239,24 +246,36 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
 
     public static enum ShopMessageType {
         /** Edit mode turned on. */
-        EDIT_MODE_ON,
+        EDIT_MODE_ON(true),
         /** Edit mode turned off. */
-        EDIT_MODE_OFF,
-        SHOP_ADD,
-        SHOP_REMOVE,
+        EDIT_MODE_OFF(true),
+        /** Adds a new shop. */
+        SHOP_ADD(true),
+        //* Removes a shop. */
+        SHOP_REMOVE(true),
         /** Shop renamed. */
-        SHOP_RENAME,
+        SHOP_RENAME(true),
         /** Change linked shop. */
-        SHOP_CHANGE,
+        SHOP_CHANGE(true),
         /** Force shop save. */
-        SHOP_SAVE,
-        ITEM_UPDATE,
-        ITEM_COST_REQUEST,
-        TAB_ADD,
-        TAB_REMOVE,
-        TAB_EDIT,
-        TAB_CHANGED,
-        TAB_MOVE_UP,
-        TAB_MOVE_DOWN
+        SHOP_SAVE(true),
+        ITEM_UPDATE(true),
+        ITEM_COST_REQUEST(true),
+        TAB_ADD(true),
+        TAB_REMOVE(true),
+        TAB_EDIT(true),
+        TAB_CHANGED(false),
+        TAB_MOVE_UP(true),
+        TAB_MOVE_DOWN(true);
+        
+        private final boolean needsCreative;
+        
+        private ShopMessageType(boolean needsCreative) {
+            this.needsCreative = needsCreative;
+        }
+        
+        public boolean getNeedsCreative() {
+            return needsCreative;
+        }
     }
 }
