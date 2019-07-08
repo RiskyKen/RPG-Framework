@@ -89,4 +89,18 @@ public final class SQLiteDriver {
 		}
 		return results;
 	}
+	
+	private static final String SQL_LAST_ROW = "SELECT last_insert_rowid()";
+	
+	public static int getLastInsertRow(Connection conn) throws SQLException {
+	    int row = -1;
+	    try (Statement statement = conn.createStatement()) {
+	        try (ResultSet rs = statement.executeQuery(SQL_LAST_ROW)) {
+	            if (rs.next()) {
+	                row = rs.getInt(1);
+	            }
+	        }
+	    }
+	    return row;
+	}
 }

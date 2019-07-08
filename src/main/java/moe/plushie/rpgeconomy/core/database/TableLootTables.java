@@ -23,15 +23,15 @@ public final class TableLootTables {
 
     private static final String SQL_CREATE_TABLE = "CREATE TABLE IF NOT EXISTS loot_tables"
             + "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
-            + "name VARCHAR(64) NOT NULL"
-            + "category VARCHAR(64) NOT NULL"
+            + "name VARCHAR(64) NOT NULL,"
+            + "category VARCHAR(64) NOT NULL,"
             + "pools TEXT NOT NULL,"
             + "last_update DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL)";
-    
+
     public static void createTable() {
         SQLiteDriver.executeUpdate(SQL_CREATE_TABLE);
     }
-    
+
     private static final String SQL_ADD_LOOT_TABLE = "INSERT INTO loot_tables (id, name, category, pools, last_update) VALUES (NULL, ?, ?, ?, CURRENT_TIMESTAMP)";
 
     public static ILootTable createNew(String name, String category) {
@@ -41,8 +41,9 @@ public final class TableLootTables {
             ps.setString(1, name);
             ps.setString(2, category);
             ps.setString(3, "[]");
-            int id = ps.executeUpdate();
-            lootTable = new LootTable(new IdentifierInt(id), name, category);
+            ps.executeUpdate();
+            int row = SQLiteDriver.getLastInsertRow(conn);
+            lootTable = new LootTable(new IdentifierInt(row), name, category);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -95,6 +96,7 @@ public final class TableLootTables {
                 poolsJson.add(IdentifierSerialize.serializeJson(identifier));
             }
             ps.setString(3, poolsJson.toString());
+            ps.setObject(4, lootTable.getIdentifier().getValue());
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();

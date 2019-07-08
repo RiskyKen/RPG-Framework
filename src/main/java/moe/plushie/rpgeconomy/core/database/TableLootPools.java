@@ -28,8 +28,8 @@ public final class TableLootPools {
 
     private static final String SQL_CREATE_TABLE = "CREATE TABLE IF NOT EXISTS loot_pools"
             + "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
-            + "name VARCHAR(64) NOT NULL"
-            + "category VARCHAR(64) NOT NULL"
+            + "name VARCHAR(64) NOT NULL,"
+            + "category VARCHAR(64) NOT NULL,"
             + "items TEXT NOT NULL,"
             + "last_update DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL)";
     
@@ -46,8 +46,9 @@ public final class TableLootPools {
             ps.setString(1, name);
             ps.setString(2, category);
             ps.setString(3, "[]");
-            int id = ps.executeUpdate();
-            tablePool = new LootTablePool(new IdentifierInt(id), name, category);
+            ps.executeUpdate();
+            int row = SQLiteDriver.getLastInsertRow(conn);
+            tablePool = new LootTablePool(new IdentifierInt(row), name, category);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -99,9 +100,10 @@ public final class TableLootPools {
             JsonArray itemsJson = new JsonArray();
             Gson gson = new GsonBuilder().registerTypeAdapter(ItemStack.class, new ItemStackSerialize()).create();
             for (ILootTableItem item : tablePool.getPoolItems()) {
-                itemsJson.add(gson.toJson(item, LootTableItem.class));
+                itemsJson.add(gson.toJsonTree(item, LootTableItem.class));
             }
             ps.setString(3, itemsJson.toString());
+            ps.setObject(4, tablePool.getIdentifier().getValue());
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();

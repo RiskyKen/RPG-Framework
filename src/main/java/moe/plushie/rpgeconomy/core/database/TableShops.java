@@ -39,8 +39,9 @@ public final class TableShops {
         try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_ADD_SHOP)) {
             ps.setString(1, name);
             ps.setObject(2, "[]");
-            int id = ps.executeUpdate();
-            shop = new Shop(new IdentifierInt(id), name);
+            ps.executeUpdate();
+            int row = SQLiteDriver.getLastInsertRow(conn);
+            shop = new Shop(new IdentifierInt(row), name);
         } catch (Exception e) {
             e.printStackTrace();
         }
