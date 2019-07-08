@@ -9,6 +9,7 @@ import moe.plushie.rpgeconomy.core.common.command.CommandExecute.ICommandExecute
 import moe.plushie.rpgeconomy.core.common.lib.EnumGuiId;
 import moe.plushie.rpgeconomy.core.common.lib.LibModInfo;
 import moe.plushie.rpgeconomy.currency.common.command.CommandCurrency;
+import moe.plushie.rpgeconomy.loot.common.command.CommandLoot;
 import moe.plushie.rpgeconomy.mail.common.command.CommandMail;
 import moe.plushie.rpgeconomy.shop.common.command.CommandShop;
 import net.minecraft.command.CommandException;
@@ -34,6 +35,7 @@ public class CommandRpg extends ModSubCommands {
         addSubCommand(new CommandDev(this));
         addSubCommand(new CommandBank(this));
         addSubCommand(new CommandIntegration(this));
+        addSubCommand(new CommandLoot(this));
     }
 
     @Override
