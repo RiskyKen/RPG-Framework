@@ -13,6 +13,8 @@ import moe.plushie.rpgeconomy.currency.client.gui.GuiWallet;
 import moe.plushie.rpgeconomy.currency.common.Currency;
 import moe.plushie.rpgeconomy.currency.common.CurrencyWalletHelper;
 import moe.plushie.rpgeconomy.currency.common.inventory.ContainerWallet;
+import moe.plushie.rpgeconomy.loot.client.gui.GuiLootEditor;
+import moe.plushie.rpgeconomy.loot.common.inventory.ContainerLootEditor;
 import moe.plushie.rpgeconomy.shop.client.gui.GuiShop;
 import moe.plushie.rpgeconomy.shop.common.inventory.ContainerShop;
 import net.minecraft.entity.player.EntityPlayer;
@@ -62,6 +64,8 @@ public class GuiHandler implements IGuiHandler {
         case SHOP_COMMAND:
             IIdentifier identifier = new IdentifierInt(x);
             return new ContainerShop(player, RpgEconomy.getProxy().getShopManager().getShop(identifier), null);
+        case LOOT_EDITOR_COMMAND:
+            return new ContainerLootEditor(player);
         default:
             break;
         }
@@ -102,6 +106,8 @@ public class GuiHandler implements IGuiHandler {
             return new GuiBank(player, RpgEconomy.getProxy().getBankManager().getBank(x));
         case SHOP_COMMAND:
             return new GuiShop(player, false);
+        case LOOT_EDITOR_COMMAND:
+            return new GuiLootEditor(player);
         default:
             break;
         }

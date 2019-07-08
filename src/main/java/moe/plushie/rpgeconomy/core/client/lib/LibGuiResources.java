@@ -21,4 +21,5 @@ public class LibGuiResources {
     public static final String WALLET = PREFIX_RESOURCE + "wallet/wallet.png";
     public static final String SHOP = PREFIX_RESOURCE + "shop/shop.png";
     public static final String BANK = PREFIX_RESOURCE + "bank/bank.png";
+    public static final String LOOT_EDITOR = PREFIX_RESOURCE + "loot_editor/panel.png";
 }

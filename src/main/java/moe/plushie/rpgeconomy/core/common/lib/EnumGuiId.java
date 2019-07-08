@@ -8,7 +8,8 @@ public enum EnumGuiId {
     SHOP_TILE(true),
     SHOP_COMMAND(false),
     BANK_TILE(true),
-    BANK_COMMAND(false);
+    BANK_COMMAND(false),
+    LOOT_EDITOR_COMMAND(false);
     
     private final boolean tile;
     
