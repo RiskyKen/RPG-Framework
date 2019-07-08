@@ -15,7 +15,7 @@ public interface ILootTable {
 
     public String getCategory();
 
-    public ArrayList<ILootTablePool> getLootPools();
+    public ArrayList<IIdentifier> getLootPools();
 
     public NonNullList<ItemStack> getLoot(Random random);
 }

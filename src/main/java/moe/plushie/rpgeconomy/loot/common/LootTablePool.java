@@ -22,6 +22,10 @@ public class LootTablePool implements ILootTablePool {
         this.category = category;
         this.poolItems = poolItems;
     }
+    
+    public LootTablePool(IIdentifier identifier, String name, String category) {
+        this(identifier, name, category, new ArrayList<ILootTableItem>());
+    }
 
     @Override
     public IIdentifier getIdentifier() {
