@@ -15,14 +15,14 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class MessageServerSyncCurrencies implements IMessage, IMessageHandler<MessageServerSyncCurrencies, IMessage> {
 
     private Currency[] currencies;
-    
+
     public MessageServerSyncCurrencies() {
     }
-    
+
     public MessageServerSyncCurrencies(Currency[] currencies) {
         this.currencies = currencies;
     }
-    
+
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(currencies.length);

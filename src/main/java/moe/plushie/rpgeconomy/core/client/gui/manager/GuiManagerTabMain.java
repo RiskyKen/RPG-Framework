@@ -11,7 +11,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class GuiManagerTabMain extends GuiTabPanel<GuiTabbed> {
 
-    private static final ResourceLocation TEXTURE_MANAGER = new ResourceLocation(LibGuiResources.MANAGER);
+    private static final ResourceLocation TEXTURE_BACKGROUND = new ResourceLocation(LibGuiResources.BACKGROUND);
     
     public GuiManagerTabMain(int tabId, GuiTabbed parent) {
         super(tabId, parent, false);
@@ -19,7 +19,7 @@ public class GuiManagerTabMain extends GuiTabPanel<GuiTabbed> {
 
     @Override
     public void drawBackgroundLayer(float partialTickTime, int mouseX, int mouseY) {
-        mc.renderEngine.bindTexture(TEXTURE_MANAGER);
-        GuiUtils.drawContinuousTexturedBox(x, y, 0, 0, width, height, 100, 100, 5, zLevel);
+        mc.renderEngine.bindTexture(TEXTURE_BACKGROUND);
+        GuiUtils.drawContinuousTexturedBox(x, y, 0, 0, width, height, 64, 64, 5, zLevel);
     }
 }

@@ -3,15 +3,21 @@ package moe.plushie.rpgeconomy.core.client.gui.controls;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import moe.plushie.rpgeconomy.core.client.lib.LibGuiResources;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Container;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public abstract class GuiTabbed extends GuiContainer {
 
+    protected static final ResourceLocation TEXTURE_BACKGROUND = new ResourceLocation(LibGuiResources.BACKGROUND);
+    protected static final ResourceLocation TEXTURE_BUTTONS = new ResourceLocation(LibGuiResources.BUTTONS);
+    protected static final ResourceLocation TEXTURE_ICONS = new ResourceLocation(LibGuiResources.ICONS);
+    
     protected GuiTabController tabController;
     protected ArrayList<GuiTabPanel> tabList;
 
