@@ -7,6 +7,8 @@ import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTab;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTabPanel;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTabbed;
 import moe.plushie.rpgeconomy.core.common.inventory.ContainerManager;
+import moe.plushie.rpgeconomy.loot.client.gui.GuiTabLootPoolEditor;
+import moe.plushie.rpgeconomy.loot.client.gui.GuiTabLootTableEditor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -19,15 +21,25 @@ public class GuiManager extends GuiTabbed {
     private static int activeTab;
 
     private final EntityPlayer player;
-    private final GuiManagerTabMain tabMain;
-
+    
+    private final GuiTabManagerMain tabManagerMain;
+    GuiTabManagerDatabase tabManagerDatabase;
+    private final GuiTabLootTableEditor tabLootTableEditor;
+    private final GuiTabLootPoolEditor tabLootPoolEditor;
+    
     public GuiManager(EntityPlayer player) {
         super(new ContainerManager(player), false);
         this.player = player;
 
-        tabMain = new GuiManagerTabMain(0, this);
+        tabManagerMain = new GuiTabManagerMain(0, this);
+        tabManagerDatabase = new GuiTabManagerDatabase(1, this);
+        tabLootTableEditor = new GuiTabLootTableEditor(2, this);
+        tabLootPoolEditor = new GuiTabLootPoolEditor(3, this);
         
-        tabList.add(tabMain);
+        tabList.add(tabManagerMain);
+        tabList.add(tabManagerDatabase);
+        tabList.add(tabLootTableEditor);
+        tabList.add(tabLootPoolEditor);
 
         tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.status.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
         tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.database.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
@@ -62,7 +74,6 @@ public class GuiManager extends GuiTabbed {
     @Override
     protected void setActiveTab(int value) {
         this.activeTab = value;
-
     }
 
     @Override

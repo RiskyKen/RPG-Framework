@@ -2,18 +2,14 @@ package moe.plushie.rpgeconomy.core.client.gui.manager;
 
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTabPanel;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTabbed;
-import moe.plushie.rpgeconomy.core.client.lib.LibGuiResources;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class GuiManagerTabMain extends GuiTabPanel<GuiTabbed> {
+public class GuiTabManagerMain extends GuiTabPanel<GuiTabbed> {
 
-    private static final ResourceLocation TEXTURE_BACKGROUND = new ResourceLocation(LibGuiResources.BACKGROUND);
-    
-    public GuiManagerTabMain(int tabId, GuiTabbed parent) {
+    public GuiTabManagerMain(int tabId, GuiTabbed parent) {
         super(tabId, parent, false);
     }
 
