@@ -22,8 +22,8 @@ public class GuiLootEditor extends GuiTabbed {
     
     @Override
     public void initGui() {
-        this.xSize = 220;
-        this.ySize = 180;
+        this.xSize = 320;
+        this.ySize = 240;
         super.initGui();
     }
 

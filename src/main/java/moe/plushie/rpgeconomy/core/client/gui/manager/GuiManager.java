@@ -1,5 +1,7 @@
 package moe.plushie.rpgeconomy.core.client.gui.manager;
 
+import org.lwjgl.opengl.GL11;
+
 import moe.plushie.rpgeconomy.core.client.gui.GuiHelper;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTab;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTabPanel;
@@ -27,7 +29,17 @@ public class GuiManager extends GuiTabbed {
         
         tabList.add(tabMain);
 
-        tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.main.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
+        tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.status.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
+        tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.database.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
+        
+        //tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.auction.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
+        //tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.banks.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
+        //tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.bank_accounts.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
+        //tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.currency.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
+        tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.loot_tables.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
+        tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.loot_pools.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
+        //tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.mail.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
+        //tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.shop.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
 
         tabController.setActiveTabIndex(getActiveTab());
         tabController.setTabsPerSide(9);
@@ -74,5 +86,9 @@ public class GuiManager extends GuiTabbed {
                 tabPanel.drawForegroundLayer(mouseX, mouseY, 0);
             }
         }
+        GL11.glPushMatrix();
+        GL11.glTranslatef(-guiLeft, -guiTop, 0F);
+        tabController.drawHoverText(mc, mouseX, mouseY);
+        GL11.glPopMatrix();
     }
 }

@@ -32,7 +32,7 @@ public class CommandLoot extends ModSubCommands {
                 
                 
                 for (int i = 0; i < 10; i++) {
-                    ILootTablePool pool = TableLootPools.createNew("Test Pool", "Testing Category");
+                    ILootTablePool pool = TableLootPools.createNew("Test Pool " + (i + 1), "Testing Category");
                     lootTable.getLootPools().add(pool.getIdentifier());
                     pool.getPoolItems().add(new LootTableItem(new ItemStack(ModBlocks.SHOP), 1));
                     pool.getPoolItems().add(new LootTableItem(new ItemStack(Blocks.ANVIL), 1));
