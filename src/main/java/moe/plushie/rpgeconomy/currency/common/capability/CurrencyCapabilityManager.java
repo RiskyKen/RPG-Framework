@@ -13,6 +13,7 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 
@@ -65,6 +66,14 @@ public final class CurrencyCapabilityManager {
             if (currencyCap != null) {
                 currencyCap.syncToOwner((EntityPlayerMP) event.player);
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onChangedDimension(PlayerChangedDimensionEvent event) {
+        ICurrencyCapability currencyCap = CurrencyCapability.get(event.player);
+        if (currencyCap != null) {
+            currencyCap.syncToOwner((EntityPlayerMP) event.player);
         }
     }
 }
