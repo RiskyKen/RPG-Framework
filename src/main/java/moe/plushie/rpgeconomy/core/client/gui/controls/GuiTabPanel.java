@@ -99,6 +99,8 @@ public abstract class GuiTabPanel<T extends GuiScreen> extends Gui {
         return false;
     }
     
+    public abstract void drawBackgroundLayer(float partialTickTime, int mouseX, int mouseY);
+    
     public void drawForegroundLayer(int mouseX, int mouseY, float partialTickTime) {
         for (int i = 0; i < buttonList.size(); i++) {
             buttonList.get(i).drawButton(mc, mouseX - x, mouseY - y, partialTickTime);
@@ -108,6 +110,4 @@ public abstract class GuiTabPanel<T extends GuiScreen> extends Gui {
     public boolean keyTyped(char c, int keycode) {
         return false;
     }
-    
-    public abstract void drawBackgroundLayer(float partialTickTime, int mouseX, int mouseY);
 }

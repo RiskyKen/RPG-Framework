@@ -7,6 +7,7 @@ import moe.plushie.rpgeconomy.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpgeconomy.core.client.gui.IDialogCallback;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiIconButton;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiList;
+import moe.plushie.rpgeconomy.core.client.gui.controls.GuiList.GuiListItem;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiList.IGuiListItem;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiScrollbar;
 import moe.plushie.rpgeconomy.core.client.lib.LibGuiResources;
@@ -16,7 +17,6 @@ import moe.plushie.rpgeconomy.core.common.network.client.MessageClientGuiShopUpd
 import moe.plushie.rpgeconomy.core.common.network.client.MessageClientGuiShopUpdate.ShopMessageType;
 import moe.plushie.rpgeconomy.core.common.network.client.MessageClientRequestSync;
 import moe.plushie.rpgeconomy.core.common.network.client.MessageClientRequestSync.SyncType;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
@@ -87,7 +87,7 @@ public class GuiShopDialogShopList extends AbstractGuiDialog {
         if (button == buttonEditTabRemove) {
             IGuiListItem listItem = listShops.getSelectedListEntry();
             if (listItem != null) {
-                IdentifierInt identifierInt = new IdentifierInt(Integer.parseInt(((ListItem) listItem).getTag()));
+                IdentifierInt identifierInt = new IdentifierInt(Integer.parseInt(((GuiListItem) listItem).getTag()));
                 PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.SHOP_REMOVE).setShopIdentifier(identifierInt));
             }
         }
@@ -124,7 +124,7 @@ public class GuiShopDialogShopList extends AbstractGuiDialog {
         items.clear();
         for (int i = 0; i < shopIdentifiers.length; i++) {
             String id = String.valueOf(shopIdentifiers[i].getValue());
-            items.add(new ListItem(id + ": " + shopNames[i], id));
+            items.add(new GuiListItem(id + ": " + shopNames[i], id));
         }
         initGui();
     }
@@ -132,59 +132,10 @@ public class GuiShopDialogShopList extends AbstractGuiDialog {
     public IIdentifier getSelectedShopIdentifier() {
         IGuiListItem listItem = listShops.getSelectedListEntry();
         if (listItem != null) {
-            ListItem item = (ListItem) listItem;
-            return new IdentifierInt(Integer.parseInt(item.tag));
+            GuiListItem item = (GuiListItem) listItem;
+            return new IdentifierInt(Integer.parseInt(item.getTag()));
         } else {
             return null;
-        }
-    }
-
-    public static class ListItem implements IGuiListItem {
-
-        private final String name;
-        private final String tag;
-
-        public ListItem(String name, String tag) {
-            this.name = name;
-            this.tag = tag;
-        }
-
-        @Override
-        public void drawListItem(FontRenderer fontRenderer, int x, int y, int mouseX, int mouseY, boolean selected, int width) {
-            int colour = 0xCCCCCC;
-            boolean hover = isHovering(fontRenderer, x, y, mouseX, mouseY, width);
-            if (hover) {
-                colour = 0xFFFFFF;
-            }
-            if (selected) {
-                colour = 0xDDDD00;
-            }
-            if (selected & hover) {
-                colour = 0xFFFF00;
-            }
-            fontRenderer.drawString(getDisplayName(), x, y, colour);
-        }
-
-        @Override
-        public boolean mousePressed(FontRenderer fontRenderer, int x, int y, int mouseX, int mouseY, int button, int width) {
-            return isHovering(fontRenderer, x, y, mouseX, mouseY, width);
-        }
-
-        @Override
-        public void mouseReleased(FontRenderer fontRenderer, int x, int y, int mouseX, int mouseY, int button, int width) {
-        }
-
-        private boolean isHovering(FontRenderer fontRenderer, int x, int y, int mouseX, int mouseY, int width) {
-            return mouseX >= x & mouseY >= y & mouseX <= x + width - 3 & mouseY <= y + 11;
-        }
-
-        @Override
-        public String getDisplayName() {
-            return name;
-        }
-
-        public String getTag() {
-            return tag;
         }
     }
 }

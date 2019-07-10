@@ -13,30 +13,30 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiLootEditor extends GuiTabbed {
-    
+
     private static int activeTab = 0;
-    
-    private final GuiTabLootTableEditor tabLootTableEditor;
-    private final GuiTabLootPoolEditor tabLootPoolEditor;
-    
+
+    public final GuiTabLootTableEditor tabLootTableEditor;
+    public final GuiTabLootPoolEditor tabLootPoolEditor;
+
     public GuiLootEditor(EntityPlayer player) {
         super(new ContainerLootEditor(player), false);
-        
+
         tabLootTableEditor = new GuiTabLootTableEditor(0, this);
         tabLootPoolEditor = new GuiTabLootPoolEditor(1, this);
-        
+
         tabList.add(tabLootTableEditor);
         tabList.add(tabLootPoolEditor);
-        
+
         tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.loot_tables.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
         tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.loot_pools.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
-        
+
         tabController.setActiveTabIndex(getActiveTab());
         tabController.setTabsPerSide(9);
-        
+
         tabChanged();
     }
-    
+
     @Override
     public void initGui() {
         this.xSize = 320;

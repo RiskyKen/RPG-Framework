@@ -21,12 +21,12 @@ public class GuiManager extends GuiTabbed {
     private static int activeTab;
 
     private final EntityPlayer player;
-    
-    private final GuiTabManagerMain tabManagerMain;
-    GuiTabManagerDatabase tabManagerDatabase;
-    private final GuiTabLootTableEditor tabLootTableEditor;
-    private final GuiTabLootPoolEditor tabLootPoolEditor;
-    
+
+    public final GuiTabManagerMain tabManagerMain;
+    public final GuiTabManagerDatabase tabManagerDatabase;
+    public final GuiTabLootTableEditor tabLootTableEditor;
+    public final GuiTabLootPoolEditor tabLootPoolEditor;
+
     public GuiManager(EntityPlayer player) {
         super(new ContainerManager(player), false);
         this.player = player;
@@ -35,7 +35,7 @@ public class GuiManager extends GuiTabbed {
         tabManagerDatabase = new GuiTabManagerDatabase(1, this);
         tabLootTableEditor = new GuiTabLootTableEditor(2, this);
         tabLootPoolEditor = new GuiTabLootPoolEditor(3, this);
-        
+
         tabList.add(tabManagerMain);
         tabList.add(tabManagerDatabase);
         tabList.add(tabLootTableEditor);
@@ -43,19 +43,19 @@ public class GuiManager extends GuiTabbed {
 
         tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.status.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
         tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.database.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
-        
-        //tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.auction.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
-        //tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.banks.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
-        //tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.bank_accounts.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
-        //tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.currency.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
+
+        // tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.auction.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
+        // tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.banks.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
+        // tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.bank_accounts.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
+        // tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.currency.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
         tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.loot_tables.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
         tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.loot_pools.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
-        //tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.mail.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
-        //tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.shop.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
+        // tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.mail.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
+        // tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.shop.name")).setIconLocation(64, 16).setPadding(0, 4, 3, 3));
 
         tabController.setActiveTabIndex(getActiveTab());
         tabController.setTabsPerSide(9);
-        
+
         tabChanged();
     }
 

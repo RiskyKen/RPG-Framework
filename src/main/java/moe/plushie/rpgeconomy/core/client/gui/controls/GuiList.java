@@ -7,9 +7,11 @@ import org.lwjgl.opengl.GL11;
 
 import moe.plushie.rpgeconomy.core.common.lib.LibModInfo;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
@@ -58,6 +60,15 @@ public class GuiList extends Gui {
         listItems.add(item);
     }
     
+    public boolean contains(String name) {
+        for (int i = 0; i < listItems.size(); i++) {
+            if (listItems.get(i).getDisplayName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     public void drawList(int mouseX, int mouseY, float tickTime) {
         if (!this.visible) { return; }
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -88,7 +99,7 @@ public class GuiList extends Gui {
             int yLocation = y - scrollAmount + 2 + i * slotHeight;
             if (mouseY >= y & mouseY <= y + height - 2) {
                 if (listItems.get(i).mousePressed(fontRenderer, x + 2, yLocation, mouseX, mouseY, button, width)) {
-                    //sh.playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1.0F));
+                    mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
                     selectedIndex = i;
                     return true;
                 }
@@ -163,5 +174,61 @@ public class GuiList extends Gui {
         public void mouseReleased(FontRenderer fontRenderer, int x, int y, int mouseX, int mouseY, int button, int width);
 
         public String getDisplayName();
+        
+        public String getTag();
+    }
+    
+    public static class GuiListItem implements IGuiListItem {
+
+        private final String name;
+        private final String tag;
+
+        public GuiListItem(String name) {
+            this(name, null);
+        }
+        
+        public GuiListItem(String name, String tag) {
+            this.name = name;
+            this.tag = tag;
+        }
+        
+        @Override
+        public void drawListItem(FontRenderer fontRenderer, int x, int y, int mouseX, int mouseY, boolean selected, int width) {
+            int colour = 0xCCCCCC;
+            boolean hover = isHovering(fontRenderer, x, y, mouseX, mouseY, width);
+            if (hover) {
+                colour = 0xFFFFFF;
+            }
+            if (selected) {
+                colour = 0xDDDD00;
+            }
+            if (selected & hover) {
+                colour = 0xFFFF00;
+            }
+            fontRenderer.drawString(getDisplayName(), x, y, colour);
+        }
+
+        @Override
+        public boolean mousePressed(FontRenderer fontRenderer, int x, int y, int mouseX, int mouseY, int button, int width) {
+            return isHovering(fontRenderer, x, y, mouseX, mouseY, width);
+        }
+
+        @Override
+        public void mouseReleased(FontRenderer fontRenderer, int x, int y, int mouseX, int mouseY, int button, int width) {
+        }
+
+        private boolean isHovering(FontRenderer fontRenderer, int x, int y, int mouseX, int mouseY, int width) {
+            return mouseX >= x & mouseY >= y & mouseX <= x + width - 3 & mouseY <= y + 11;
+        }
+
+        @Override
+        public String getDisplayName() {
+            return name;
+        }
+        
+        @Override
+        public String getTag() {
+            return tag;
+        }
     }
 }
