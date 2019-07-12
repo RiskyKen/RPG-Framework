@@ -9,7 +9,6 @@ import moe.plushie.rpgeconomy.core.common.serialize.IdentifierSerialize;
 import moe.plushie.rpgeconomy.core.common.utils.SerializeHelper;
 import moe.plushie.rpgeconomy.loot.client.gui.GuiLootEditor;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -73,7 +72,6 @@ public class MessageServerSyncLootTable implements IMessage {
             mc.addScheduledTask(new Runnable() {
                 @Override
                 public void run() {
-                    GuiScreen screen = mc.currentScreen;
                     switch (message.syncType) {
                     case LOOT_TABLES:
                         if (mc.currentScreen != null && mc.currentScreen instanceof GuiLootEditor) {

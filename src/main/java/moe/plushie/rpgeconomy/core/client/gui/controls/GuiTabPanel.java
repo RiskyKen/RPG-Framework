@@ -71,7 +71,7 @@ public abstract class GuiTabPanel<T extends GuiScreen> extends Gui {
         if (button == 0) {
             for (int i = 0; i < buttonList.size(); i++) {
                 GuiButton guiButton = buttonList.get(i);
-                if (guiButton.mousePressed(mc, mouseX - x, mouseY - y)) {
+                if (guiButton.mousePressed(mc, mouseX, mouseY)) {
                     ActionPerformedEvent.Pre event = new ActionPerformedEvent.Pre(parent, guiButton, buttonList);
                     if (MinecraftForge.EVENT_BUS.post(event)) {
                         break;
@@ -99,12 +99,14 @@ public abstract class GuiTabPanel<T extends GuiScreen> extends Gui {
         return false;
     }
     
-    public abstract void drawBackgroundLayer(float partialTickTime, int mouseX, int mouseY);
-    
-    public void drawForegroundLayer(int mouseX, int mouseY, float partialTickTime) {
+    public void drawBackgroundLayer(float partialTickTime, int mouseX, int mouseY) {
         for (int i = 0; i < buttonList.size(); i++) {
             buttonList.get(i).drawButton(mc, mouseX - x, mouseY - y, partialTickTime);
         }
+    }
+    
+    public void drawForegroundLayer(int mouseX, int mouseY, float partialTickTime) {
+
     }
     
     public boolean keyTyped(char c, int keycode) {
