@@ -3,6 +3,7 @@ package moe.plushie.rpgeconomy.loot.client.gui;
 import java.util.ArrayList;
 
 import moe.plushie.rpgeconomy.api.core.IIdentifier;
+import moe.plushie.rpgeconomy.api.loot.ILootTablePool;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpgeconomy.core.client.gui.IDialogCallback;
@@ -200,5 +201,11 @@ public class GuiLootTabPoolEditor extends GuiTabPanel<GuiTabbed> implements IDia
     @Override
     public void dialogResult(AbstractGuiDialog dialog, DialogResult result) {
         closeDialog();
+    }
+    
+    public void gotPoolFromServer(ILootTablePool pool) {
+        if (isDialogOpen() && dialog instanceof GuiLootDialogEditPool) {
+            ((GuiLootDialogEditPool)dialog).gotPoolFromServer(pool);
+        }
     }
 }

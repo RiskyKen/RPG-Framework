@@ -6,6 +6,7 @@ import moe.plushie.rpgeconomy.api.loot.ILootTable;
 import moe.plushie.rpgeconomy.api.loot.ILootTablePool;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.common.utils.ByteBufHelper;
+import moe.plushie.rpgeconomy.loot.common.LootTableHelper;
 import moe.plushie.rpgeconomy.loot.common.inventory.ContainerLootEditor;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -73,7 +74,7 @@ public class MessageClientLootEditorUpdate implements IMessage {
             ByteBufUtils.writeUTF8String(buf, category);
             break;
         case LOOT_POOL_EDIT:
-            //ByteBufHelper.writeIdentifier(buf, identifier);
+            ByteBufUtils.writeUTF8String(buf, LootTableHelper.poolToJson(pool).toString());
             break;
         case LOOT_POOL_REMOVE:
             ByteBufHelper.writeIdentifier(buf, identifier);
@@ -91,7 +92,7 @@ public class MessageClientLootEditorUpdate implements IMessage {
             ByteBufUtils.writeUTF8String(buf, category);
             break;
         case LOOT_TABLE_EDIT:
-            //ByteBufHelper.writeIdentifier(buf, identifier);
+            ByteBufUtils.writeUTF8String(buf, LootTableHelper.tableToJson(table).toString());
             break;
         case LOOT_TABLE_REMOVE:
             ByteBufHelper.writeIdentifier(buf, identifier);
@@ -116,7 +117,7 @@ public class MessageClientLootEditorUpdate implements IMessage {
             category = ByteBufUtils.readUTF8String(buf);
             break;
         case LOOT_POOL_EDIT:
-            //identifier = ByteBufHelper.readIdentifier(buf);
+            pool = LootTableHelper.poolFromJson(ByteBufUtils.readUTF8String(buf));
             break;
         case LOOT_POOL_REMOVE:
             identifier = ByteBufHelper.readIdentifier(buf);
@@ -134,7 +135,7 @@ public class MessageClientLootEditorUpdate implements IMessage {
             category = ByteBufUtils.readUTF8String(buf);
             break;
         case LOOT_TABLE_EDIT:
-            //identifier = ByteBufHelper.readIdentifier(buf);
+            table = LootTableHelper.tableFromJson(ByteBufUtils.readUTF8String(buf));
             break;
         case LOOT_TABLE_REMOVE:
             identifier = ByteBufHelper.readIdentifier(buf);

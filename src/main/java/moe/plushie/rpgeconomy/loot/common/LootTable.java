@@ -59,4 +59,9 @@ public class LootTable implements ILootTable {
         }
         return items;
     }
+
+    @Override
+    public String toString() {
+        return "LootTable [identifier=" + identifier + ", name=" + name + ", category=" + category + ", lootPools=" + lootPools + "]";
+    }
 }

@@ -22,4 +22,9 @@ public class LootTableItem implements ILootTableItem {
     public int getWeight() {
         return weight;
     }
+
+    @Override
+    public String toString() {
+        return "LootTableItem [item=" + item + ", weight=" + weight + "]";
+    }
 }

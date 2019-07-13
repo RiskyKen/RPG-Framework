@@ -69,4 +69,9 @@ public class LootTablePool implements ILootTablePool {
         }
         return total;
     }
+
+    @Override
+    public String toString() {
+        return "LootTablePool [identifier=" + identifier + ", name=" + name + ", category=" + category + ", poolItems=" + poolItems + "]";
+    }
 }

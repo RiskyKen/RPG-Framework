@@ -1,5 +1,7 @@
 package moe.plushie.rpgeconomy.loot.client.gui;
 
+import moe.plushie.rpgeconomy.api.loot.ILootTable;
+import moe.plushie.rpgeconomy.api.loot.ILootTablePool;
 import moe.plushie.rpgeconomy.core.client.gui.GuiHelper;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTab;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTabPanel;
@@ -91,5 +93,13 @@ public class GuiLootEditor extends GuiTabbed {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+    }
+    
+    public void gotTableFromServer(ILootTable table) {
+        
+    }
+    
+    public void gotPoolFromServer(ILootTablePool pool) {
+        tabLootPoolEditor.gotPoolFromServer(pool);
     }
 }

@@ -16,17 +16,17 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class MessageServerSyncLootTable implements IMessage {
+public class MessageServerSyncLootTables implements IMessage {
 
     private SyncType syncType;
     private ArrayList<IIdentifier> identifiers;
     private ArrayList<String> names;
     private ArrayList<String> categories;
 
-    public MessageServerSyncLootTable() {
+    public MessageServerSyncLootTables() {
     }
 
-    public MessageServerSyncLootTable(SyncType syncType, ArrayList<IIdentifier> identifiers, ArrayList<String> names, ArrayList<String> categories) {
+    public MessageServerSyncLootTables(SyncType syncType, ArrayList<IIdentifier> identifiers, ArrayList<String> names, ArrayList<String> categories) {
         this.syncType = syncType;
         this.identifiers = identifiers;
         this.names = names;
@@ -58,16 +58,16 @@ public class MessageServerSyncLootTable implements IMessage {
         }
     }
 
-    public static class Handler implements IMessageHandler<MessageServerSyncLootTable, IMessage> {
+    public static class Handler implements IMessageHandler<MessageServerSyncLootTables, IMessage> {
 
         @Override
-        public IMessage onMessage(MessageServerSyncLootTable message, MessageContext ctx) {
+        public IMessage onMessage(MessageServerSyncLootTables message, MessageContext ctx) {
             sendToGui(message);
             return null;
         }
 
         @SideOnly(Side.CLIENT)
-        private void sendToGui(MessageServerSyncLootTable message) {
+        private void sendToGui(MessageServerSyncLootTables message) {
             Minecraft mc = Minecraft.getMinecraft();
             mc.addScheduledTask(new Runnable() {
                 @Override
