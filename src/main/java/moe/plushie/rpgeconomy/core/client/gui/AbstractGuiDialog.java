@@ -149,6 +149,7 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
             mouseX = mouseY = 0;
         }
         drawBackground(mouseX, mouseY, partialTickTime);
+        //GlStateManager.translate(-x, -y, 0);
         drawForeground(mouseX, mouseY, partialTickTime);
         if (isDialogOpen()) {
             // GL11.glTranslatef(-guiLeft, -guiTop, 0);
@@ -172,9 +173,12 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
     }
 
     protected void drawTitle() {
-        String title = GuiHelper.getLocalControlName(name, "title");
-        int titleWidth = fontRenderer.getStringWidth(title);
-        fontRenderer.drawString(title, x + width / 2 - titleWidth / 2, y + 6, 4210752);
+        drawTitle(name);
+    }
+    
+    protected void drawTitle(String text) {
+        int titleWidth = fontRenderer.getStringWidth(text);
+        fontRenderer.drawString(text, x + width / 2 - titleWidth / 2, y + 6, 4210752);
     }
 
     public void openDialog(AbstractGuiDialog dialog) {

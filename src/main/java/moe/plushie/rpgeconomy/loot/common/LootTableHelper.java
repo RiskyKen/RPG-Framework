@@ -30,4 +30,8 @@ public final class LootTableHelper {
         TableLootPools.getList(identifiers, names, categories, null);
         PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerSyncLootTable(SyncType.LOOT_POOLS, identifiers, names, categories), player);
     }
+
+    public static void sendPoolToClient(IIdentifier identifier, EntityPlayerMP player) {
+        // TODO Auto-generated method stub
+    }
 }

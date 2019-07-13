@@ -2,6 +2,7 @@ package moe.plushie.rpgeconomy.core.client.gui.controls;
 
 import java.util.ArrayList;
 
+import moe.plushie.rpgeconomy.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpgeconomy.core.client.lib.LibGuiResources;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -34,6 +35,10 @@ public abstract class GuiTabPanel<T extends GuiScreen> extends Gui {
     private final boolean fullscreen;
     private GuiButton selectedButton;
     
+    protected AbstractGuiDialog dialog;
+    int oldMouseX;
+    int oldMouseY;
+    
     public GuiTabPanel(int tabId, T parent, boolean fullscreen) {
         this.tabId = tabId;
         this.parent = parent;
@@ -57,6 +62,9 @@ public abstract class GuiTabPanel<T extends GuiScreen> extends Gui {
             this.width = width;
             this.height = height;
         }
+        if (isDialogOpen()) {
+            dialog.initGui();
+        }
     }
     
     public int getTabId() {
@@ -68,23 +76,27 @@ public abstract class GuiTabPanel<T extends GuiScreen> extends Gui {
     }
     
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
-        if (button == 0) {
-            for (int i = 0; i < buttonList.size(); i++) {
-                GuiButton guiButton = buttonList.get(i);
-                if (guiButton.mousePressed(mc, mouseX, mouseY)) {
-                    ActionPerformedEvent.Pre event = new ActionPerformedEvent.Pre(parent, guiButton, buttonList);
-                    if (MinecraftForge.EVENT_BUS.post(event)) {
-                        break;
+        if (!isDialogOpen()) {
+            if (button == 0) {
+                for (int i = 0; i < buttonList.size(); i++) {
+                    GuiButton guiButton = buttonList.get(i);
+                    if (guiButton.mousePressed(mc, mouseX, mouseY)) {
+                        ActionPerformedEvent.Pre event = new ActionPerformedEvent.Pre(parent, guiButton, buttonList);
+                        if (MinecraftForge.EVENT_BUS.post(event)) {
+                            break;
+                        }
+                        this.selectedButton = event.getButton();
+                        event.getButton().playPressSound(this.mc.getSoundHandler());
+                        this.actionPerformed(event.getButton());
+                        if (parent.equals(this.mc.currentScreen)) {
+                            MinecraftForge.EVENT_BUS.post(new ActionPerformedEvent.Post(parent, event.getButton(), this.buttonList));
+                        }
+                        return true;
                     }
-                    this.selectedButton = event.getButton();
-                    event.getButton().playPressSound(this.mc.getSoundHandler());
-                    this.actionPerformed(event.getButton());
-                    if (parent.equals(this.mc.currentScreen)) {
-                        MinecraftForge.EVENT_BUS.post(new ActionPerformedEvent.Post(parent, event.getButton(), this.buttonList));
-                    }
-                    return true;
                 }
             }
+        } else {
+            dialog.mouseClicked(mouseX, mouseY, button);
         }
         return false;
     }
@@ -92,24 +104,53 @@ public abstract class GuiTabPanel<T extends GuiScreen> extends Gui {
     protected void actionPerformed(GuiButton button) {}
     
     public boolean mouseMovedOrUp(int mouseX, int mouseY, int button) {
-        if (this.selectedButton != null && button == 0) {
-            this.selectedButton.mouseReleased(mouseX - x, mouseY - y);
-            this.selectedButton = null;
+        if (!isDialogOpen()) {
+            if (this.selectedButton != null && button == 0) {
+                this.selectedButton.mouseReleased(mouseX - x, mouseY - y);
+                this.selectedButton = null;
+            }
+        } else {
+            dialog.mouseMovedOrUp(mouseX, mouseY, button);
         }
         return false;
     }
     
     public void drawBackgroundLayer(float partialTickTime, int mouseX, int mouseY) {
+        oldMouseX = mouseX;
+        oldMouseY = mouseY;
+        if (isDialogOpen()) {
+            mouseX = mouseY = 0;
+        }
         for (int i = 0; i < buttonList.size(); i++) {
             buttonList.get(i).drawButton(mc, mouseX - x, mouseY - y, partialTickTime);
         }
     }
     
     public void drawForegroundLayer(int mouseX, int mouseY, float partialTickTime) {
-
+        if (isDialogOpen()) {
+            //GL11.glTranslatef(-parent.width, -y, 0);
+            dialog.draw(mouseX, mouseX, partialTickTime);
+            //GL11.glTranslatef(x, y, 0);
+        }
     }
     
     public boolean keyTyped(char c, int keycode) {
+        if (isDialogOpen()) {
+            return dialog.keyTyped(c, keycode);
+        }
         return false;
+    }
+    
+    public void openDialog(AbstractGuiDialog dialog) {
+        this.dialog = dialog;
+        dialog.initGui();
+    }
+
+    protected boolean isDialogOpen() {
+        return dialog != null;
+    }
+    
+    protected void closeDialog() {
+        this.dialog = null;
     }
 }

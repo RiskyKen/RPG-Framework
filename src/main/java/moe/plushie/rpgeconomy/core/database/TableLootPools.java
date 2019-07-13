@@ -3,6 +3,7 @@ package moe.plushie.rpgeconomy.core.database;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -131,6 +132,20 @@ public final class TableLootPools {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static final String SQL_RENAME_LOOT_POOL = "UPDATE loot_pools SET name=?, category=?, last_update=datetime('now') WHERE id=?";
+    
+    public static void rename(IIdentifier identifier, String name, String category) {
+        createTable();
+        try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_RENAME_LOOT_POOL)) {
+            ps.setString(1, name);
+            ps.setString(2, category);
+            ps.setObject(3, identifier.getValue());
+            ps.executeUpdate();
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }

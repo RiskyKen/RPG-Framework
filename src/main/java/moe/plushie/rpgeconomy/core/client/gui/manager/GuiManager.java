@@ -7,8 +7,8 @@ import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTab;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTabPanel;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTabbed;
 import moe.plushie.rpgeconomy.core.common.inventory.ContainerManager;
-import moe.plushie.rpgeconomy.loot.client.gui.GuiTabLootPoolEditor;
-import moe.plushie.rpgeconomy.loot.client.gui.GuiTabLootTableEditor;
+import moe.plushie.rpgeconomy.loot.client.gui.GuiLootTabPoolEditor;
+import moe.plushie.rpgeconomy.loot.client.gui.GuiLootTabTableEditor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -24,8 +24,8 @@ public class GuiManager extends GuiTabbed {
 
     public final GuiTabManagerMain tabManagerMain;
     public final GuiTabManagerDatabase tabManagerDatabase;
-    public final GuiTabLootTableEditor tabLootTableEditor;
-    public final GuiTabLootPoolEditor tabLootPoolEditor;
+    public final GuiLootTabTableEditor tabLootTableEditor;
+    public final GuiLootTabPoolEditor tabLootPoolEditor;
 
     public GuiManager(EntityPlayer player) {
         super(new ContainerManager(player), false);
@@ -33,8 +33,8 @@ public class GuiManager extends GuiTabbed {
 
         tabManagerMain = new GuiTabManagerMain(0, this);
         tabManagerDatabase = new GuiTabManagerDatabase(1, this);
-        tabLootTableEditor = new GuiTabLootTableEditor(2, this);
-        tabLootPoolEditor = new GuiTabLootPoolEditor(3, this);
+        tabLootTableEditor = new GuiLootTabTableEditor(2, this);
+        tabLootPoolEditor = new GuiLootTabPoolEditor(3, this);
 
         tabList.add(tabManagerMain);
         tabList.add(tabManagerDatabase);

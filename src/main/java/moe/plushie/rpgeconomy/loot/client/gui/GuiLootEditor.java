@@ -1,12 +1,12 @@
 package moe.plushie.rpgeconomy.loot.client.gui;
 
-import org.lwjgl.opengl.GL11;
-
 import moe.plushie.rpgeconomy.core.client.gui.GuiHelper;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTab;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTabPanel;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTabbed;
 import moe.plushie.rpgeconomy.loot.common.inventory.ContainerLootEditor;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -16,14 +16,14 @@ public class GuiLootEditor extends GuiTabbed {
 
     private static int activeTab = 0;
 
-    public final GuiTabLootTableEditor tabLootTableEditor;
-    public final GuiTabLootPoolEditor tabLootPoolEditor;
+    public final GuiLootTabTableEditor tabLootTableEditor;
+    public final GuiLootTabPoolEditor tabLootPoolEditor;
 
     public GuiLootEditor(EntityPlayer player) {
         super(new ContainerLootEditor(player), false);
 
-        tabLootTableEditor = new GuiTabLootTableEditor(0, this);
-        tabLootPoolEditor = new GuiTabLootPoolEditor(1, this);
+        tabLootTableEditor = new GuiLootTabTableEditor(0, this);
+        tabLootPoolEditor = new GuiLootTabPoolEditor(1, this);
 
         tabList.add(tabLootTableEditor);
         tabList.add(tabLootPoolEditor);
@@ -43,6 +43,32 @@ public class GuiLootEditor extends GuiTabbed {
         this.ySize = 240;
         super.initGui();
     }
+    
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        
+        GlStateManager.color(1F, 1F, 1F, 1F);
+        RenderHelper.disableStandardItemLighting();
+        
+        for (GuiTabPanel tabPanel : tabList) {
+            if (tabPanel.getTabId() == activeTab) {
+                tabPanel.drawBackgroundLayer(partialTicks, mouseX, mouseY);
+            }
+        }
+        
+
+        
+        //GlStateManager.translate(guiLeft, guiTop, 0);
+        for (GuiTabPanel tabPanel : tabList) {
+            if (tabPanel.getTabId() == activeTab) {
+                tabPanel.drawForegroundLayer(mouseX, mouseY, partialTicks);
+            }
+        }
+        //GlStateManager.translate(guiLeft, guiTop, 0);
+        
+        tabController.drawHoverText(mc, mouseX, mouseY);
+    }
 
     @Override
     protected int getActiveTab() {
@@ -61,23 +87,9 @@ public class GuiLootEditor extends GuiTabbed {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        for (GuiTabPanel tabPanel : tabList) {
-            if (tabPanel.getTabId() == activeTab) {
-                tabPanel.drawBackgroundLayer(partialTicks, mouseX, mouseY);
-            }
-        }
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        for (GuiTabPanel tabPanel : tabList) {
-            if (tabPanel.getTabId() == activeTab) {
-                tabPanel.drawForegroundLayer(mouseX, mouseY, 0);
-            }
-        }
-        GL11.glPushMatrix();
-        GL11.glTranslatef(-guiLeft, -guiTop, 0F);
-        tabController.drawHoverText(mc, mouseX, mouseY);
-        GL11.glPopMatrix();
     }
 }

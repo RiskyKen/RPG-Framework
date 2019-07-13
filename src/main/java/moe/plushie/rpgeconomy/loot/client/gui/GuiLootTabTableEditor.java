@@ -13,9 +13,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class GuiTabLootTableEditor extends GuiTabPanel<GuiTabbed> {
+public class GuiLootTabTableEditor extends GuiTabPanel<GuiTabbed> {
 
-    public GuiTabLootTableEditor(int tabId, GuiTabbed parent) {
+    public GuiLootTabTableEditor(int tabId, GuiTabbed parent) {
         super(tabId, parent, false);
         requestFromServer();
     }
