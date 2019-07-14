@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import moe.plushie.rpgeconomy.currency.common.items.ItemCurrency;
 import moe.plushie.rpgeconomy.currency.common.items.ItemWallet;
+import moe.plushie.rpgeconomy.loot.common.items.ItemBasicLootBag;
 import moe.plushie.rpgeconomy.loot.common.items.ItemLootBag;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
@@ -18,6 +19,7 @@ public final class ModItems {
     public static final Item CURRENCY = new ItemCurrency();
     public static final Item WALLET = new ItemWallet();
     public static final Item LOOT_BAG = new ItemLootBag();
+    public static final Item BASIC_LOOT_BAG = new ItemBasicLootBag();
     
     public ModItems() {
         MinecraftForge.EVENT_BUS.register(this);

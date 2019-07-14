@@ -1,0 +1,7 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "rpg_economy:items/pouch",
+        "layer1": "rpg_economy:items/pouch_overlay"
+    }
+}

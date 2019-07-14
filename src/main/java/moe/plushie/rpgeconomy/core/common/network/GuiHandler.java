@@ -6,6 +6,7 @@ import moe.plushie.rpgeconomy.bank.common.inventory.ContainerBank;
 import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.client.gui.manager.GuiManager;
 import moe.plushie.rpgeconomy.core.common.IdentifierInt;
+import moe.plushie.rpgeconomy.core.common.init.ModItems;
 import moe.plushie.rpgeconomy.core.common.inventory.ContainerManager;
 import moe.plushie.rpgeconomy.core.common.inventory.IGuiFactory;
 import moe.plushie.rpgeconomy.core.common.lib.EnumGuiId;
@@ -13,11 +14,14 @@ import moe.plushie.rpgeconomy.currency.client.gui.GuiWallet;
 import moe.plushie.rpgeconomy.currency.common.Currency;
 import moe.plushie.rpgeconomy.currency.common.CurrencyWalletHelper;
 import moe.plushie.rpgeconomy.currency.common.inventory.ContainerWallet;
+import moe.plushie.rpgeconomy.loot.client.gui.GuiBasicLootBag;
 import moe.plushie.rpgeconomy.loot.client.gui.GuiLootEditor;
+import moe.plushie.rpgeconomy.loot.common.inventory.ContainerBasicLootBag;
 import moe.plushie.rpgeconomy.loot.common.inventory.ContainerLootEditor;
 import moe.plushie.rpgeconomy.shop.client.gui.GuiShop;
 import moe.plushie.rpgeconomy.shop.common.inventory.ContainerShop;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -33,6 +37,7 @@ public class GuiHandler implements IGuiHandler {
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         EnumGuiId guiId = EnumGuiId.values()[ID];
+        
         if (guiId.isTile()) {
             TileEntity te = null;
             BlockPos pos = new BlockPos(x, y, z);
@@ -44,7 +49,7 @@ public class GuiHandler implements IGuiHandler {
             }
             return null;
         }
-
+        
         switch (guiId) {
         case MANAGER:
             return new ContainerManager(player);
@@ -66,10 +71,16 @@ public class GuiHandler implements IGuiHandler {
             return new ContainerShop(player, RpgEconomy.getProxy().getShopManager().getShop(identifier), null);
         case LOOT_EDITOR_COMMAND:
             return new ContainerLootEditor(player);
+        case BASIC_LOOT_BAG:
+            ItemStack stack = player.getHeldItemMainhand();
+            if (!stack.isEmpty() & stack.getItem() == ModItems.BASIC_LOOT_BAG) {
+                return new ContainerBasicLootBag(player, stack);
+            }
+            break;
         default:
             break;
         }
-
+        
         return null;
     }
 
@@ -87,7 +98,7 @@ public class GuiHandler implements IGuiHandler {
             }
             return null;
         }
-
+        
         switch (guiId) {
         case MANAGER:
             return new GuiManager(player);
@@ -108,6 +119,12 @@ public class GuiHandler implements IGuiHandler {
             return new GuiShop(player, false);
         case LOOT_EDITOR_COMMAND:
             return new GuiLootEditor(player);
+        case BASIC_LOOT_BAG:
+            ItemStack stack = player.getHeldItemMainhand();
+            if (!stack.isEmpty() & stack.getItem() == ModItems.BASIC_LOOT_BAG) {
+                return new GuiBasicLootBag(player, stack);
+            }
+            break;
         default:
             break;
         }
