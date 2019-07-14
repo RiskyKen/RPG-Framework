@@ -11,8 +11,7 @@ import moe.plushie.rpgeconomy.core.common.serialize.ItemStackSerialize;
 import moe.plushie.rpgeconomy.loot.common.LootTableItem;
 import moe.plushie.rpgeconomy.loot.common.LootTableItemSerializer;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.IInventoryChangedListener;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -21,12 +20,12 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraftforge.common.util.Constants.NBT;
 
-public class ContainerBasicLootBag extends ModContainer implements IInventoryChangedListener {
+public class ContainerBasicLootBag extends ModContainer {
 
-    private static final String TAG_TABLE_ITEMS = "table_items";
-    private static final int BAG_WIDTH = 6;
-    private static final int BAG_HEIGHT = 6;
-    private static final int BAG_SIZE = BAG_WIDTH * BAG_HEIGHT;
+    public static final String TAG_TABLE_ITEMS = "table_items";
+    public static final int BAG_WIDTH = 6;
+    public static final int BAG_HEIGHT = 6;
+    public static final int BAG_SIZE = BAG_WIDTH * BAG_HEIGHT;
 
     private final EntityPlayer player;
     private final ItemStack stack;
@@ -39,7 +38,6 @@ public class ContainerBasicLootBag extends ModContainer implements IInventoryCha
         this.stack = stack;
         tableItems = new ArrayList<ILootTableItem>();
         lootInv = new InventoryBasic("", false, BAG_SIZE);
-        lootInv.addInventoryChangeListener(this);
         readItems();
         for (int iy = 0; iy < BAG_HEIGHT; iy++) {
             for (int ix = 0; ix < BAG_WIDTH; ix++) {
@@ -47,7 +45,11 @@ public class ContainerBasicLootBag extends ModContainer implements IInventoryCha
             }
         }
 
-        addPlayerSlots(8, 140);
+        addPlayerSlots(8, 158);
+    }
+
+    public ArrayList<ILootTableItem> getTableItems() {
+        return tableItems;
     }
 
     private void moveToInv() {
@@ -59,7 +61,7 @@ public class ContainerBasicLootBag extends ModContainer implements IInventoryCha
     private void moveFromInv() {
         for (int i = 0; i < BAG_SIZE; i++) {
             ILootTableItem item = tableItems.get(i);
-            tableItems.add(i, new LootTableItem(lootInv.getStackInSlot(i), item.getWeight()));
+            tableItems.set(i, new LootTableItem(lootInv.getStackInSlot(i), item.getWeight()));
         }
     }
 
@@ -101,17 +103,16 @@ public class ContainerBasicLootBag extends ModContainer implements IInventoryCha
     }
 
     @Override
-    public void onInventoryChanged(IInventory invBasic) {
-        if (!player.getEntityWorld().isRemote) {
-            // ItemStackHelper.saveAllItems(tag, lootInv.get, true);
-        }
-    }
-
-    @Override
     public void onContainerClosed(EntityPlayer playerIn) {
         if (!player.getEntityWorld().isRemote) {
             writeItems();
         }
         super.onContainerClosed(playerIn);
+    }
+
+    public void clientUpdatedSlot(EntityPlayerMP playerIn, int slotIndex, int weight) {
+        ILootTableItem item = tableItems.get(slotIndex);
+        tableItems.set(slotIndex, new LootTableItem(item.getItem(), weight));
+        writeItems();
     }
 }

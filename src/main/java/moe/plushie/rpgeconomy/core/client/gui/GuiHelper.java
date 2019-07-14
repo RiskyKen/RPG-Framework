@@ -64,6 +64,15 @@ public final class GuiHelper {
         fontRenderer.drawString(renderText, xPos, 6, colour);
     }
     
+    public static void renderGuiName(FontRenderer fontRenderer, int xSize, String name) {
+        renderGuiName(fontRenderer, xSize, name, 4210752);
+    }
+    
+    public static void renderGuiName(FontRenderer fontRenderer, int xSize, String name, int colour) {
+        int xPos = xSize / 2 - fontRenderer.getStringWidth(name) / 2;
+        fontRenderer.drawString(name, xPos, 6, colour);
+    }
+    
     public static String getLocalControlName(String guiName, String controlName) {
         return I18n.format("inventory." + LibModInfo.ID.toLowerCase() + ":" + guiName + "." + controlName);
     }
