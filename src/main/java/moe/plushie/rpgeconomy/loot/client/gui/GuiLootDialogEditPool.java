@@ -3,7 +3,6 @@ package moe.plushie.rpgeconomy.loot.client.gui;
 import moe.plushie.rpgeconomy.api.core.IIdentifier;
 import moe.plushie.rpgeconomy.api.loot.ILootTableItem;
 import moe.plushie.rpgeconomy.api.loot.ILootTablePool;
-import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpgeconomy.core.client.gui.GuiHelper;
 import moe.plushie.rpgeconomy.core.client.gui.IDialogCallback;
@@ -85,12 +84,12 @@ public class GuiLootDialogEditPool extends AbstractGuiDialog {
         for (int i = 0; i < pool.getPoolItems().size(); i++) {
             ILootTableItem item = pool.getPoolItems().get(i);
             ri.renderItemAndEffectIntoGUI(item.getItem(), x + 8 + i * 18, y + 25);
+            ri.renderItemOverlayIntoGUI(fontRenderer, item.getItem(), x + 8 + i * 18, y + 25, null);
         }
         RenderHelper.disableStandardItemLighting();
     }
     
     public void gotPoolFromServer(ILootTablePool pool) {
-        RpgEconomy.getLogger().info("Got pool " + pool);
         this.pool = pool;
     }
 }
