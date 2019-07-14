@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import moe.plushie.rpgeconomy.api.core.IIdentifier;
 import moe.plushie.rpgeconomy.api.loot.ILootTablePool;
-import moe.plushie.rpgeconomy.core.RpgEconomy;
 import moe.plushie.rpgeconomy.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpgeconomy.core.client.gui.IDialogCallback;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiIconButton;
@@ -65,7 +64,7 @@ public class GuiLootTabPoolEditor extends GuiTabPanel<GuiTabbed> implements IDia
     public void onGotFromServer(ArrayList<IIdentifier> identifiers, ArrayList<String> names, ArrayList<String> categories) {
         listCategories.clearList();
         listNames.clearList();
-        RpgEconomy.getLogger().info("Got lists " + identifiers.size());
+        //RpgEconomy.getLogger().info("Got lists " + identifiers.size());
         for (String category : categories) {
             if (!listCategories.contains(category)) {
                 listCategories.addListItem(new GuiListItem(category));
@@ -195,6 +194,11 @@ public class GuiLootTabPoolEditor extends GuiTabPanel<GuiTabbed> implements IDia
         textSearchNames.drawTextBox();
         for (int i = 0; i < buttonList.size(); i++) {
             buttonList.get(i).drawButton(mc, mouseX, mouseY, partialTickTime);
+        }
+        for (int i = 0; i < buttonList.size(); i++) {
+            if (buttonList.get(i) instanceof GuiIconButton) {
+                ((GuiIconButton) buttonList.get(i)).drawRollover(mc, mouseX, mouseY);
+            }
         }
     }
 

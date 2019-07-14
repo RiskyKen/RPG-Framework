@@ -2,9 +2,6 @@ package moe.plushie.rpgeconomy.core.client.gui;
 
 import java.util.ArrayList;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
-
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiIconButton;
 import moe.plushie.rpgeconomy.core.common.lib.LibModInfo;
 import net.minecraft.client.Minecraft;
@@ -12,7 +9,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
@@ -136,30 +133,39 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
     }
 
     public void draw(int mouseX, int mouseY, float partialTickTime) {
-        RenderHelper.enableGUIStandardItemLighting();
-        GL11.glColor4f(1, 1, 1, 1);
-        GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
-        GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+        GlStateManager.pushAttrib();
+        //RenderHelper.enableGUIStandardItemLighting();
+        GlStateManager.color(1, 1, 1, 1);
+        //GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
+        //GL11.glDisable(GL12.GL_RESCALE_NORMAL);
         // RenderHelper.disableStandardItemLighting();
-        GL11.glDisable(GL11.GL_LIGHTING);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        //GL11.glDisable(GL11.GL_LIGHTING);
+        //GL11.glDisable(GL11.GL_DEPTH_TEST);
         oldMouseX = mouseX;
         oldMouseY = mouseY;
         if (isDialogOpen()) {
             mouseX = mouseY = 0;
+
         }
+        
         drawBackground(mouseX, mouseY, partialTickTime);
         //GlStateManager.translate(-x, -y, 0);
         drawForeground(mouseX, mouseY, partialTickTime);
+        
         if (isDialogOpen()) {
             // GL11.glTranslatef(-guiLeft, -guiTop, 0);
             dialog.draw(oldMouseX, oldMouseY, 0);
             // GL11.glTranslatef(guiLeft, guiTop, 0);
         }
-        GL11.glPopAttrib();
+        //GL11.glPopAttrib();
+        
+        GlStateManager.popAttrib();
     }
 
     public void drawBackground(int mouseX, int mouseY, float partialTickTime) {
+        GlStateManager.disableLighting();
+        GlStateManager.color(1, 1, 1, 1);
+        GlStateManager.disableBlend();
         drawParentCoverBackground();
         int textureWidth = 176;
         int textureHeight = 62;

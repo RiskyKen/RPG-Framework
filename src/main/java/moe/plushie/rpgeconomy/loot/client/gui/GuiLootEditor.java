@@ -1,15 +1,18 @@
 package moe.plushie.rpgeconomy.loot.client.gui;
 
+import java.util.ArrayList;
+
 import moe.plushie.rpgeconomy.api.loot.ILootTable;
 import moe.plushie.rpgeconomy.api.loot.ILootTablePool;
 import moe.plushie.rpgeconomy.core.client.gui.GuiHelper;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTab;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTabPanel;
 import moe.plushie.rpgeconomy.core.client.gui.controls.GuiTabbed;
+import moe.plushie.rpgeconomy.core.common.inventory.slot.SlotHidable;
 import moe.plushie.rpgeconomy.loot.common.inventory.ContainerLootEditor;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Slot;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -37,6 +40,13 @@ public class GuiLootEditor extends GuiTabbed {
         tabController.setTabsPerSide(9);
 
         tabChanged();
+        
+        ArrayList<Slot> playerSlots = ((ContainerLootEditor)inventorySlots).getSlotsPlayer();
+        for (Slot slot : playerSlots) {
+            if (slot instanceof SlotHidable) {
+                ((SlotHidable)slot).setVisible(false);
+            }
+        }
     }
 
     @Override
@@ -48,28 +58,46 @@ public class GuiLootEditor extends GuiTabbed {
     
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        super.drawScreen(mouseX, mouseY, partialTicks);
+        drawDefaultBackground();
         
         GlStateManager.color(1F, 1F, 1F, 1F);
-        RenderHelper.disableStandardItemLighting();
+
+        GlStateManager.disableDepth();
+        //GlStateManager.enableBlend();
         
         for (GuiTabPanel tabPanel : tabList) {
             if (tabPanel.getTabId() == activeTab) {
+                GlStateManager.pushAttrib();
                 tabPanel.drawBackgroundLayer(partialTicks, mouseX, mouseY);
+                GlStateManager.popAttrib();
+            }
+        }
+        
+        GlStateManager.pushAttrib();
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        GlStateManager.popAttrib();
+        
+        GlStateManager.pushAttrib();
+        //GlStateManager.enableBlend();
+        //GlStateManager.enableAlpha();
+        
+        if (!tabList.get(activeTab).isDialogOpen()) {
+            tabController.drawHoverText(mc, mouseX, mouseY);
+            renderHoveredToolTip(mouseX, mouseY);
+        }
+
+        GlStateManager.enableBlend();
+        GlStateManager.popAttrib();
+        
+        for (GuiTabPanel tabPanel : tabList) {
+            if (tabPanel.getTabId() == activeTab) {
+                GlStateManager.pushAttrib();
+                tabPanel.drawForegroundLayer(mouseX, mouseY, partialTicks);
+                GlStateManager.popAttrib();
             }
         }
         
 
-        
-        //GlStateManager.translate(guiLeft, guiTop, 0);
-        for (GuiTabPanel tabPanel : tabList) {
-            if (tabPanel.getTabId() == activeTab) {
-                tabPanel.drawForegroundLayer(mouseX, mouseY, partialTicks);
-            }
-        }
-        //GlStateManager.translate(guiLeft, guiTop, 0);
-        
-        tabController.drawHoverText(mc, mouseX, mouseY);
     }
 
     @Override

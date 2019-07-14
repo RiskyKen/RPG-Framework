@@ -146,7 +146,7 @@ public abstract class GuiTabPanel<T extends GuiScreen> extends Gui {
         dialog.initGui();
     }
 
-    protected boolean isDialogOpen() {
+    public boolean isDialogOpen() {
         return dialog != null;
     }
     

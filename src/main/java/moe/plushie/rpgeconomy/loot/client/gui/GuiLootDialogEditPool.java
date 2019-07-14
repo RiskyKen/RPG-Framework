@@ -5,26 +5,31 @@ import moe.plushie.rpgeconomy.api.loot.ILootTableItem;
 import moe.plushie.rpgeconomy.api.loot.ILootTablePool;
 import moe.plushie.rpgeconomy.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpgeconomy.core.client.gui.GuiHelper;
+import moe.plushie.rpgeconomy.core.client.gui.GuiSlotHandler;
 import moe.plushie.rpgeconomy.core.client.gui.IDialogCallback;
 import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
 import moe.plushie.rpgeconomy.core.common.network.client.MessageClientLootEditorUpdate;
 import moe.plushie.rpgeconomy.core.common.network.client.MessageClientLootEditorUpdate.LootEditType;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
 import net.minecraftforge.fml.client.config.GuiUtils;
 
 public class GuiLootDialogEditPool extends AbstractGuiDialog {
-
+    
+    private final GuiSlotHandler slotHandler;
     private GuiButtonExt buttonCancel;
     private GuiButtonExt buttonOK;
     
     private ILootTablePool pool = null;
     
     public GuiLootDialogEditPool(GuiScreen parent, String name, IDialogCallback callback, IIdentifier poolIdentifier) {
-        super(parent, name, callback, 280, 220);
+        super(parent, name, callback, 320, 240);
+        this.slotHandler = new GuiSlotHandler((GuiContainer) parent);
         PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientLootEditorUpdate(LootEditType.LOOT_POOL_REQUEST).setRequestPoolData(poolIdentifier));
     }
 
@@ -60,13 +65,17 @@ public class GuiLootDialogEditPool extends AbstractGuiDialog {
     
     @Override
     public void drawBackground(int mouseX, int mouseY, float partialTickTime) {
+        GlStateManager.disableLighting();
+        GlStateManager.color(1, 1, 1, 1);
+        GlStateManager.disableBlend();
         drawParentCoverBackground();
+        
         int textureWidth = 176;
         int textureHeight = 62;
         int borderSize = 4;
         mc.renderEngine.bindTexture(TEXTURE);
         GuiUtils.drawContinuousTexturedBox(x, y, 0, 0, width, height - 99, textureWidth, textureHeight, borderSize, zLevel);
-        GuiHelper.renderPlayerInvTexture(x, y + height - 98);
+        GuiHelper.renderPlayerInvTexture(x + width / 2 - 176 / 2, y + height - 98);
     }
     
     @Override
@@ -80,6 +89,8 @@ public class GuiLootDialogEditPool extends AbstractGuiDialog {
         drawTitle(name + " - " + pool.getName());
         RenderItem ri = mc.getRenderItem();
         
+        GlStateManager.pushAttrib();
+        RenderHelper.disableStandardItemLighting();
         RenderHelper.enableGUIStandardItemLighting();
         for (int i = 0; i < pool.getPoolItems().size(); i++) {
             ILootTableItem item = pool.getPoolItems().get(i);
@@ -87,6 +98,7 @@ public class GuiLootDialogEditPool extends AbstractGuiDialog {
             ri.renderItemOverlayIntoGUI(fontRenderer, item.getItem(), x + 8 + i * 18, y + 25, null);
         }
         RenderHelper.disableStandardItemLighting();
+        GlStateManager.popAttrib();
     }
     
     public void gotPoolFromServer(ILootTablePool pool) {
