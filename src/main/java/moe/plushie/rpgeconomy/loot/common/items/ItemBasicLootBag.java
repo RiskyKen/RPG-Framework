@@ -37,12 +37,13 @@ public class ItemBasicLootBag extends AbstractModItem {
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
         ItemStack stack = playerIn.getHeldItem(handIn);
         if (!worldIn.isRemote) {
-            if (playerIn.isCreative()) {
-                stack = stack.copy();
-            }
+
             if (playerIn.isSneaking() & playerIn.isCreative()) {
                 FMLNetworkHandler.openGui(playerIn, RpgEconomy.getInstance(), EnumGuiId.BASIC_LOOT_BAG.ordinal(), worldIn, 0, 0, 0);
             } else {
+                if (playerIn.isCreative()) {
+                    stack = stack.copy();
+                }
                 getLoot(worldIn, playerIn, stack);
 
                 stack.shrink(1);
@@ -64,8 +65,6 @@ public class ItemBasicLootBag extends AbstractModItem {
                 if (!playerIn.inventory.addItemStackToInventory(lootStack.copy())) {
                     UtilItems.spawnItemAtEntity(playerIn, lootStack.copy(), true);
                 }
-                RpgEconomy.getLogger().info(lootStack);
-
             }
         }
     }

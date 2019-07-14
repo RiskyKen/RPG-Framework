@@ -105,6 +105,7 @@ public class ContainerBasicLootBag extends ModContainer {
     @Override
     public void onContainerClosed(EntityPlayer playerIn) {
         if (!player.getEntityWorld().isRemote) {
+            moveFromInv();
             writeItems();
         }
         super.onContainerClosed(playerIn);
