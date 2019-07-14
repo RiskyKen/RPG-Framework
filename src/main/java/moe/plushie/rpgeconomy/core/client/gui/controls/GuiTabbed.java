@@ -52,9 +52,9 @@ public abstract class GuiTabbed extends GuiContainer {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        //this.drawDefaultBackground();
+        this.drawDefaultBackground();
         super.drawScreen(mouseX, mouseY, partialTicks);
-        //this.renderHoveredToolTip(mouseX, mouseY);
+        this.renderHoveredToolTip(mouseX, mouseY);
     }
 
     protected void tabChanged() {
@@ -79,6 +79,17 @@ public abstract class GuiTabbed extends GuiContainer {
         if (!clicked) {
             super.mouseClicked(mouseX, mouseY, button);
         }
+    }
+    
+    @Override
+    protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
+        for (int i = 0; i < tabList.size(); i++) {
+            GuiTabPanel tab = tabList.get(i);
+            if (tab.getTabId() == getActiveTab()) {
+                //tab.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
+            }
+        }
+        super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
     }
 
     @Override

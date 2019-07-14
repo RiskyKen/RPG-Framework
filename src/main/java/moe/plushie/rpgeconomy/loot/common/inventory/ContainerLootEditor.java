@@ -15,7 +15,7 @@ public class ContainerLootEditor extends ModContainer {
     public ContainerLootEditor(EntityPlayer player) {
         super(player.inventory);
         this.player = player;
-        addPlayerSlots(8, 100);
+        addPlayerSlots(8, 8);
     }
 
     public void lootPoolAdd(String name, String category) {

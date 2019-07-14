@@ -1,5 +1,8 @@
 package moe.plushie.rpgeconomy.loot.client.gui;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
 import moe.plushie.rpgeconomy.api.core.IIdentifier;
 import moe.plushie.rpgeconomy.api.loot.ILootTableItem;
 import moe.plushie.rpgeconomy.api.loot.ILootTablePool;
@@ -10,12 +13,14 @@ import moe.plushie.rpgeconomy.core.client.gui.IDialogCallback;
 import moe.plushie.rpgeconomy.core.common.network.PacketHandler;
 import moe.plushie.rpgeconomy.core.common.network.client.MessageClientLootEditorUpdate;
 import moe.plushie.rpgeconomy.core.common.network.client.MessageClientLootEditorUpdate.LootEditType;
+import moe.plushie.rpgeconomy.loot.common.inventory.ContainerLootEditor;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.inventory.Slot;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
 import net.minecraftforge.fml.client.config.GuiUtils;
 
@@ -43,6 +48,7 @@ public class GuiLootDialogEditPool extends AbstractGuiDialog {
         
         buttonList.add(buttonCancel);
         buttonList.add(buttonOK);
+        slotHandler.initGui();
     }
     
     @Override
@@ -61,6 +67,41 @@ public class GuiLootDialogEditPool extends AbstractGuiDialog {
     @Override
     public void mouseClicked(int mouseX, int mouseY, int button) {
         super.mouseClicked(mouseX, mouseY, button);
+        try {
+            updateSlots(false);
+            slotHandler.mouseClicked(mouseX, mouseY, button);
+            updateSlots(true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    @Override
+    public void mouseClickMove(int mouseX, int mouseY, int lastButtonClicked, long timeSinceMouseClick) {
+        super.mouseClickMove(mouseX, mouseY, lastButtonClicked, timeSinceMouseClick);
+        updateSlots(false);
+        slotHandler.mouseClickMove(mouseX, mouseY, lastButtonClicked, timeSinceMouseClick);
+        updateSlots(true);
+    }
+    
+    @Override
+    public void mouseMovedOrUp(int mouseX, int mouseY, int button) {
+        super.mouseMovedOrUp(mouseX, mouseY, button);
+        updateSlots(false);
+        slotHandler.mouseReleased(mouseX, mouseY, button);
+        updateSlots(true);
+    }
+    
+    @Override
+    public boolean keyTyped(char c, int keycode) {
+        try {
+            updateSlots(false);
+            slotHandler.keyTyped(c, keycode);
+            updateSlots(true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return super.keyTyped(c, keycode);
     }
     
     @Override
@@ -90,6 +131,11 @@ public class GuiLootDialogEditPool extends AbstractGuiDialog {
         RenderItem ri = mc.getRenderItem();
         
         GlStateManager.pushAttrib();
+        
+        updateSlots(false);
+        slotHandler.drawScreen(mouseX, mouseY, partialTickTime);
+        updateSlots(true);
+        
         RenderHelper.disableStandardItemLighting();
         RenderHelper.enableGUIStandardItemLighting();
         for (int i = 0; i < pool.getPoolItems().size(); i++) {
@@ -103,5 +149,44 @@ public class GuiLootDialogEditPool extends AbstractGuiDialog {
     
     public void gotPoolFromServer(ILootTablePool pool) {
         this.pool = pool;
+    }
+    
+    private void updateSlots(boolean restore) {
+        ContainerLootEditor containerLootEditor = (ContainerLootEditor) slotHandler.inventorySlots;
+        GuiLootEditor gui = (GuiLootEditor) parent;
+        if (!restore) {
+            ArrayList<Slot> playerSlots = containerLootEditor.getSlotsPlayer();
+            int posX = x + 80 - gui.getGuiLeft();
+            int posY = y + 158 - gui.getGuiTop();
+            int playerInvY = posY;
+            int hotBarY = playerInvY + 58;
+            for (int ix = 0; ix < 9; ix++) {
+                playerSlots.get(ix).xPos = posX + 18 * ix;
+                playerSlots.get(ix).yPos = hotBarY;
+            }
+            for (int iy = 0; iy < 3; iy++) {
+                for (int ix = 0; ix < 9; ix++) {
+                    playerSlots.get(ix + iy * 9 + 9).xPos = posX + 18 * ix;
+                    playerSlots.get(ix + iy * 9 + 9).yPos = playerInvY + iy * 18;
+                }
+            }
+            //((SlotHidable)playerSlots.get(index))
+        } else {
+            ArrayList<Slot> playerSlots = containerLootEditor.getSlotsPlayer();
+            int posX = -10000;
+            int posY = -10000;
+            int playerInvY = posY;
+            int hotBarY = playerInvY + 58;
+            for (int ix = 0; ix < 9; ix++) {
+                playerSlots.get(ix).xPos = posX + 18 * ix;
+                playerSlots.get(ix).yPos = hotBarY;
+            }
+            for (int iy = 0; iy < 3; iy++) {
+                for (int ix = 0; ix < 9; ix++) {
+                    playerSlots.get(ix + iy * 9 + 9).xPos = posX + 18 * ix;
+                    playerSlots.get(ix + iy * 9 + 9).yPos = playerInvY + iy * 18;
+                }
+            }
+        }
     }
 }

@@ -129,7 +129,7 @@ public abstract class GuiTabPanel<T extends GuiScreen> extends Gui {
     public void drawForegroundLayer(int mouseX, int mouseY, float partialTickTime) {
         if (isDialogOpen()) {
             //GL11.glTranslatef(-parent.width, -y, 0);
-            dialog.draw(mouseX, mouseX, partialTickTime);
+            dialog.draw(mouseX, mouseY, partialTickTime);
             //GL11.glTranslatef(x, y, 0);
         }
     }
