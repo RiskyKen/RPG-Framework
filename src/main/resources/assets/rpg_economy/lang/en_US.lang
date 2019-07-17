@@ -47,7 +47,7 @@ item.rpg_economy:basic_loot_bag.name=Basic Loot Bag
 #item.rpg_economy:currency.0.tooltip=Test
 
 # Creative tab
-itemGroup.rpg_economy=RPG Economy
+itemGroup.rpg_economy=RPG Framework
 
 # Inventory
 inventory.rpg_economy:mailbox.tab.reading.name=Reading
@@ -61,6 +61,6 @@ commands.rpg_economy:rpg_economy.currency.usage=<reload>
 commands.rpg_economy:rpg_economy.mail.usage=<reload>
 
 # Keybindings
-keys.rpg_economy:category=RPG Economy
+keys.rpg_economy:category=RPG Framework
 keys.rpg_economy.open_wallet_1=Open Wallet 1
 keys.rpg_economy.open_wallet_2=Open Wallet 2

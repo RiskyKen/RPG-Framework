@@ -1,8 +1,8 @@
 [
 {
   "modid": "rpg_economy",
-  "name": "RPG Economy",
-  "description": "RPG Economy Mod.",
+  "name": "RPG Framework",
+  "description": "RPG Framework Mod.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "https://github.com/RiskyKen/RPG-Economy",

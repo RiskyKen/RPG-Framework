@@ -19,8 +19,8 @@ if (System.env.BUILD_NUMBER != null) {
     version = "$minecraftVersion-$modVersion"
 }
 
-group = "moe.plushie.rpg_economy"
-archivesBaseName = "rpg_economy"
+group = "moe.plushie.rpg_framework"
+archivesBaseName = "rpg_framework"
 
 sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 compileJava {
