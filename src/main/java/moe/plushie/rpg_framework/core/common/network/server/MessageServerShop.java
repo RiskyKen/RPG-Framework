@@ -6,6 +6,7 @@ import io.netty.buffer.ByteBuf;
 import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.shop.IShop;
 import moe.plushie.rpg_framework.core.common.serialize.IdentifierSerialize;
+import moe.plushie.rpg_framework.core.common.utils.ByteBufHelper;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import moe.plushie.rpg_framework.shop.client.gui.GuiShop;
 import moe.plushie.rpg_framework.shop.common.serialize.ShopSerializer;
@@ -38,7 +39,7 @@ public class MessageServerShop implements IMessage, IMessageHandler<MessageServe
         if (shop != null) {
             ByteBufUtils.writeUTF8String(buf, IdentifierSerialize.serializeJson(shop.getIdentifier()).toString());
             JsonElement jsonShop = ShopSerializer.serializeJson(shop, true);
-            ByteBufUtils.writeUTF8String(buf, jsonShop.toString());
+            ByteBufHelper.writeString(buf, jsonShop.toString());
         }
     }
 
@@ -47,7 +48,7 @@ public class MessageServerShop implements IMessage, IMessageHandler<MessageServe
         update = buf.readBoolean();
         if (buf.readBoolean()) {
             IIdentifier identifier = IdentifierSerialize.deserializeJson(SerializeHelper.stringToJson(ByteBufUtils.readUTF8String(buf)));
-            String jsonString = ByteBufUtils.readUTF8String(buf);
+            String jsonString = ByteBufHelper.readString(buf);
             JsonElement jsonShop = SerializeHelper.stringToJson(jsonString);
             shop = ShopSerializer.deserializeJson(jsonShop, identifier);
         }
