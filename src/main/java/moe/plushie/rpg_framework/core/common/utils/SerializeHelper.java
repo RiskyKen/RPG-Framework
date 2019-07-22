@@ -92,7 +92,7 @@ public final class SerializeHelper {
         NBTTagCompound compound = new NBTTagCompound();
         itemStack.writeToNBT(compound);
         if (compact) {
-            compound.setInteger("id", Item.getIdFromItem(itemStack.getItem()));
+            compound.setString("id", String.valueOf(Item.getIdFromItem(itemStack.getItem())));
         } else {
             compound.setString("id", itemStack.getItem().getRegistryName().toString());
         }
