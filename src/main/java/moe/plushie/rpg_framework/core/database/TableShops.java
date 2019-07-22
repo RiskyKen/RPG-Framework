@@ -117,7 +117,7 @@ public final class TableShops {
         create();
         try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_UPDATE_SHOP)) {
             ps.setString(1, shop.getName());
-            ps.setString(2, ShopSerializer.serializeTabs(shop.getTabs(), true).toString());
+            ps.setString(2, ShopSerializer.serializeTabs(shop.getTabs(), false).toString());
             ps.setObject(3, shop.getIdentifier().getValue());
             ps.executeUpdate();
         } catch (Exception e) {

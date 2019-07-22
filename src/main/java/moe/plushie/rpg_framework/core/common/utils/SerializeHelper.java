@@ -24,6 +24,8 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public final class SerializeHelper {
 
+    private static final String TAG_COMPOUND = "compound";
+    
     private SerializeHelper() {
     }
 
@@ -84,22 +86,15 @@ public final class SerializeHelper {
     }
 
     public static JsonObject writeItemToJson(ItemStack itemStack, boolean compact) {
-        JsonObject jsonObject = new JsonObject();
-        if (!itemStack.isEmpty()) {
-            if (compact) {
-                jsonObject.addProperty("id", Item.getIdFromItem(itemStack.getItem()));
-            } else {
-                jsonObject.addProperty("id", itemStack.getItem().getRegistryName().toString());
-            }
-            jsonObject.addProperty("count", itemStack.getCount());
-            jsonObject.addProperty("damage", itemStack.getItemDamage());
-            if (itemStack.getItem().isDamageable() || itemStack.getItem().getShareTag()) {
-                if (itemStack.hasTagCompound()) {
-                    jsonObject.addProperty("nbt", itemStack.getTagCompound().toString());
-                }
-            }
+        NBTTagCompound compound = new NBTTagCompound();
+        itemStack.writeToNBT(compound);
+        if (compact) {
+            compound.setInteger("id", Item.getIdFromItem(itemStack.getItem()));
+        } else {
+            compound.setString("id", itemStack.getItem().getRegistryName().toString());
         }
-
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty(TAG_COMPOUND, compound.toString());
         return jsonObject;
     }
 
@@ -108,6 +103,10 @@ public final class SerializeHelper {
     }
 
     public static ItemStack readItemFromJson(JsonObject jsonObject) throws NBTException {
+        if (jsonObject.has(TAG_COMPOUND)) {
+            NBTTagCompound compound = JsonToNBT.getTagFromJson(jsonObject.get(TAG_COMPOUND).getAsString());
+            return new ItemStack(compound);
+        }
         if (!jsonObject.has("id")) {
             return ItemStack.EMPTY;
         }
