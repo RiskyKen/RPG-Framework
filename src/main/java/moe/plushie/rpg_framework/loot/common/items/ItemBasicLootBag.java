@@ -18,13 +18,11 @@ import moe.plushie.rpg_framework.loot.common.LootTablePool;
 import moe.plushie.rpg_framework.loot.common.inventory.ContainerBasicLootBag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 
 public class ItemBasicLootBag extends AbstractModItem {
@@ -70,15 +68,8 @@ public class ItemBasicLootBag extends AbstractModItem {
     }
 
     private void readItems(ItemStack stack, ArrayList<ILootTableItem> tableItems) {
-        Gson gson = getGson();
         resetItems(tableItems);
-        if (stack.getTagCompound() != null && stack.getTagCompound().hasKey(ContainerBasicLootBag.TAG_TABLE_ITEMS, NBT.TAG_LIST)) {
-            NBTTagList tagList = stack.getTagCompound().getTagList(ContainerBasicLootBag.TAG_TABLE_ITEMS, NBT.TAG_STRING);
-            for (int i = 0; i < tagList.tagCount(); i++) {
-                String data = tagList.getStringTagAt(i);
-                tableItems.set(i, gson.fromJson(data, ILootTableItem.class));
-            }
-        }
+        ContainerBasicLootBag.readItems(stack, tableItems);
     }
 
     private void resetItems(ArrayList<ILootTableItem> tableItems) {

@@ -23,6 +23,8 @@ import net.minecraftforge.common.util.Constants.NBT;
 public class ContainerBasicLootBag extends ModContainer {
 
     public static final String TAG_TABLE_ITEMS = "table_items";
+    private static final String TAG_ITEM = "item";
+    private static final String TAG_SLOT = "slot";
     public static final int BAG_WIDTH = 6;
     public static final int BAG_HEIGHT = 6;
     public static final int BAG_SIZE = BAG_WIDTH * BAG_HEIGHT;
@@ -38,7 +40,9 @@ public class ContainerBasicLootBag extends ModContainer {
         this.stack = stack;
         tableItems = new ArrayList<ILootTableItem>();
         lootInv = new InventoryBasic("", false, BAG_SIZE);
-        readItems();
+        resetItems();
+        readItems(stack, tableItems);
+        moveToInv();
         for (int iy = 0; iy < BAG_HEIGHT; iy++) {
             for (int ix = 0; ix < BAG_WIDTH; ix++) {
                 addSlotToContainer(new Slot(lootInv, ix + iy * BAG_WIDTH, 9 + ix * 18, 24 + iy * 18));
@@ -70,7 +74,8 @@ public class ContainerBasicLootBag extends ModContainer {
         Gson gson = getGson();
         NBTTagList tagList = new NBTTagList();
         for (int i = 0; i < BAG_SIZE; i++) {
-            tagList.appendTag(new NBTTagString(gson.toJsonTree(tableItems.get(i)).toString()));
+            ILootTableItem tableItem = tableItems.get(i);
+            tagList.appendTag(new NBTTagString(gson.toJsonTree(tableItem).toString()));
         }
         if (!stack.hasTagCompound()) {
             stack.setTagCompound(new NBTTagCompound());
@@ -78,9 +83,8 @@ public class ContainerBasicLootBag extends ModContainer {
         stack.getTagCompound().setTag(TAG_TABLE_ITEMS, tagList);
     }
 
-    private void readItems() {
+    public static void readItems(ItemStack stack, ArrayList<ILootTableItem> tableItems) {
         Gson gson = getGson();
-        resetItems();
         if (stack.getTagCompound() != null && stack.getTagCompound().hasKey(TAG_TABLE_ITEMS, NBT.TAG_LIST)) {
             NBTTagList tagList = stack.getTagCompound().getTagList(TAG_TABLE_ITEMS, NBT.TAG_STRING);
             for (int i = 0; i < tagList.tagCount(); i++) {
@@ -88,7 +92,6 @@ public class ContainerBasicLootBag extends ModContainer {
                 tableItems.set(i, gson.fromJson(data, ILootTableItem.class));
             }
         }
-        moveToInv();
     }
 
     private void resetItems() {

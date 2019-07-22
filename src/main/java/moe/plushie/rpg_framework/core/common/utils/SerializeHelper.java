@@ -86,6 +86,9 @@ public final class SerializeHelper {
     }
 
     public static JsonObject writeItemToJson(ItemStack itemStack, boolean compact) {
+        if (itemStack.isEmpty()) {
+            return new JsonObject();
+        }
         NBTTagCompound compound = new NBTTagCompound();
         itemStack.writeToNBT(compound);
         if (compact) {
