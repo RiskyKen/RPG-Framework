@@ -1,9 +1,9 @@
 ---
 name: Crash report
-about: Create a report to help us improve
+about: Create a crash report
 title: ''
 labels: crash
-assignees: ''
+assignees: RiskyKen
 
 ---
 
