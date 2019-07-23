@@ -24,8 +24,7 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Debug crash log**
-Linking a debug crash log can help track down bugs. Holding down F3 + C for 10 seconds in game will force the a crash making a debug crash log.
-
+Linking a debug crash log can help track down bugs. Holding down F3 + C for 10 seconds in game will force the a crash making a debug crash log. Please link your log using a site like https://pastebin.com/
 
 **Additional context**
 Add any other context about the problem here.
