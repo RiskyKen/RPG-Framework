@@ -1,7 +1,7 @@
 ---
 name: Crash report
 about: Create a crash report
-title: ''
+title: "[CRASH]"
 labels: crash
 assignees: RiskyKen
 
