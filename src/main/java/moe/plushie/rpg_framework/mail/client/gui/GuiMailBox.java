@@ -45,13 +45,14 @@ public class GuiMailBox extends GuiTabbed {
 
     @Override
     public void initGui() {
-        this.xSize = 176;
+        this.xSize = 320;
         this.ySize = 224;
         super.initGui();
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTickTime, int mouseX, int mouseY) {
+        drawRect(guiLeft, guiTop, guiLeft + xSize, guiTop + ySize, 0x22FFFFFF);
         for (int i = 0; i < tabList.size(); i++) {
             GuiTabPanel tab = tabList.get(i);
             if (tab.getTabId() == getActiveTab()) {

@@ -27,7 +27,8 @@ public class GuiTabMailBoxReading extends GuiTabPanel<GuiMailBox> {
     
     @Override
     public void drawForegroundLayer(int mouseX, int mouseY, float partialTickTime) {
-        GuiHelper.renderLocalizedGuiName(fontRenderer, width, parent.getName() + ".tab.reading");
+        
+        GuiHelper.renderLocalizedGuiName(fontRenderer, parent.getXSize(), parent.getName() + ".tab.reading");
         super.drawForegroundLayer(mouseX, mouseY, partialTickTime);
     }
 }

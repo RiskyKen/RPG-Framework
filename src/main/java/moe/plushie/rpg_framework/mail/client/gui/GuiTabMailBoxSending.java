@@ -19,6 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
+import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -119,16 +120,21 @@ public class GuiTabMailBoxSending extends GuiTabPanel<GuiMailBox> {
     @Override
     public void drawBackgroundLayer(float partialTickTime, int mouseX, int mouseY) {
         GL11.glColor4f(1, 1, 1, 1);
-        mc.renderEngine.bindTexture(TEXTURE_SENDING);
-        drawTexturedModalRect(x, y, 0, 0, width, height);
+        mc.renderEngine.bindTexture(TEXTURE_BACKGROUND);
+        GuiUtils.drawContinuousTexturedBox(x, y, 0, 0, width, height, 64, 64, 5, zLevel);
+        
+        //mc.renderEngine.bindTexture(TEXTURE_SENDING);
+        //drawTexturedModalRect(x, y, 0, 0, width, height);
         textFieldTo.drawTextBox();
         textFieldSubject.drawTextBox();
         textFieldMessage.drawTextBox();
+        
+
     }
     
     @Override
     public void drawForegroundLayer(int mouseX, int mouseY, float partialTickTime) {
-        GuiHelper.renderLocalizedGuiName(fontRenderer, width, parent.getName() + ".tab.sending");
+        GuiHelper.renderLocalizedGuiName(fontRenderer, parent.getXSize(), parent.getName() + ".tab.sending");
         super.drawForegroundLayer(mouseX, mouseY, 0);
     }
 } 
