@@ -4,15 +4,13 @@ import org.lwjgl.opengl.GL11;
 
 import moe.plushie.rpg_framework.core.client.gui.GuiHelper;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiTabPanel;
-import moe.plushie.rpg_framework.core.client.lib.LibGuiResources;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiTabMailBoxReading extends GuiTabPanel<GuiMailBox> {
     
-    private static final ResourceLocation TEXTURE_READING = new ResourceLocation(LibGuiResources.MAIL_BOX_READING);
+    //private static final ResourceLocation TEXTURE_READING = new ResourceLocation(LibGuiResources.MAIL_BOX_READING);
     
     public GuiTabMailBoxReading(int tabId, GuiMailBox parent) {
         super(tabId, parent, false);
@@ -21,7 +19,7 @@ public class GuiTabMailBoxReading extends GuiTabPanel<GuiMailBox> {
     @Override
     public void drawBackgroundLayer(float partialTickTime, int mouseX, int mouseY) {
         GL11.glColor4f(1, 1, 1, 1);
-        mc.renderEngine.bindTexture(TEXTURE_READING);
+        //mc.renderEngine.bindTexture(TEXTURE_READING);
         drawTexturedModalRect(x, y, 0, 0, width, height);
     }
     

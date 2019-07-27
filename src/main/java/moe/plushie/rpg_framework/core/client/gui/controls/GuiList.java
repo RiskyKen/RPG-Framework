@@ -91,6 +91,7 @@ public class GuiList extends Gui {
             }
         }
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
     }
     
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
