@@ -20,7 +20,7 @@ public abstract class ModGuiContainer<CONTAINER_TYPE extends ModContainer> exten
     int oldMouseX;
     int oldMouseY;
 
-    public ModGuiContainer(ModContainer container) {
+    public ModGuiContainer(CONTAINER_TYPE container) {
         super(container);
     }
 
