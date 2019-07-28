@@ -3,10 +3,12 @@ package moe.plushie.rpg_framework.currency.common;
 import moe.plushie.rpg_framework.api.core.IItemMatcher;
 import moe.plushie.rpg_framework.api.currency.ICurrency;
 import moe.plushie.rpg_framework.api.currency.ICurrency.ICurrencyVariant;
+import moe.plushie.rpg_framework.core.common.utils.UtilItems;
 import moe.plushie.rpg_framework.currency.common.items.ItemWallet;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 
 public final class CurrencyWalletHelper {
@@ -51,19 +53,17 @@ public final class CurrencyWalletHelper {
         return value;
     }
 
-    public static boolean addAmountToInventory(ICurrency currency, InventoryPlayer inventory, int amount, boolean simulate) {
+    public static boolean addAmountToInventory(ICurrency currency, EntityPlayer player, int amount, boolean simulate) {
         if (simulate) {
-            inventory = copyInventory(inventory);
+            return true;
+            //inventory = copyInventory(inventory);
         }
 
         for (int i = currency.getCurrencyVariants().length; i > 0; i--) {
             ICurrencyVariant variant = currency.getCurrencyVariants()[i - 1];
             while (variant.getValue() <= amount) {
-                if (inventory.addItemStackToInventory(variant.getItem().getItemStack().copy())) {
-                    amount -= variant.getValue();
-                } else {
-                    break;
-                }
+                UtilItems.spawnItemAtEntity(player, variant.getItem().getItemStack().copy(), true);
+                amount -= variant.getValue();
             }
         }
 
@@ -73,9 +73,10 @@ public final class CurrencyWalletHelper {
         return false;
     }
 
-    public static boolean consumeAmountFromInventory(ICurrency currency, InventoryPlayer inventory, int amount, boolean simulate) {
+    public static boolean consumeAmountFromInventory(ICurrency currency, InventoryPlayer inventoryPlayer, int amount, boolean simulate) {
+        IInventory inv = inventoryPlayer;
         if (simulate) {
-            inventory = copyInventory(inventory);
+            inv = copyInventory(inventoryPlayer);
         }
 
         // Remove full coins.
@@ -83,8 +84,8 @@ public final class CurrencyWalletHelper {
             ICurrencyVariant variant = currency.getCurrencyVariants()[j - 1];
 
             if (variant.getValue() <= amount) {
-                for (int i = 0; i < inventory.getSizeInventory(); i++) {
-                    ItemStack stack = inventory.getStackInSlot(i);
+                for (int i = 0; i < inv.getSizeInventory(); i++) {
+                    ItemStack stack = inv.getStackInSlot(i);
                     if (variant.getItem().matches(stack)) {
                         while (amount > 0 & !stack.isEmpty()) {
                             stack.shrink(1);
@@ -108,8 +109,8 @@ public final class CurrencyWalletHelper {
 
         // Remove remainder.
         for (ICurrencyVariant variant : currency.getCurrencyVariants()) {
-            for (int i = 0; i < inventory.getSizeInventory(); i++) {
-                ItemStack stack = inventory.getStackInSlot(i);
+            for (int i = 0; i < inv.getSizeInventory(); i++) {
+                ItemStack stack = inv.getStackInSlot(i);
                 if (variant.getItem().matches(stack)) {
                     while (!stack.isEmpty() & amount > 0) {
                         stack.shrink(1);
@@ -130,15 +131,19 @@ public final class CurrencyWalletHelper {
         }
 
         if (amount < 0) {
-            if (addAmountToInventory(currency, inventory, -amount, simulate)) {
+            if (simulate) {
                 return true;
+            } else {
+                if (addAmountToInventory(currency, inventoryPlayer.player, -amount, simulate)) {
+                    return true;
+                }
             }
         }
         return false;
     }
 
     public static boolean payWithItems(InventoryPlayer inventoryPlayer, IItemMatcher[] itemCost, boolean simulate) {
-        InventoryPlayer inv = inventoryPlayer;
+        IInventory inv = inventoryPlayer;
         if (simulate) {
             inv = copyInventory(inventoryPlayer);
         }
@@ -158,7 +163,6 @@ public final class CurrencyWalletHelper {
                 if (!stack.isEmpty()) {
                     if (itemCost[i].matches(stack)) {
                         int takeAmount = Math.min(stack.getCount(), neededAmounts[i]);
-
                         neededAmounts[i] -= takeAmount;
                         stack.shrink(takeAmount);
                     }
@@ -175,12 +179,12 @@ public final class CurrencyWalletHelper {
         return true;
     }
 
-    public static InventoryPlayer copyInventory(InventoryPlayer inventory) {
-        InventoryPlayer inventoryPlayer = new InventoryPlayer(null);
-        for (int i = 0; i < inventoryPlayer.getSizeInventory(); i++) {
-            inventoryPlayer.setInventorySlotContents(i, inventory.getStackInSlot(i).copy());
+    public static IInventory copyInventory(InventoryPlayer inventory) {
+        IInventory copyInventory = new InventoryBasic("", false, inventory.getSizeInventory());
+        for (int i = 0; i < inventory.getSizeInventory(); i++) {
+            copyInventory.setInventorySlotContents(i, inventory.getStackInSlot(i).copy());
         }
-        return inventoryPlayer;
+        return copyInventory;
     }
 
     public static boolean haveWalletForCurrency(EntityPlayer player, ICurrency currency) {
