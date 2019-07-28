@@ -153,8 +153,8 @@ public final class CurrencyWalletHelper {
         }
 
         for (int i = 0; i < neededAmounts.length; i++) {
-            for (int j = 0; j < inv.mainInventory.size(); j++) {
-                ItemStack stack = inv.mainInventory.get(j);
+            for (int j = 0; j < inv.getSizeInventory(); j++) {
+                ItemStack stack = inv.getStackInSlot(j);
                 if (!stack.isEmpty()) {
                     if (itemCost[i].matches(stack)) {
                         int takeAmount = Math.min(stack.getCount(), neededAmounts[i]);
