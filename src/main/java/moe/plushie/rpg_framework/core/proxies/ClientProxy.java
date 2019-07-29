@@ -8,9 +8,12 @@ import moe.plushie.rpg_framework.core.common.init.ModItems;
 import moe.plushie.rpg_framework.core.common.lib.LibModInfo;
 import moe.plushie.rpg_framework.core.common.module.IModModule;
 import moe.plushie.rpg_framework.core.common.module.ModModule;
+import moe.plushie.rpg_framework.mail.client.RenderBlockMailBox;
+import moe.plushie.rpg_framework.mail.common.tileentities.TileEntityMailBox;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -33,6 +36,7 @@ public class ClientProxy extends CommonProxy {
     public void init(FMLInitializationEvent event) {
         super.init(event);
         Keybindings.registerKeyBindings();
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMailBox.class, new RenderBlockMailBox());
     }
     
     @SubscribeEvent
