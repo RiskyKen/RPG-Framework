@@ -8,7 +8,7 @@ public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> {
 
     public ContainerMailBox(TileEntityMailBox tileEntity, EntityPlayer entityPlayer) {
         super(entityPlayer, tileEntity);
-        addPlayerSlots(29, 142);
+        addPlayerSlots(8, 167);
     }
     
     @Override

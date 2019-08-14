@@ -1,12 +1,18 @@
 package moe.plushie.rpg_framework.mail.client.gui;
 
+import org.lwjgl.opengl.GL11;
+
 import moe.plushie.rpg_framework.core.client.gui.GuiHelper;
 import moe.plushie.rpg_framework.core.client.gui.ModGuiContainer;
+import moe.plushie.rpg_framework.core.client.gui.controls.GuiIconButton;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiList;
 import moe.plushie.rpg_framework.core.client.lib.LibGuiResources;
 import moe.plushie.rpg_framework.core.common.lib.LibBlockNames;
 import moe.plushie.rpg_framework.mail.common.inventory.ContainerMailBox;
 import moe.plushie.rpg_framework.mail.common.tileentities.TileEntityMailBox;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
@@ -22,6 +28,11 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> {
     private final TileEntityMailBox tileEntity;
 
     private GuiList listMail;
+    private GuiIconButton buttonListPre;
+    private GuiIconButton buttonListNext;
+    private GuiIconButton buttonNewMessage;
+    private GuiIconButton buttonMessageReply;
+    private GuiIconButton buttonMessageDelete;
 
     public GuiMailBox(TileEntityMailBox tileEntity, EntityPlayer entityPlayer) {
         super(new ContainerMailBox(tileEntity, entityPlayer));
@@ -36,11 +47,41 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> {
     @Override
     public void initGui() {
         this.xSize = 320;
-        this.ySize = 224;
+        this.ySize = 247;
         super.initGui();
-        listMail = new GuiList(guiLeft + 5, guiTop + 18, 100, ySize - 128, 18);
-        listMail.addListItem(new GuiList.GuiListItem("Test Item A"));
-        listMail.addListItem(new GuiList.GuiListItem("Test Item B"));
+        listMail = new GuiList(guiLeft + 5, guiTop + 18, 100, 111, 18);
+        
+        buttonListPre = addButton(new GuiIconButton(this, 0, guiLeft + 5, guiTop + 130, 16, 16, TEXTURE_BUTTONS));
+        buttonListNext = addButton(new GuiIconButton(this, 0, guiLeft + 23, guiTop + 130, 16, 16, TEXTURE_BUTTONS));
+        
+        buttonNewMessage = addButton(new GuiIconButton(this, 0, guiLeft + 88, guiTop + 130, 16, 16, TEXTURE_BUTTONS));
+        
+        buttonMessageReply = addButton(new GuiIconButton(this, 0, guiLeft + 276, guiTop + 22, 16, 16, TEXTURE_BUTTONS));
+        buttonMessageDelete = addButton(new GuiIconButton(this, 0, guiLeft + 294, guiTop + 22, 16, 16, TEXTURE_BUTTONS));
+        
+        
+        buttonListPre.setDrawButtonBackground(false).setIconLocation(208, 128, 16, 16);
+        buttonListNext.setDrawButtonBackground(false).setIconLocation(208, 112, 16, 16);
+        
+        buttonNewMessage.setDrawButtonBackground(false).setIconLocation(160, 224, 16, 16);
+        
+        buttonMessageReply.setDrawButtonBackground(false).setIconLocation(160, 240, 16, 16);
+        buttonMessageDelete.setDrawButtonBackground(false).setIconLocation(208, 160, 16, 16);
+        
+        
+        buttonListPre.setHoverText("Previous Page");
+        buttonListNext.setHoverText("Next Page");
+        
+        buttonNewMessage.setHoverText("New Message");
+        
+        buttonMessageReply.setHoverText("Reply");
+        buttonMessageDelete.setHoverText("Delete");
+        
+        // Test data
+        listMail.addListItem(new MailListItem("Test Message A"));
+        listMail.addListItem(new MailListItem("Test Item A"));
+        listMail.addListItem(new MailListItem("Test Message B"));
+        listMail.addListItem(new MailListItem("Test Item B"));
     }
 
     public TileEntityMailBox getTileEntity() {
@@ -53,12 +94,12 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> {
         GlStateManager.color(1F, 1F, 1F, 1F);
 
         // Render background.
-        GuiUtils.drawContinuousTexturedBox(guiLeft, guiTop, 0, 0, xSize, ySize - 90, 64, 64, 4, zLevel);
+        GuiUtils.drawContinuousTexturedBox(guiLeft, guiTop, 0, 0, xSize, 150, 64, 64, 4, zLevel);
 
         // Render title.
         GuiUtils.drawContinuousTexturedBox(guiLeft + 10, guiTop + 4, 0, 64, xSize - 20, 13, 64, 13, 2, zLevel);
 
-        GuiHelper.renderPlayerInvTexture(guiLeft, guiTop + ySize - 89);
+        GuiHelper.renderPlayerInvTexture(guiLeft, guiTop + 151);
 
         listMail.drawList(mouseX, mouseY, partialTicks);
 
@@ -69,8 +110,53 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        GuiHelper.renderPlayerInvlabel(0, ySize - 89, fontRenderer);
-
         GuiHelper.renderLocalizedGuiName(fontRenderer, xSize, getName());
+
+        GuiHelper.renderPlayerInvlabel(0, 151, fontRenderer);
+        
+        String message = "From: [internal test]\n";
+        
+        message += "To: RiskyKen\n\n";
+        message += "Subject: Test Message\n\n";
+        message += "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi nibh sem, gravida sit amet neque in, ornare eleifend diam. Etiam vitae urna ullamcorper, molestie dui sit amet, scelerisque justo. Sed eleifend finibus lacus, et venenatis odio accumsan sed.";
+        
+        fontRenderer.drawSplitString(message, 112, 24, 200, 0x444444);
+        
+        GL11.glPushMatrix();
+        GL11.glTranslatef(-guiLeft, -guiTop, 0F);
+        for (int i = 0; i < buttonList.size(); i++) {
+            GuiButton button = (GuiButton) buttonList.get(i);
+            if (button instanceof GuiIconButton) {
+                ((GuiIconButton) button).drawRollover(mc, mouseX, mouseY);
+            }
+        }
+        GL11.glPopMatrix();
+    }
+    
+    private static class MailListItem  extends GuiList.GuiListItem {
+
+        public MailListItem(String name) {
+            super(name);
+        }
+        
+        @Override
+        public void drawListItem(FontRenderer fontRenderer, int x, int y, int mouseX, int mouseY, boolean selected, int width) {
+            Minecraft mc = Minecraft.getMinecraft();
+            mc.renderEngine.bindTexture(TEXTURE);
+            drawModalRectWithCustomSizedTexture(x, y, 0, 205, 16, 16, 256, 256);
+            int colour = 0xCCCCCC;
+            boolean hover = isHovering(fontRenderer, x, y, mouseX, mouseY, width);
+            if (hover) {
+                colour = 0xFFFFFF;
+            }
+            if (selected) {
+                colour = 0xDDDD00;
+            }
+            if (selected & hover) {
+                colour = 0xFFFF00;
+            }
+            fontRenderer.drawString(getDisplayName(), x + 17, y, colour);
+            GlStateManager.color(1F, 1F, 1F, 1F);
+        }
     }
 }

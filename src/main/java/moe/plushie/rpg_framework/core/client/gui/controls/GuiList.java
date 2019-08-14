@@ -218,7 +218,7 @@ public class GuiList extends Gui {
         public void mouseReleased(FontRenderer fontRenderer, int x, int y, int mouseX, int mouseY, int button, int width) {
         }
 
-        private boolean isHovering(FontRenderer fontRenderer, int x, int y, int mouseX, int mouseY, int width) {
+        protected boolean isHovering(FontRenderer fontRenderer, int x, int y, int mouseX, int mouseY, int width) {
             return mouseX >= x & mouseY >= y & mouseX <= x + width - 3 & mouseY <= y + 11;
         }
 
