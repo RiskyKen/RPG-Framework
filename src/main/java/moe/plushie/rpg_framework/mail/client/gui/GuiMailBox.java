@@ -1,13 +1,26 @@
 package moe.plushie.rpg_framework.mail.client.gui;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
 import org.lwjgl.opengl.GL11;
 
+import com.mojang.authlib.GameProfile;
+
+import moe.plushie.rpg_framework.core.RpgEconomy;
 import moe.plushie.rpg_framework.core.client.gui.GuiHelper;
 import moe.plushie.rpg_framework.core.client.gui.ModGuiContainer;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiIconButton;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiList;
 import moe.plushie.rpg_framework.core.client.lib.LibGuiResources;
+import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.lib.LibBlockNames;
+import moe.plushie.rpg_framework.core.common.network.PacketHandler;
+import moe.plushie.rpg_framework.core.common.network.client.MessageClientGuiMailBox;
+import moe.plushie.rpg_framework.mail.common.MailMessage;
+import moe.plushie.rpg_framework.mail.common.MailSystem;
 import moe.plushie.rpg_framework.mail.common.inventory.ContainerMailBox;
 import moe.plushie.rpg_framework.mail.common.tileentities.TileEntityMailBox;
 import net.minecraft.client.Minecraft;
@@ -15,6 +28,8 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
@@ -83,6 +98,29 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> {
         listMail.addListItem(new MailListItem("Test Message B"));
         listMail.addListItem(new MailListItem("Test Item B"));
     }
+    
+    @Override
+    protected void actionPerformed(GuiButton button) throws IOException {
+        if (button == buttonNewMessage) {
+            sendMail();
+        }
+    }
+    
+    private void sendMail() {
+        MailSystem mailSystem = RpgEconomy.getProxy().getMailSystemManager().getMailSystem(new IdentifierString("main.json"));
+        GameProfile sender = mc.player.getGameProfile();
+        GameProfile receiver = mc.player.getGameProfile();
+        Date sendDateTime = Calendar.getInstance().getTime();
+        String subject = "Test Message";
+        String message = " This message is a test. Have a nice day.";
+        
+        NonNullList<ItemStack> attachments = NonNullList.<ItemStack>create();
+        if (!mc.player.getHeldItemMainhand().isEmpty()) {
+            attachments.add(mc.player.getHeldItemMainhand());
+        }
+        MailMessage mailMessage = new MailMessage(mailSystem, sender, receiver, sendDateTime, subject, message, attachments);
+        PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiMailBox(mailMessage));
+    }
 
     public TileEntityMailBox getTileEntity() {
         return tileEntity;
@@ -131,6 +169,11 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> {
             }
         }
         GL11.glPopMatrix();
+    }
+    
+    public void gotListFromServer(ArrayList<Integer> ids, ArrayList<String> subjects, ArrayList<Boolean> items, ArrayList<Boolean> read) {
+        // TODO Auto-generated method stub
+        
     }
     
     private static class MailListItem  extends GuiList.GuiListItem {

@@ -1,10 +1,11 @@
 package moe.plushie.rpg_framework.api.mail;
 
+import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.currency.ICost;
 
 public interface IMailSystem {
 
-	public String getIdentifier();
+	public IIdentifier getIdentifier();
 	
     public String getName();
     

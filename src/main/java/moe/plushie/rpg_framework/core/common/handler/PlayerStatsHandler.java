@@ -17,10 +17,14 @@ import net.minecraftforge.fml.relauncher.Side;
 
 @Mod.EventBusSubscriber(modid = LibModInfo.ID)
 public final class PlayerStatsHandler {
-    
+
+    static {
+        TablePlayers.create();
+        TableHeatmaps.create();
+    }
+
     @SubscribeEvent
     public static void onPlayerLogin(PlayerLoggedInEvent event) {
-        TablePlayers.create();
         EntityPlayer player = event.player;
         if (TablePlayers.isPlayerInDatabase(player.getGameProfile())) {
             TablePlayers.updatePlayerLastLogin(player.getGameProfile());
@@ -33,19 +37,18 @@ public final class PlayerStatsHandler {
     public static void onPlayerLogout(PlayerLoggedOutEvent event) {
         RpgEconomy.getLogger().info("Player logout: " + event.player);
     }
-    
+
     @SubscribeEvent
     public static void onWorldTickEvent(WorldTickEvent event) {
         if (event.phase == Phase.START | event.side == Side.CLIENT | ConfigHandler.options.heatmapTrackingRate == 0) {
             return;
         }
         World world = event.world;
-        world.profiler.startSection(LibModInfo.ID + ":heatmapUpdates");
+        world.profiler.startSection(LibModInfo.ID + "heatmapUpdates");
         if ((world.getTotalWorldTime() % (20L * ((long) ConfigHandler.options.heatmapTrackingRate))) != 0) {
             return;
         }
         world.profiler.startSection("createTable");
-        TableHeatmaps.create();
         world.profiler.endStartSection("updateTable");
         TableHeatmaps.addHeatmapData(world.playerEntities);
         world.profiler.endSection();

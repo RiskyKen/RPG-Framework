@@ -52,8 +52,8 @@ public class ItemBlockMailBox extends ModItemBlock {
     public static MailSystem getMailSystemFromStack(ItemStack itemStack) {
         if (itemStack.hasTagCompound()) {
             if (itemStack.getTagCompound().hasKey(TAG_MAIL_SYSTEM, NBT.TAG_STRING)) {
-                MailSystemManager mailSystemManager = RpgEconomy.getProxy().getMailSystemManager();
-                return mailSystemManager.getMailSystem(itemStack.getTagCompound().getString(TAG_MAIL_SYSTEM));
+                // MailSystemManager mailSystemManager = RpgEconomy.getProxy().getMailSystemManager();
+                // return mailSystemManager.getMailSystem(itemStack.getTagCompound().getString(TAG_MAIL_SYSTEM));
             }
         }
         return null;
@@ -64,21 +64,21 @@ public class ItemBlockMailBox extends ModItemBlock {
         setMailSystemOnStack(itemStack, mailSystem);
         return itemStack;
     }
-    
+
     public static void setMailSystemOnStack(ItemStack itemStack, MailSystem mailSystem) {
         if (!itemStack.hasTagCompound()) {
             itemStack.setTagCompound(new NBTTagCompound());
         }
-        itemStack.getTagCompound().setString(TAG_MAIL_SYSTEM, mailSystem.getIdentifier());
+        // itemStack.getTagCompound().setstring(TAG_MAIL_SYSTEM, mailSystem.getIdentifier());
     }
-    
+
     @Override
     public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, IBlockState newState) {
         boolean flag = super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState);
         MailSystem mailSystem = getMailSystemFromStack(stack);
         TileEntity tileEntity = world.getTileEntity(pos);
         if (tileEntity != null && tileEntity instanceof TileEntityMailBox) {
-            ((TileEntityMailBox)tileEntity).setMailSystem(mailSystem);
+            ((TileEntityMailBox) tileEntity).setMailSystem(mailSystem);
         }
         return flag;
     }

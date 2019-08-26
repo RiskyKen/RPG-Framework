@@ -1,11 +1,13 @@
 package moe.plushie.rpg_framework.mail.client;
 
+import moe.plushie.rpg_framework.core.common.init.ModBlocks;
 import moe.plushie.rpg_framework.core.common.lib.LibModInfo;
 import moe.plushie.rpg_framework.mail.common.blocks.BlockMailBox;
 import moe.plushie.rpg_framework.mail.common.tileentities.TileEntityMailBox;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
@@ -64,7 +66,7 @@ public class RenderBlockMailBox extends TileEntitySpecialRenderer<TileEntityMail
         modelMailBoxFlag.render(null, 0, 0, 0, 0, 0, scale);
         super.render(te, x, y, z, partialTicks, destroyStage, alpha);
         GlStateManager.popMatrix();
-
-        drawNameplate(te, te.getBlockType().getLocalizedName(), x, y, z, 10);
+        
+        drawNameplate(te, new ItemStack(ModBlocks.MAIL_BOX).getDisplayName(), x, y, z, 10);
     }
 }

@@ -11,6 +11,7 @@ import moe.plushie.rpg_framework.core.RpgEconomy;
 import moe.plushie.rpg_framework.core.client.gui.GuiHelper;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiLabeledTextField;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiTabPanel;
+import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.mail.common.MailMessage;
 import moe.plushie.rpg_framework.mail.common.MailSystem;
 import net.minecraft.client.gui.GuiButton;
@@ -93,7 +94,7 @@ public class GuiTabMailBoxSending extends GuiTabPanel<GuiMailBox> {
             if (textFieldMessage.getText().trim().isEmpty()) {
                 return;
             }
-            MailSystem mailSystem = RpgEconomy.getProxy().getMailSystemManager().getMailSystem("main");
+            MailSystem mailSystem = RpgEconomy.getProxy().getMailSystemManager().getMailSystem(new IdentifierString("main.json"));
             GameProfile sender = mc.player.getGameProfile();
             GameProfile receiver = new GameProfile(null, textFieldTo.getText());
             Date sendDateTime = Calendar.getInstance().getTime();

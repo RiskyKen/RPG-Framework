@@ -11,7 +11,7 @@ import net.minecraft.util.NonNullList;
 
 public class MailMessage implements IMailMessage {
 
-    private final MailSystem mailSystem;
+    private final IMailSystem mailSystem;
     private final GameProfile sender;
     private final GameProfile receiver;
     private final Date sendDateTime;
@@ -19,7 +19,7 @@ public class MailMessage implements IMailMessage {
     private final String messageText;
     private final NonNullList<ItemStack> attachments;
 
-    public MailMessage(MailSystem mailSystem, GameProfile sender, GameProfile receiver, Date sendDateTime, String subject, String messageText, NonNullList<ItemStack> attachments) {
+    public MailMessage(IMailSystem mailSystem, GameProfile sender, GameProfile receiver, Date sendDateTime, String subject, String messageText, NonNullList<ItemStack> attachments) {
         this.mailSystem = mailSystem;
         this.sender = sender;
         this.receiver = receiver;

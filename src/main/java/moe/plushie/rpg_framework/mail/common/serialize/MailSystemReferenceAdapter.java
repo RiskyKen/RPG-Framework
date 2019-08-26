@@ -9,7 +9,6 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-import moe.plushie.rpg_framework.core.RpgEconomy;
 import moe.plushie.rpg_framework.mail.common.MailSystem;
 
 public class MailSystemReferenceAdapter implements JsonDeserializer<MailSystem>, JsonSerializer<MailSystem> {
@@ -17,7 +16,7 @@ public class MailSystemReferenceAdapter implements JsonDeserializer<MailSystem>,
     @Override
     public MailSystem deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         if (json.getAsJsonObject().has("identifier")) {
-            return RpgEconomy.getProxy().getMailSystemManager().getMailSystem(json.getAsJsonObject().get("identifier").getAsString());
+            //return RpgEconomy.getProxy().getMailSystemManager().getMailSystem(json.getAsJsonObject().get("identifier").getAsString());
         }
         
         //Refra
