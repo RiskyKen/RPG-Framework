@@ -10,6 +10,7 @@ import java.util.Date;
 import moe.plushie.rpg_framework.api.mail.IMailSystem;
 import moe.plushie.rpg_framework.core.RpgEconomy;
 import moe.plushie.rpg_framework.core.common.IdentifierString;
+import moe.plushie.rpg_framework.mail.common.MailListItem;
 import moe.plushie.rpg_framework.mail.common.MailMessage;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -56,23 +57,18 @@ public final class TableMail {
 
     private static final String SQL_MESSAGE_LIST_GET = "SELECT id, subject, attachments, read FROM mail WHERE mail_system=?";
 
-    public static void getMessageList(EntityPlayer player, IMailSystem mailSystem, ArrayList<Integer> ids, ArrayList<String> subjects, ArrayList<Boolean> items, ArrayList<Boolean> read) {
+    public static ArrayList<MailListItem> getMessageList(EntityPlayer player, IMailSystem mailSystem) {
+        ArrayList<MailListItem> listItems = new ArrayList<MailListItem>();
         try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_MESSAGE_LIST_GET)) {
             ps.setObject(1, mailSystem.getIdentifier().getValue());
             ResultSet resultSet = ps.executeQuery();
             while (resultSet.next()) {
-                ids.add(resultSet.getInt("id"));
-                subjects.add(resultSet.getString("subject"));
-                if (resultSet.getString("attachments").length() < 3) {
-                    items.add(false);
-                } else {
-                    items.add(true);
-                }
-                read.add(resultSet.getBoolean("read"));
+                listItems.add(new MailListItem(resultSet.getInt("id"), resultSet.getString("subject"), resultSet.getString("attachments").length() > 2, resultSet.getBoolean("read")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return listItems;
     }
 
     private static final String SQL_MESSAGE_GET = "SELECT * FROM mail WHERE id=?";

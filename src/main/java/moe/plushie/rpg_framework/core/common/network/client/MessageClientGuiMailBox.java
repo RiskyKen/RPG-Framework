@@ -6,7 +6,9 @@ import io.netty.buffer.ByteBuf;
 import moe.plushie.rpg_framework.core.RpgEconomy;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import moe.plushie.rpg_framework.mail.common.MailMessage;
+import moe.plushie.rpg_framework.mail.common.inventory.ContainerMailBox;
 import moe.plushie.rpg_framework.mail.common.serialize.MailMessageSerializer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -38,7 +40,11 @@ public class MessageClientGuiMailBox implements IMessage, IMessageHandler<Messag
 
     @Override
     public IMessage onMessage(MessageClientGuiMailBox message, MessageContext ctx) {
-        RpgEconomy.getProxy().getMailSystemManager().onClientSendMailMessage(ctx.getServerHandler().player, message.mailMessage);
+        EntityPlayerMP player = ctx.getServerHandler().player;
+        RpgEconomy.getProxy().getMailSystemManager().onClientSendMailMessage(player, message.mailMessage);
+        if (player.openContainer != null && player.openContainer instanceof ContainerMailBox) {
+            ((ContainerMailBox)player.openContainer).markDirty();
+        }
         return null;
     }
 }
