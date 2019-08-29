@@ -88,12 +88,16 @@ public class MailSystem implements IMailSystem, Comparable<IMailSystem> {
         return this;
     }
 
-    public void onClientSendMailMessage(EntityPlayerMP entityPlayer, MailMessage mailMessage) {
+    public void onClientSendMailMessage(EntityPlayerMP player, MailMessage mailMessage) {
         TableMail.addMessage(mailMessage);
         for (int i = 0; i < mailMessage.getAttachments().size(); i++) {
             ItemStack itemStack = mailMessage.getAttachments().get(i);
-            entityPlayer.entityDropItem(itemStack, entityPlayer.eyeHeight);
+            player.entityDropItem(itemStack, player.eyeHeight);
         }
         RpgEconomy.getLogger().info("got mail message from player " + mailMessage);
+    }
+    
+    public void onClientDeleteMessage(EntityPlayerMP player, int messageId) {
+        TableMail.deleteMessage(messageId);
     }
 }

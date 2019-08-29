@@ -1,10 +1,11 @@
 package moe.plushie.rpg_framework.core.database;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
+import java.sql.Timestamp;
 import java.util.UUID;
 
 import com.mojang.authlib.GameProfile;
@@ -58,8 +59,8 @@ public final class TablePlayers {
                 int id = resultSet.getInt("id");
                 UUID uuid = UUID.fromString(resultSet.getString("uuid"));
                 String username = resultSet.getString("username");
-                Date firstSeen = resultSet.getDate("first_seen");
-                Date lastLogin = resultSet.getDate("last_seen");
+                Timestamp firstSeen = resultSet.getTimestamp("first_seen");
+                Timestamp lastLogin = resultSet.getTimestamp("last_seen");
                 playerInfo = new DBPlayerInfo(id, new GameProfile(uuid, username), firstSeen, lastLogin);
             }
         } catch (SQLException e) {
@@ -67,7 +68,7 @@ public final class TablePlayers {
         }
         return playerInfo;
     }
-    
+
     public static DBPlayer getPlayer(GameProfile gameProfile) {
         DBPlayer playerInfo = DBPlayer.MISSING;
         try (Connection conn = SQLiteDriver.getConnection()) {
@@ -124,6 +125,16 @@ public final class TablePlayers {
     }
     
     private static final String SQL_GET_PLAYER_ID = "SELECT * FROM players WHERE id=?";
+    
+    public static DBPlayerInfo getPlayer(int id) {
+        DBPlayerInfo playerInfo = DBPlayerInfo.MISSING_INFO;
+        try (Connection conn = SQLiteDriver.getConnection()) {
+            return getPlayer(conn, id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return playerInfo;
+    }
     
     public static DBPlayerInfo getPlayer(Connection conn, int id) {
         DBPlayerInfo playerInfo = DBPlayerInfo.MISSING_INFO;

@@ -2,9 +2,13 @@ package moe.plushie.rpg_framework.core.common.network.server;
 
 import java.util.ArrayList;
 
+import com.google.gson.JsonElement;
+
 import io.netty.buffer.ByteBuf;
+import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import moe.plushie.rpg_framework.mail.client.gui.GuiMailBox;
-import moe.plushie.rpg_framework.mail.common.MailListItem;
+import moe.plushie.rpg_framework.mail.common.MailMessage;
+import moe.plushie.rpg_framework.mail.common.serialize.MailMessageSerializer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -16,37 +20,33 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class MessageServerMailList implements IMessage {
 
-    private ArrayList<MailListItem> listItems;
+    private ArrayList<MailMessage> mailMessages;
 
     public MessageServerMailList() {
     }
 
-    public MessageServerMailList(ArrayList<MailListItem> listItems) {
-        this.listItems = listItems;
+    public MessageServerMailList(ArrayList<MailMessage> mailMessages) {
+        this.mailMessages = mailMessages;
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(listItems.size());
-        for (int i = 0; i < listItems.size(); i++) {
-            MailListItem listItem = listItems.get(i);
-            buf.writeInt(listItem.getId());
-            ByteBufUtils.writeUTF8String(buf, listItem.getSubject());
-            buf.writeBoolean(listItem.hasItems());
-            buf.writeBoolean(listItem.isRead());
+        buf.writeInt(mailMessages.size());
+        for (int i = 0; i < mailMessages.size(); i++) {
+            MailMessage mailMessage = mailMessages.get(i);
+            JsonElement mailJson = MailMessageSerializer.serializeJson(mailMessage, true);
+            ByteBufUtils.writeUTF8String(buf, mailJson.toString());
         }
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        listItems = new ArrayList<MailListItem>();
+        mailMessages = new ArrayList<MailMessage>();
         int size = buf.readInt();
         for (int i = 0; i < size; i++) {
-            int id = buf.readInt();
-            String subject = ByteBufUtils.readUTF8String(buf);
-            boolean hasItems = buf.readBoolean();
-            boolean read = buf.readBoolean();
-            listItems.add(new MailListItem(id, subject, hasItems, read));
+            JsonElement mailJson = SerializeHelper.stringToJson(ByteBufUtils.readUTF8String(buf));
+            MailMessage mailMessage = MailMessageSerializer.deserializeJson(mailJson);
+            mailMessages.add(mailMessage);
         }
     }
 
@@ -66,7 +66,7 @@ public class MessageServerMailList implements IMessage {
                 public void run() {
                     GuiScreen guiScreen = mc.currentScreen;
                     if (guiScreen != null && guiScreen instanceof GuiMailBox) {
-                        ((GuiMailBox) guiScreen).gotListFromServer(message.listItems);
+                        ((GuiMailBox) guiScreen).gotListFromServer(message.mailMessages);
                     }
                 }
             });

@@ -8,7 +8,7 @@ import moe.plushie.rpg_framework.core.common.inventory.ModTileContainer;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerMailList;
 import moe.plushie.rpg_framework.core.database.TableMail;
-import moe.plushie.rpg_framework.mail.common.MailListItem;
+import moe.plushie.rpg_framework.mail.common.MailMessage;
 import moe.plushie.rpg_framework.mail.common.MailSystem;
 import moe.plushie.rpg_framework.mail.common.tileentities.TileEntityMailBox;
 import net.minecraft.entity.player.EntityPlayer;
@@ -41,8 +41,8 @@ public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> {
             for (IContainerListener listener : listeners) {
                 if (listener instanceof EntityPlayerMP) {
                     EntityPlayerMP player = (EntityPlayerMP) listener;
-                    ArrayList<MailListItem> listItems = TableMail.getMessageList(player, mailSystem);
-                    MessageServerMailList message = new MessageServerMailList(listItems);
+                    ArrayList<MailMessage> mailMessages = TableMail.getMessages(player, mailSystem);
+                    MessageServerMailList message = new MessageServerMailList(mailMessages);
                     PacketHandler.NETWORK_WRAPPER.sendTo(message, player);
                 }
             }

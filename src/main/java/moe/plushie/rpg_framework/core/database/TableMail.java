@@ -21,16 +21,8 @@ public final class TableMail {
     private TableMail() {
     }
 
-    private static final String SQL_CREATE_TABLE = "CREATE TABLE IF NOT EXISTS mail"
-            + "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
-            + "mail_system VARCHAR(64) NOT NULL,"
-            + "player_id_sender INTEGER NOT NULL,"
-            + "player_id_receiver INTEGER NOT NULL,"
-            + "subject VARCHAR(64) NOT NULL,"
-            + "text TEXT NOT NULL,"
-            + "attachments TEXT NOT NULL,"
-            + "sent_date DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,"
-            + "read BOOLEAN NOT NULL)";
+    private static final String SQL_CREATE_TABLE = "CREATE TABLE IF NOT EXISTS mail" + "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," + "mail_system VARCHAR(64) NOT NULL," + "player_id_sender INTEGER NOT NULL," + "player_id_receiver INTEGER NOT NULL," + "subject VARCHAR(64) NOT NULL," + "text TEXT NOT NULL," + "attachments TEXT NOT NULL,"
+            + "sent_date DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL," + "read BOOLEAN NOT NULL)";
 
     public static void create() {
         SQLiteDriver.executeUpdate(SQL_CREATE_TABLE);
@@ -71,6 +63,31 @@ public final class TableMail {
         return listItems;
     }
 
+    private static final String SQL_MESSAGES_GET = "SELECT * FROM mail WHERE mail_system=? AND player_id_receiver=?";
+
+    public static ArrayList<MailMessage> getMessages(EntityPlayer player, IMailSystem mailSystem) {
+        ArrayList<MailMessage> mailMessages = new ArrayList<MailMessage>();
+        try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_MESSAGES_GET)) {
+            DBPlayerInfo dbPlayerReceiver = TablePlayers.getPlayerInfo(player.getGameProfile());
+            ps.setObject(1, mailSystem.getIdentifier().getValue());
+            ps.setInt(2, dbPlayerReceiver.getId());
+            ResultSet resultSet = ps.executeQuery();
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                DBPlayerInfo dbPlayerSender = TablePlayers.getPlayer(resultSet.getInt("player_id_sender"));
+                Date sendDateTime = resultSet.getDate("sent_date");
+                String subject = resultSet.getString("subject");
+                String messageText = resultSet.getString("text");
+                NonNullList<ItemStack> attachments = NonNullList.<ItemStack>create();
+                boolean read = resultSet.getBoolean("read");
+                mailMessages.add(new MailMessage(id, mailSystem, dbPlayerSender.getGameProfile(), dbPlayerReceiver.getGameProfile(), sendDateTime, subject, messageText, attachments, read));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return mailMessages;
+    }
+
     private static final String SQL_MESSAGE_GET = "SELECT * FROM mail WHERE id=?";
 
     public static MailMessage getMessage(int id) {
@@ -86,12 +103,24 @@ public final class TableMail {
                 String subject = resultSet.getString("subject");
                 String messageText = resultSet.getString("text");
                 NonNullList<ItemStack> attachments = NonNullList.<ItemStack>create();
-
-                message = new MailMessage(mailSystem, dbPlayerSender.getGameProfile(), dbPlayerReceiver.getGameProfile(), sendDateTime, subject, messageText, attachments);
+                boolean read = resultSet.getBoolean("read");
+                message = new MailMessage(id, mailSystem, dbPlayerSender.getGameProfile(), dbPlayerReceiver.getGameProfile(), sendDateTime, subject, messageText, attachments, read);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return message;
+    }
+
+    private static final String SQL_DELETE_MESSAGE = "DELETE FROM mail WHERE id=?";
+
+    public static void deleteMessage(int messageId) {
+        create();
+        try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_DELETE_MESSAGE)) {
+            ps.setInt(1, messageId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

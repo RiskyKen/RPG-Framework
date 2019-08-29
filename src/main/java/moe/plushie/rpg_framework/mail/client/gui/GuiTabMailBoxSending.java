@@ -106,7 +106,7 @@ public class GuiTabMailBoxSending extends GuiTabPanel<GuiMailBox> {
                 attachments.add(mc.player.getHeldItemMainhand());
             }
             
-            MailMessage mailMessage = new MailMessage(mailSystem, sender, receiver, sendDateTime, subject, message, attachments);
+            MailMessage mailMessage = new MailMessage(-1, mailSystem, sender, receiver, sendDateTime, subject, message, attachments, false);
             
             sendMail(mailMessage);
         }

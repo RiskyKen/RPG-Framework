@@ -11,6 +11,7 @@ import net.minecraft.util.NonNullList;
 
 public class MailMessage implements IMailMessage {
 
+    private final int id;
     private final IMailSystem mailSystem;
     private final GameProfile sender;
     private final GameProfile receiver;
@@ -18,8 +19,10 @@ public class MailMessage implements IMailMessage {
     private final String subject;
     private final String messageText;
     private final NonNullList<ItemStack> attachments;
+    private boolean read;
 
-    public MailMessage(IMailSystem mailSystem, GameProfile sender, GameProfile receiver, Date sendDateTime, String subject, String messageText, NonNullList<ItemStack> attachments) {
+    public MailMessage(int id, IMailSystem mailSystem, GameProfile sender, GameProfile receiver, Date sendDateTime, String subject, String messageText, NonNullList<ItemStack> attachments, boolean read) {
+        this.id = id;
         this.mailSystem = mailSystem;
         this.sender = sender;
         this.receiver = receiver;
@@ -27,6 +30,11 @@ public class MailMessage implements IMailMessage {
         this.subject = subject;
         this.messageText = messageText;
         this.attachments = attachments;
+        this.read = read;
+    }
+
+    public int getId() {
+        return id;
     }
 
     @Override
@@ -60,9 +68,17 @@ public class MailMessage implements IMailMessage {
     public NonNullList<ItemStack> getAttachments() {
         return attachments;
     }
+    
+    public boolean isRead() {
+        return read;
+    }
+    
+    public void setRead(boolean read) {
+        this.read = read;
+    }
 
     @Override
     public String toString() {
-        return "MailMessage [sender=" + sender + ", receiver=" + receiver + ", sendDateTime=" + sendDateTime + ", subject=" + subject + ", messageText=" + messageText + ", attachments=" + attachments + "]";
+        return "MailMessage [id=" + id + ", mailSystem=" + mailSystem + ", sender=" + sender + ", receiver=" + receiver + ", sendDateTime=" + sendDateTime + ", subject=" + subject + ", messageText=" + messageText + ", attachments=" + attachments + "]";
     }
 }

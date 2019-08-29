@@ -22,6 +22,7 @@ import net.minecraft.util.NonNullList;
 
 public final class MailMessageSerializer {
 
+    private static final String PROP_ID = "id";
     private static final String PROP_MAIL_SYSTEM = "mailSystem";
     private static final String PROP_SENDER = "sender";
     private static final String PROP_RECEIVER = "receiver";
@@ -29,6 +30,7 @@ public final class MailMessageSerializer {
     private static final String PROP_SUBJECT = "subject";
     private static final String PROP_MESSAGE_TEXT = "messageText";
     private static final String PROP_ATTACHMENTS = "attachments";
+    private static final String PROP_READ = "read";
 
     private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 
@@ -41,6 +43,7 @@ public final class MailMessageSerializer {
         }
         JsonObject jsonObject = new JsonObject();
 
+        jsonObject.addProperty(PROP_ID, mailMessage.getId());
         jsonObject.add(PROP_MAIL_SYSTEM, IdentifierSerialize.serializeJson(mailMessage.getMailSystem().getIdentifier()));
         jsonObject.addProperty(PROP_SENDER, NBTUtil.writeGameProfile(new NBTTagCompound(), mailMessage.getSender()).toString());
         jsonObject.addProperty(PROP_RECEIVER, NBTUtil.writeGameProfile(new NBTTagCompound(), mailMessage.getReceiver()).toString());
@@ -54,7 +57,7 @@ public final class MailMessageSerializer {
             jsonArray.add(SerializeHelper.writeItemToJson(itemStack, compact));
         }
         jsonObject.add(PROP_ATTACHMENTS, jsonArray);
-
+        jsonObject.addProperty(PROP_READ, mailMessage.isRead());
         return jsonObject;
     }
 
@@ -62,6 +65,7 @@ public final class MailMessageSerializer {
         try {
             JsonObject jsonObject = json.getAsJsonObject();
 
+            JsonElement elementId = jsonObject.get(PROP_ID);
             JsonElement elementMailSystem = jsonObject.get(PROP_MAIL_SYSTEM);
             JsonElement elementSender = jsonObject.get(PROP_SENDER);
             JsonElement elementReceiver = jsonObject.get(PROP_RECEIVER);
@@ -69,7 +73,9 @@ public final class MailMessageSerializer {
             JsonElement elementSubject = jsonObject.get(PROP_SUBJECT);
             JsonElement elementMessageText = jsonObject.get(PROP_MESSAGE_TEXT);
             JsonElement elementAttachments = jsonObject.get(PROP_ATTACHMENTS);
+            JsonElement elementRead = jsonObject.get(PROP_READ);
 
+            int id = elementId.getAsInt();
             MailSystem mailSystem = RpgEconomy.getProxy().getMailSystemManager().getMailSystem(IdentifierSerialize.deserializeJson(elementMailSystem));
             GameProfile sender = NBTUtil.readGameProfileFromNBT(JsonToNBT.getTagFromJson(elementSender.getAsString()));
             GameProfile receiver = NBTUtil.readGameProfileFromNBT(JsonToNBT.getTagFromJson(elementReceiver.getAsString()));
@@ -83,19 +89,12 @@ public final class MailMessageSerializer {
                 JsonObject jsonAttachment = jsonArray.get(i).getAsJsonObject();
                 attachments.add(SerializeHelper.readItemFromJson(jsonAttachment));
             }
+            boolean read = elementRead.getAsBoolean();
 
-            return new MailMessage(mailSystem, sender, receiver, sendDateTime, subject, messageText, attachments);
+            return new MailMessage(id, mailSystem, sender, receiver, sendDateTime, subject, messageText, attachments, read);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
-    }
-
-    public static void serializeDatabase(MailMessage mailMessage) {
-
-    }
-
-    public static MailMessage deserializeDatabase(int messageId) {
         return null;
     }
 }
