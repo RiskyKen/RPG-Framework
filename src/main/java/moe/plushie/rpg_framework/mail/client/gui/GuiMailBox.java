@@ -2,15 +2,13 @@ package moe.plushie.rpg_framework.mail.client.gui;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 
 import org.lwjgl.opengl.GL11;
 
-import com.mojang.authlib.GameProfile;
-
 import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpg_framework.core.client.gui.GuiHelper;
+import moe.plushie.rpg_framework.core.client.gui.IDialogCallback;
 import moe.plushie.rpg_framework.core.client.gui.ModGuiContainer;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiIconButton;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiList;
@@ -29,34 +27,39 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class GuiMailBox extends ModGuiContainer<ContainerMailBox> {
+public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDialogCallback {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation(LibGuiResources.MAIL_BOX);
 
     private final TileEntityMailBox tileEntity;
+    private final EntityPlayer player;
+    private final MailSystem mailSystem;
 
     private ArrayList<MailMessage> mailMessages;
     private int mailPage = 0;
-    
+
     private GuiList listMail;
     private GuiIconButton buttonListPre;
     private GuiIconButton buttonListNext;
     private GuiIconButton buttonNewMessage;
     private GuiIconButton buttonMessageReply;
     private GuiIconButton buttonMessageDelete;
+    private GuiIconButton buttonMessageWithdrawItems;
 
     public GuiMailBox(TileEntityMailBox tileEntity, EntityPlayer entityPlayer) {
         super(new ContainerMailBox(tileEntity, entityPlayer));
         this.tileEntity = tileEntity;
+        this.player = entityPlayer;
+        this.mailSystem = RpgEconomy.getProxy().getMailSystemManager().getMailSystem(new IdentifierString("main.json"));
         this.mailMessages = new ArrayList<MailMessage>();
     }
 
@@ -74,98 +77,112 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> {
 
         buttonListPre = addButton(new GuiIconButton(this, 0, guiLeft + 5, guiTop + 130, 16, 16, TEXTURE_BUTTONS));
         buttonListNext = addButton(new GuiIconButton(this, 0, guiLeft + 23, guiTop + 130, 16, 16, TEXTURE_BUTTONS));
-
         buttonNewMessage = addButton(new GuiIconButton(this, 0, guiLeft + 88, guiTop + 130, 16, 16, TEXTURE_BUTTONS));
-
         buttonMessageReply = addButton(new GuiIconButton(this, 0, guiLeft + 276, guiTop + 22, 16, 16, TEXTURE_BUTTONS));
         buttonMessageDelete = addButton(new GuiIconButton(this, 0, guiLeft + 294, guiTop + 22, 16, 16, TEXTURE_BUTTONS));
+        buttonMessageWithdrawItems = addButton(new GuiIconButton(this, 0, guiLeft + 295, guiTop + 125, 16, 16, TEXTURE_BUTTONS));
 
         buttonListPre.setDrawButtonBackground(false).setIconLocation(208, 128, 16, 16);
         buttonListNext.setDrawButtonBackground(false).setIconLocation(208, 112, 16, 16);
-
         buttonNewMessage.setDrawButtonBackground(false).setIconLocation(160, 224, 16, 16);
-
         buttonMessageReply.setDrawButtonBackground(false).setIconLocation(160, 240, 16, 16);
         buttonMessageDelete.setDrawButtonBackground(false).setIconLocation(208, 160, 16, 16);
+        buttonMessageWithdrawItems.setDrawButtonBackground(false).setIconLocation(208, 128, 16, 16);
 
         buttonListPre.setHoverText("Previous Page");
         buttonListNext.setHoverText("Next Page");
-
         buttonNewMessage.setHoverText("New Message");
-
         buttonMessageReply.setHoverText("Reply");
         buttonMessageDelete.setHoverText("Delete");
+        buttonMessageWithdrawItems.setHoverText("Withdraw Items");
 
-        // Test data
-        // listMail.addListItem(new GuiMailListItem("Test Message A"));
-        // listMail.addListItem(new GuiMailListItem("Test Item A"));
-        // listMail.addListItem(new GuiMailListItem("Test Message B"));
-        // listMail.addListItem(new GuiMailListItem("Test Item B"));
+        buttonMessageWithdrawItems.enabled = false;
+        
+        buttonListPre.enabled = false;
+        buttonListNext.enabled = false;
+        
+        if (!player.capabilities.isCreativeMode) {
+            buttonNewMessage.enabled = false;
+            buttonNewMessage.setDisableText("This feature is not available yet.");
+        }
     }
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int button) throws IOException {
         super.mouseClicked(mouseX, mouseY, button);
-        if (listMail.mouseClicked(mouseX, mouseY, button)) {
-            
+        if (!isDialogOpen()) {
+            if (listMail.mouseClicked(mouseX, mouseY, button)) {
+                if (listMail.getSelectedListEntry() != null && listMail.getSelectedListEntry() instanceof GuiMailListItem) {
+                    GuiMailListItem mailListItem = (GuiMailListItem) listMail.getSelectedListEntry();
+                    mailListItem.getMailMessage().setRead(true);
+                    MessageClientGuiMailBox message = new MessageClientGuiMailBox(MailMessageType.MAIL_MESSAGE_SELECT);
+                    message.setMessageId(mailListItem.getMailMessage().getId());
+                    message.setMailSystem(mailSystem);
+                    PacketHandler.NETWORK_WRAPPER.sendToServer(message);
+                }
+            }
         }
     }
 
     @Override
     protected void mouseClickMove(int mouseX, int mouseY, int lastButtonClicked, long timeSinceMouseClick) {
         super.mouseClickMove(mouseX, mouseY, lastButtonClicked, timeSinceMouseClick);
-        listMail.mouseMovedOrUp(mouseX, mouseY, lastButtonClicked);
+        if (!isDialogOpen()) {
+            listMail.mouseMovedOrUp(mouseX, mouseY, lastButtonClicked);
+        }
     }
 
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         if (button == buttonListPre) {
-            
+
         }
         if (button == buttonListNext) {
-            
+
         }
         if (button == buttonNewMessage) {
-            sendMail();
+            openDialog(new GuiMailBoxDialogSend(this, this, mailSystem));
         }
         if (button == buttonMessageReply) {
-            
+
         }
         if (button == buttonMessageDelete) {
             if (listMail.getSelectedListEntry() != null && listMail.getSelectedListEntry() instanceof GuiMailListItem) {
-                MailSystem mailSystem = RpgEconomy.getProxy().getMailSystemManager().getMailSystem(new IdentifierString("main.json"));
                 GuiMailListItem mailListItem = (GuiMailListItem) listMail.getSelectedListEntry();
                 MessageClientGuiMailBox message = new MessageClientGuiMailBox(MailMessageType.MAIL_MESSAGE_DELETE);
                 message.setMessageId(mailListItem.getMailMessage().getId()).setMailSystem(mailSystem);
                 PacketHandler.NETWORK_WRAPPER.sendToServer(message);
             }
         }
-    }
-
-    private void sendMail() {
-        MailSystem mailSystem = RpgEconomy.getProxy().getMailSystemManager().getMailSystem(new IdentifierString("main.json"));
-        GameProfile sender = mc.player.getGameProfile();
-        GameProfile receiver = mc.player.getGameProfile();
-        Date sendDateTime = Calendar.getInstance().getTime();
-        String subject = "Test Message";
-        String message = "This message is a test. Have a nice day.";
-
-        NonNullList<ItemStack> attachments = NonNullList.<ItemStack>create();
-        if (!mc.player.getHeldItemMainhand().isEmpty()) {
-            attachments.add(mc.player.getHeldItemMainhand());
+        if (button == buttonMessageWithdrawItems) {
+            if (listMail.getSelectedListEntry() != null && listMail.getSelectedListEntry() instanceof GuiMailListItem) {
+                GuiMailListItem mailListItem = (GuiMailListItem) listMail.getSelectedListEntry();
+                MessageClientGuiMailBox message = new MessageClientGuiMailBox(MailMessageType.MAIL_MESSAGE_WITHDRAW_ITEMS);
+                message.setMessageId(mailListItem.getMailMessage().getId()).setMailSystem(mailSystem);
+                PacketHandler.NETWORK_WRAPPER.sendToServer(message);
+            }
         }
-        MailMessage mailMessage = new MailMessage(-1, mailSystem, sender, receiver, sendDateTime, subject, message, attachments, false);
-        PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiMailBox(MailMessageType.MAIL_MESSAGE_SEND).setMailMessage(mailMessage));
     }
 
     public TileEntityMailBox getTileEntity() {
         return tileEntity;
     }
-    
+
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        buttonMessageWithdrawItems.enabled = false;
+        if (listMail.getSelectedListEntry() != null && listMail.getSelectedListEntry() instanceof GuiMailListItem) {
+            GuiMailListItem mailListItem = (GuiMailListItem) listMail.getSelectedListEntry();
+            if (!mailListItem.getMailMessage().getAttachments().isEmpty()) {
+                buttonMessageWithdrawItems.enabled = true;
+            }
+        }
         buttonMessageReply.enabled = listMail.getSelectedIndex() != -1;
         buttonMessageDelete.enabled = listMail.getSelectedIndex() != -1;
+        
+        // TEMP
+        buttonMessageReply.enabled = false;
+        
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
@@ -209,6 +226,26 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> {
         } else {
             message += "Select a mail message.";
         }
+        
+        if (listMail.getSelectedListEntry() != null && listMail.getSelectedListEntry() instanceof GuiMailListItem) {
+            GlStateManager.pushMatrix();
+            GlStateManager.pushAttrib();
+            RenderHelper.enableGUIStandardItemLighting();
+            GuiMailListItem mailListItem = (GuiMailListItem) listMail.getSelectedListEntry();
+            if (!mailListItem.getMailMessage().getAttachments().isEmpty()) {
+                int itemCount = 0;
+                for (ItemStack stack : mailListItem.getMailMessage().getAttachments()) {
+                    if (!stack.isEmpty()) {
+                        itemRender.renderItemAndEffectIntoGUI(stack, 277 - itemCount * 17, 125);
+                        itemRender.renderItemOverlays(fontRenderer, stack, 277 - itemCount * 17, 125);
+                        itemCount++;
+                    }
+                }
+            }
+            RenderHelper.disableStandardItemLighting();
+            GlStateManager.popAttrib();
+            GlStateManager.popMatrix();
+        }
 
         fontRenderer.drawSplitString(message, 112, 24, 200, 0x444444);
 
@@ -228,7 +265,7 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> {
         this.mailMessages = mailMessages;
         updateMailList(mailPage);
     }
-    
+
     public void updateMailList(int page) {
         listMail.clearList();
         for (MailMessage mailMessage : mailMessages) {
@@ -252,7 +289,7 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> {
         @Override
         public void drawListItem(FontRenderer fontRenderer, int x, int y, int mouseX, int mouseY, boolean selected, int width) {
             Minecraft mc = Minecraft.getMinecraft();
-            
+
             int yoffset = 0;
             if (!mailMessage.getAttachments().isEmpty()) {
                 yoffset -= 16;
@@ -260,7 +297,7 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> {
             if (!mailMessage.isRead()) {
                 yoffset -= 32;
             }
-            //drawRect(x, y, x + width, y + 18, 0xCCFFFFFF);
+            // drawRect(x, y, x + width, y + 18, 0xCCFFFFFF);
             mc.renderEngine.bindTexture(TEXTURE);
             drawModalRectWithCustomSizedTexture(x, y, 0, 240 + yoffset, 16, 16, 256, 256);
             int colour = 0xCCCCCC;
@@ -276,6 +313,16 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> {
             }
             fontRenderer.drawString(getDisplayName(), x + 17, y, colour);
             GlStateManager.color(1F, 1F, 1F, 1F);
+        }
+    }
+
+    @Override
+    public void dialogResult(AbstractGuiDialog dialog, DialogResult result) {
+        if (result == DialogResult.CANCEL) {
+            closeDialog();
+        }
+        if (dialog.getClass() == GuiMailBoxDialogSend.class & result == DialogResult.OK) {
+            closeDialog();
         }
     }
 }

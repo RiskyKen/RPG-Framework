@@ -9,7 +9,6 @@ import moe.plushie.rpg_framework.core.RpgEconomy;
 import moe.plushie.rpg_framework.core.common.serialize.IdentifierSerialize;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import moe.plushie.rpg_framework.mail.common.MailMessage;
-import moe.plushie.rpg_framework.mail.common.MailSystem;
 import moe.plushie.rpg_framework.mail.common.inventory.ContainerMailBox;
 import moe.plushie.rpg_framework.mail.common.serialize.MailMessageSerializer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -60,10 +59,15 @@ public class MessageClientGuiMailBox implements IMessage, IMessageHandler<Messag
         case MAIL_MESSAGE_REQUEST:
             break;
         case MAIL_MESSAGE_SELECT:
+            writeMailSystem(buf, mailSystem);
+            buf.writeInt(messageId);
             break;
         case MAIL_MESSAGE_DELETE:
-            JsonElement json = IdentifierSerialize.serializeJson(mailSystem.getIdentifier());
-            ByteBufUtils.writeUTF8String(buf, json.toString());
+            writeMailSystem(buf, mailSystem);
+            buf.writeInt(messageId);
+            break;
+        case MAIL_MESSAGE_WITHDRAW_ITEMS:
+            writeMailSystem(buf, mailSystem);
             buf.writeInt(messageId);
             break;
         }
@@ -82,14 +86,29 @@ public class MessageClientGuiMailBox implements IMessage, IMessageHandler<Messag
         case MAIL_MESSAGE_REQUEST:
             break;
         case MAIL_MESSAGE_SELECT:
+            mailSystem = readMailSystem(buf);
+            messageId = buf.readInt();
             break;
         case MAIL_MESSAGE_DELETE:
-            JsonElement json = SerializeHelper.stringToJson(ByteBufUtils.readUTF8String(buf));
-            IIdentifier identifier = IdentifierSerialize.deserializeJson(json);
-            mailSystem = RpgEconomy.getProxy().getMailSystemManager().getMailSystem(identifier);
+            mailSystem = readMailSystem(buf);
+            messageId = buf.readInt();
+            break;
+        case MAIL_MESSAGE_WITHDRAW_ITEMS:
+            mailSystem = readMailSystem(buf);
             messageId = buf.readInt();
             break;
         }
+    }
+    
+    private void writeMailSystem(ByteBuf buf, IMailSystem mailSystem) {
+        JsonElement json = IdentifierSerialize.serializeJson(mailSystem.getIdentifier());
+        ByteBufUtils.writeUTF8String(buf, json.toString());
+    }
+    
+    private IMailSystem readMailSystem(ByteBuf buf) {
+        JsonElement json = SerializeHelper.stringToJson(ByteBufUtils.readUTF8String(buf));
+        IIdentifier identifier = IdentifierSerialize.deserializeJson(json);
+        return RpgEconomy.getProxy().getMailSystemManager().getMailSystem(identifier);
     }
 
     @Override
@@ -101,27 +120,37 @@ public class MessageClientGuiMailBox implements IMessage, IMessageHandler<Messag
                 return null;
             }
         }
+        
+        if (!(player.openContainer != null && player.openContainer instanceof ContainerMailBox)) {
+            return null;
+        }
+        
+        ContainerMailBox containerMailBox = (ContainerMailBox) player.openContainer;
 
         switch (message.messageType) {
         case MAIL_CHANGE:
 
             break;
         case MAIL_MESSAGE_SEND:
-            RpgEconomy.getProxy().getMailSystemManager().onClientSendMailMessage(player, message.mailMessage);
+            containerMailBox.onClientSendMailMessage(player, message.mailMessage);
+            containerMailBox.markDirty();
             break;
         case MAIL_MESSAGE_REQUEST:
 
             break;
         case MAIL_MESSAGE_SELECT:
-
+            containerMailBox.onClientSelectMessage(player, message.messageId);
             break;
         case MAIL_MESSAGE_DELETE:
-            ((MailSystem) message.mailSystem).onClientDeleteMessage(player, message.messageId);
+            containerMailBox.onClientDeleteMessage(player, message.messageId);
+            containerMailBox.markDirty();
+            break;
+        case MAIL_MESSAGE_WITHDRAW_ITEMS:
+            containerMailBox.onClientWithdrawItems(player, message.messageId);
+            containerMailBox.markDirty();
             break;
         }
-        if (player.openContainer != null && player.openContainer instanceof ContainerMailBox) {
-            ((ContainerMailBox) player.openContainer).markDirty();
-        }
+        
         return null;
     }
 
@@ -138,8 +167,10 @@ public class MessageClientGuiMailBox implements IMessage, IMessageHandler<Messag
         /** Set the active message. */
         MAIL_MESSAGE_SELECT(false),
 
-        /**  */
-        MAIL_MESSAGE_DELETE(false);
+        /** Delete a mail message. */
+        MAIL_MESSAGE_DELETE(false),
+        
+        MAIL_MESSAGE_WITHDRAW_ITEMS(false);
 
         private final boolean needsCreative;
 

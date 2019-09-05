@@ -29,6 +29,9 @@ public abstract class ModGuiContainer<CONTAINER_TYPE extends ModContainer> exten
         //this.xSize = 320;
         //this.ySize = 240;
         super.initGui();
+        if (isDialogOpen()) {
+            dialog.initGui();
+        }
     }
 
     @Override

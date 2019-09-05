@@ -156,9 +156,10 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
         drawItems(mouseX, mouseY, partialTickTime);
         RenderHelper.disableStandardItemLighting();
 
-        drawForeground(mouseX, mouseY, partialTickTime);
+        
 
         GlStateManager.popMatrix();
+        drawForeground(mouseX, mouseY, partialTickTime);
         GlStateManager.enableLighting();
         GlStateManager.enableDepth();
         RenderHelper.enableStandardItemLighting();
@@ -211,7 +212,6 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
         oldMouseY = mouseY;
         if (isDialogOpen()) {
             mouseX = mouseY = 0;
-
         }
 
         drawBackground(mouseX, mouseY, partialTickTime);

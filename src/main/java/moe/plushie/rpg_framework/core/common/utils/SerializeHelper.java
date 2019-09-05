@@ -10,6 +10,7 @@ import java.nio.charset.Charset;
 import org.apache.commons.io.IOUtils;
 
 import com.google.common.base.Charsets;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -21,10 +22,12 @@ import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.NonNullList;
 
 public final class SerializeHelper {
 
     private static final String TAG_COMPOUND = "compound";
+    private static final String TAG_SLOT = "slot";
     
     private SerializeHelper() {
     }
@@ -83,6 +86,31 @@ public final class SerializeHelper {
             RpgEconomy.getLogger().error(e.getLocalizedMessage());
             return null;
         }
+    }
+
+    public static JsonArray writeItemsToJson(NonNullList<ItemStack> items, boolean compact) {
+        JsonArray jsonArray = new JsonArray();
+        for (int i = 0; i < items.size(); i++) {
+            JsonObject jsonObject = writeItemToJson(items.get(i), compact);
+            jsonObject.addProperty(TAG_SLOT, i);
+            jsonArray.add(jsonObject);
+        }
+        return jsonArray;
+    }
+
+    public static NonNullList<ItemStack> readItemsFromJson(JsonArray jsonArray) {
+        NonNullList<ItemStack> items = NonNullList.<ItemStack>withSize(jsonArray.size(), ItemStack.EMPTY);
+        for (int i = 0; i < jsonArray.size(); i++) {
+            JsonObject jsonObject = jsonArray.get(i).getAsJsonObject();
+            try {
+                ItemStack itemStack = readItemFromJson(jsonObject);
+                int slot = jsonObject.get(TAG_SLOT).getAsInt();
+                items.set(slot, itemStack);
+            } catch (NBTException e) {
+                e.printStackTrace();
+            }
+        }
+        return items;
     }
 
     public static JsonObject writeItemToJson(ItemStack itemStack, boolean compact) {
