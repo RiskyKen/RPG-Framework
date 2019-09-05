@@ -2,6 +2,7 @@ package moe.plushie.rpg_framework.mail;
 
 import moe.plushie.rpg_framework.core.RpgEconomy;
 import moe.plushie.rpg_framework.core.common.module.ModModule;
+import moe.plushie.rpg_framework.core.database.TableMail;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -41,6 +42,7 @@ public class ModuleMail extends ModModule {
 
     @Override
     public void serverStarting(FMLServerStartingEvent event) {
+        TableMail.create();
     }
 
     @Override

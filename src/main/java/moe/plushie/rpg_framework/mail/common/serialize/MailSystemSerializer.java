@@ -3,6 +3,7 @@ package moe.plushie.rpg_framework.mail.common.serialize;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.currency.ICost;
 import moe.plushie.rpg_framework.currency.common.serialize.CostSerializer;
 import moe.plushie.rpg_framework.mail.common.MailSystem;
@@ -35,7 +36,7 @@ public class MailSystemSerializer {
         return jsonObject;
     }
 
-    public static MailSystem deserializeJson(JsonElement json, String identifier) {
+    public static MailSystem deserializeJson(JsonElement json, IIdentifier identifier) {
         try {
             JsonObject jsonObject = json.getAsJsonObject();
 

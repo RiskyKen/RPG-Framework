@@ -54,6 +54,7 @@ inventory.rpg_economy:mailbox.tab.reading.name=Reading
 inventory.rpg_economy:mailbox.tab.sending.name=Sending
 inventory.rpg_economy:wallet.name=Wallet
 inventory.rpg_economy:bank.invalidBank=§4Invalid Bank
+inventory.rpg_economy:mailbox.name=Mail Box
 
 # Commands
 commands.rpg_economy:rpg_economy.usage=<currency | mail>

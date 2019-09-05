@@ -91,6 +91,7 @@ public class GuiList extends Gui {
             }
         }
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
     }
     
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
@@ -217,7 +218,7 @@ public class GuiList extends Gui {
         public void mouseReleased(FontRenderer fontRenderer, int x, int y, int mouseX, int mouseY, int button, int width) {
         }
 
-        private boolean isHovering(FontRenderer fontRenderer, int x, int y, int mouseX, int mouseY, int width) {
+        protected boolean isHovering(FontRenderer fontRenderer, int x, int y, int mouseX, int mouseY, int width) {
             return mouseX >= x & mouseY >= y & mouseX <= x + width - 3 & mouseY <= y + 11;
         }
 

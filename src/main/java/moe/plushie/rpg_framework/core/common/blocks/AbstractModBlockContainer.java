@@ -25,9 +25,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
 
 public abstract class AbstractModBlockContainer extends BlockContainer implements ICustomItemBlock, ICustomModel {
-    
+
     private int sortPriority = 100;
-    
+
     public AbstractModBlockContainer(String name) {
         super(Material.IRON);
         setCreativeTab(RpgEconomy.getCreativeTabRPGEconomy());
@@ -36,7 +36,7 @@ public abstract class AbstractModBlockContainer extends BlockContainer implement
         setTranslationKey(name);
         ModBlocks.BLOCK_LIST.add(this);
     }
-    
+
     public AbstractModBlockContainer(String name, Material material, SoundType soundType, boolean addCreativeTab) {
         super(material);
         if (addCreativeTab) {
@@ -47,26 +47,26 @@ public abstract class AbstractModBlockContainer extends BlockContainer implement
         setTranslationKey(name);
         ModBlocks.BLOCK_LIST.add(this);
     }
-    
+
     @Override
     public boolean isOpaqueCube(IBlockState state) {
         return false;
     }
-    
+
     @Override
     public boolean isBlockNormalCube(IBlockState state) {
         return false;
     }
-    
+
     @Override
     public EnumBlockRenderType getRenderType(IBlockState state) {
         return EnumBlockRenderType.MODEL;
     }
-    
+
     protected static boolean getBitBool(int value, int index) {
         return getBit(value, index) == 1;
     }
-    
+
     protected static int getBit(int value, int index) {
         return (value >> index) & 1;
     }
@@ -78,7 +78,7 @@ public abstract class AbstractModBlockContainer extends BlockContainer implement
             return value & ~(1 << index);
         }
     }
-    
+
     @Override
     public Block setTranslationKey(String name) {
         super.setTranslationKey(name);
@@ -86,22 +86,28 @@ public abstract class AbstractModBlockContainer extends BlockContainer implement
         return this;
     }
 
+//    @Override
+//    public String getTranslationKey() {
+//        String name = super.getTranslationKey().substring(super.getTranslationKey().indexOf(".") + 1);
+//        return "tile." + LibModInfo.ID + ":" + name;
+//    }
+
     public AbstractModBlockContainer setSortPriority(int sortPriority) {
         this.sortPriority = sortPriority;
         return this;
     }
-    
+
     @Override
     public void registerItemBlock(IForgeRegistry<Item> registry) {
         registry.register(new ModItemBlock(this).setRegistryName(getRegistryName()));
     }
-    
+
     @SideOnly(Side.CLIENT)
     @Override
     public void registerModels() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(new ResourceLocation(LibModInfo.ID, getTranslationKey()), "normal"));
     }
-    
+
     protected void openGui(EntityPlayer playerIn, int guiId, World worldIn, BlockPos pos, IBlockState state, EnumFacing facing) {
         if (!worldIn.isRemote) {
             FMLNetworkHandler.openGui(playerIn, RpgEconomy.getInstance(), guiId, worldIn, pos.getX(), pos.getY(), pos.getZ());

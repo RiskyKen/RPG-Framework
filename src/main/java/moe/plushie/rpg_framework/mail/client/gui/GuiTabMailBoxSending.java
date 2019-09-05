@@ -11,21 +11,21 @@ import moe.plushie.rpg_framework.core.RpgEconomy;
 import moe.plushie.rpg_framework.core.client.gui.GuiHelper;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiLabeledTextField;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiTabPanel;
-import moe.plushie.rpg_framework.core.client.lib.LibGuiResources;
+import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.mail.common.MailMessage;
 import moe.plushie.rpg_framework.mail.common.MailSystem;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
+import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiTabMailBoxSending extends GuiTabPanel<GuiMailBox> {
     
-    private static final ResourceLocation TEXTURE_SENDING = new ResourceLocation(LibGuiResources.MAIL_BOX_SENDING);
+    //private static final ResourceLocation TEXTURE_SENDING = new ResourceLocation(LibGuiResources.MAIL_BOX_SENDING);
     
     private GuiButtonExt buttonSend;
     private GuiLabeledTextField textFieldTo;
@@ -94,7 +94,7 @@ public class GuiTabMailBoxSending extends GuiTabPanel<GuiMailBox> {
             if (textFieldMessage.getText().trim().isEmpty()) {
                 return;
             }
-            MailSystem mailSystem = RpgEconomy.getProxy().getMailSystemManager().getMailSystem("main");
+            MailSystem mailSystem = RpgEconomy.getProxy().getMailSystemManager().getMailSystem(new IdentifierString("main.json"));
             GameProfile sender = mc.player.getGameProfile();
             GameProfile receiver = new GameProfile(null, textFieldTo.getText());
             Date sendDateTime = Calendar.getInstance().getTime();
@@ -106,7 +106,7 @@ public class GuiTabMailBoxSending extends GuiTabPanel<GuiMailBox> {
                 attachments.add(mc.player.getHeldItemMainhand());
             }
             
-            MailMessage mailMessage = new MailMessage(mailSystem, sender, receiver, sendDateTime, subject, message, attachments);
+            MailMessage mailMessage = new MailMessage(-1, mailSystem, sender, receiver, sendDateTime, subject, message, attachments, false);
             
             sendMail(mailMessage);
         }
@@ -119,16 +119,21 @@ public class GuiTabMailBoxSending extends GuiTabPanel<GuiMailBox> {
     @Override
     public void drawBackgroundLayer(float partialTickTime, int mouseX, int mouseY) {
         GL11.glColor4f(1, 1, 1, 1);
-        mc.renderEngine.bindTexture(TEXTURE_SENDING);
-        drawTexturedModalRect(x, y, 0, 0, width, height);
+        mc.renderEngine.bindTexture(TEXTURE_BACKGROUND);
+        GuiUtils.drawContinuousTexturedBox(x, y, 0, 0, width, height, 64, 64, 5, zLevel);
+        
+        //mc.renderEngine.bindTexture(TEXTURE_SENDING);
+        //drawTexturedModalRect(x, y, 0, 0, width, height);
         textFieldTo.drawTextBox();
         textFieldSubject.drawTextBox();
         textFieldMessage.drawTextBox();
+        
+
     }
     
     @Override
     public void drawForegroundLayer(int mouseX, int mouseY, float partialTickTime) {
-        GuiHelper.renderLocalizedGuiName(fontRenderer, width, parent.getName() + ".tab.sending");
+        GuiHelper.renderLocalizedGuiName(fontRenderer, parent.getXSize(), parent.getName() + ".tab.sending");
         super.drawForegroundLayer(mouseX, mouseY, 0);
     }
 } 

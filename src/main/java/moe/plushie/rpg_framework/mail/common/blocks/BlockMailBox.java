@@ -1,6 +1,7 @@
 package moe.plushie.rpg_framework.mail.common.blocks;
 
 import moe.plushie.rpg_framework.core.common.blocks.AbstractModBlockContainer;
+import moe.plushie.rpg_framework.core.common.items.block.ModItemBlock;
 import moe.plushie.rpg_framework.core.common.lib.EnumGuiId;
 import moe.plushie.rpg_framework.core.common.lib.LibBlockNames;
 import moe.plushie.rpg_framework.mail.common.MailSystem;
@@ -90,7 +91,7 @@ public class BlockMailBox extends AbstractModBlockContainer {
 
     @Override
     public void registerItemBlock(IForgeRegistry<Item> registry) {
-        registry.register(new ItemBlockMailBox(this).setRegistryName(getRegistryName()));
+        registry.register(new ModItemBlock(this).setRegistryName(getRegistryName()));
     }
 
     @Override

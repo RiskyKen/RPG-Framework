@@ -7,8 +7,10 @@ import java.util.HashMap;
 
 import com.google.gson.JsonElement;
 
+import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.mail.IMailSystemManager;
 import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerSyncMailSystems;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
@@ -24,14 +26,14 @@ public class MailSystemManager implements IMailSystemManager {
     private static final String DIRECTORY_NAME = "mail";
 
     private final File currencyDirectory;
-    private final HashMap<String, MailSystem> mailSystemMap;
+    private final HashMap<IIdentifier, MailSystem> mailSystemMap;
 
     public MailSystemManager(File modDirectory) {
         currencyDirectory = new File(modDirectory, DIRECTORY_NAME);
         if (!currencyDirectory.exists()) {
             currencyDirectory.mkdir();
         }
-        mailSystemMap = new HashMap<String, MailSystem>();
+        mailSystemMap = new HashMap<IIdentifier, MailSystem>();
         MinecraftForge.EVENT_BUS.register(this);
     }
 
@@ -85,7 +87,7 @@ public class MailSystemManager implements IMailSystemManager {
         RpgEconomy.getLogger().info("Loading mail system: " + mailSystemFile.getName());
         JsonElement jsonElement = SerializeHelper.readJsonFile(mailSystemFile);
         if (jsonElement != null) {
-            MailSystem mailSystem = MailSystemSerializer.deserializeJson(jsonElement, mailSystemFile.getName());
+            MailSystem mailSystem = MailSystemSerializer.deserializeJson(jsonElement, new IdentifierString(mailSystemFile.getName()));
             if (mailSystem != null) {
                 mailSystemMap.put(mailSystem.getIdentifier(), mailSystem);
             }
@@ -93,7 +95,7 @@ public class MailSystemManager implements IMailSystemManager {
     }
 
     @Override
-    public MailSystem getMailSystem(String identifier) {
+    public MailSystem getMailSystem(IIdentifier identifier) {
         return mailSystemMap.get(identifier);
     }
 
@@ -103,7 +105,7 @@ public class MailSystemManager implements IMailSystemManager {
         Arrays.sort(mailSystems);
         return mailSystems;
     }
-    
+
     @Override
     public String[] getMailSystemNames() {
         return mailSystemMap.keySet().toArray(new String[mailSystemMap.size()]);

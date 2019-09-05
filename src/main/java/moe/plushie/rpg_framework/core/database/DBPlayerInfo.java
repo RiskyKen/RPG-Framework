@@ -6,6 +6,8 @@ import com.mojang.authlib.GameProfile;
 
 public class DBPlayerInfo extends DBPlayer {
 
+    public static final DBPlayerInfo MISSING_INFO = new DBPlayerInfo(-1, null, null, null);
+    
 	private final GameProfile gameProfile;
 	private final Date firstSeen;
 	private final Date lastLogin;

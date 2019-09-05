@@ -1,18 +1,10 @@
 {
-    "forge_marker": 1,
-	"defaults": {
-	    "textures": {
-			"top": "rpg_economy:blocks/mail_box/mail_box_top_bot",
-			"side": "rpg_economy:blocks/mail_box/mail_box_side",
-			"front": "rpg_economy:blocks/mail_box/mail_box_front"
-		},
-		"model": "orientable"
-	},
-	"variants": {
-		"normal": [{"model": "orientable"}],
-		"facing=north": {"model": "orientable"},
-		"facing=east": {"model": "orientable", "y": 90},
-		"facing=south": {"model": "orientable", "y": 180},
-		"facing=west": {"model": "orientable", "y": 270}
-	}
+  "forge_marker": 1,
+  "variants": {
+    "normal": [{"model": "rpg_economy:mail_box_inventory"}],
+    "facing=north": {"model": "rpg_economy:mail_box"},
+    "facing=east": {"model": "rpg_economy:mail_box", "y": 90},
+    "facing=south": {"model": "rpg_economy:mail_box", "y": 180},
+    "facing=west": {"model": "rpg_economy:mail_box", "y": 270}
+  }
 }

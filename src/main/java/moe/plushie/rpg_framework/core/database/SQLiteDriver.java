@@ -7,9 +7,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Properties;
 
 import javax.sql.PooledConnection;
 
+import org.sqlite.SQLiteConfig;
+import org.sqlite.SQLiteConfig.Pragma;
 import org.sqlite.javax.SQLiteConnectionPoolDataSource;
 
 import moe.plushie.rpg_framework.core.RpgEconomy;
@@ -25,8 +28,10 @@ public final class SQLiteDriver {
     }
 
     private static PooledConnection makePool() throws SQLException {
+        SQLiteConfig config = makeConfig();
         SQLiteConnectionPoolDataSource ds = new SQLiteConnectionPoolDataSource();
         ds.setUrl(getConnectionUrl());
+        ds.setConfig(config);
         return ds.getPooledConnection();
     }
 
@@ -39,7 +44,7 @@ public final class SQLiteDriver {
 
     public static Connection getConnection() throws SQLException {
         return getPoolConnection();
-        // return DriverManager.getConnection(getConnectionUrl());
+        // return DriverManager.getConnection(getConnectionUrl(), makeConfig().toProperties());
     }
 
     public static PreparedStatement getPreparedStatement(String sql) {
@@ -49,6 +54,22 @@ public final class SQLiteDriver {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private static SQLiteConfig makeConfig() {
+        SQLiteConfig config = new SQLiteConfig(makeProperties());
+        config.setPragma(Pragma.DATE_STRING_FORMAT, "yyyy-MM-dd HH:mm:ss");
+        config.setPragma(Pragma.JOURNAL_MODE, "WAL");
+        config.setPragma(Pragma.SYNCHRONOUS, "NORMAL");
+        return config;
+    }
+
+    private static Properties makeProperties() {
+        Properties properties = new SQLiteConfig().toProperties();
+        properties.setProperty(Pragma.DATE_STRING_FORMAT.pragmaName, "yyyy-MM-dd HH:mm:ss");
+        properties.setProperty(Pragma.JOURNAL_MODE.pragmaName, "WAL");
+        properties.setProperty(Pragma.SYNCHRONOUS.pragmaName, "NORMAL");
+        return properties;
     }
 
     public static void executeUpdate(String sql) {

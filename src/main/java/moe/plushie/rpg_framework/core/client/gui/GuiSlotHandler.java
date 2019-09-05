@@ -48,7 +48,7 @@ public class GuiSlotHandler extends Gui {
     /** Starting Y position for the Gui. Inconsistent use for Gui backgrounds. */
     protected int guiTop;
     /** holds the slot currently hovered */
-    private Slot hoveredSlot;
+    public Slot hoveredSlot;
     /** Used when touchscreen is enabled. */
     private Slot clickedSlot;
     /** Used when touchscreen is enabled. */
@@ -197,7 +197,7 @@ public class GuiSlotHandler extends Gui {
         this.itemRender.zLevel = 0.0F;
     }
 
-    private void drawSlot(Slot slotIn) {
+    public void drawSlot(Slot slotIn) {
         int i = slotIn.xPos;
         int j = slotIn.yPos;
         ItemStack itemstack = slotIn.getStack();
@@ -534,7 +534,7 @@ public class GuiSlotHandler extends Gui {
     /**
      * Returns whether the mouse is over the given slot.
      */
-    private boolean isMouseOverSlot(Slot slotIn, int mouseX, int mouseY) {
+    boolean isMouseOverSlot(Slot slotIn, int mouseX, int mouseY) {
         return this.isPointInRegion(slotIn.xPos, slotIn.yPos, 16, 16, mouseX, mouseY);
     }
 

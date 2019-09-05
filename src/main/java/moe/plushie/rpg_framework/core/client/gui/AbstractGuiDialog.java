@@ -12,8 +12,11 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.inventory.Slot;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
@@ -136,40 +139,93 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
         }
     }
 
+    public void drawFull(int mouseX, int mouseY, float partialTickTime) {
+        GlStateManager.disableRescaleNormal();
+        RenderHelper.disableStandardItemLighting();
+        GlStateManager.disableLighting();
+        GlStateManager.disableDepth();
+        drawBackground(mouseX, mouseY, partialTickTime);
+
+        RenderHelper.enableGUIStandardItemLighting();
+        GlStateManager.pushMatrix();
+        GlStateManager.translate((float) x, (float) y, 0.0F);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.enableRescaleNormal();
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0F, 240.0F);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        drawItems(mouseX, mouseY, partialTickTime);
+        RenderHelper.disableStandardItemLighting();
+
+        
+
+        GlStateManager.popMatrix();
+        drawForeground(mouseX, mouseY, partialTickTime);
+        GlStateManager.enableLighting();
+        GlStateManager.enableDepth();
+        RenderHelper.enableStandardItemLighting();
+    }
+
+    public void drawItems(int mouseX, int mouseY, float partialTickTime) {
+        if (parent instanceof GuiContainer) {
+            GuiContainer guiContainer = (GuiContainer) parent;
+            GuiSlotHandler slotHandler = new GuiSlotHandler(guiContainer);
+            
+            for (int i1 = 0; i1 < guiContainer.inventorySlots.inventorySlots.size(); ++i1) {
+                Slot slot = guiContainer.inventorySlots.inventorySlots.get(i1);
+
+                if (slot.isEnabled()) {
+                    slotHandler.drawSlot(slot);
+                }
+
+                if (slotHandler.isMouseOverSlot(slot, mouseX, mouseY) && slot.isEnabled()) {
+                    slotHandler.hoveredSlot = slot;
+                    GlStateManager.disableLighting();
+                    GlStateManager.disableDepth();
+                    int j1 = slot.xPos;
+                    int k1 = slot.yPos;
+                    GlStateManager.colorMask(true, true, true, false);
+                    this.drawGradientRect(j1, k1, j1 + 16, k1 + 16, -2130706433, -2130706433);
+                    GlStateManager.colorMask(true, true, true, true);
+                    GlStateManager.enableLighting();
+                    GlStateManager.enableDepth();
+                }
+            }
+        }
+    }
+
     public void draw(int mouseX, int mouseY, float partialTickTime) {
         RenderHelper.enableGUIStandardItemLighting();
         GL11.glColor4f(1, 1, 1, 1);
         GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
         GlStateManager.pushAttrib();
-        //RenderHelper.enableGUIStandardItemLighting();
+        // RenderHelper.enableGUIStandardItemLighting();
         GlStateManager.color(1, 1, 1, 1);
-        //GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
-        //GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+        // GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
+        // GL11.glDisable(GL12.GL_RESCALE_NORMAL);
         // RenderHelper.disableStandardItemLighting();
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glDisable(GL11.GL_DEPTH_TEST);
-        //GL11.glDisable(GL11.GL_LIGHTING);
-        //GL11.glDisable(GL11.GL_DEPTH_TEST);
+        // GL11.glDisable(GL11.GL_LIGHTING);
+        // GL11.glDisable(GL11.GL_DEPTH_TEST);
         oldMouseX = mouseX;
         oldMouseY = mouseY;
         if (isDialogOpen()) {
             mouseX = mouseY = 0;
-
         }
-        
+
         drawBackground(mouseX, mouseY, partialTickTime);
-        //GlStateManager.translate(-x, -y, 0);
+        // GlStateManager.translate(-x, -y, 0);
         drawForeground(mouseX, mouseY, partialTickTime);
-        
+
         if (isDialogOpen()) {
             // GL11.glTranslatef(-guiLeft, -guiTop, 0);
             dialog.draw(oldMouseX, oldMouseY, 0);
             // GL11.glTranslatef(guiLeft, guiTop, 0);
         }
         GL11.glPopAttrib();
-        //GL11.glPopAttrib();
-        
+        // GL11.glPopAttrib();
+
         GlStateManager.popAttrib();
     }
 
@@ -192,7 +248,7 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
     protected void drawTitle() {
         drawTitle(name);
     }
-    
+
     protected void drawTitle(String text) {
         int titleWidth = fontRenderer.getStringWidth(text);
         fontRenderer.drawString(text, x + width / 2 - titleWidth / 2, y + 6, 4210752);
@@ -206,14 +262,14 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
     protected boolean isDialogOpen() {
         return dialog != null;
     }
-    
+
     protected void closeDialog() {
         this.dialog = null;
     }
 
     public void update() {
     }
-    
+
     @Override
     public void dialogResult(AbstractGuiDialog dialog, DialogResult result) {
         if (result == DialogResult.CANCEL) {

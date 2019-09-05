@@ -25,17 +25,25 @@ public final class TableHeatmaps {
     }
 
     private static final String SQL_ADD_HEATMAP = "INSERT INTO heatmaps (id, player_id, x, y, z, dimension, date) VALUES (NULL, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
+    
+    public static PreparedStatement createPreStateHeatmapAdd(Connection conn) throws SQLException {
+        return conn.prepareStatement(SQL_ADD_HEATMAP);
+    }
+
     public static void addHeatmapData(List<EntityPlayer> players) {
-        try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_ADD_HEATMAP)) {
+        try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement psHeatmap = createPreStateHeatmapAdd(conn); PreparedStatement psPlayerGet = TablePlayers.createPreStatementPlayerUUID(conn)) {
+            conn.setAutoCommit(false);
             for (EntityPlayer player : players) {
-                DBPlayer dbPlayer = TablePlayers.getPlayer(player.getGameProfile());
-                ps.setInt(1, dbPlayer.getId());
-                ps.setDouble(2, player.posX);
-                ps.setDouble(3, player.posY);
-                ps.setDouble(4, player.posZ);
-                ps.setInt(5, player.dimension);
-                ps.executeUpdate();
+                DBPlayer dbPlayer = TablePlayers.getPlayerUUID(conn, psPlayerGet, player.getGameProfile().getId());
+                psHeatmap.setInt(1, dbPlayer.getId());
+                psHeatmap.setDouble(2, player.posX);
+                psHeatmap.setDouble(3, player.posY);
+                psHeatmap.setDouble(4, player.posZ);
+                psHeatmap.setInt(5, player.dimension);
+                psHeatmap.addBatch();
             }
+            psHeatmap.executeBatch();
+            conn.commit();
         } catch (SQLException e) {
             e.printStackTrace();
         }

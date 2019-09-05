@@ -1,6 +1,8 @@
 package moe.plushie.rpg_framework.mail.common.tileentities;
 
+import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.inventory.IGuiFactory;
 import moe.plushie.rpg_framework.core.common.tileentities.ModAutoSyncTileEntity;
 import moe.plushie.rpg_framework.mail.client.gui.GuiMailBox;
@@ -10,6 +12,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -42,7 +45,7 @@ public class TileEntityMailBox extends ModAutoSyncTileEntity implements IGuiFact
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         if (compound.hasKey(TAG_MAIL_SYSTEM, NBT.TAG_STRING)) {
-            String mailSystemName = compound.getString(TAG_MAIL_SYSTEM);
+            IIdentifier mailSystemName = new IdentifierString(compound.getString(TAG_MAIL_SYSTEM));
             mailSystem = RpgEconomy.getProxy().getMailSystemManager().getMailSystem(mailSystemName);
         }
     }
@@ -51,7 +54,7 @@ public class TileEntityMailBox extends ModAutoSyncTileEntity implements IGuiFact
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound = super.writeToNBT(compound);
         if (mailSystem != null) {
-            compound.setString(TAG_MAIL_SYSTEM, mailSystem.getIdentifier());
+            compound.setString(TAG_MAIL_SYSTEM, (String) mailSystem.getIdentifier().getValue());
         }
         return compound;
     }
@@ -65,5 +68,11 @@ public class TileEntityMailBox extends ModAutoSyncTileEntity implements IGuiFact
     @Override
     public GuiScreen getClientGuiElement(EntityPlayer player, World world, BlockPos pos) {
         return new GuiMailBox(this, player);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public AxisAlignedBB getRenderBoundingBox() {
+        return INFINITE_EXTENT_AABB;
     }
 }
