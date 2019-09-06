@@ -83,7 +83,7 @@ public final class TablePlayers {
         return playerInfo;
     }
     
-    private static final String SQL_GET_PLAYER_USERNAME = "SELECT id FROM players WHERE username=?";
+    private static final String SQL_GET_PLAYER_USERNAME = "SELECT id FROM players WHERE username=? COLLATE NOCASE";
     public static DBPlayer getPlayer(Connection conn, String username) {
         DBPlayer playerInfo = DBPlayer.MISSING;
         try (PreparedStatement ps = conn.prepareStatement(SQL_GET_PLAYER_USERNAME)) {
