@@ -45,6 +45,9 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
         textFieldTo.setEmptyLabel("To");
         textFieldSubject.setEmptyLabel("Subject");
         textFieldBody.setEmptyLabel("Message");
+        
+        textFieldTo.setMaxStringLength(500);
+        textFieldBody.setMaxStringLength(500);
     }
 
     @Override
