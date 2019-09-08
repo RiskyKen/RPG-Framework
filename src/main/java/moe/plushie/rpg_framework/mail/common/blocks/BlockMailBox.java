@@ -81,10 +81,6 @@ public class BlockMailBox extends AbstractModBlockContainer {
     
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        ItemStack stack = playerIn.getHeldItem(hand);
-        if (!playerIn.canPlayerEdit(pos, facing, stack)) {
-            return false;
-        }
         openGui(playerIn, EnumGuiId.MAIL_BOX.ordinal(), worldIn, pos, state, facing);
         return true;
     }
