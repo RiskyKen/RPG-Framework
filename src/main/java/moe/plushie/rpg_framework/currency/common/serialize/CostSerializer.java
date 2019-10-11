@@ -36,16 +36,16 @@ public final class CostSerializer {
         return jsonObject;
     }
 
-    public static Cost deserializeJson(JsonElement jsonElement) {
+    public static ICost deserializeJson(JsonElement jsonElement) {
         try {
             return deserializeJson(jsonElement.getAsJsonObject());
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return Cost.NO_COST;
     }
 
-    public static Cost deserializeJson(JsonObject jsonObject) {
+    public static ICost deserializeJson(JsonObject jsonObject) {
         try {
             IItemMatcher[] itemCost = null;
             IWallet walletCost = null;
@@ -66,6 +66,6 @@ public final class CostSerializer {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return Cost.NO_COST;
     }
 }
