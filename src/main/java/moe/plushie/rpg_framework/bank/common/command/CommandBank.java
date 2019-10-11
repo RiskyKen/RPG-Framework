@@ -1,6 +1,6 @@
 package moe.plushie.rpg_framework.bank.common.command;
 
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.command.CommandExecute;
 import moe.plushie.rpg_framework.core.common.command.ModCommand;
 import moe.plushie.rpg_framework.core.common.command.ModSubCommands;
@@ -16,7 +16,7 @@ public class CommandBank extends ModSubCommands {
         addSubCommand(new CommandExecute(this, "reload", new ICommandExecute() {
             @Override
             public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-                RpgEconomy.getProxy().getBankManager().reload(true);
+                RPGFramework.getProxy().getBankManager().reload(true);
             }
         }));
         addSubCommand(new CommandOpenBank(this, "open"));

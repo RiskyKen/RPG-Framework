@@ -1,5 +1,6 @@
 package moe.plushie.rpg_framework.mail.client.gui;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
@@ -45,7 +46,7 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
         textFieldTo.setEmptyLabel("To");
         textFieldSubject.setEmptyLabel("Subject");
         textFieldBody.setEmptyLabel("Message");
-        
+
         textFieldTo.setMaxStringLength(500);
         textFieldBody.setMaxStringLength(500);
     }
@@ -112,7 +113,9 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
         }
         if (button == buttonSend) {
             if (sendMail()) {
-                returnDialogResult(DialogResult.OK);
+                buttonSend.enabled = false;
+                buttonClose.enabled = false;
+                // returnDialogResult(DialogResult.OK);
             }
         }
     }
@@ -159,6 +162,7 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
             attachments.add(mc.player.getHeldItemMainhand());
         }
         String[] split = textFieldTo.getText().trim().split(",");
+        ArrayList<MailMessage> mailMessages = new ArrayList<MailMessage>();
         for (String textReceiver : split) {
             GameProfile receiver = null;
             try {
@@ -169,9 +173,13 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
             if (receiver == null) {
                 receiver = new GameProfile(null, textReceiver.trim());
             }
-            MailMessage mailMessage = new MailMessage(-1, mailSystem, sender, receiver, sendDateTime, subject, message, attachments, false);
-            PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiMailBox(MailMessageType.MAIL_MESSAGE_SEND).setMailMessage(mailMessage));
+            mailMessages.add(new MailMessage(-1, mailSystem, sender, receiver, sendDateTime, subject, message, attachments, false));
+
         }
+        if (mailMessages.isEmpty()) {
+            return false;
+        }
+        PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiMailBox(MailMessageType.MAIL_MESSAGE_SEND).setMailMessages(mailMessages.toArray(new MailMessage[mailMessages.size()])));
         return true;
     }
 }

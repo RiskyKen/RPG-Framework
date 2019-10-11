@@ -9,7 +9,7 @@ import com.google.gson.JsonParser;
 import moe.plushie.rpg_framework.api.currency.ICurrency;
 import moe.plushie.rpg_framework.api.currency.ICurrencyCapability;
 import moe.plushie.rpg_framework.api.currency.IWallet;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerSyncWalletCap;
 import moe.plushie.rpg_framework.currency.common.Currency;
@@ -36,7 +36,7 @@ public class CurrencyCapability implements ICurrencyCapability {
     private final HashMap<String, Wallet> walletMap;
     
     public CurrencyCapability() {
-        CurrencyManager currencyManager = RpgEconomy.getProxy().getCurrencyManager();
+        CurrencyManager currencyManager = RPGFramework.getProxy().getCurrencyManager();
         walletMap = new HashMap<String, Wallet>();
         Currency[] currencies = currencyManager.getCurrencies();
         for (Currency currency : currencies) {
@@ -74,7 +74,7 @@ public class CurrencyCapability implements ICurrencyCapability {
         @Override
         public NBTBase writeNBT(Capability<ICurrencyCapability> capability, ICurrencyCapability instance, EnumFacing side) {
             NBTTagCompound compound = new NBTTagCompound();
-            CurrencyManager currencyManager = RpgEconomy.getProxy().getCurrencyManager();
+            CurrencyManager currencyManager = RPGFramework.getProxy().getCurrencyManager();
             Currency[] currencies = currencyManager.getCurrencies();
             for (Currency currency : currencies) {
                 IWallet wallet = instance.getWallet(currency);
@@ -87,7 +87,7 @@ public class CurrencyCapability implements ICurrencyCapability {
         @Override
         public void readNBT(Capability<ICurrencyCapability> capability, ICurrencyCapability instance, EnumFacing side, NBTBase nbt) {
             NBTTagCompound compound = (NBTTagCompound) nbt;
-            CurrencyManager currencyManager = RpgEconomy.getProxy().getCurrencyManager();
+            CurrencyManager currencyManager = RPGFramework.getProxy().getCurrencyManager();
             Currency[] currencies = currencyManager.getCurrencies();
             for (Currency currency : currencies) {
                 if (compound.hasKey(TAG_WALLET + currency.getName(), NBT.TAG_STRING)) { 
@@ -98,8 +98,8 @@ public class CurrencyCapability implements ICurrencyCapability {
                         IWallet walletOld = instance.getWallet(currency);
                         walletOld.setAmount(walletNew.getAmount());
                     } catch (Exception e) {
-                        RpgEconomy.getLogger().error("Error parsing json.");
-                        RpgEconomy.getLogger().error(e.getLocalizedMessage());
+                        RPGFramework.getLogger().error("Error parsing json.");
+                        RPGFramework.getLogger().error(e.getLocalizedMessage());
                     }
                 }
             }

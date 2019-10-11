@@ -86,8 +86,8 @@ public class MailSystem implements IMailSystem, Comparable<IMailSystem> {
         return this;
     }
 
-    public void onClientSendMailMessage(EntityPlayerMP player, MailMessage mailMessage) {
-        TableMail.addMessage(mailMessage);
+    public boolean onClientSendMailMessage(EntityPlayerMP player, MailMessage mailMessage) {
+        return TableMail.addMessage(mailMessage);
     }
     
     public void onClientDeleteMessage(EntityPlayerMP player, int messageId) {

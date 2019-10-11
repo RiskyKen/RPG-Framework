@@ -17,10 +17,10 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 
 @Mod(modid = LibModInfo.ID, version = LibModInfo.VERSION, updateJSON = LibModInfo.UPDATE_JSON_URL)
-public class RpgEconomy {
+public class RPGFramework {
 
     @Instance(LibModInfo.ID)
-    private static RpgEconomy instance;
+    private static RPGFramework instance;
 
     @SidedProxy(clientSide = LibModInfo.PROXY_CLIENT_CLASS, serverSide = LibModInfo.PROXY_COMMNON_CLASS)
     private static CommonProxy proxy;
@@ -51,7 +51,7 @@ public class RpgEconomy {
     public void serverAboutToStart(FMLServerAboutToStartEvent event) {
         proxy.serverAboutToStart(event);
     }
-    
+
     @EventHandler
     public void serverStart(FMLServerStartingEvent event) {
         proxy.serverStarting(event);
@@ -66,7 +66,7 @@ public class RpgEconomy {
         return proxy;
     }
 
-    public static RpgEconomy getInstance() {
+    public static RPGFramework getInstance() {
         return instance;
     }
 

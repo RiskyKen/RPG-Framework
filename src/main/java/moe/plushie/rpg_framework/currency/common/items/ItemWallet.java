@@ -1,7 +1,7 @@
 package moe.plushie.rpg_framework.currency.common.items;
 
 import moe.plushie.rpg_framework.api.currency.ICurrency;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.init.ModItems;
 import moe.plushie.rpg_framework.core.common.items.AbstractModItem;
 import moe.plushie.rpg_framework.core.common.lib.LibItemNames;
@@ -29,7 +29,7 @@ public class ItemWallet extends AbstractModItem {
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
         if (this.isInCreativeTab(tab)) {
-            CurrencyManager currencyManager = RpgEconomy.getProxy().getCurrencyManager();
+            CurrencyManager currencyManager = RPGFramework.getProxy().getCurrencyManager();
             for (Currency currency : currencyManager.getCurrencies()) {
                 ItemStack stack = getWallet(currency);
                 if (!stack.isEmpty()) {
@@ -52,7 +52,7 @@ public class ItemWallet extends AbstractModItem {
         if (itemStack.getItem() == ModItems.WALLET) {
             if (itemStack.hasTagCompound()) {
                 if (itemStack.getTagCompound().hasKey(TAG_CURRENCY, NBT.TAG_STRING)) {
-                    CurrencyManager currencyManager = RpgEconomy.getProxy().getCurrencyManager();
+                    CurrencyManager currencyManager = RPGFramework.getProxy().getCurrencyManager();
                     return currencyManager.getCurrency(itemStack.getTagCompound().getString(TAG_CURRENCY));
                 }
             }
@@ -75,7 +75,7 @@ public class ItemWallet extends AbstractModItem {
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
         if (!worldIn.isRemote) {
             ICurrency currency = getCurrency(playerIn.getHeldItem(handIn));
-            RpgEconomy.getProxy().openCurrencyWalletGui(playerIn, currency);
+            RPGFramework.getProxy().openCurrencyWalletGui(playerIn, currency);
         }
         return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
     }

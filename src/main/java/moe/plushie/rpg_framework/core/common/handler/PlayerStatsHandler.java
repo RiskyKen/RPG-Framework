@@ -1,6 +1,6 @@
 package moe.plushie.rpg_framework.core.common.handler;
 
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.config.ConfigHandler;
 import moe.plushie.rpg_framework.core.common.lib.LibModInfo;
 import moe.plushie.rpg_framework.core.database.TableHeatmaps;
@@ -35,7 +35,7 @@ public final class PlayerStatsHandler {
 
     @SubscribeEvent
     public static void onPlayerLogout(PlayerLoggedOutEvent event) {
-        RpgEconomy.getLogger().info("Player logout: " + event.player);
+        RPGFramework.getLogger().info("Player logout: " + event.player);
     }
 
     @SubscribeEvent

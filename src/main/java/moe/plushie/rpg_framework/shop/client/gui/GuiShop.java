@@ -15,7 +15,7 @@ import moe.plushie.rpg_framework.api.currency.IWallet;
 import moe.plushie.rpg_framework.api.currency.ICurrency.ICurrencyVariant;
 import moe.plushie.rpg_framework.api.shop.IShop;
 import moe.plushie.rpg_framework.api.shop.IShop.IShopTab;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpg_framework.core.client.gui.GuiHelper;
 import moe.plushie.rpg_framework.core.client.gui.IDialogCallback;
@@ -283,7 +283,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
         }
 
         fontRenderer.drawString("Player Money", 200, 151, 0x333333);
-        CurrencyManager currencyManager = RpgEconomy.getProxy().getCurrencyManager();
+        CurrencyManager currencyManager = RPGFramework.getProxy().getCurrencyManager();
         ICurrency[] currencies = currencyManager.getCurrencies();
         int yCur = 0;
         ICurrencyCapability cap = CurrencyCapability.get(entityPlayer);

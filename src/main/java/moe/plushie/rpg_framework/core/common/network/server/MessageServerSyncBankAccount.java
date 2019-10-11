@@ -8,7 +8,7 @@ import moe.plushie.rpg_framework.api.bank.IBankAccount;
 import moe.plushie.rpg_framework.api.bank.IBankCapability;
 import moe.plushie.rpg_framework.bank.common.capability.BankCapability;
 import moe.plushie.rpg_framework.bank.common.serialize.BankAccountSerializer;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -45,7 +45,7 @@ public class MessageServerSyncBankAccount implements IMessage, IMessageHandler<M
         bankAccounts = new IBankAccount[buf.readInt()];
         for (int i = 0; i < bankAccounts.length; i++) {
             String bankIdentifier = ByteBufUtils.readUTF8String(buf);
-            IBank bank = RpgEconomy.getProxy().getBankManager().getBank(bankIdentifier);
+            IBank bank = RPGFramework.getProxy().getBankManager().getBank(bankIdentifier);
             String jsonString = ByteBufUtils.readUTF8String(buf);
             JsonElement json = SerializeHelper.stringToJson(jsonString);
             bankAccounts[i] = BankAccountSerializer.deserializeJson(json, bank);

@@ -3,7 +3,7 @@ package moe.plushie.rpg_framework.bank.common.items.block;
 import moe.plushie.rpg_framework.api.bank.IBank;
 import moe.plushie.rpg_framework.bank.common.BankManager;
 import moe.plushie.rpg_framework.bank.tileentities.TileEntityBank;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.init.ModBlocks;
 import moe.plushie.rpg_framework.core.common.items.block.ModItemBlock;
 import net.minecraft.block.Block;
@@ -30,7 +30,7 @@ public class ItemBlockBank extends ModItemBlock {
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
         if (this.isInCreativeTab(tab)) {
-            BankManager bankManager = RpgEconomy.getProxy().getBankManager();
+            BankManager bankManager = RPGFramework.getProxy().getBankManager();
             for (IBank bank : bankManager.getBanks()) {
                 ItemStack itemStack = getStackFromBank(bank);
                 if (!itemStack.isEmpty()) {
@@ -52,7 +52,7 @@ public class ItemBlockBank extends ModItemBlock {
     public static IBank getBankFromStack(ItemStack itemStack) {
         if (itemStack.hasTagCompound()) {
             if (itemStack.getTagCompound().hasKey(TAG_BANK, NBT.TAG_STRING)) {
-                BankManager bankManager = RpgEconomy.getProxy().getBankManager();
+                BankManager bankManager = RPGFramework.getProxy().getBankManager();
                 return bankManager.getBank(itemStack.getTagCompound().getString(TAG_BANK));
             }
         }

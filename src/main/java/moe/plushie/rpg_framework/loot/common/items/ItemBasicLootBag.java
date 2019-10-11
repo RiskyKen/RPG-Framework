@@ -6,7 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import moe.plushie.rpg_framework.api.loot.ILootTableItem;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.items.AbstractModItem;
 import moe.plushie.rpg_framework.core.common.lib.EnumGuiId;
 import moe.plushie.rpg_framework.core.common.lib.LibItemNames;
@@ -36,7 +36,7 @@ public class ItemBasicLootBag extends AbstractModItem {
         ItemStack stack = playerIn.getHeldItem(handIn);
         if (!worldIn.isRemote) {
             if (playerIn.isSneaking() & playerIn.isCreative()) {
-                FMLNetworkHandler.openGui(playerIn, RpgEconomy.getInstance(), EnumGuiId.BASIC_LOOT_BAG.ordinal(), worldIn, 0, 0, 0);
+                FMLNetworkHandler.openGui(playerIn, RPGFramework.getInstance(), EnumGuiId.BASIC_LOOT_BAG.ordinal(), worldIn, 0, 0, 0);
             } else {
                 getLoot(worldIn, playerIn, stack);
                 stack.shrink(1);

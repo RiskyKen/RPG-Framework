@@ -9,7 +9,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
 
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.serialize.IdentifierSerialize;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import moe.plushie.rpg_framework.mail.common.MailMessage;
@@ -76,7 +76,7 @@ public final class MailMessageSerializer {
             JsonElement elementRead = jsonObject.get(PROP_READ);
 
             int id = elementId.getAsInt();
-            MailSystem mailSystem = RpgEconomy.getProxy().getMailSystemManager().getMailSystem(IdentifierSerialize.deserializeJson(elementMailSystem));
+            MailSystem mailSystem = RPGFramework.getProxy().getMailSystemManager().getMailSystem(IdentifierSerialize.deserializeJson(elementMailSystem));
             GameProfile sender = NBTUtil.readGameProfileFromNBT(JsonToNBT.getTagFromJson(elementSender.getAsString()));
             GameProfile receiver = NBTUtil.readGameProfileFromNBT(JsonToNBT.getTagFromJson(elementReceiver.getAsString()));
             Date sendDateTime = SDF.parse(elementSendDateTime.getAsString());

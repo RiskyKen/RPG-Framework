@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import moe.plushie.rpg_framework.api.currency.ICurrencyCapability;
 import moe.plushie.rpg_framework.api.currency.IWallet;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.init.ModSounds;
 import moe.plushie.rpg_framework.currency.common.Currency.CurrencyVariant;
 import moe.plushie.rpg_framework.currency.common.capability.CurrencyCapability;
@@ -33,7 +33,7 @@ public class CurrencyPickupHelper {
         EntityPlayer player = event.getEntityPlayer();
         World world = player.getEntityWorld();
         
-        Currency[] currencies = RpgEconomy.getProxy().getCurrencyManager().getCurrencies();
+        Currency[] currencies = RPGFramework.getProxy().getCurrencyManager().getCurrencies();
         for (Currency currency : currencies) {
             if (!currency.getCurrencyWalletInfo().getPickupIntoWallet()) {
                 continue;

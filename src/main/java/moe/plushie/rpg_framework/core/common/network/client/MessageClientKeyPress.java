@@ -1,7 +1,7 @@
 package moe.plushie.rpg_framework.core.common.network.client;
 
 import io.netty.buffer.ByteBuf;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.lib.LibModKeys.ModKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -36,7 +36,7 @@ public class MessageClientKeyPress implements IMessage, IMessageHandler<MessageC
         server.addScheduledTask(new Runnable() {
             @Override
             public void run() {
-                RpgEconomy.getProxy().onClentKeyPress(ctx.getServerHandler().player, message.modKey);
+                RPGFramework.getProxy().onClentKeyPress(ctx.getServerHandler().player, message.modKey);
             }
         });
         return null;

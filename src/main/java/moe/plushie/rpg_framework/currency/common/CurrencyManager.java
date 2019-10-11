@@ -9,7 +9,7 @@ import com.google.gson.JsonElement;
 
 import moe.plushie.rpg_framework.api.currency.ICurrency;
 import moe.plushie.rpg_framework.api.currency.ICurrencyManager;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerSyncCurrencies;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
@@ -37,7 +37,7 @@ public class CurrencyManager implements ICurrencyManager {
     }
 
     public void reload(boolean syncWithClients) {
-        RpgEconomy.getLogger().info("Loading Currencies");
+        RPGFramework.getLogger().info("Loading Currencies");
         File[] files = currencyDirectory.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
@@ -61,12 +61,12 @@ public class CurrencyManager implements ICurrencyManager {
     }
     
     public void syncToClient(EntityPlayerMP entityPlayer) {
-        RpgEconomy.getLogger().info("Sending " + currencyMap.size() + " currency list(s) to player " + entityPlayer.getName() + ".");
+        RPGFramework.getLogger().info("Sending " + currencyMap.size() + " currency list(s) to player " + entityPlayer.getName() + ".");
         PacketHandler.NETWORK_WRAPPER.sendTo(getSyncMessage(), entityPlayer);
     }
     
     private void syncToAll() {
-        RpgEconomy.getLogger().info("Sending " + currencyMap.size() + " currency list(s) to all players.");
+        RPGFramework.getLogger().info("Sending " + currencyMap.size() + " currency list(s) to all players.");
         PacketHandler.NETWORK_WRAPPER.sendToAll(getSyncMessage());
     }
     
@@ -75,7 +75,7 @@ public class CurrencyManager implements ICurrencyManager {
     }
     
     public void gotCurrenciesFromServer(Currency[] currencies) {
-        RpgEconomy.getLogger().info("Got " + currencies.length + " currency list(s) from server.");
+        RPGFramework.getLogger().info("Got " + currencies.length + " currency list(s) from server.");
         currencyMap.clear();
         for (Currency currency : currencies) {
             currencyMap.put(currency.getIdentifier(), currency);
@@ -83,7 +83,7 @@ public class CurrencyManager implements ICurrencyManager {
     }
     
     private void loadCurrency(File currencyFile) {
-        RpgEconomy.getLogger().info("Loading currency: " + currencyFile.getName());
+        RPGFramework.getLogger().info("Loading currency: " + currencyFile.getName());
         JsonElement jsonElement = SerializeHelper.readJsonFile(currencyFile);
         if (jsonElement != null) {
             Currency currency = CurrencySerializer.deserializeJson(jsonElement);

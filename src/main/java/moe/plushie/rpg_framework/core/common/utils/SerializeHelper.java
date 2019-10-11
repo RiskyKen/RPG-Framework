@@ -15,7 +15,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
@@ -82,8 +82,8 @@ public final class SerializeHelper {
             JsonParser parser = new JsonParser();
             return parser.parse(jsonString);
         } catch (Exception e) {
-            RpgEconomy.getLogger().error("Error parsing json.");
-            RpgEconomy.getLogger().error(e.getLocalizedMessage());
+            RPGFramework.getLogger().error("Error parsing json.");
+            RPGFramework.getLogger().error(e.getLocalizedMessage());
             return null;
         }
     }

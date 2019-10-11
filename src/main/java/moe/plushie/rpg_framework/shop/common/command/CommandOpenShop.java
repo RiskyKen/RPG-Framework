@@ -5,7 +5,7 @@ import java.util.List;
 
 import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.shop.IShop;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.IdentifierInt;
 import moe.plushie.rpg_framework.core.common.command.ModCommand;
 import moe.plushie.rpg_framework.core.common.lib.EnumGuiId;
@@ -59,8 +59,8 @@ public class CommandOpenShop extends ModCommand {
             player = getPlayer(server, sender, args[getParentCount() + 1]);
         }
         
-        IShop shop = RpgEconomy.getProxy().getShopManager().getShop(new IdentifierInt(id));
-        FMLNetworkHandler.openGui(player, RpgEconomy.getInstance(), EnumGuiId.SHOP_COMMAND.ordinal(), server.getEntityWorld(), id, 0, 0);
+        IShop shop = RPGFramework.getProxy().getShopManager().getShop(new IdentifierInt(id));
+        FMLNetworkHandler.openGui(player, RPGFramework.getInstance(), EnumGuiId.SHOP_COMMAND.ordinal(), server.getEntityWorld(), id, 0, 0);
         
         PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerShop(shop, false), (EntityPlayerMP) player);
     }

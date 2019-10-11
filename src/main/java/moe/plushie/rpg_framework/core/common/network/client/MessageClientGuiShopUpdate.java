@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import io.netty.buffer.ByteBuf;
 import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.currency.ICost;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.utils.ByteBufHelper;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import moe.plushie.rpg_framework.currency.common.serialize.CostSerializer;
@@ -185,7 +185,7 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
         EntityPlayerMP player = ctx.getServerHandler().player;
         if (message.type.getNeedsCreative()) {
             if (!player.capabilities.isCreativeMode) {
-                RpgEconomy.getLogger().warn(String.format("Player %s tried to use the shop action %s without creative mode.", player.getName(), message.type.toString()));
+                RPGFramework.getLogger().warn(String.format("Player %s tried to use the shop action %s without creative mode.", player.getName(), message.type.toString()));
                 return null;
             }
         }

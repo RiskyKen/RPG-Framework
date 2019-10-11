@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.loot.ILootTable;
 import moe.plushie.rpg_framework.api.loot.ILootTablePool;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.utils.ByteBufHelper;
 import moe.plushie.rpg_framework.loot.common.LootTableHelper;
 import moe.plushie.rpg_framework.loot.common.inventory.ContainerLootEditor;
@@ -158,7 +158,7 @@ public class MessageClientLootEditorUpdate implements IMessage {
             EntityPlayerMP player = ctx.getServerHandler().player;
             if (message.editType.getNeedsCreative()) {
                 if (!player.capabilities.isCreativeMode) {
-                    RpgEconomy.getLogger().warn(String.format("Player %s tried to use the loot edit action %s without creative mode.", player.getName(), message.editType.toString()));
+                    RPGFramework.getLogger().warn(String.format("Player %s tried to use the loot edit action %s without creative mode.", player.getName(), message.editType.toString()));
                     return null;
                 }
             }

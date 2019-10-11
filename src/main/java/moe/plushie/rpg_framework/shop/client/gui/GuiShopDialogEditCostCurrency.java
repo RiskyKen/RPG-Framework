@@ -5,7 +5,7 @@ import java.util.Random;
 import moe.plushie.rpg_framework.api.currency.ICurrency;
 import moe.plushie.rpg_framework.api.currency.IWallet;
 import moe.plushie.rpg_framework.api.currency.ICurrency.ICurrencyVariant;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpg_framework.core.client.gui.IDialogCallback;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiDropDownList;
@@ -57,7 +57,7 @@ public class GuiShopDialogEditCostCurrency extends AbstractGuiDialog implements 
 
         dropDownCurrencyTypes.addListItem("None", "", true);
         dropDownCurrencyTypes.setListSelectedIndex(0);
-        CurrencyManager currencyManager = RpgEconomy.getProxy().getCurrencyManager();
+        CurrencyManager currencyManager = RPGFramework.getProxy().getCurrencyManager();
         for (int i = 0; i < currencyManager.getCurrencies().length; i++) {
             ICurrency currency = currencyManager.getCurrencies()[i];
             dropDownCurrencyTypes.addListItem(currency.getName(), currency.getIdentifier(), true);
@@ -174,7 +174,7 @@ public class GuiShopDialogEditCostCurrency extends AbstractGuiDialog implements 
 
     @Override
     public void onDropDownListChanged(GuiDropDownList dropDownList) {
-        CurrencyManager currencyManager = RpgEconomy.getProxy().getCurrencyManager();
+        CurrencyManager currencyManager = RPGFramework.getProxy().getCurrencyManager();
         currency = currencyManager.getCurrency(dropDownList.getListSelectedItem().tag);
         amount = 0;
         initGui();

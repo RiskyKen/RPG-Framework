@@ -10,7 +10,7 @@ import java.util.Date;
 import com.google.gson.JsonArray;
 
 import moe.plushie.rpg_framework.api.mail.IMailSystem;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import moe.plushie.rpg_framework.mail.common.MailListItem;
@@ -42,7 +42,7 @@ public final class TableMail {
 
     private static final String SQL_MESSAGE_ADD = "INSERT INTO mail (id, mail_system, player_id_sender, player_id_receiver, subject, text, attachments, sent_date, read) VALUES (NULL, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)";
 
-    public static void addMessage(MailMessage message) {
+    public static boolean addMessage(MailMessage message) {
         try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_MESSAGE_ADD)) {
             DBPlayer dbPlayerSender = TablePlayers.getPlayer(message.getSender());
             DBPlayer dbPlayerReceiver = TablePlayers.getPlayer(message.getReceiver());
@@ -55,10 +55,12 @@ public final class TableMail {
                 ps.setString(6, SerializeHelper.writeItemsToJson(message.getAttachments(), false).toString());
                 ps.setBoolean(7, false);
                 ps.executeUpdate();
+                return true;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     private static final String SQL_MESSAGE_LIST_GET = "SELECT id, subject, attachments, read FROM mail WHERE mail_system=?";
@@ -111,7 +113,7 @@ public final class TableMail {
             ps.setInt(1, id);
             ResultSet resultSet = ps.executeQuery();
             while (resultSet.next()) {
-                IMailSystem mailSystem = RpgEconomy.getProxy().getMailSystemManager().getMailSystem(new IdentifierString(resultSet.getString("mail_system")));
+                IMailSystem mailSystem = RPGFramework.getProxy().getMailSystemManager().getMailSystem(new IdentifierString(resultSet.getString("mail_system")));
                 DBPlayerInfo dbPlayerSender = TablePlayers.getPlayer(conn, resultSet.getInt("player_id_sender"));
                 DBPlayerInfo dbPlayerReceiver = TablePlayers.getPlayer(conn, resultSet.getInt("player_id_receiver"));
                 Date sendDateTime = resultSet.getDate("sent_date");

@@ -3,7 +3,7 @@ package moe.plushie.rpg_framework.core.common.network;
 import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.bank.client.GuiBank;
 import moe.plushie.rpg_framework.bank.common.inventory.ContainerBank;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.client.gui.manager.GuiManager;
 import moe.plushie.rpg_framework.core.common.IdentifierInt;
 import moe.plushie.rpg_framework.core.common.init.ModItems;
@@ -31,7 +31,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 public class GuiHandler implements IGuiHandler {
 
     public GuiHandler() {
-        NetworkRegistry.INSTANCE.registerGuiHandler(RpgEconomy.getInstance(), this);
+        NetworkRegistry.INSTANCE.registerGuiHandler(RPGFramework.getInstance(), this);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class GuiHandler implements IGuiHandler {
         case MANAGER:
             return new ContainerManager(player);
         case WALLET:
-            Currency currency = RpgEconomy.getProxy().getCurrencyManager().getCurrencyFromID(x);
+            Currency currency = RPGFramework.getProxy().getCurrencyManager().getCurrencyFromID(x);
             if (currency != null) {
                 if (currency.getCurrencyWalletInfo().getNeedItemToAccess()) {
                     if (!CurrencyWalletHelper.haveWalletForCurrency(player, currency)) {
@@ -65,10 +65,10 @@ public class GuiHandler implements IGuiHandler {
             }
             break;
         case BANK_COMMAND:
-            return new ContainerBank(player, RpgEconomy.getProxy().getBankManager().getBank(x));
+            return new ContainerBank(player, RPGFramework.getProxy().getBankManager().getBank(x));
         case SHOP_COMMAND:
             IIdentifier identifier = new IdentifierInt(x);
-            return new ContainerShop(player, RpgEconomy.getProxy().getShopManager().getShop(identifier), null);
+            return new ContainerShop(player, RPGFramework.getProxy().getShopManager().getShop(identifier), null);
         case LOOT_EDITOR_COMMAND:
             return new ContainerLootEditor(player);
         case BASIC_LOOT_BAG:
@@ -103,7 +103,7 @@ public class GuiHandler implements IGuiHandler {
         case MANAGER:
             return new GuiManager(player);
         case WALLET:
-            Currency currency = RpgEconomy.getProxy().getCurrencyManager().getCurrencyFromID(x);
+            Currency currency = RPGFramework.getProxy().getCurrencyManager().getCurrencyFromID(x);
             if (currency != null) {
                 if (currency.getCurrencyWalletInfo().getNeedItemToAccess()) {
                     if (!CurrencyWalletHelper.haveWalletForCurrency(player, currency)) {
@@ -114,7 +114,7 @@ public class GuiHandler implements IGuiHandler {
             }
             break;
         case BANK_COMMAND:
-            return new GuiBank(player, RpgEconomy.getProxy().getBankManager().getBank(x));
+            return new GuiBank(player, RPGFramework.getProxy().getBankManager().getBank(x));
         case SHOP_COMMAND:
             return new GuiShop(player, false);
         case LOOT_EDITOR_COMMAND:

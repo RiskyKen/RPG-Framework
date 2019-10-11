@@ -3,7 +3,7 @@ package moe.plushie.rpg_framework.core.common.network.server;
 import com.google.gson.JsonElement;
 
 import io.netty.buffer.ByteBuf;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import moe.plushie.rpg_framework.currency.common.Currency;
 import moe.plushie.rpg_framework.currency.common.serialize.CurrencySerializer;
@@ -47,7 +47,7 @@ public class MessageServerSyncCurrencies implements IMessage, IMessageHandler<Me
 
     @Override
     public IMessage onMessage(MessageServerSyncCurrencies message, MessageContext ctx) {
-        RpgEconomy.getProxy().getCurrencyManager().gotCurrenciesFromServer(message.currencies);
+        RPGFramework.getProxy().getCurrencyManager().gotCurrenciesFromServer(message.currencies);
         return null;
     }
 }

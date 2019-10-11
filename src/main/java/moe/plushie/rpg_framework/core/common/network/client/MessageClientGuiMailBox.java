@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import io.netty.buffer.ByteBuf;
 import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.mail.IMailSystem;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.serialize.IdentifierSerialize;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import moe.plushie.rpg_framework.mail.common.MailMessage;
@@ -20,7 +20,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class MessageClientGuiMailBox implements IMessage, IMessageHandler<MessageClientGuiMailBox, IMessage> {
 
     private MailMessageType messageType;
-    private MailMessage mailMessage;
+    private MailMessage[] mailMessages;
     private IMailSystem mailSystem;
     private int messageId;
 
@@ -31,8 +31,8 @@ public class MessageClientGuiMailBox implements IMessage, IMessageHandler<Messag
         this.messageType = messageType;
     }
 
-    public MessageClientGuiMailBox setMailMessage(MailMessage mailMessage) {
-        this.mailMessage = mailMessage;
+    public MessageClientGuiMailBox setMailMessages(MailMessage[] mailMessages) {
+        this.mailMessages = mailMessages;
         return this;
     }
 
@@ -53,8 +53,11 @@ public class MessageClientGuiMailBox implements IMessage, IMessageHandler<Messag
         case MAIL_CHANGE:
             break;
         case MAIL_MESSAGE_SEND:
-            JsonElement jsonElement = MailMessageSerializer.serializeJson(mailMessage, true);
-            ByteBufUtils.writeUTF8String(buf, jsonElement.toString());
+            buf.writeInt(mailMessages.length);
+            for (int i = 0; i < mailMessages.length; i++) {
+                JsonElement jsonElement = MailMessageSerializer.serializeJson(mailMessages[i], true);
+                ByteBufUtils.writeUTF8String(buf, jsonElement.toString());
+            }
             break;
         case MAIL_MESSAGE_REQUEST:
             break;
@@ -80,8 +83,11 @@ public class MessageClientGuiMailBox implements IMessage, IMessageHandler<Messag
         case MAIL_CHANGE:
             break;
         case MAIL_MESSAGE_SEND:
+            int count = buf.readInt();
             String mailJson = ByteBufUtils.readUTF8String(buf);
-            mailMessage = MailMessageSerializer.deserializeJson(SerializeHelper.stringToJson(mailJson));
+            for (int i = 0; i < count; i++) {
+                mailMessages[i] = MailMessageSerializer.deserializeJson(SerializeHelper.stringToJson(mailJson));
+            }
             break;
         case MAIL_MESSAGE_REQUEST:
             break;
@@ -108,7 +114,7 @@ public class MessageClientGuiMailBox implements IMessage, IMessageHandler<Messag
     private IMailSystem readMailSystem(ByteBuf buf) {
         JsonElement json = SerializeHelper.stringToJson(ByteBufUtils.readUTF8String(buf));
         IIdentifier identifier = IdentifierSerialize.deserializeJson(json);
-        return RpgEconomy.getProxy().getMailSystemManager().getMailSystem(identifier);
+        return RPGFramework.getProxy().getMailSystemManager().getMailSystem(identifier);
     }
 
     @Override
@@ -116,7 +122,7 @@ public class MessageClientGuiMailBox implements IMessage, IMessageHandler<Messag
         EntityPlayerMP player = ctx.getServerHandler().player;
         if (message.messageType.getNeedsCreative()) {
             if (!player.capabilities.isCreativeMode) {
-                RpgEconomy.getLogger().warn(String.format("Player %s tried to use the shop action %s without creative mode.", player.getName(), message.messageType.toString()));
+                RPGFramework.getLogger().warn(String.format("Player %s tried to use the shop action %s without creative mode.", player.getName(), message.messageType.toString()));
                 return null;
             }
         }
@@ -132,7 +138,7 @@ public class MessageClientGuiMailBox implements IMessage, IMessageHandler<Messag
 
             break;
         case MAIL_MESSAGE_SEND:
-            containerMailBox.onClientSendMailMessage(player, message.mailMessage);
+            containerMailBox.onClientSendMailMessages(player, message.mailMessages);
             containerMailBox.markDirty();
             break;
         case MAIL_MESSAGE_REQUEST:

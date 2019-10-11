@@ -3,7 +3,7 @@ package moe.plushie.rpg_framework.bank.common.command;
 import java.util.List;
 
 import moe.plushie.rpg_framework.api.bank.IBank;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.command.ModCommand;
 import moe.plushie.rpg_framework.core.common.lib.EnumGuiId;
 import net.minecraft.command.CommandException;
@@ -58,9 +58,9 @@ public class CommandOpenBank extends ModCommand {
         
         
         
-        RpgEconomy.getLogger().info("bankIdentifier:" + bankIdentifier);
+        RPGFramework.getLogger().info("bankIdentifier:" + bankIdentifier);
         
-        IBank bank = RpgEconomy.getProxy().getBankManager().getBank(bankIdentifier);
+        IBank bank = RPGFramework.getProxy().getBankManager().getBank(bankIdentifier);
         EntityPlayer player = getCommandSenderAsPlayer(sender);
         
         //DBPlayer dbPlayer = Database.PLAYERS_TABLE.getPlayer(player);
@@ -77,7 +77,7 @@ public class CommandOpenBank extends ModCommand {
             throw new WrongUsageException(getUsage(sender), (Object)args);
         }*/
         
-        int index = RpgEconomy.getProxy().getBankManager().getBankIndex(bank);
-        FMLNetworkHandler.openGui(player, RpgEconomy.getInstance(), EnumGuiId.BANK_COMMAND.ordinal(), server.getEntityWorld(), index, 0, 0);
+        int index = RPGFramework.getProxy().getBankManager().getBankIndex(bank);
+        FMLNetworkHandler.openGui(player, RPGFramework.getInstance(), EnumGuiId.BANK_COMMAND.ordinal(), server.getEntityWorld(), index, 0, 0);
     }
 }

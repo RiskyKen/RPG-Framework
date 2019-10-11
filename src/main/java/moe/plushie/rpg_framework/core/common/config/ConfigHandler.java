@@ -2,7 +2,7 @@ package moe.plushie.rpg_framework.core.common.config;
 
 import java.io.File;
 
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.lib.LibModInfo;
 import net.minecraftforge.common.config.Configuration;
 
@@ -42,7 +42,7 @@ public class ConfigHandler {
             return;
         }
         if (versionCompare(options.lastVersion.replaceAll("-", "."), localVersion.replaceAll("-", ".")) < 0) {
-            RpgEconomy.getLogger().info(String.format("Updated from version %s to version %s.", options.lastVersion, localVersion));
+            RPGFramework.getLogger().info(String.format("Updated from version %s to version %s.", options.lastVersion, localVersion));
             config.getCategory(CATEGORY_GENERAL).get("lastVersion").set(localVersion);
             if (config.hasChanged()) {
                 config.save();

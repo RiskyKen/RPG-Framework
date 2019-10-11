@@ -1,6 +1,6 @@
 package moe.plushie.rpg_framework.core.common.blocks;
 
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.client.model.ICustomModel;
 import moe.plushie.rpg_framework.core.common.init.ModBlocks;
 import moe.plushie.rpg_framework.core.common.items.block.ModItemBlock;
@@ -30,7 +30,7 @@ public abstract class AbstractModBlockContainer extends BlockContainer implement
 
     public AbstractModBlockContainer(String name) {
         super(Material.IRON);
-        setCreativeTab(RpgEconomy.getCreativeTabRPGEconomy());
+        setCreativeTab(RPGFramework.getCreativeTabRPGEconomy());
         setHardness(3.0F);
         setSoundType(SoundType.METAL);
         setTranslationKey(name);
@@ -40,7 +40,7 @@ public abstract class AbstractModBlockContainer extends BlockContainer implement
     public AbstractModBlockContainer(String name, Material material, SoundType soundType, boolean addCreativeTab) {
         super(material);
         if (addCreativeTab) {
-            setCreativeTab(RpgEconomy.getCreativeTabRPGEconomy());
+            setCreativeTab(RPGFramework.getCreativeTabRPGEconomy());
         }
         setHardness(3.0F);
         setSoundType(soundType);
@@ -110,7 +110,7 @@ public abstract class AbstractModBlockContainer extends BlockContainer implement
 
     protected void openGui(EntityPlayer playerIn, int guiId, World worldIn, BlockPos pos, IBlockState state, EnumFacing facing) {
         if (!worldIn.isRemote) {
-            FMLNetworkHandler.openGui(playerIn, RpgEconomy.getInstance(), guiId, worldIn, pos.getX(), pos.getY(), pos.getZ());
+            FMLNetworkHandler.openGui(playerIn, RPGFramework.getInstance(), guiId, worldIn, pos.getX(), pos.getY(), pos.getZ());
         }
     }
 }

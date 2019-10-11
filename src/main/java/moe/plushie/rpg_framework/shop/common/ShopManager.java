@@ -14,7 +14,7 @@ import com.google.gson.JsonElement;
 import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.shop.IShop;
 import moe.plushie.rpg_framework.api.shop.IShopManager;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerSyncShops;
@@ -41,7 +41,7 @@ public class ShopManager implements IShopManager {
     }
     
     public void exportShops() {
-        RpgEconomy.getLogger().info("Exporting Shops");
+        RPGFramework.getLogger().info("Exporting Shops");
         ArrayList<IIdentifier> identifiers = new ArrayList<IIdentifier>();
         TableShops.getShopList(identifiers, null, null);
         for (IIdentifier identifier : identifiers) {
@@ -50,8 +50,8 @@ public class ShopManager implements IShopManager {
     }
     
     public void importShops() {
-        RpgEconomy.getLogger().info("Importing Shops");
-        RpgEconomy.getLogger().info("Loading Shops");
+        RPGFramework.getLogger().info("Importing Shops");
+        RPGFramework.getLogger().info("Loading Shops");
         File[] files = currencyDirectory.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
@@ -65,19 +65,19 @@ public class ShopManager implements IShopManager {
     }
     
     public void saveShop(IShop shop) {
-        RpgEconomy.getLogger().info("Saving shop: " + shop.getIdentifier());
+        RPGFramework.getLogger().info("Saving shop: " + shop.getIdentifier());
         TableShops.updateShop(shop);
     }
     
     public void exportShop(IShop shop) {
-        RpgEconomy.getLogger().info("Exporting shop: " + shop.getIdentifier());
+        RPGFramework.getLogger().info("Exporting shop: " + shop.getIdentifier());
         JsonElement jsonData = ShopSerializer.serializeJson(shop, false);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         SerializeHelper.writeFile(new File(currencyDirectory, String.valueOf(shop.getIdentifier().getValue()) + ".json"), Charsets.UTF_8, gson.toJson(jsonData));
     }
     
     public void importShop(File shopFile) {
-        RpgEconomy.getLogger().info("Importing shop: " + shopFile.getName());
+        RPGFramework.getLogger().info("Importing shop: " + shopFile.getName());
         JsonElement jsonElement = SerializeHelper.readJsonFile(shopFile);
         if (jsonElement != null) {
             Shop shop = ShopSerializer.deserializeJson(jsonElement, new IdentifierString(shopFile.getName()));

@@ -12,7 +12,7 @@ import moe.plushie.rpg_framework.api.bank.IBankCapability;
 import moe.plushie.rpg_framework.bank.common.BankAccount;
 import moe.plushie.rpg_framework.bank.common.BankManager;
 import moe.plushie.rpg_framework.bank.common.serialize.BankAccountSerializer;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerSyncBankAccount;
 import net.minecraft.entity.EntityLivingBase;
@@ -68,7 +68,7 @@ public class BankCapability implements IBankCapability {
         @Override
         public NBTBase writeNBT(Capability<IBankCapability> capability, IBankCapability instance, EnumFacing side) {
             NBTTagCompound compound = new NBTTagCompound();
-            BankManager bankManager = RpgEconomy.getProxy().getBankManager();
+            BankManager bankManager = RPGFramework.getProxy().getBankManager();
             for (IBank bank : bankManager.getBanks()) {
                 IBankAccount bankInstance = instance.getBank(bank);
                 JsonElement json = BankAccountSerializer.serializeJson(bankInstance, true);
@@ -80,7 +80,7 @@ public class BankCapability implements IBankCapability {
         @Override
         public void readNBT(Capability<IBankCapability> capability, IBankCapability instance, EnumFacing side, NBTBase nbt) {
             NBTTagCompound compound = (NBTTagCompound) nbt;
-            BankManager bankManager = RpgEconomy.getProxy().getBankManager();
+            BankManager bankManager = RPGFramework.getProxy().getBankManager();
             for (IBank bank : bankManager.getBanks()) {
                 if (compound.hasKey(TAG_BANK + bank.getIdentifier(), NBT.TAG_STRING)) {
                     try {
@@ -89,22 +89,22 @@ public class BankCapability implements IBankCapability {
                         IBankAccount bankNew = BankAccountSerializer.deserializeJson(json, bank);
                         instance.setBankAccount(bankNew);
                     } catch (Exception e) {
-                        RpgEconomy.getLogger().error("Error parsing json.");
-                        RpgEconomy.getLogger().error(e.getLocalizedMessage());
+                        RPGFramework.getLogger().error("Error parsing json.");
+                        RPGFramework.getLogger().error(e.getLocalizedMessage());
                     }
                 }
             }
         }
 
         public static void writeToDatabase(EntityPlayer player, IBankCapability instance) {
-            BankManager bankManager = RpgEconomy.getProxy().getBankManager();
+            BankManager bankManager = RPGFramework.getProxy().getBankManager();
             for (IBank bank : bankManager.getBanks()) {
                 BankAccountSerializer.serializeDatabase(player, instance.getBank(bank));
             }
         }
 
         public static void readFromDatabase(EntityPlayer player, IBankCapability instance) {
-            BankManager bankManager = RpgEconomy.getProxy().getBankManager();
+            BankManager bankManager = RPGFramework.getProxy().getBankManager();
             for (IBank bank : bankManager.getBanks()) {
                 instance.setBankAccount(BankAccountSerializer.deserializeDatabase(player, bank));
             }

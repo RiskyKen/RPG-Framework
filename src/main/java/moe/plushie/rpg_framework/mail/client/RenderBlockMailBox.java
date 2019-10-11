@@ -19,10 +19,6 @@ public class RenderBlockMailBox extends TileEntitySpecialRenderer<TileEntityMail
     private static final ResourceLocation TEXTURE_FLAG = new ResourceLocation(LibModInfo.ID, "textures/blocks/mail_box/mail_box_flag_tesr.png");
     private final ModelMailBoxFlag modelMailBoxFlag = new ModelMailBoxFlag();
 
-    public RenderBlockMailBox() {
-        // TODO Auto-generated constructor stub
-    }
-
     @Override
     public void render(TileEntityMailBox te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         IBlockState blockState = te.getWorld().getBlockState(te.getPos());
@@ -32,12 +28,12 @@ public class RenderBlockMailBox extends TileEntitySpecialRenderer<TileEntityMail
         bindTexture(TEXTURE_FLAG);
         float scale = 0.0625F;
         GlStateManager.pushMatrix();
-        
+
         GlStateManager.enableNormalize();
         GlStateManager.enableRescaleNormal();
 
         GlStateManager.translate(x, y, z);
-        GlStateManager.translate(0.5F, 1F , 0.5F);
+        GlStateManager.translate(0.5F, 1F, 0.5F);
         switch (facing) {
         case EAST:
             GlStateManager.rotate(180.0F, 0.0F, 1.0F, 0.0F);
@@ -51,22 +47,22 @@ public class RenderBlockMailBox extends TileEntitySpecialRenderer<TileEntityMail
         default:
             break;
         }
-        
+
         angle *= 4F;
-        
+
         if (angle > 90) {
             angle = 90 - (angle - 90);
         }
-        
+
         GlStateManager.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
-        
+
         GlStateManager.scale(1F, -1F, -1F);
         modelMailBoxFlag.FlagPole.rotateAngleX = (float) Math.toRadians(angle + 90F);
-        //modelMailBoxFlag.FlagPole.rotateAngleX = (float) Math.toRadians(90);
+        // modelMailBoxFlag.FlagPole.rotateAngleX = (float) Math.toRadians(90);
         modelMailBoxFlag.render(null, 0, 0, 0, 0, 0, scale);
         super.render(te, x, y, z, partialTicks, destroyStage, alpha);
         GlStateManager.popMatrix();
-        
+
         drawNameplate(te, new ItemStack(ModBlocks.MAIL_BOX).getDisplayName(), x, y, z, 10);
     }
 }

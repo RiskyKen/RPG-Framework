@@ -2,7 +2,7 @@ package moe.plushie.rpg_framework.core.common.items;
 
 import java.util.List;
 
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.client.model.ICustomModel;
 import moe.plushie.rpg_framework.core.common.init.ModItems;
 import moe.plushie.rpg_framework.core.common.lib.LibModInfo;
@@ -27,7 +27,7 @@ public abstract class AbstractModItem extends Item implements ICustomModel {
 
     public AbstractModItem(String name, boolean addCreativeTab) {
         if (addCreativeTab) {
-            setCreativeTab(RpgEconomy.getCreativeTabRPGEconomy());
+            setCreativeTab(RPGFramework.getCreativeTabRPGEconomy());
         }
         setTranslationKey(name);
         setHasSubtypes(false);

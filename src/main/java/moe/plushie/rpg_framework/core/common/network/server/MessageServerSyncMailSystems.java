@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 
 import io.netty.buffer.ByteBuf;
 import moe.plushie.rpg_framework.api.core.IIdentifier;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.utils.ByteBufHelper;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import moe.plushie.rpg_framework.mail.common.MailSystem;
@@ -51,7 +51,7 @@ public class MessageServerSyncMailSystems implements IMessage, IMessageHandler<M
 
     @Override
     public IMessage onMessage(MessageServerSyncMailSystems message, MessageContext ctx) {
-        RpgEconomy.getProxy().getMailSystemManager().gotMailSystemsFromServer(message.mailSystems);
+        RPGFramework.getProxy().getMailSystemManager().gotMailSystemsFromServer(message.mailSystems);
         return null;
     }
 }

@@ -2,16 +2,19 @@ package moe.plushie.rpg_framework.mail.common;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
 import com.google.gson.JsonElement;
+import com.mojang.authlib.GameProfile;
 
 import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.mail.IMailSystemManager;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
+import moe.plushie.rpg_framework.core.common.network.server.MessageServerMailResult;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerSyncMailSystems;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import moe.plushie.rpg_framework.mail.common.serialize.MailSystemSerializer;
@@ -38,7 +41,7 @@ public class MailSystemManager implements IMailSystemManager {
     }
 
     public void reload(boolean syncWithClients) {
-        RpgEconomy.getLogger().info("Loading Mail Systems");
+        RPGFramework.getLogger().info("Loading Mail Systems");
         File[] files = currencyDirectory.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
@@ -62,12 +65,12 @@ public class MailSystemManager implements IMailSystemManager {
     }
 
     public void syncToClient(EntityPlayerMP entityPlayer) {
-        RpgEconomy.getLogger().info("Sending " + mailSystemMap.size() + " mail system(s) to player " + entityPlayer.getName() + ".");
+        RPGFramework.getLogger().info("Sending " + mailSystemMap.size() + " mail system(s) to player " + entityPlayer.getName() + ".");
         PacketHandler.NETWORK_WRAPPER.sendTo(getSyncMessage(), entityPlayer);
     }
 
     private void syncToAll() {
-        RpgEconomy.getLogger().info("Sending " + mailSystemMap.size() + " mail system(s) to all players.");
+        RPGFramework.getLogger().info("Sending " + mailSystemMap.size() + " mail system(s) to all players.");
         PacketHandler.NETWORK_WRAPPER.sendToAll(getSyncMessage());
     }
 
@@ -76,7 +79,7 @@ public class MailSystemManager implements IMailSystemManager {
     }
 
     public void gotMailSystemsFromServer(MailSystem[] mailSystems) {
-        RpgEconomy.getLogger().info("Got " + mailSystems.length + " mail systems(s) from server.");
+        RPGFramework.getLogger().info("Got " + mailSystems.length + " mail systems(s) from server.");
         mailSystemMap.clear();
         for (MailSystem mailSystem : mailSystems) {
             mailSystemMap.put(mailSystem.getIdentifier(), mailSystem);
@@ -84,7 +87,7 @@ public class MailSystemManager implements IMailSystemManager {
     }
 
     private void loadMailSystem(File mailSystemFile) {
-        RpgEconomy.getLogger().info("Loading mail system: " + mailSystemFile.getName());
+        RPGFramework.getLogger().info("Loading mail system: " + mailSystemFile.getName());
         JsonElement jsonElement = SerializeHelper.readJsonFile(mailSystemFile);
         if (jsonElement != null) {
             MailSystem mailSystem = MailSystemSerializer.deserializeJson(jsonElement, new IdentifierString(mailSystemFile.getName()));
@@ -111,10 +114,19 @@ public class MailSystemManager implements IMailSystemManager {
         return mailSystemMap.keySet().toArray(new String[mailSystemMap.size()]);
     }
 
-    public void onClientSendMailMessage(EntityPlayerMP entityPlayer, MailMessage mailMessage) {
-        MailSystem mailSystem = getMailSystem(mailMessage.getMailSystem().getIdentifier());
-        if (mailSystem != null) {
-            mailSystem.onClientSendMailMessage(entityPlayer, mailMessage);
+    public void onClientSendMailMessage(EntityPlayerMP entityPlayer, MailMessage[] mailMessages) {
+        ArrayList<GameProfile> success = new ArrayList<GameProfile>();
+        ArrayList<GameProfile> failed = new ArrayList<GameProfile>();
+        for (MailMessage mailMessage : mailMessages) {
+            MailSystem mailSystem = getMailSystem(mailMessage.getMailSystem().getIdentifier());
+            if (mailSystem != null) {
+                if (mailSystem.onClientSendMailMessage(entityPlayer, mailMessage)) {
+                    success.add(mailMessage.getReceiver());
+                    continue;
+                }
+            }
+            failed.add(mailMessage.getReceiver());
         }
+        PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerMailResult(success, failed), entityPlayer);
     }
 }

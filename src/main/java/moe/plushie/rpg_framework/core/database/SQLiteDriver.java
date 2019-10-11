@@ -15,7 +15,7 @@ import org.sqlite.SQLiteConfig;
 import org.sqlite.SQLiteConfig.Pragma;
 import org.sqlite.javax.SQLiteConnectionPoolDataSource;
 
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 
 public final class SQLiteDriver {
 
@@ -23,7 +23,7 @@ public final class SQLiteDriver {
     private static PooledConnection pooledConnection;
 
     private static String getConnectionUrl() {
-        File file = new File(RpgEconomy.getProxy().getModDirectory(), FILE_NAME);
+        File file = new File(RPGFramework.getProxy().getModDirectory(), FILE_NAME);
         return "jdbc:sqlite:" + file.getAbsolutePath();
     }
 

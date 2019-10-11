@@ -1,7 +1,7 @@
 package moe.plushie.rpg_framework.mail.common.tileentities;
 
 import moe.plushie.rpg_framework.api.core.IIdentifier;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.inventory.IGuiFactory;
 import moe.plushie.rpg_framework.core.common.tileentities.ModAutoSyncTileEntity;
@@ -46,7 +46,7 @@ public class TileEntityMailBox extends ModAutoSyncTileEntity implements IGuiFact
         super.readFromNBT(compound);
         if (compound.hasKey(TAG_MAIL_SYSTEM, NBT.TAG_STRING)) {
             IIdentifier mailSystemName = new IdentifierString(compound.getString(TAG_MAIL_SYSTEM));
-            mailSystem = RpgEconomy.getProxy().getMailSystemManager().getMailSystem(mailSystemName);
+            mailSystem = RPGFramework.getProxy().getMailSystemManager().getMailSystem(mailSystemName);
         }
     }
 

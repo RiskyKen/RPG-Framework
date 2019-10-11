@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import org.lwjgl.opengl.GL11;
 
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpg_framework.core.client.gui.GuiHelper;
 import moe.plushie.rpg_framework.core.client.gui.IDialogCallback;
@@ -59,7 +59,7 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
         super(new ContainerMailBox(tileEntity, entityPlayer));
         this.tileEntity = tileEntity;
         this.player = entityPlayer;
-        this.mailSystem = RpgEconomy.getProxy().getMailSystemManager().getMailSystem(new IdentifierString("main.json"));
+        this.mailSystem = RPGFramework.getProxy().getMailSystemManager().getMailSystem(new IdentifierString("main.json"));
         this.mailMessages = new ArrayList<MailMessage>();
     }
 
@@ -261,7 +261,7 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
     }
 
     public void gotListFromServer(ArrayList<MailMessage> mailMessages) {
-        RpgEconomy.getLogger().info("Got message list from server.");
+        RPGFramework.getLogger().info("Got message list from server.");
         this.mailMessages = mailMessages;
         updateMailList(mailPage);
     }

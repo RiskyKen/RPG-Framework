@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import io.netty.buffer.ByteBuf;
 import moe.plushie.rpg_framework.api.bank.IBank;
 import moe.plushie.rpg_framework.bank.common.serialize.BankSerializer;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -49,7 +49,7 @@ public class MessageServerSyncBanks implements IMessage, IMessageHandler<Message
 
     @Override
     public IMessage onMessage(MessageServerSyncBanks message, MessageContext ctx) {
-        RpgEconomy.getProxy().getBankManager().gotBanksFromServer(message.banks);
+        RPGFramework.getProxy().getBankManager().gotBanksFromServer(message.banks);
         return null;
     }
 }

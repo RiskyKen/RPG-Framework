@@ -1,6 +1,6 @@
 package moe.plushie.rpg_framework.mail.common.items.block;
 
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.init.ModBlocks;
 import moe.plushie.rpg_framework.core.common.items.block.ModItemBlock;
 import moe.plushie.rpg_framework.mail.common.MailSystem;
@@ -30,7 +30,7 @@ public class ItemBlockMailBox extends ModItemBlock {
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
         if (this.isInCreativeTab(tab)) {
-            MailSystemManager mailSystemManager = RpgEconomy.getProxy().getMailSystemManager();
+            MailSystemManager mailSystemManager = RPGFramework.getProxy().getMailSystemManager();
             for (MailSystem mailSystem : mailSystemManager.getMailSystems()) {
                 ItemStack itemStack = getStackFromMailSystem(mailSystem);
                 if (!itemStack.isEmpty()) {

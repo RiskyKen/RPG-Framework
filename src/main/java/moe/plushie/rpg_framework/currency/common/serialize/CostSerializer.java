@@ -11,7 +11,7 @@ import moe.plushie.rpg_framework.core.common.serialize.ItemMacherSerializer;
 import moe.plushie.rpg_framework.currency.common.Cost;
 
 public final class CostSerializer {
-    
+
     private static final String PROP_CURRENCY = "currency";
     private static final String PROP_ITEMS = "items";
 
@@ -28,18 +28,23 @@ public final class CostSerializer {
             }
             jsonObject.add(PROP_ITEMS, arrayItems);
         }
-        
+
         // Write wallet.
         if (cost.hasWalletCost()) {
             jsonObject.add(PROP_CURRENCY, WalletSerializer.serializeJson(cost.getWalletCost()));
         }
         return jsonObject;
     }
-    
+
     public static Cost deserializeJson(JsonElement jsonElement) {
-        return deserializeJson(jsonElement.getAsJsonObject());
+        try {
+            return deserializeJson(jsonElement.getAsJsonObject());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
-    
+
     public static Cost deserializeJson(JsonObject jsonObject) {
         try {
             IItemMatcher[] itemCost = null;
@@ -56,7 +61,7 @@ public final class CostSerializer {
             if (jsonObject.has(PROP_CURRENCY)) {
                 walletCost = WalletSerializer.deserializeJson(jsonObject.get(PROP_CURRENCY).getAsJsonObject());
             }
-            
+
             return new Cost(walletCost, itemCost);
         } catch (Exception e) {
             e.printStackTrace();

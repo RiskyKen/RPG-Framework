@@ -3,7 +3,7 @@ package moe.plushie.rpg_framework.bank.tileentities;
 import moe.plushie.rpg_framework.api.bank.IBank;
 import moe.plushie.rpg_framework.bank.client.GuiBank;
 import moe.plushie.rpg_framework.bank.common.inventory.ContainerBank;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.inventory.IGuiFactory;
 import moe.plushie.rpg_framework.core.common.tileentities.ModAutoSyncTileEntity;
 import net.minecraft.client.gui.GuiScreen;
@@ -34,7 +34,7 @@ public class TileEntityBank extends ModAutoSyncTileEntity implements IGuiFactory
     }
 
     public IBank getBank() {
-        return RpgEconomy.getProxy().getBankManager().getBank(bankIdentifier);
+        return RPGFramework.getProxy().getBankManager().getBank(bankIdentifier);
     }
 
     public void setBank(IBank bank) {

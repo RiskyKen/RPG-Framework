@@ -1,7 +1,7 @@
 package moe.plushie.rpg_framework.core.common.network.client;
 
 import io.netty.buffer.ByteBuf;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.loot.common.LootTableHelper;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
@@ -40,13 +40,13 @@ public class MessageClientRequestSync implements IMessage, IMessageHandler<Messa
             public void run() {
                 switch (message.syncType) {
                 case CURRENCIES:
-                    RpgEconomy.getProxy().getCurrencyManager().syncToClient(player);
+                    RPGFramework.getProxy().getCurrencyManager().syncToClient(player);
                     break;
                 case SHOPS_IDENTIFIERS:
-                    RpgEconomy.getProxy().getShopManager().syncToClient(player);
+                    RPGFramework.getProxy().getShopManager().syncToClient(player);
                     break;
                 case MAIL_SYSTEMS:
-                    RpgEconomy.getProxy().getMailSystemManager().syncToClient(player);
+                    RPGFramework.getProxy().getMailSystemManager().syncToClient(player);
                     break;
                 case LOOT_TABLES:
                     LootTableHelper.syncLootTablesToClient(player);

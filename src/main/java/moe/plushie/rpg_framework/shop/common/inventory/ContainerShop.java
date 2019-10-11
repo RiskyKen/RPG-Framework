@@ -7,7 +7,7 @@ import moe.plushie.rpg_framework.api.currency.ICost;
 import moe.plushie.rpg_framework.api.shop.IShop;
 import moe.plushie.rpg_framework.api.shop.IShop.IShopItem;
 import moe.plushie.rpg_framework.api.shop.IShop.IShopTab;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.config.ConfigHandler;
 import moe.plushie.rpg_framework.core.common.init.ModSounds;
 import moe.plushie.rpg_framework.core.common.inventory.ModContainer;
@@ -226,7 +226,7 @@ public class ContainerShop extends ModContainer {
     }
 
     public void saveShop() {
-        RpgEconomy.getProxy().getShopManager().saveShop(shop);
+        RPGFramework.getProxy().getShopManager().saveShop(shop);
     }
 
     public void shopRename(String shopName) {
@@ -267,7 +267,7 @@ public class ContainerShop extends ModContainer {
             tileEntity.setShop(identifier);
             changeTab(0);
         }
-        shop = RpgEconomy.getProxy().getShopManager().getShop(identifier);
+        shop = RPGFramework.getProxy().getShopManager().getShop(identifier);
         sendShopToListeners(false);
     }
 
@@ -281,13 +281,13 @@ public class ContainerShop extends ModContainer {
     }
 
     public void addShop(String shopName) {
-        ShopManager shopManager = RpgEconomy.getProxy().getShopManager();
+        ShopManager shopManager = RPGFramework.getProxy().getShopManager();
         shopManager.addShop(shopName);
         shopManager.syncToClient((EntityPlayerMP) player);
     }
 
     public void removeShop(IIdentifier shopIdentifier) {
-        ShopManager shopManager = RpgEconomy.getProxy().getShopManager();
+        ShopManager shopManager = RPGFramework.getProxy().getShopManager();
         shopManager.removeShop(shopIdentifier);
         shopManager.syncToClient((EntityPlayerMP) player);
     }

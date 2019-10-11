@@ -2,7 +2,7 @@ package moe.plushie.rpg_framework.loot.common.command;
 
 import moe.plushie.rpg_framework.api.loot.ILootTable;
 import moe.plushie.rpg_framework.api.loot.ILootTablePool;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.command.CommandExecute;
 import moe.plushie.rpg_framework.core.common.command.ModCommand;
 import moe.plushie.rpg_framework.core.common.command.ModSubCommands;
@@ -47,7 +47,7 @@ public class CommandLoot extends ModSubCommands {
             @Override
             public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
                 EntityPlayerMP player = getCommandSenderAsPlayer(sender);
-                FMLNetworkHandler.openGui(player, RpgEconomy.getInstance(), EnumGuiId.LOOT_EDITOR_COMMAND.ordinal(), server.getEntityWorld(), 0, 0, 0);
+                FMLNetworkHandler.openGui(player, RPGFramework.getInstance(), EnumGuiId.LOOT_EDITOR_COMMAND.ordinal(), server.getEntityWorld(), 0, 0, 0);
             }
         }));
     }

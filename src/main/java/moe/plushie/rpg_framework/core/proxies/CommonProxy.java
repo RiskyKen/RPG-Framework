@@ -8,7 +8,7 @@ import moe.plushie.rpg_framework.auction.ModuleAuction;
 import moe.plushie.rpg_framework.bank.ModuleBank;
 import moe.plushie.rpg_framework.bank.common.BankManager;
 import moe.plushie.rpg_framework.bank.common.capability.BankCapabilityManager;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.command.CommandRpg;
 import moe.plushie.rpg_framework.core.common.config.ConfigHandler;
 import moe.plushie.rpg_framework.core.common.init.ModBlocks;
@@ -183,8 +183,8 @@ public class CommonProxy {
 
     public void openCurrencyWalletGui(EntityPlayer player, ICurrency currency) {
         if (currency != null) {
-            int id = RpgEconomy.getProxy().getCurrencyManager().getCurrencyID(currency);
-            FMLNetworkHandler.openGui(player, RpgEconomy.getInstance(), EnumGuiId.WALLET.ordinal(), player.getEntityWorld(), id, 0, 0);
+            int id = RPGFramework.getProxy().getCurrencyManager().getCurrencyID(currency);
+            FMLNetworkHandler.openGui(player, RPGFramework.getInstance(), EnumGuiId.WALLET.ordinal(), player.getEntityWorld(), id, 0, 0);
         }
     }
 }

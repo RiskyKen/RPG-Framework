@@ -2,10 +2,11 @@ package moe.plushie.rpg_framework.mail.common.inventory;
 
 import java.util.ArrayList;
 
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.inventory.ModTileContainer;
 import moe.plushie.rpg_framework.core.common.inventory.slot.SlotHidable;
+import moe.plushie.rpg_framework.core.common.inventory.slot.SlotOutput;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerMailList;
 import moe.plushie.rpg_framework.core.common.utils.UtilItems;
@@ -26,26 +27,18 @@ public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> {
     private boolean synced = false;
 
     private final InventoryBasic invAttachmentsInput;
-    // private final InventoryBasic invAttachmentsOutput;
 
     private final ArrayList<Slot> slotsAttachmentsInput;
-    // private final ArrayList<Slot> slotsAttachmentsOutput;
 
     public ContainerMailBox(TileEntityMailBox tileEntity, EntityPlayer entityPlayer) {
         super(entityPlayer, tileEntity);
-        this.mailSystem = RpgEconomy.getProxy().getMailSystemManager().getMailSystem(new IdentifierString("main.json"));
+        this.mailSystem = RPGFramework.getProxy().getMailSystemManager().getMailSystem(new IdentifierString("main.json"));
 
         invAttachmentsInput = new InventoryBasic("attachmentsInput", false, 8);
-        // invAttachmentsOutput = new InventoryBasic("attachmentsOutput", false, 8);
 
         slotsAttachmentsInput = new ArrayList<Slot>();
-        // slotsAttachmentsOutput = new ArrayList<Slot>();
 
         addPlayerSlots(8, 167);
-
-        // for (int i = 0; i < invAttachmentsOutput.getSizeInventory(); i++) {
-        // addSlotToContainerAndList(new SlotOutput(invAttachmentsOutput, i, 290 - 17 * i, 122), slotsAttachmentsOutput);
-        // }
 
         for (int i = 0; i < invAttachmentsInput.getSizeInventory(); i++) {
             addSlotToContainerAndList(new SlotHidable(invAttachmentsInput, i, 290 - 17 * i, 122), slotsAttachmentsInput);
@@ -59,10 +52,6 @@ public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> {
     public ArrayList<Slot> getSlotsAttachmentsInput() {
         return slotsAttachmentsInput;
     }
-
-    // public ArrayList<Slot> getSlotsAttachmentsOutput() {
-    // return slotsAttachmentsOutput;
-    // }
 
     @Override
     public boolean canInteractWith(EntityPlayer entityPlayer) {
@@ -89,8 +78,8 @@ public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> {
         }
     }
 
-    public void onClientSendMailMessage(EntityPlayerMP player, MailMessage mailMessage) {
-        RpgEconomy.getProxy().getMailSystemManager().onClientSendMailMessage(player, mailMessage);
+    public void onClientSendMailMessages(EntityPlayerMP player, MailMessage[] mailMessages) {
+        RPGFramework.getProxy().getMailSystemManager().onClientSendMailMessage(player, mailMessages);
     }
 
     public void onClientSelectMessage(EntityPlayerMP player, int messageId) {

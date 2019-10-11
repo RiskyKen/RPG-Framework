@@ -3,7 +3,7 @@ package moe.plushie.rpg_framework.core.common.network.server;
 import io.netty.buffer.ByteBuf;
 import moe.plushie.rpg_framework.api.loot.ILootTable;
 import moe.plushie.rpg_framework.api.loot.ILootTablePool;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.loot.client.gui.GuiLootEditor;
 import moe.plushie.rpg_framework.loot.common.LootTableHelper;
 import net.minecraft.client.Minecraft;
@@ -40,7 +40,7 @@ public class MessageServerSyncLoot implements IMessage {
             jsonString = LootTableHelper.poolToJson(pool).toString();
             buf.writeBoolean(false);
         } else {
-            RpgEconomy.getLogger().warn("Sending loot package with no data.");
+            RPGFramework.getLogger().warn("Sending loot package with no data.");
         }
         ByteBufUtils.writeUTF8String(buf, jsonString);
     }

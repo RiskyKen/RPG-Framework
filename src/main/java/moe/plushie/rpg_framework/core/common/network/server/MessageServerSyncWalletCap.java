@@ -2,7 +2,7 @@ package moe.plushie.rpg_framework.core.common.network.server;
 
 import io.netty.buffer.ByteBuf;
 import moe.plushie.rpg_framework.api.currency.ICurrencyCapability;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.network.client.DelayedMessageHandler;
 import moe.plushie.rpg_framework.core.common.network.client.DelayedMessageHandler.IDelayedMessage;
 import moe.plushie.rpg_framework.currency.common.capability.CurrencyCapability;
@@ -65,7 +65,7 @@ public class MessageServerSyncWalletCap implements IMessage, IMessageHandler<Mes
                     CurrencyCapability.WALLET_CAP.getStorage().readNBT(CurrencyCapability.WALLET_CAP, wallet, null, compound);
                 }
             } else {
-                RpgEconomy.getLogger().warn(String.format("Failed to get entity with %d when updating IWardrobeCapability.", entityID));
+                RPGFramework.getLogger().warn(String.format("Failed to get entity with %d when updating IWardrobeCapability.", entityID));
             }
         }
     }

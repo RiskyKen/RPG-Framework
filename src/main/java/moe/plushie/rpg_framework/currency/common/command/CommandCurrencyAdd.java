@@ -5,7 +5,7 @@ import java.util.List;
 import moe.plushie.rpg_framework.api.currency.ICurrency;
 import moe.plushie.rpg_framework.api.currency.ICurrencyCapability;
 import moe.plushie.rpg_framework.api.currency.IWallet;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.command.ModCommand;
 import moe.plushie.rpg_framework.currency.common.capability.CurrencyCapability;
 import net.minecraft.command.CommandException;
@@ -24,7 +24,7 @@ public class CommandCurrencyAdd extends ModCommand {
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos targetPos) {
         if (args.length == getParentCount() + 1) {
-            return getListOfStringsMatchingLastWord(args, RpgEconomy.getProxy().getCurrencyManager().getCurrencyNames());
+            return getListOfStringsMatchingLastWord(args, RPGFramework.getProxy().getCurrencyManager().getCurrencyNames());
         }
         if (args.length == getParentCount() + 2) {
             return getListOfStringsMatchingLastWord(args, getPlayers(server));
@@ -38,7 +38,7 @@ public class CommandCurrencyAdd extends ModCommand {
         String playerText = args[getParentCount() + 1];
         String amountText = args[getParentCount() + 2];
         
-        ICurrency currency = RpgEconomy.getProxy().getCurrencyManager().getCurrency(currencyText);
+        ICurrency currency = RPGFramework.getProxy().getCurrencyManager().getCurrency(currencyText);
         EntityPlayerMP entityPlayer = getPlayer(server, sender, playerText);
         int amount = parseInt(amountText, 0);
         

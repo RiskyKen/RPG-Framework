@@ -10,7 +10,7 @@ import com.google.gson.JsonElement;
 import moe.plushie.rpg_framework.api.bank.IBank;
 import moe.plushie.rpg_framework.api.bank.IBankManager;
 import moe.plushie.rpg_framework.bank.common.serialize.BankSerializer;
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerSyncBanks;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
@@ -37,7 +37,7 @@ public class BankManager implements IBankManager {
     }
     
     public void reload(boolean syncWithClients) {
-        RpgEconomy.getLogger().info("Loading Banks");
+        RPGFramework.getLogger().info("Loading Banks");
         File[] files = currencyDirectory.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
@@ -61,12 +61,12 @@ public class BankManager implements IBankManager {
     }
     
     public void syncToClient(EntityPlayerMP entityPlayer) {
-        RpgEconomy.getLogger().info("Sending " + bankMap.size() + " bank list(s) to player " + entityPlayer.getName() + ".");
+        RPGFramework.getLogger().info("Sending " + bankMap.size() + " bank list(s) to player " + entityPlayer.getName() + ".");
         PacketHandler.NETWORK_WRAPPER.sendTo(getSyncMessage(), entityPlayer);
     }
     
     private void syncToAll() {
-        RpgEconomy.getLogger().info("Sending " + bankMap.size() + " bank list(s) to all players.");
+        RPGFramework.getLogger().info("Sending " + bankMap.size() + " bank list(s) to all players.");
         PacketHandler.NETWORK_WRAPPER.sendToAll(getSyncMessage());
     }
     
@@ -75,7 +75,7 @@ public class BankManager implements IBankManager {
     }
     
     public void gotBanksFromServer(IBank[] banks) {
-        RpgEconomy.getLogger().info("Got " + banks.length + " bank list(s) from server.");
+        RPGFramework.getLogger().info("Got " + banks.length + " bank list(s) from server.");
         bankMap.clear();
         for (IBank bank : banks) {
             bankMap.put(bank.getIdentifier(), bank);
@@ -83,7 +83,7 @@ public class BankManager implements IBankManager {
     }
     
     private void loadBank(File bankFile) {
-        RpgEconomy.getLogger().info("Loading bank: " + bankFile.getName());
+        RPGFramework.getLogger().info("Loading bank: " + bankFile.getName());
         JsonElement jsonElement = SerializeHelper.readJsonFile(bankFile);
         if (jsonElement != null) {
             Bank bank = BankSerializer.deserializeJson(jsonElement, bankFile.getName());

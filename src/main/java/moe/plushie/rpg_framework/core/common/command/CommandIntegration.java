@@ -6,7 +6,7 @@ import java.util.UUID;
 import com.google.common.base.Charsets;
 import com.mojang.authlib.GameProfile;
 
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.command.CommandExecute.ICommandExecute;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import moe.plushie.rpg_framework.core.database.TablePlayers;
@@ -25,7 +25,7 @@ public class CommandIntegration extends ModSubCommands {
             @Override
             public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
                 EntityPlayer player = getCommandSenderAsPlayer(sender);
-                File fantasticPlayersFile = new File(RpgEconomy.getProxy().getConfigDirectory(), "fantasticlib/reference/players.txt");
+                File fantasticPlayersFile = new File(RPGFramework.getProxy().getConfigDirectory(), "fantasticlib/reference/players.txt");
                 if (!fantasticPlayersFile.exists()) {
                     player.sendMessage(new TextComponentString("File was not found."));
                     return;

@@ -2,7 +2,7 @@ package moe.plushie.rpg_framework.core.client.gui;
 
 import java.util.HashMap;
 
-import moe.plushie.rpg_framework.core.RpgEconomy;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.client.gui.json.GuiJsonInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourceManager;
@@ -26,7 +26,7 @@ public class GuiResourceManager implements IResourceManagerReloadListener {
 	
 	@Override
 	public void onResourceManagerReload(IResourceManager resourceManager) {
-	    RpgEconomy.getLogger().info("Loading GUI resources.");
+	    RPGFramework.getLogger().info("Loading GUI resources.");
 	    synchronized (GUI_RESOURCE_MAP) {
 	        GUI_RESOURCE_MAP.clear();
         }
