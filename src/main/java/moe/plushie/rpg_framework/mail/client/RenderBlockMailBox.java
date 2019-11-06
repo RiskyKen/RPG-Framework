@@ -22,7 +22,11 @@ public class RenderBlockMailBox extends TileEntitySpecialRenderer<TileEntityMail
     @Override
     public void render(TileEntityMailBox te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         IBlockState blockState = te.getWorld().getBlockState(te.getPos());
-        EnumFacing facing = blockState.getValue(BlockMailBox.STATE_FACING);
+        EnumFacing facing = EnumFacing.EAST;
+        if (blockState.getBlock() == ModBlocks.MAIL_BOX) {
+            facing = blockState.getValue(BlockMailBox.STATE_FACING);
+        }
+
         float angle = (((te.getWorld().getTotalWorldTime() + te.hashCode()) % 45) + partialTicks);
         // RpgEconomy.getLogger().info("");
         bindTexture(TEXTURE_FLAG);
