@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 import org.lwjgl.opengl.GL11;
 
+import com.mojang.authlib.GameProfile;
+
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpg_framework.core.client.gui.GuiHelper;
@@ -323,6 +325,12 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
         }
         if (dialog.getClass() == GuiMailBoxDialogSend.class & result == DialogResult.OK) {
             closeDialog();
+        }
+    }
+
+    public void onServerMailResult(ArrayList<GameProfile> success, ArrayList<GameProfile> failed) {
+        if (isDialogOpen() && dialog instanceof GuiMailBoxDialogSend) {
+            ((GuiMailBoxDialogSend)dialog).onServerMailResult(success, failed);
         }
     }
 }

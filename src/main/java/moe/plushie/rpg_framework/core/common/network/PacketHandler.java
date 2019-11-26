@@ -9,6 +9,7 @@ import moe.plushie.rpg_framework.core.common.network.client.MessageClientKeyPres
 import moe.plushie.rpg_framework.core.common.network.client.MessageClientLootEditorUpdate;
 import moe.plushie.rpg_framework.core.common.network.client.MessageClientRequestSync;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerMailList;
+import moe.plushie.rpg_framework.core.common.network.server.MessageServerMailResult;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerShop;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerSyncBankAccount;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerSyncBanks;
@@ -52,6 +53,7 @@ public class PacketHandler {
         registerMessage(MessageServerSyncLootTables.Handler.class, MessageServerSyncLootTables.class, Side.CLIENT);
         registerMessage(MessageServerSyncLoot.Handler.class, MessageServerSyncLoot.class, Side.CLIENT);
         registerMessage(MessageServerMailList.Handler.class, MessageServerMailList.class, Side.CLIENT);
+        registerMessage(MessageServerMailResult.Handler.class, MessageServerMailResult.class, Side.CLIENT);
     }
 
     private <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Class<? extends IMessageHandler<REQ, REPLY>> messageHandler, Class<REQ> requestMessageType, Side side) {

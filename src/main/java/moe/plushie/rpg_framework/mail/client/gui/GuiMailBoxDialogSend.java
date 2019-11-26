@@ -8,6 +8,7 @@ import java.util.UUID;
 import com.mojang.authlib.GameProfile;
 
 import moe.plushie.rpg_framework.api.mail.IMailSystem;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpg_framework.core.client.gui.GuiHelper;
 import moe.plushie.rpg_framework.core.client.gui.IDialogCallback;
@@ -25,6 +26,7 @@ import net.minecraftforge.fml.client.config.GuiButtonExt;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import scala.actors.threadpool.Arrays;
 
 @SideOnly(Side.CLIENT)
 public class GuiMailBoxDialogSend extends AbstractGuiDialog {
@@ -179,7 +181,14 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
         if (mailMessages.isEmpty()) {
             return false;
         }
+
         PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiMailBox(MailMessageType.MAIL_MESSAGE_SEND).setMailMessages(mailMessages.toArray(new MailMessage[mailMessages.size()])));
         return true;
+    }
+
+    public void onServerMailResult(ArrayList<GameProfile> success, ArrayList<GameProfile> failed) {
+        RPGFramework.getLogger().info("success: " + Arrays.toString(success.toArray()));
+        RPGFramework.getLogger().info("failed: " + Arrays.toString(failed.toArray()));
+        returnDialogResult(DialogResult.OK);
     }
 }

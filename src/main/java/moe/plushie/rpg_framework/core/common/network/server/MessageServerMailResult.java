@@ -5,13 +5,19 @@ import java.util.ArrayList;
 import com.mojang.authlib.GameProfile;
 
 import io.netty.buffer.ByteBuf;
+import moe.plushie.rpg_framework.core.client.gui.manager.GuiManager;
 import moe.plushie.rpg_framework.core.common.utils.ByteBufHelper;
+import moe.plushie.rpg_framework.loot.client.gui.GuiLootEditor;
+import moe.plushie.rpg_framework.mail.client.gui.GuiMailBox;
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class MessageServerMailResult implements IMessage {
 
@@ -60,8 +66,21 @@ public class MessageServerMailResult implements IMessage {
 
         @Override
         public IMessage onMessage(MessageServerMailResult message, MessageContext ctx) {
-            // TODO Auto-generated method stub
+            sendToGui(message);
             return null;
+        }
+
+        @SideOnly(Side.CLIENT)
+        private void sendToGui(MessageServerMailResult message) {
+            Minecraft mc = Minecraft.getMinecraft();
+            mc.addScheduledTask(new Runnable() {
+                @Override
+                public void run() {
+                    if (mc.currentScreen != null && mc.currentScreen instanceof GuiMailBox) {
+                        ((GuiMailBox) mc.currentScreen).onServerMailResult(message.success, message.failed);
+                    }
+                }
+            });
         }
     }
 }

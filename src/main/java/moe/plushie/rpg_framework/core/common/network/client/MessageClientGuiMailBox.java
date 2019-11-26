@@ -84,8 +84,9 @@ public class MessageClientGuiMailBox implements IMessage, IMessageHandler<Messag
             break;
         case MAIL_MESSAGE_SEND:
             int count = buf.readInt();
-            String mailJson = ByteBufUtils.readUTF8String(buf);
+            mailMessages = new MailMessage[count];
             for (int i = 0; i < count; i++) {
+                String mailJson = ByteBufUtils.readUTF8String(buf);
                 mailMessages[i] = MailMessageSerializer.deserializeJson(SerializeHelper.stringToJson(mailJson));
             }
             break;
