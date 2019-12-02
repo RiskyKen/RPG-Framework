@@ -13,6 +13,7 @@ import moe.plushie.rpg_framework.api.mail.IMailSystem;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
+import moe.plushie.rpg_framework.core.database.driver.SQLiteDriver;
 import moe.plushie.rpg_framework.mail.common.MailListItem;
 import moe.plushie.rpg_framework.mail.common.MailMessage;
 import net.minecraft.entity.player.EntityPlayer;
@@ -37,13 +38,13 @@ public final class TableMail {
                     "read BOOLEAN NOT NULL)";
 
     public static void create() {
-        SQLiteDriver.executeUpdate(SQL_CREATE_TABLE);
+        DatabaseManager.executeUpdate(SQL_CREATE_TABLE);
     }
 
     private static final String SQL_MESSAGE_ADD = "INSERT INTO mail (id, mail_system, player_id_sender, player_id_receiver, subject, text, attachments, sent_date, read) VALUES (NULL, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)";
 
     public static boolean addMessage(MailMessage message) {
-        try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_MESSAGE_ADD)) {
+        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_MESSAGE_ADD)) {
             DBPlayer dbPlayerSender = TablePlayers.getPlayer(message.getSender());
             DBPlayer dbPlayerReceiver = TablePlayers.getPlayer(message.getReceiver());
             if (dbPlayerReceiver != DBPlayer.MISSING) {
@@ -67,7 +68,7 @@ public final class TableMail {
 
     public static ArrayList<MailListItem> getMessageList(EntityPlayer player, IMailSystem mailSystem) {
         ArrayList<MailListItem> listItems = new ArrayList<MailListItem>();
-        try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_MESSAGE_LIST_GET)) {
+        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_MESSAGE_LIST_GET)) {
             ps.setObject(1, mailSystem.getIdentifier().getValue());
             ResultSet resultSet = ps.executeQuery();
             while (resultSet.next()) {
@@ -83,7 +84,7 @@ public final class TableMail {
 
     public static ArrayList<MailMessage> getMessages(EntityPlayer player, IMailSystem mailSystem) {
         ArrayList<MailMessage> mailMessages = new ArrayList<MailMessage>();
-        try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_MESSAGES_GET)) {
+        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_MESSAGES_GET)) {
             DBPlayerInfo dbPlayerReceiver = TablePlayers.getPlayerInfo(player.getGameProfile());
             ps.setObject(1, mailSystem.getIdentifier().getValue());
             ps.setInt(2, dbPlayerReceiver.getId());
@@ -109,7 +110,7 @@ public final class TableMail {
 
     public static MailMessage getMessage(int id) {
         MailMessage message = null;
-        try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_MESSAGE_GET)) {
+        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_MESSAGE_GET)) {
             ps.setInt(1, id);
             ResultSet resultSet = ps.executeQuery();
             while (resultSet.next()) {
@@ -134,7 +135,7 @@ public final class TableMail {
 
     public static void deleteMessage(int messageId) {
         create();
-        try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_DELETE_MESSAGE)) {
+        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_DELETE_MESSAGE)) {
             ps.setInt(1, messageId);
             ps.executeUpdate();
         } catch (Exception e) {
@@ -145,7 +146,7 @@ public final class TableMail {
     private static final String SQL_MESSAGE_MARK_READ = "UPDATE mail SET read=? WHERE id=?";
 
     public static void markMessageasRead(int messageId) {
-        try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_MESSAGE_MARK_READ)) {
+        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_MESSAGE_MARK_READ)) {
             ps.setBoolean(1, true);
             ps.setInt(2, messageId);
             ps.executeUpdate();
@@ -157,7 +158,7 @@ public final class TableMail {
     private static final String SQL_CLEAR_MESSAGE_ITEMS = "UPDATE mail SET attachments=? WHERE id=?";
     
     public static void clearMessageItems(int messageId) {
-        try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_CLEAR_MESSAGE_ITEMS)) {
+        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_CLEAR_MESSAGE_ITEMS)) {
             ps.setString(1, "[]");
             ps.setInt(2, messageId);
             ps.executeUpdate();

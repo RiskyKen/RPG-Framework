@@ -15,6 +15,7 @@ import moe.plushie.rpg_framework.core.common.inventory.slot.SlotHidable;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerShop;
 import moe.plushie.rpg_framework.core.common.utils.UtilItems;
+import moe.plushie.rpg_framework.core.database.DatabaseScheduler;
 import moe.plushie.rpg_framework.shop.common.ShopManager;
 import moe.plushie.rpg_framework.shop.common.Shop.ShopItem;
 import moe.plushie.rpg_framework.shop.common.Shop.ShopTab;

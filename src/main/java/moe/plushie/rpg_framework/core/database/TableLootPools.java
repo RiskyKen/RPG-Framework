@@ -18,6 +18,7 @@ import moe.plushie.rpg_framework.api.loot.ILootTablePool;
 import moe.plushie.rpg_framework.core.common.IdentifierInt;
 import moe.plushie.rpg_framework.core.common.serialize.ItemStackSerialize;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
+import moe.plushie.rpg_framework.core.database.driver.SQLiteDriver;
 import moe.plushie.rpg_framework.loot.common.LootTableItem;
 import moe.plushie.rpg_framework.loot.common.LootTablePool;
 import net.minecraft.item.ItemStack;
@@ -35,7 +36,7 @@ public final class TableLootPools {
             + "last_update DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL)";
     
     public static void createTable() {
-        SQLiteDriver.executeUpdate(SQL_CREATE_TABLE);
+        DatabaseManager.executeUpdate(SQL_CREATE_TABLE);
     }
 
     private static final String SQL_ADD_LOOT_POOL = "INSERT INTO loot_pools (id, name, category, items, last_update) VALUES (NULL, ?, ?, ?, CURRENT_TIMESTAMP)";
@@ -43,12 +44,12 @@ public final class TableLootPools {
     public static ILootTablePool createNew(String name, String category) {
         createTable();
         ILootTablePool tablePool = null;
-        try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_ADD_LOOT_POOL)) {
+        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_ADD_LOOT_POOL)) {
             ps.setString(1, name);
             ps.setString(2, category);
             ps.setString(3, "[]");
             ps.executeUpdate();
-            int row = SQLiteDriver.getLastInsertRow(conn);
+            int row = DatabaseManager.getLastInsertRow(conn);
             tablePool = new LootTablePool(new IdentifierInt(row), name, category);
         } catch (Exception e) {
             e.printStackTrace();
@@ -60,7 +61,7 @@ public final class TableLootPools {
 
     public static void delete(IIdentifier identifier) {
         createTable();
-        try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_DELETE_LOOT_POOL)) {
+        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_DELETE_LOOT_POOL)) {
             ps.setObject(1, identifier.getValue());
             ps.executeUpdate();
         } catch (Exception e) {
@@ -73,7 +74,7 @@ public final class TableLootPools {
     public static ILootTablePool get(IIdentifier identifier) {
         createTable();
         ILootTablePool tablePool = null;
-        try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_GET_LOOT_POOL)) {
+        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_GET_LOOT_POOL)) {
             ps.setObject(1, identifier.getValue());
             ResultSet resultSet = ps.executeQuery();
             if (resultSet.next()) {
@@ -95,7 +96,7 @@ public final class TableLootPools {
 
     public static void update(ILootTablePool tablePool) {
         createTable();
-        try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_UPDATE_LOOT_POOL)) {
+        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_UPDATE_LOOT_POOL)) {
             ps.setString(1, tablePool.getName());
             ps.setString(2, tablePool.getCategory());
             JsonArray itemsJson = new JsonArray();
@@ -115,7 +116,7 @@ public final class TableLootPools {
 
     public static void getList(ArrayList<IIdentifier> identifiers, ArrayList<String> names, ArrayList<String> categories, ArrayList<Date> dates) {
         createTable();
-        try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_GET_LOOT_POOLS_LIST)) {
+        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_GET_LOOT_POOLS_LIST)) {
             ResultSet resultSet = ps.executeQuery();
             while (resultSet.next()) {
                 if (identifiers != null) {
@@ -140,7 +141,7 @@ public final class TableLootPools {
     
     public static void rename(IIdentifier identifier, String name, String category) {
         createTable();
-        try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_RENAME_LOOT_POOL)) {
+        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_RENAME_LOOT_POOL)) {
             ps.setString(1, name);
             ps.setString(2, category);
             ps.setObject(3, identifier.getValue());

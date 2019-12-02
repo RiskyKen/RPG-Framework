@@ -4,7 +4,8 @@ import java.util.ArrayList;
 
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.command.CommandExecute.ICommandExecute;
-import moe.plushie.rpg_framework.core.database.SQLiteDriver;
+import moe.plushie.rpg_framework.core.database.DatabaseManager;
+import moe.plushie.rpg_framework.core.database.driver.SQLiteDriver;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -19,14 +20,14 @@ public class CommandDev extends ModSubCommands {
             @Override
             public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
             	RPGFramework.getLogger().info("Updating database.");
-            	SQLiteDriver.executeUpdate(
+            	DatabaseManager.executeUpdate(
             			"DROP TABLE IF EXISTS TEST",
             			"CREATE TABLE TEST (id INTEGER, name STRING)",
             			"INSERT INTO TEST VALUES(1, 'Test 1')",
             			"INSERT INTO TEST VALUES(2, 'Test 2')");
             	
             	RPGFramework.getLogger().info("Query database.");
-            	ArrayList<String> result = SQLiteDriver.executeQueryArrayList("SELECT * FROM TEST");
+            	ArrayList<String> result = DatabaseManager.executeQueryArrayList("SELECT * FROM TEST");
             	RPGFramework.getLogger().info(result.toString());
             }
         }));
@@ -35,7 +36,7 @@ public class CommandDev extends ModSubCommands {
             @Override
             public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
             	RPGFramework.getLogger().info("Creating table players.");
-            	SQLiteDriver.executeUpdate(
+            	DatabaseManager.executeUpdate(
             			"DROP TABLE IF EXISTS players",
             			"CREATE TABLE players "
             			+ "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
@@ -53,7 +54,7 @@ public class CommandDev extends ModSubCommands {
             	String sql = "INSERT INTO players (id, uuid, username, first_seen, last_seen) VALUES (NULL, '%s', '%s', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
             	sql = String.format(sql, player.getGameProfile().getId().toString(), player.getGameProfile().getName());
             	RPGFramework.getLogger().info(sql);
-            	SQLiteDriver.executeUpdate(sql);
+            	DatabaseManager.executeUpdate(sql);
             }
         }));
         
@@ -61,7 +62,7 @@ public class CommandDev extends ModSubCommands {
             @Override
             public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
             	RPGFramework.getLogger().info("Query database.");
-            	ArrayList<String> result = SQLiteDriver.executeQueryArrayList("SELECT * FROM players");
+            	ArrayList<String> result = DatabaseManager.executeQueryArrayList("SELECT * FROM players");
             	RPGFramework.getLogger().info(result.toString());
             	EntityPlayerMP player = getCommandSenderAsPlayer(sender);
             	for (String s : result) {
@@ -80,7 +81,7 @@ public class CommandDev extends ModSubCommands {
                 	}
                 	RPGFramework.getLogger().info("Query database.");
                 	RPGFramework.getLogger().info(sql);
-                	ArrayList<String> result = SQLiteDriver.executeQueryArrayList(sql);
+                	ArrayList<String> result = DatabaseManager.executeQueryArrayList(sql);
                 	EntityPlayerMP player = getCommandSenderAsPlayer(sender);
                 	player.sendMessage(new TextComponentString("Query result"));
                 	for (String s : result) {

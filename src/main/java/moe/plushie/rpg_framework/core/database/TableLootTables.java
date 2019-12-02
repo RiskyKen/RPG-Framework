@@ -14,6 +14,7 @@ import moe.plushie.rpg_framework.api.loot.ILootTable;
 import moe.plushie.rpg_framework.core.common.IdentifierInt;
 import moe.plushie.rpg_framework.core.common.serialize.IdentifierSerialize;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
+import moe.plushie.rpg_framework.core.database.driver.SQLiteDriver;
 import moe.plushie.rpg_framework.loot.common.LootTable;
 
 public final class TableLootTables {
@@ -29,7 +30,7 @@ public final class TableLootTables {
             + "last_update DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL)";
 
     public static void createTable() {
-        SQLiteDriver.executeUpdate(SQL_CREATE_TABLE);
+        DatabaseManager.executeUpdate(SQL_CREATE_TABLE);
     }
 
     private static final String SQL_ADD_LOOT_TABLE = "INSERT INTO loot_tables (id, name, category, pools, last_update) VALUES (NULL, ?, ?, ?, CURRENT_TIMESTAMP)";
@@ -37,12 +38,12 @@ public final class TableLootTables {
     public static ILootTable createNew(String name, String category) {
         createTable();
         ILootTable lootTable = null;
-        try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_ADD_LOOT_TABLE)) {
+        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_ADD_LOOT_TABLE)) {
             ps.setString(1, name);
             ps.setString(2, category);
             ps.setString(3, "[]");
             ps.executeUpdate();
-            int row = SQLiteDriver.getLastInsertRow(conn);
+            int row = DatabaseManager.getLastInsertRow(conn);
             lootTable = new LootTable(new IdentifierInt(row), name, category);
         } catch (Exception e) {
             e.printStackTrace();
@@ -54,7 +55,7 @@ public final class TableLootTables {
 
     public static void delete(IIdentifier identifier) {
         createTable();
-        try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_DELETE_LOOT_TABLE)) {
+        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_DELETE_LOOT_TABLE)) {
             ps.setObject(1, identifier.getValue());
             ps.executeUpdate();
         } catch (Exception e) {
@@ -67,7 +68,7 @@ public final class TableLootTables {
     public static ILootTable get(IIdentifier identifier) {
         createTable();
         ILootTable lootTable = null;
-        try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_GET_LOOT_TABLE)) {
+        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_GET_LOOT_TABLE)) {
             ps.setObject(1, identifier.getValue());
             ResultSet resultSet = ps.executeQuery();
             if (resultSet.next()) {
@@ -88,7 +89,7 @@ public final class TableLootTables {
 
     public static void update(ILootTable lootTable) {
         createTable();
-        try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_UPDATE_LOOT_TABLE)) {
+        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_UPDATE_LOOT_TABLE)) {
             ps.setString(1, lootTable.getName());
             ps.setString(2, lootTable.getCategory());
             JsonArray poolsJson = new JsonArray();
@@ -107,7 +108,7 @@ public final class TableLootTables {
 
     public static void getList(ArrayList<IIdentifier> identifiers, ArrayList<String> names, ArrayList<String> categories, ArrayList<Date> dates) {
         createTable();
-        try (Connection conn = SQLiteDriver.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_GET_LOOT_TABLE_LIST)) {
+        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_GET_LOOT_TABLE_LIST)) {
             ResultSet resultSet = ps.executeQuery();
             while (resultSet.next()) {
                 if (identifiers != null) {
