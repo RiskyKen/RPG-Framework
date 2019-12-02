@@ -1,5 +1,6 @@
 package moe.plushie.rpg_framework.core.database;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -117,6 +118,27 @@ public final class TableShops {
             ps.setString(2, ShopSerializer.serializeTabs(shop.getTabs(), false).toString());
             ps.setObject(3, shop.getIdentifier().getValue());
             ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public static void exportShopSql() {
+        create();
+        File fileDatabaseOld = SQLiteDriver.getDatabaseFile(DatebaseTable.RPG);
+        
+        String sqlAttach = "ATTACH DATABASE \"" + fileDatabaseOld.getAbsolutePath() + "\" AS 'dbOld'";
+        String sqlCopy = "INSERT INTO shops SELECT * FROM dbOld.shops";
+        String sqlDetach = "DETACH DATABASE 'dbOld'";
+        
+        try (Connection conn = DatabaseManager.getConnection(DatebaseTable.SHOPS); PreparedStatement psAttach = conn.prepareStatement(sqlAttach); PreparedStatement psDetach = conn.prepareStatement(sqlDetach)) {
+            psAttach.execute();
+            try (PreparedStatement psCopy = conn.prepareStatement(sqlCopy)) {
+                psCopy.execute();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            psDetach.execute();
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -40,16 +40,16 @@ public final class DatabaseManager {
     public static void executeUpdate(DatebaseTable table, String... sql) {
         DATABASE_DRIVER.executeUpdate(table, sql);
     }
-    
+
     @Deprecated
     public static void executeUpdate(String... sql) {
         DATABASE_DRIVER.executeUpdate(DatebaseTable.RPG, sql);
     }
-    
+
     public static ArrayList<String> executeQueryArrayList(DatebaseTable table, String sql) {
         return DATABASE_DRIVER.executeQueryArrayList(table, sql);
     }
-    
+
     @Deprecated
     public static ArrayList<String> executeQueryArrayList(String sql) {
         return DATABASE_DRIVER.executeQueryArrayList(DatebaseTable.RPG, sql);

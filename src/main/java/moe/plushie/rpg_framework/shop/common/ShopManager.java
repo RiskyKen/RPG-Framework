@@ -25,7 +25,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.MinecraftForge;
 
 public class ShopManager implements IShopManager {
-	
+
     private static final String DIRECTORY_NAME = "shop";
 
     private final File currencyDirectory;
@@ -39,8 +39,8 @@ public class ShopManager implements IShopManager {
         shopMap = new HashMap<IIdentifier, Shop>();
         MinecraftForge.EVENT_BUS.register(this);
     }
-    
-    public void exportShops() {
+
+    public void exportShopJson() {
         RPGFramework.getLogger().info("Exporting Shops");
         ArrayList<IIdentifier> identifiers = new ArrayList<IIdentifier>();
         TableShops.getShopList(identifiers, null, null);
@@ -48,8 +48,8 @@ public class ShopManager implements IShopManager {
             exportShop(getShop(identifier));
         }
     }
-    
-    public void importShops() {
+
+    public void importShopJson() {
         RPGFramework.getLogger().info("Importing Shops");
         RPGFramework.getLogger().info("Loading Shops");
         File[] files = currencyDirectory.listFiles(new FilenameFilter() {
@@ -63,19 +63,23 @@ public class ShopManager implements IShopManager {
             importShop(file);
         }
     }
-    
+
     public void saveShop(IShop shop) {
         RPGFramework.getLogger().info("Saving shop: " + shop.getIdentifier());
         TableShops.updateShop(shop);
     }
-    
+
     public void exportShop(IShop shop) {
         RPGFramework.getLogger().info("Exporting shop: " + shop.getIdentifier());
         JsonElement jsonData = ShopSerializer.serializeJson(shop, false);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         SerializeHelper.writeFile(new File(currencyDirectory, String.valueOf(shop.getIdentifier().getValue()) + ".json"), Charsets.UTF_8, gson.toJson(jsonData));
     }
-    
+
+    public void exportShopSql() {
+        TableShops.exportShopSql();
+    }
+
     public void importShop(File shopFile) {
         RPGFramework.getLogger().info("Importing shop: " + shopFile.getName());
         JsonElement jsonElement = SerializeHelper.readJsonFile(shopFile);
@@ -86,27 +90,27 @@ public class ShopManager implements IShopManager {
             }
         }
     }
-    
-	@Override
-	public IShop getShop(IIdentifier identifier) {
-	    if (identifier == null) {
-	        return null;
-	    }
-		return TableShops.getShop(identifier);
-	}
 
-	@Override
-	public IShop[] getShops() {
-	    IShop[] shops = shopMap.values().toArray(new Shop[shopMap.size()]);
-	    Arrays.sort(shops);
-		return shops;
-	}
-	
-	@Override
-	public IIdentifier[] getShopIdentifier() {
-		return shopMap.keySet().toArray(new IIdentifier[shopMap.size()]);
-	}
-	
+    @Override
+    public IShop getShop(IIdentifier identifier) {
+        if (identifier == null) {
+            return null;
+        }
+        return TableShops.getShop(identifier);
+    }
+
+    @Override
+    public IShop[] getShops() {
+        IShop[] shops = shopMap.values().toArray(new Shop[shopMap.size()]);
+        Arrays.sort(shops);
+        return shops;
+    }
+
+    @Override
+    public IIdentifier[] getShopIdentifier() {
+        return shopMap.keySet().toArray(new IIdentifier[shopMap.size()]);
+    }
+
     @Override
     public String[] getShopNames() {
         String[] names = new String[shopMap.size()];
@@ -116,7 +120,7 @@ public class ShopManager implements IShopManager {
         }
         return names;
     }
-    
+
     public void syncToClient(EntityPlayerMP player) {
         ArrayList<IIdentifier> identifiers = new ArrayList<IIdentifier>();
         ArrayList<String> names = new ArrayList<String>();

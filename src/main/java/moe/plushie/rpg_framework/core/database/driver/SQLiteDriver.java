@@ -22,31 +22,34 @@ import moe.plushie.rpg_framework.core.database.DatebaseTable;
 public final class SQLiteDriver implements IDatabaseDriver {
 
     private static final String FILE_EXTENSION = ".sqlite3";
-    private final HashMap<String, PooledConnection> pooledConnections = new HashMap<String, PooledConnection>();
+    private final HashMap<DatebaseTable, PooledConnection> pooledConnections = new HashMap<DatebaseTable, PooledConnection>();
 
-    private String getConnectionUrl(String fileName) {
-        File file = new File(RPGFramework.getProxy().getModDirectory(), fileName + FILE_EXTENSION);
-        return "jdbc:sqlite:" + file.getAbsolutePath();
+    public static File getDatabaseFile(DatebaseTable table) {
+        return new File(RPGFramework.getProxy().getModDirectory(), table.name().toLowerCase() + FILE_EXTENSION);
+    }
+    
+    private String getConnectionUrl(DatebaseTable table) {
+        return "jdbc:sqlite:" + getDatabaseFile(table).getAbsolutePath();
     }
 
-    private PooledConnection makePool(String fileName) throws SQLException {
+    private PooledConnection makePool(DatebaseTable table) throws SQLException {
         SQLiteConfig config = makeConfig();
         SQLiteConnectionPoolDataSource ds = new SQLiteConnectionPoolDataSource();
-        ds.setUrl(getConnectionUrl(fileName));
+        ds.setUrl(getConnectionUrl(table));
         ds.setConfig(config);
         return ds.getPooledConnection();
     }
 
-    private Connection getPoolConnection(String fileName) throws SQLException {
-        if (!pooledConnections.containsKey(fileName)) {
-            pooledConnections.put(fileName, makePool(fileName));
+    private Connection getPoolConnection(DatebaseTable table) throws SQLException {
+        if (!pooledConnections.containsKey(table)) {
+            pooledConnections.put(table, makePool(table));
         }
-        return pooledConnections.get(fileName).getConnection();
+        return pooledConnections.get(table).getConnection();
     }
 
     @Override
     public Connection getConnection(DatebaseTable table) throws SQLException {
-        return getPoolConnection(table.name().toLowerCase());
+        return getPoolConnection(table);
         // return DriverManager.getConnection(getConnectionUrl(), makeConfig().toProperties());
     }
 
