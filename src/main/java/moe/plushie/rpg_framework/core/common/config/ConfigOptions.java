@@ -5,6 +5,7 @@ import com.google.gson.annotations.Expose;
 public final class ConfigOptions {
     
     // General
+    @Expose
     public int heatmapTrackingRate = 0;
 
     // Currency

@@ -20,7 +20,9 @@ public final class PlayerStatsHandler {
 
     static {
         TablePlayers.create();
-        TableHeatmaps.create();
+        if (ConfigHandler.options.heatmapTrackingRate > 0) {
+            TableHeatmaps.create();
+        }
     }
 
     @SubscribeEvent
@@ -43,6 +45,7 @@ public final class PlayerStatsHandler {
         if (event.phase == Phase.START | event.side == Side.CLIENT | ConfigHandler.options.heatmapTrackingRate == 0) {
             return;
         }
+        
         World world = event.world;
         world.profiler.startSection(LibModInfo.ID + "heatmapUpdates");
         if ((world.getTotalWorldTime() % (20L * ((long) ConfigHandler.options.heatmapTrackingRate))) != 0) {

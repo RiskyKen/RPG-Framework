@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
-import moe.plushie.rpg_framework.core.database.driver.SQLiteDriver;
 import net.minecraft.entity.player.EntityPlayer;
 
 public final class TableHeatmaps {
@@ -22,7 +21,7 @@ public final class TableHeatmaps {
             + "dimension INTEGER NOT NULL,"
             + "date DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL)";
     public static void create() {
-        DatabaseManager.executeUpdate(SQL_CREATE_TABLE);
+        DatabaseManager.executeUpdate(DatebaseTable.HEATMAPS, SQL_CREATE_TABLE);
     }
 
     private static final String SQL_ADD_HEATMAP = "INSERT INTO heatmaps (id, player_id, x, y, z, dimension, date) VALUES (NULL, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
@@ -32,10 +31,10 @@ public final class TableHeatmaps {
     }
 
     public static void addHeatmapData(List<EntityPlayer> players) {
-        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement psHeatmap = createPreStateHeatmapAdd(conn); PreparedStatement psPlayerGet = TablePlayers.createPreStatementPlayerUUID(conn)) {
+        try (Connection conn = DatabaseManager.getConnection(DatebaseTable.HEATMAPS); PreparedStatement psHeatmap = createPreStateHeatmapAdd(conn)) {
             conn.setAutoCommit(false);
             for (EntityPlayer player : players) {
-                DBPlayer dbPlayer = TablePlayers.getPlayerUUID(conn, psPlayerGet, player.getGameProfile().getId());
+                DBPlayer dbPlayer = TablePlayers.getPlayerInfo(player.getGameProfile());
                 psHeatmap.setInt(1, dbPlayer.getId());
                 psHeatmap.setDouble(2, player.posX);
                 psHeatmap.setDouble(3, player.posY);
