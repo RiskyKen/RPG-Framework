@@ -151,7 +151,8 @@ public class GuiLootDialogEditPool extends AbstractGuiDialog {
         this.pool = pool;
     }
     
-    private void updateSlots(boolean restore) {
+    @Override
+    protected void updateSlots(boolean restore) {
         ContainerLootEditor containerLootEditor = (ContainerLootEditor) slotHandler.inventorySlots;
         GuiLootEditor gui = (GuiLootEditor) parent;
         if (!restore) {

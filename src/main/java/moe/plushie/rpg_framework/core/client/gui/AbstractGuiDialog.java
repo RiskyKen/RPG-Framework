@@ -1,5 +1,6 @@
 package moe.plushie.rpg_framework.core.client.gui;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.lwjgl.opengl.GL11;
@@ -45,6 +46,8 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
     int oldMouseX;
     int oldMouseY;
 
+    protected GuiSlotHandler slotHandler;
+
     public AbstractGuiDialog(GuiScreen parent, String name, IDialogCallback callback, int width, int height) {
         this.parent = parent;
         this.name = name;
@@ -54,6 +57,10 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
         this.width = width;
         this.height = height;
         this.buttonList = new ArrayList<GuiButton>();
+        if (parent instanceof GuiContainer) {
+            GuiContainer guiContainer = (GuiContainer) parent;
+            slotHandler = new GuiSlotHandler(guiContainer);
+        }
         // initGui();
     }
 
@@ -62,6 +69,9 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
         this.y = this.parent.height / 2 - this.height / 2;
         if (isDialogOpen()) {
             dialog.initGui();
+        }
+        if (slotHandler != null) {
+            slotHandler.initGui();
         }
     }
 
@@ -72,6 +82,16 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
             if (mouseX < this.x | mouseX >= this.x + this.width | mouseY < this.y | mouseY >= this.y + this.height) {
                 // mouse click outside of dialog
                 // returnDialogResult(DialogResult.CANCEL);
+            }
+            if (slotHandler != null) {
+                try {
+                    updateSlots(false);
+                    slotHandler.mouseClicked(mouseX, mouseY, button);
+                    updateSlots(true);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
             if (button == 0) {
                 for (int i = 0; i < this.buttonList.size(); i++) {
@@ -93,6 +113,11 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
         if (isDialogOpen()) {
             dialog.mouseMovedOrUp(mouseX, mouseY, button);
         } else {
+            if (slotHandler != null) {
+                updateSlots(false);
+                slotHandler.mouseReleased(mouseX, mouseY, button);
+                updateSlots(true);
+            }
             if (this.selectedButton != null && button == 0) {
                 this.selectedButton.mouseReleased(mouseX, mouseY);
                 this.selectedButton = null;
@@ -103,6 +128,12 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
     public void mouseClickMove(int mouseX, int mouseY, int lastButtonClicked, long timeSinceMouseClick) {
         if (isDialogOpen()) {
             dialog.mouseClickMove(mouseX, mouseY, lastButtonClicked, timeSinceMouseClick);
+        } else {
+            if (slotHandler != null) {
+                updateSlots(false);
+                slotHandler.mouseClickMove(mouseX, mouseY, lastButtonClicked, timeSinceMouseClick);
+                updateSlots(true);
+            }
         }
     }
 
@@ -153,10 +184,8 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
         GlStateManager.enableRescaleNormal();
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0F, 240.0F);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        drawItems(mouseX, mouseY, partialTickTime);
+        //drawItems(mouseX, mouseY, partialTickTime);
         RenderHelper.disableStandardItemLighting();
-
-        
 
         GlStateManager.popMatrix();
         drawForeground(mouseX, mouseY, partialTickTime);
@@ -164,12 +193,15 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
         GlStateManager.enableDepth();
         RenderHelper.enableStandardItemLighting();
     }
+    
+    protected void updateSlots(boolean restore) {
+        
+    }
 
     public void drawItems(int mouseX, int mouseY, float partialTickTime) {
-        if (parent instanceof GuiContainer) {
+        if (slotHandler != null) {
             GuiContainer guiContainer = (GuiContainer) parent;
-            GuiSlotHandler slotHandler = new GuiSlotHandler(guiContainer);
-            
+
             for (int i1 = 0; i1 < guiContainer.inventorySlots.inventorySlots.size(); ++i1) {
                 Slot slot = guiContainer.inventorySlots.inventorySlots.get(i1);
 
@@ -217,6 +249,8 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
         drawBackground(mouseX, mouseY, partialTickTime);
         // GlStateManager.translate(-x, -y, 0);
         drawForeground(mouseX, mouseY, partialTickTime);
+        
+
 
         if (isDialogOpen()) {
             // GL11.glTranslatef(-guiLeft, -guiTop, 0);
@@ -233,6 +267,10 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
         GlStateManager.disableLighting();
         GlStateManager.color(1, 1, 1, 1);
         GlStateManager.disableBlend();
+        GlStateManager.disableDepth();
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GlStateManager.disableCull();
+        GlStateManager.disableBlend();
         drawParentCoverBackground();
         int textureWidth = 176;
         int textureHeight = 62;
@@ -242,7 +280,17 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
     }
 
     public void drawForeground(int mouseX, int mouseY, float partialTickTime) {
+        
         drawbuttons(mouseX, mouseY, partialTickTime);
+        if (slotHandler != null) {
+            updateSlots(false);
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(0, 0, 10);
+            slotHandler.drawScreen(mouseX, mouseY, partialTickTime);
+            updateSlots(true);
+            GlStateManager.popMatrix();
+        }
+        GlStateManager.disableDepth();
     }
 
     protected void drawTitle() {

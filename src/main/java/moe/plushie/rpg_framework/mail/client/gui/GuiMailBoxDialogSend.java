@@ -13,13 +13,16 @@ import moe.plushie.rpg_framework.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpg_framework.core.client.gui.GuiHelper;
 import moe.plushie.rpg_framework.core.client.gui.IDialogCallback;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiLabeledTextField;
+import moe.plushie.rpg_framework.core.common.inventory.slot.SlotHidable;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.client.MessageClientGuiMailBox;
 import moe.plushie.rpg_framework.core.common.network.client.MessageClientGuiMailBox.MailMessageType;
 import moe.plushie.rpg_framework.mail.common.MailMessage;
+import moe.plushie.rpg_framework.mail.common.inventory.ContainerMailBox;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
@@ -121,12 +124,58 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
             }
         }
     }
+    
+    @Override
+    protected void updateSlots(boolean restore) {
+        ContainerMailBox containerMailBox = (ContainerMailBox) slotHandler.inventorySlots;
+        GuiMailBox gui = (GuiMailBox) parent;
+        if (!restore) {
+            ArrayList<Slot> playerSlots = containerMailBox.getSlotsPlayer();
+            int posX = x + 8 - gui.getGuiLeft();
+            int posY = y + 174 - gui.getGuiTop();
+            int playerInvY = posY;
+            int hotBarY = playerInvY + 58;
+            for (int ix = 0; ix < 9; ix++) {
+                playerSlots.get(ix).xPos = posX + 18 * ix;
+                playerSlots.get(ix).yPos = hotBarY;
+            }
+            for (int iy = 0; iy < 3; iy++) {
+                for (int ix = 0; ix < 9; ix++) {
+                    playerSlots.get(ix + iy * 9 + 9).xPos = posX + 18 * ix;
+                    playerSlots.get(ix + iy * 9 + 9).yPos = playerInvY + iy * 18;
+                }
+            }
+            for (Slot slot : containerMailBox.getSlotsAttachmentsInput()) {
+                ((SlotHidable)slot).setVisible(true);
+            }
+        } else {
+            ArrayList<Slot> playerSlots = containerMailBox.getSlotsPlayer();
+            int posX = 8;
+            int posY = 167;
+            int playerInvY = posY;
+            int hotBarY = playerInvY + 58;
+            for (int ix = 0; ix < 9; ix++) {
+                playerSlots.get(ix).xPos = posX + 18 * ix;
+                playerSlots.get(ix).yPos = hotBarY;
+            }
+            for (int iy = 0; iy < 3; iy++) {
+                for (int ix = 0; ix < 9; ix++) {
+                    playerSlots.get(ix + iy * 9 + 9).xPos = posX + 18 * ix;
+                    playerSlots.get(ix + iy * 9 + 9).yPos = playerInvY + iy * 18;
+                }
+            }
+            for (Slot slot : containerMailBox.getSlotsAttachmentsInput()) {
+                ((SlotHidable)slot).setVisible(false);
+            }
+        }
+    }
 
     @Override
     public void drawBackground(int mouseX, int mouseY, float partialTickTime) {
         GlStateManager.disableLighting();
         GlStateManager.color(1, 1, 1, 1);
         GlStateManager.disableBlend();
+        GlStateManager.disableDepth();
         drawParentCoverBackground();
         int textureWidth = 176;
         int textureHeight = 62;
@@ -189,6 +238,11 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
     public void onServerMailResult(ArrayList<GameProfile> success, ArrayList<GameProfile> failed) {
         RPGFramework.getLogger().info("success: " + Arrays.toString(success.toArray()));
         RPGFramework.getLogger().info("failed: " + Arrays.toString(failed.toArray()));
-        returnDialogResult(DialogResult.OK);
+        if (success.isEmpty()) {
+            buttonSend.enabled = true;
+            buttonClose.enabled = true;
+        } else {
+            returnDialogResult(DialogResult.OK);
+        }
     }
 }

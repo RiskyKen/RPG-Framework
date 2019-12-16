@@ -6,7 +6,6 @@ import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.inventory.ModTileContainer;
 import moe.plushie.rpg_framework.core.common.inventory.slot.SlotHidable;
-import moe.plushie.rpg_framework.core.common.inventory.slot.SlotOutput;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerMailList;
 import moe.plushie.rpg_framework.core.common.utils.UtilItems;
@@ -41,7 +40,7 @@ public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> {
         addPlayerSlots(8, 167);
 
         for (int i = 0; i < invAttachmentsInput.getSizeInventory(); i++) {
-            addSlotToContainerAndList(new SlotHidable(invAttachmentsInput, i, 290 - 17 * i, 122), slotsAttachmentsInput);
+            addSlotToContainerAndList(new SlotHidable(invAttachmentsInput, i, 290 - 18 * i, 122), slotsAttachmentsInput);
         }
 
         for (Slot slot : slotsAttachmentsInput) {

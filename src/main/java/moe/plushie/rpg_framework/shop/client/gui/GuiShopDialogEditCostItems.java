@@ -179,7 +179,8 @@ public class GuiShopDialogEditCostItems extends AbstractGuiDialog {
         GuiHelper.renderPlayerInvTexture(x, y + height - 98);
     }
     
-    private void updateSlots(boolean restore) {
+    @Override
+    protected void updateSlots(boolean restore) {
         ContainerShop containerShop = (ContainerShop) slotHandler.inventorySlots;
         GuiShop gui = (GuiShop) parent;
         if (!restore) {
