@@ -37,7 +37,7 @@ public class GuiHandler implements IGuiHandler {
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         EnumGuiId guiId = EnumGuiId.values()[ID];
-        
+
         if (guiId.isTile()) {
             TileEntity te = null;
             BlockPos pos = new BlockPos(x, y, z);
@@ -49,7 +49,7 @@ public class GuiHandler implements IGuiHandler {
             }
             return null;
         }
-        
+
         switch (guiId) {
         case MANAGER:
             return new ContainerManager(player);
@@ -80,7 +80,7 @@ public class GuiHandler implements IGuiHandler {
         default:
             break;
         }
-        
+
         return null;
     }
 
@@ -98,7 +98,7 @@ public class GuiHandler implements IGuiHandler {
             }
             return null;
         }
-        
+
         switch (guiId) {
         case MANAGER:
             return new GuiManager(player);

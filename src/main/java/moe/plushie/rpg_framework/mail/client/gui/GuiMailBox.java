@@ -65,7 +65,7 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
         this.player = entityPlayer;
         this.mailSystem = RPGFramework.getProxy().getMailSystemManager().getMailSystem(new IdentifierString("main.json"));
         this.mailMessages = new ArrayList<MailMessage>();
-        
+
         for (Slot slot : getContainer().getSlotsAttachmentsInput()) {
             ((SlotHidable) slot).setVisible(false);
         }
@@ -105,10 +105,10 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
         buttonMessageWithdrawItems.setHoverText("Withdraw Items");
 
         buttonMessageWithdrawItems.enabled = false;
-        
+
         buttonListPre.enabled = false;
         buttonListNext.enabled = false;
-        
+
         if (!player.capabilities.isCreativeMode) {
             buttonNewMessage.enabled = false;
             buttonNewMessage.setDisableText("This feature is not available yet.");
@@ -187,10 +187,10 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
         }
         buttonMessageReply.enabled = listMail.getSelectedIndex() != -1;
         buttonMessageDelete.enabled = listMail.getSelectedIndex() != -1;
-        
+
         // TEMP
         buttonMessageReply.enabled = false;
-        
+
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
@@ -234,7 +234,7 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
         } else {
             message += "Select a mail message.";
         }
-        
+
         if (listMail.getSelectedListEntry() != null && listMail.getSelectedListEntry() instanceof GuiMailListItem) {
             GlStateManager.pushMatrix();
             GlStateManager.pushAttrib();
@@ -336,7 +336,7 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
 
     public void onServerMailResult(ArrayList<GameProfile> success, ArrayList<GameProfile> failed) {
         if (isDialogOpen() && dialog instanceof GuiMailBoxDialogSend) {
-            ((GuiMailBoxDialogSend)dialog).onServerMailResult(success, failed);
+            ((GuiMailBoxDialogSend) dialog).onServerMailResult(success, failed);
         }
     }
 }

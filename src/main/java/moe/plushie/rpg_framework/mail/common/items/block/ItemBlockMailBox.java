@@ -1,6 +1,7 @@
 package moe.plushie.rpg_framework.mail.common.items.block;
 
 import moe.plushie.rpg_framework.core.RPGFramework;
+import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.init.ModBlocks;
 import moe.plushie.rpg_framework.core.common.items.block.ModItemBlock;
 import moe.plushie.rpg_framework.mail.common.MailSystem;
@@ -52,8 +53,8 @@ public class ItemBlockMailBox extends ModItemBlock {
     public static MailSystem getMailSystemFromStack(ItemStack itemStack) {
         if (itemStack.hasTagCompound()) {
             if (itemStack.getTagCompound().hasKey(TAG_MAIL_SYSTEM, NBT.TAG_STRING)) {
-                // MailSystemManager mailSystemManager = RpgEconomy.getProxy().getMailSystemManager();
-                // return mailSystemManager.getMailSystem(itemStack.getTagCompound().getString(TAG_MAIL_SYSTEM));
+                MailSystemManager mailSystemManager = RPGFramework.getProxy().getMailSystemManager();
+                return mailSystemManager.getMailSystem(new IdentifierString(itemStack.getTagCompound().getString(TAG_MAIL_SYSTEM)));
             }
         }
         return null;
@@ -69,7 +70,7 @@ public class ItemBlockMailBox extends ModItemBlock {
         if (!itemStack.hasTagCompound()) {
             itemStack.setTagCompound(new NBTTagCompound());
         }
-        // itemStack.getTagCompound().setstring(TAG_MAIL_SYSTEM, mailSystem.getIdentifier());
+        itemStack.getTagCompound().setString(TAG_MAIL_SYSTEM, mailSystem.getIdentifier().toString());
     }
 
     @Override
