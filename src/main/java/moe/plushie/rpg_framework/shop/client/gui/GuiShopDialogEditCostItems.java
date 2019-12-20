@@ -1,12 +1,10 @@
 package moe.plushie.rpg_framework.shop.client.gui;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import moe.plushie.rpg_framework.api.core.IItemMatcher;
 import moe.plushie.rpg_framework.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpg_framework.core.client.gui.GuiHelper;
-import moe.plushie.rpg_framework.core.client.gui.GuiSlotHandler;
 import moe.plushie.rpg_framework.core.client.gui.IDialogCallback;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiIconButton;
 import moe.plushie.rpg_framework.core.client.lib.LibGuiResources;
@@ -18,7 +16,6 @@ import moe.plushie.rpg_framework.core.common.network.client.MessageClientGuiShop
 import moe.plushie.rpg_framework.shop.common.inventory.ContainerShop;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.inventory.Slot;
@@ -31,7 +28,6 @@ public class GuiShopDialogEditCostItems extends AbstractGuiDialog {
 
     private static final ResourceLocation TEXTURE_SHOP = new ResourceLocation(LibGuiResources.SHOP);
     
-    private final GuiSlotHandler slotHandler;
     private final int slotIndex;
     
     private GuiButtonExt buttonClose;
@@ -46,7 +42,6 @@ public class GuiShopDialogEditCostItems extends AbstractGuiDialog {
     
     public GuiShopDialogEditCostItems(GuiScreen parent, String name, IDialogCallback callback, int width, int height, int slotIndex, IItemMatcher[] cost) {
         super(parent, name, callback, width, height);
-        this.slotHandler = new GuiSlotHandler((GuiContainer) parent);
         this.slotIndex = slotIndex;
         
         PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.ITEM_COST_REQUEST).setSlotIndex(slotIndex));
@@ -99,8 +94,6 @@ public class GuiShopDialogEditCostItems extends AbstractGuiDialog {
             buttonList.add(buttonsMeta[i]);
             buttonList.add(buttonsNbt[i]);
         }
-        
-        slotHandler.initGui();
     }
 
     @Override
@@ -119,46 +112,6 @@ public class GuiShopDialogEditCostItems extends AbstractGuiDialog {
             matchNbt[button.id - 5] = !matchNbt[button.id - 5];
             initGui();
         }
-    }
-    
-    @Override
-    public void mouseClicked(int mouseX, int mouseY, int button) {
-        super.mouseClicked(mouseX, mouseY, button);
-        try {
-            updateSlots(false);
-            slotHandler.mouseClicked(mouseX, mouseY, button);
-            updateSlots(true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    
-    @Override
-    public void mouseClickMove(int mouseX, int mouseY, int lastButtonClicked, long timeSinceMouseClick) {
-        super.mouseClickMove(mouseX, mouseY, lastButtonClicked, timeSinceMouseClick);
-        updateSlots(false);
-        slotHandler.mouseClickMove(mouseX, mouseY, lastButtonClicked, timeSinceMouseClick);
-        updateSlots(true);
-    }
-    
-    @Override
-    public void mouseMovedOrUp(int mouseX, int mouseY, int button) {
-        super.mouseMovedOrUp(mouseX, mouseY, button);
-        updateSlots(false);
-        slotHandler.mouseReleased(mouseX, mouseY, button);
-        updateSlots(true);
-    }
-    
-    @Override
-    public boolean keyTyped(char c, int keycode) {
-        try {
-            updateSlots(false);
-            slotHandler.keyTyped(c, keycode);
-            updateSlots(true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return super.keyTyped(c, keycode);
     }
     
     @Override
@@ -242,13 +195,6 @@ public class GuiShopDialogEditCostItems extends AbstractGuiDialog {
         GlStateManager.color(1F, 1F, 1F, 1F);
         mc.renderEngine.bindTexture(ICONS);
         
-        GlStateManager.pushAttrib();
-        
-        updateSlots(false);
-        slotHandler.drawScreen(mouseX, mouseY, partialTickTime);
-        updateSlots(true);
-        
-        GlStateManager.popAttrib();
         
         GlStateManager.disableDepth();
         GlStateManager.enableBlend();

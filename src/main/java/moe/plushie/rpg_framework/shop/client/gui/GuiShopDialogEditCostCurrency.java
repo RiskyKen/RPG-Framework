@@ -3,14 +3,14 @@ package moe.plushie.rpg_framework.shop.client.gui;
 import java.util.Random;
 
 import moe.plushie.rpg_framework.api.currency.ICurrency;
-import moe.plushie.rpg_framework.api.currency.IWallet;
 import moe.plushie.rpg_framework.api.currency.ICurrency.ICurrencyVariant;
+import moe.plushie.rpg_framework.api.currency.IWallet;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpg_framework.core.client.gui.IDialogCallback;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiDropDownList;
-import moe.plushie.rpg_framework.core.client.gui.controls.GuiIconButton;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiDropDownList.IDropDownListCallback;
+import moe.plushie.rpg_framework.core.client.gui.controls.GuiIconButton;
 import moe.plushie.rpg_framework.core.client.lib.LibGuiResources;
 import moe.plushie.rpg_framework.core.common.init.ModSounds;
 import moe.plushie.rpg_framework.currency.common.CurrencyManager;
@@ -44,6 +44,7 @@ public class GuiShopDialogEditCostCurrency extends AbstractGuiDialog implements 
             this.currency = wallet.getCurrency();
             this.amount = wallet.getAmount();
         }
+        slotHandler = null;
     }
 
     @Override
