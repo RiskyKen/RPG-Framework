@@ -33,6 +33,7 @@ public class GuiShopDialogEditCost extends AbstractGuiDialog implements IDropDow
         if (costNew == null) {
             costNew = Cost.NO_COST;
         }
+        slotHandler = null;
     }
 
     @Override
