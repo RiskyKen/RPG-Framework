@@ -17,6 +17,7 @@ import moe.plushie.rpg_framework.core.client.gui.controls.GuiList;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiList.IGuiListItem;
 import moe.plushie.rpg_framework.core.client.lib.LibGuiResources;
 import moe.plushie.rpg_framework.core.common.IdentifierString;
+import moe.plushie.rpg_framework.core.common.inventory.slot.SlotHidable;
 import moe.plushie.rpg_framework.core.common.lib.LibBlockNames;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.client.MessageClientGuiMailBox;
@@ -31,6 +32,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiUtils;
@@ -63,6 +65,10 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
         this.player = entityPlayer;
         this.mailSystem = RPGFramework.getProxy().getMailSystemManager().getMailSystem(new IdentifierString("main.json"));
         this.mailMessages = new ArrayList<MailMessage>();
+        
+        for (Slot slot : getContainer().getSlotsAttachmentsInput()) {
+            ((SlotHidable) slot).setVisible(false);
+        }
     }
 
     @Override

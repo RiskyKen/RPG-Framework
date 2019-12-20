@@ -88,7 +88,7 @@ public class GuiSlotHandler extends Gui {
      * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the window resizes, the buttonList is cleared beforehand.
      */
     public void initGui() {
-        //this.mc.player.openContainer = this.inventorySlots;
+        // this.mc.player.openContainer = this.inventorySlots;
         this.xSize = parentContainer.getXSize();
         this.ySize = parentContainer.getYSize();
         this.guiLeft = parentContainer.getGuiLeft();
@@ -101,12 +101,12 @@ public class GuiSlotHandler extends Gui {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         int i = this.guiLeft;
         int j = this.guiTop;
-        //this.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+        // this.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
         GlStateManager.disableRescaleNormal();
         RenderHelper.disableStandardItemLighting();
         GlStateManager.disableLighting();
         GlStateManager.disableDepth();
-        //super.drawScreen(mouseX, mouseY, partialTicks);
+        // super.drawScreen(mouseX, mouseY, partialTicks);
         RenderHelper.enableGUIStandardItemLighting();
         GlStateManager.pushMatrix();
         GlStateManager.translate((float) i, (float) j, 0.0F);
@@ -138,9 +138,9 @@ public class GuiSlotHandler extends Gui {
         }
 
         RenderHelper.disableStandardItemLighting();
-        //this.drawGuiContainerForegroundLayer(mouseX, mouseY);
+        // this.drawGuiContainerForegroundLayer(mouseX, mouseY);
         RenderHelper.enableGUIStandardItemLighting();
-        //net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiContainerEvent.DrawForeground(this, mouseX, mouseY));
+        // net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiContainerEvent.DrawForeground(this, mouseX, mouseY));
         InventoryPlayer inventoryplayer = this.mc.player.inventory;
         ItemStack itemstack = this.draggedStack.isEmpty() ? inventoryplayer.getItemStack() : this.draggedStack;
 

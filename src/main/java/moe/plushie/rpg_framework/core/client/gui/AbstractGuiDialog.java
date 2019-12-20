@@ -65,8 +65,10 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
     }
 
     public void initGui() {
-        this.x = this.parent.width / 2 - this.width / 2;
-        this.y = this.parent.height / 2 - this.height / 2;
+        this.x = (this.parent.width - this.width) / 2;
+        this.y = (this.parent.height  - this.height) / 2;
+        
+        
         if (isDialogOpen()) {
             dialog.initGui();
         }
@@ -89,7 +91,6 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
                     slotHandler.mouseClicked(mouseX, mouseY, button);
                     updateSlots(true);
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
@@ -184,7 +185,7 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
         GlStateManager.enableRescaleNormal();
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0F, 240.0F);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        //drawItems(mouseX, mouseY, partialTickTime);
+        // drawItems(mouseX, mouseY, partialTickTime);
         RenderHelper.disableStandardItemLighting();
 
         GlStateManager.popMatrix();
@@ -193,9 +194,9 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
         GlStateManager.enableDepth();
         RenderHelper.enableStandardItemLighting();
     }
-    
+
     protected void updateSlots(boolean restore) {
-        
+
     }
 
     public void drawItems(int mouseX, int mouseY, float partialTickTime) {
@@ -249,8 +250,6 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
         drawBackground(mouseX, mouseY, partialTickTime);
         // GlStateManager.translate(-x, -y, 0);
         drawForeground(mouseX, mouseY, partialTickTime);
-        
-
 
         if (isDialogOpen()) {
             // GL11.glTranslatef(-guiLeft, -guiTop, 0);
@@ -280,7 +279,7 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
     }
 
     public void drawForeground(int mouseX, int mouseY, float partialTickTime) {
-        
+
         drawbuttons(mouseX, mouseY, partialTickTime);
         if (slotHandler != null) {
             updateSlots(false);

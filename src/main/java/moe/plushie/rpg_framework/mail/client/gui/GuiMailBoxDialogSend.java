@@ -25,6 +25,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
@@ -61,8 +62,8 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
         super.initGui();
         buttonList.clear();
 
-        buttonClose = new GuiButtonExt(-1, x + width - 80 - 10, y + height - 30 - 90, 80, 20, "Close");
-        buttonSend = new GuiButtonExt(-1, x + width - 160 - 20, y + height - 30 - 90, 80, 20, "Send");
+        buttonClose = new GuiButtonExt(-1, x + width - 60 - 10, y + height - 30 - 90, 60, 16, "Close");
+        buttonSend = new GuiButtonExt(-1, x + width - 120 - 20, y + height - 30 - 90, 60, 16, "Send");
 
         buttonList.add(buttonClose);
         buttonList.add(buttonSend);
@@ -124,7 +125,7 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
             }
         }
     }
-    
+
     @Override
     protected void updateSlots(boolean restore) {
         ContainerMailBox containerMailBox = (ContainerMailBox) slotHandler.inventorySlots;
@@ -132,7 +133,7 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
         if (!restore) {
             ArrayList<Slot> playerSlots = containerMailBox.getSlotsPlayer();
             int posX = x + 8 - gui.getGuiLeft();
-            int posY = y + 174 - gui.getGuiTop();
+            int posY = y + 167 - gui.getGuiTop();
             int playerInvY = posY;
             int hotBarY = playerInvY + 58;
             for (int ix = 0; ix < 9; ix++) {
@@ -146,7 +147,7 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
                 }
             }
             for (Slot slot : containerMailBox.getSlotsAttachmentsInput()) {
-                ((SlotHidable)slot).setVisible(true);
+                ((SlotHidable) slot).setVisible(true);
             }
         } else {
             ArrayList<Slot> playerSlots = containerMailBox.getSlotsPlayer();
@@ -165,7 +166,7 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
                 }
             }
             for (Slot slot : containerMailBox.getSlotsAttachmentsInput()) {
-                ((SlotHidable)slot).setVisible(false);
+                ((SlotHidable) slot).setVisible(false);
             }
         }
     }
@@ -181,9 +182,20 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
         int textureHeight = 62;
         int borderSize = 4;
         mc.renderEngine.bindTexture(TEXTURE);
-        GuiUtils.drawContinuousTexturedBox(x, y, 0, 0, width, height - 90, textureWidth, textureHeight, borderSize, zLevel);
+        // Main background.
+        GuiUtils.drawContinuousTexturedBox(x, y, 0, 0, width, height - 97, textureWidth, textureHeight, borderSize, zLevel);
 
-        GuiHelper.renderPlayerInvTexture(x, y + 158);
+        // Attachments.
+        GuiUtils.drawContinuousTexturedBox(x + 177, y + 151, 0, 0, 80, 98, textureWidth, textureHeight, borderSize, zLevel);
+        for (int i = 0; i < ((ContainerMailBox) slotHandler.inventorySlots).getSlotsAttachmentsInput().size(); i++) {
+            int yIndex = MathHelper.floor(i / 3);
+            int xIndex = i - (yIndex * 3);
+            drawTexturedModalRect(x + 177 + 8 + xIndex * 18, y + 151 + 15 + 18 * yIndex, 238, 0, 18, 18);
+        }
+
+        // Player inventory.
+        GuiHelper.renderPlayerInvTexture(x, y + 151);
+
         textFieldTo.drawTextBox();
         textFieldSubject.drawTextBox();
         textFieldBody.drawTextBox();
@@ -193,7 +205,8 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
     @Override
     public void drawForeground(int mouseX, int mouseY, float partialTickTime) {
         super.drawForeground(mouseX, mouseY, partialTickTime);
-        GuiHelper.renderPlayerInvlabel(x, y + 158, fontRenderer);
+        GuiHelper.renderPlayerInvlabel(x, y + 151, fontRenderer);
+        fontRenderer.drawString("Attachments", x + 177 + 8, y + 151 + 5, 0x333333);
     }
 
     private boolean sendMail() {
@@ -208,9 +221,12 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
         Date sendDateTime = Calendar.getInstance().getTime();
         String subject = textFieldSubject.getText();
         String message = textFieldBody.getText();
+        ContainerMailBox containerMailBox = (ContainerMailBox) slotHandler.inventorySlots;
         NonNullList<ItemStack> attachments = NonNullList.<ItemStack>create();
-        if (!mc.player.getHeldItemMainhand().isEmpty()) {
-            attachments.add(mc.player.getHeldItemMainhand());
+        for (Slot slot : containerMailBox.getSlotsAttachmentsInput()) {
+            if (slot.getHasStack()) {
+                attachments.add(slot.getStack());
+            }
         }
         String[] split = textFieldTo.getText().trim().split(",");
         ArrayList<MailMessage> mailMessages = new ArrayList<MailMessage>();

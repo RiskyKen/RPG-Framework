@@ -19,6 +19,7 @@ import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.MathHelper;
 
 public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> {
 
@@ -33,18 +34,20 @@ public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> {
         super(entityPlayer, tileEntity);
         this.mailSystem = RPGFramework.getProxy().getMailSystemManager().getMailSystem(new IdentifierString("main.json"));
 
-        invAttachmentsInput = new InventoryBasic("attachmentsInput", false, 8);
+        invAttachmentsInput = new InventoryBasic("attachmentsInput", false, mailSystem.getMaxAttachments());
 
         slotsAttachmentsInput = new ArrayList<Slot>();
 
         addPlayerSlots(8, 167);
 
         for (int i = 0; i < invAttachmentsInput.getSizeInventory(); i++) {
-            addSlotToContainerAndList(new SlotHidable(invAttachmentsInput, i, 290 - 18 * i, 122), slotsAttachmentsInput);
+            int yIndex = MathHelper.floor(i / 3);
+            int xIndex = i - (yIndex * 3);
+            addSlotToContainerAndList(new SlotHidable(invAttachmentsInput, i, 246 + 18 * xIndex, 167 + 18 * yIndex), slotsAttachmentsInput);
         }
 
         for (Slot slot : slotsAttachmentsInput) {
-            ((SlotHidable) slot).setVisible(false);
+            ((SlotHidable) slot).setVisible(true);
         }
     }
 
