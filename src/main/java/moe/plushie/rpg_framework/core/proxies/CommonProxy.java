@@ -9,6 +9,7 @@ import moe.plushie.rpg_framework.bank.ModuleBank;
 import moe.plushie.rpg_framework.bank.common.BankManager;
 import moe.plushie.rpg_framework.bank.common.capability.BankCapabilityManager;
 import moe.plushie.rpg_framework.core.RPGFramework;
+import moe.plushie.rpg_framework.core.common.addons.ModAddonManager;
 import moe.plushie.rpg_framework.core.common.command.CommandRpg;
 import moe.plushie.rpg_framework.core.common.config.ConfigHandler;
 import moe.plushie.rpg_framework.core.common.init.ModBlocks;
@@ -30,6 +31,8 @@ import moe.plushie.rpg_framework.mail.ModuleMail;
 import moe.plushie.rpg_framework.mail.common.MailSystemManager;
 import moe.plushie.rpg_framework.shop.ModuleShop;
 import moe.plushie.rpg_framework.shop.common.ShopManager;
+import moe.plushie.rpg_framework.value.ModuleValue;
+import moe.plushie.rpg_framework.value.ValueManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.Mod;
@@ -55,11 +58,13 @@ public class CommonProxy {
     private ModSounds modSounds;
 
     private CurrencyManager currencyManager;
+    private ValueManager valueManager;
     private MailSystemManager mailSystemManager;
     private ShopManager shopManager;
     private BankManager bankManager;
 
     private IModModule moduleCurrency = new ModuleCurrency();
+    private IModModule moduleValue = new ModuleValue();
     private IModModule moduleMail = new ModuleMail();
     private IModModule moduleShop = new ModuleShop();
     private IModModule moduleBank = new ModuleBank();
@@ -77,6 +82,8 @@ public class CommonProxy {
         if (!modDirectory.exists()) {
             modDirectory.mkdir();
         }
+        
+        ModAddonManager.preInit();
 
         currencyManager = new CurrencyManager(modDirectory);
         mailSystemManager = new MailSystemManager(modDirectory);
@@ -108,6 +115,8 @@ public class CommonProxy {
         for (IModModule module : ModModule.MOD_MODULES) {
             module.init(event);
         }
+        
+        ModAddonManager.init();
     }
 
     public void initRenderers() {
@@ -117,6 +126,7 @@ public class CommonProxy {
         for (IModModule module : ModModule.MOD_MODULES) {
             module.postInit(event);
         }
+        ModAddonManager.postInit();
     }
 
     public void serverAboutToStart(FMLServerAboutToStartEvent event) {
