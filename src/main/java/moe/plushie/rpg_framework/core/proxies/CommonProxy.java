@@ -64,7 +64,7 @@ public class CommonProxy {
     private BankManager bankManager;
 
     private IModModule moduleCurrency = new ModuleCurrency();
-    private IModModule moduleValue = new ModuleValue();
+    private IModModule moduleValue = new ModuleValue(getModDirectory());
     private IModModule moduleMail = new ModuleMail();
     private IModModule moduleShop = new ModuleShop();
     private IModModule moduleBank = new ModuleBank();

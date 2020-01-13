@@ -21,7 +21,8 @@ public class AddonFaerunHeroes extends ModAddon {
     public ICost getValue(ItemStack itemStack) {
         if (itemStack.hasTagCompound() && itemStack.getTagCompound().hasKey(TAG_TIAMATRPG, NBT.TAG_COMPOUND)) {
             NBTTagCompound compound = itemStack.getTagCompound().getCompoundTag(TAG_TIAMATRPG);
-            if (compound.hasKey(TAG_TIAMATRPG, NBT.TAG_INT)) {
+            if (compound.hasKey(TAG_VALUE, NBT.TAG_INT)) {
+                // TODO Make this load from a config or something.
                 ICurrency currency = RPGFramework.getProxy().getCurrencyManager().getCurrency("common.json");
                 return new Cost(new Wallet(currency, compound.getInteger(TAG_VALUE)), null);
             }
@@ -37,7 +38,7 @@ public class AddonFaerunHeroes extends ModAddon {
             if (!itemStack.getTagCompound().hasKey(TAG_TIAMATRPG, NBT.TAG_COMPOUND)) {
                 itemStack.getTagCompound().setTag(TAG_TIAMATRPG, new NBTTagCompound());
             }
-            itemStack.getTagCompound().getCompoundTag(TAG_TIAMATRPG).setInteger(TAG_TIAMATRPG, value.getWalletCost().getAmount());
+            itemStack.getTagCompound().getCompoundTag(TAG_TIAMATRPG).setInteger(TAG_VALUE, value.getWalletCost().getAmount());
         }
     }
 }

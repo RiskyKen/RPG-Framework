@@ -207,6 +207,7 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
         super.drawForeground(mouseX, mouseY, partialTickTime);
         GuiHelper.renderPlayerInvlabel(x, y + 151, fontRenderer);
         fontRenderer.drawString("Attachments", x + 177 + 8, y + 151 + 5, 0x333333);
+        GuiHelper.renderCost(fontRenderer, mc.getRenderItem(), mailSystem.getMessageCost(), 0, 0);
     }
 
     private boolean sendMail() {

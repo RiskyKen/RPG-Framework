@@ -7,12 +7,10 @@ import org.lwjgl.opengl.GL11;
 import com.mojang.realmsclient.gui.ChatFormatting;
 
 import moe.plushie.rpg_framework.api.core.IIdentifier;
-import moe.plushie.rpg_framework.api.core.IItemMatcher;
 import moe.plushie.rpg_framework.api.currency.ICost;
 import moe.plushie.rpg_framework.api.currency.ICurrency;
 import moe.plushie.rpg_framework.api.currency.ICurrencyCapability;
 import moe.plushie.rpg_framework.api.currency.IWallet;
-import moe.plushie.rpg_framework.api.currency.ICurrency.ICurrencyVariant;
 import moe.plushie.rpg_framework.api.shop.IShop;
 import moe.plushie.rpg_framework.api.shop.IShop.IShopTab;
 import moe.plushie.rpg_framework.core.RPGFramework;
@@ -38,10 +36,8 @@ import moe.plushie.rpg_framework.currency.common.capability.CurrencyCapability;
 import moe.plushie.rpg_framework.shop.common.inventory.ContainerShop;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.client.config.GuiUtils;
@@ -296,7 +292,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
             }
             amount += CurrencyWalletHelper.getAmountInInventory(currency, entityPlayer.inventory);
             if (amount > 0) {
-                renderCost(176, 156 + yCur * 18, new Cost(new Wallet(currency, amount), null));
+                GuiHelper.renderCost(fontRenderer, itemRender, new Cost(new Wallet(currency, amount), null), 176, 156 + yCur * 18);
                 yCur++;
             }
         }
@@ -337,74 +333,8 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
             if (shop.getTabCount() > activeTabIndex && index < shop.getTabs().get(activeTabIndex).getItemCount()) {
                 fontRenderer.drawString("Stock: \u221E", slot.xPos + 23, slot.yPos - 4, 0x888888, false);
                 ICost cost = shop.getTabs().get(activeTabIndex).getItems().get(index).getCost();
-                renderCost(slot.xPos, slot.yPos, cost);
+                GuiHelper.renderCost(fontRenderer, itemRender, cost, slot.xPos, slot.yPos);
                 // fontRenderer.drawString("Stock: " + amount, slot.xPos + 23, slot.yPos - 4, 0x888888, false);
-            }
-        }
-    }
-
-    private void renderCost(int slotX, int slotY, ICost cost) {
-
-        if (cost.hasWalletCost()) {
-            IWallet wallet = cost.getWalletCost();
-            int amount = wallet.getAmount();
-            boolean used = false;
-            int renderCount = 0;
-            for (int i = 0; i < wallet.getCurrency().getCurrencyVariants().length; i++) {
-                if (amount > 0) {
-                    ICurrencyVariant variant = wallet.getCurrency().getCurrencyVariants()[wallet.getCurrency().getCurrencyVariants().length - i - 1];
-                    // variant = cost.getCurrency().getCurrencyVariants()[i];
-
-                    int count = 0;
-                    for (int j = 0; j < 22000; j++) {
-                        if (variant.getValue() <= amount) {
-                            amount -= variant.getValue();
-                            count++;
-                            used = true;
-                        } else {
-                            continue;
-                        }
-                    }
-
-                    if (used) {
-                        GlStateManager.pushMatrix();
-                        GlStateManager.pushAttrib();
-                        RenderHelper.enableGUIStandardItemLighting();
-                        GlStateManager.translate(22 + slotX + renderCount * 17, 5 + slotY, 0);
-                        // GlStateManager.scale(0.75, 0.75, 0.75);
-                        ItemStack stack = variant.getItem().getItemStack().copy();
-                        stack.setCount(1);
-                        itemRender.renderItemAndEffectIntoGUI(stack, 0, 0);
-                        if (count >= 1000) {
-                            itemRender.renderItemOverlayIntoGUI(fontRenderer, stack, 0, 0, String.valueOf(count / 1000) + "K");
-                        } else {
-                            itemRender.renderItemOverlayIntoGUI(fontRenderer, stack, 0, 0, String.valueOf(count));
-                        }
-                        RenderHelper.disableStandardItemLighting();
-                        GlStateManager.popAttrib();
-                        GlStateManager.popMatrix();
-                        renderCount++;
-                    }
-                }
-            }
-        }
-        if (cost.hasItemCost()) {
-            IItemMatcher[] itemCost = cost.getItemCost();
-            for (int i = 0; i < itemCost.length; i++) {
-
-                GlStateManager.pushMatrix();
-                GlStateManager.pushAttrib();
-                RenderHelper.enableGUIStandardItemLighting();
-                GlStateManager.translate(22 + slotX + i * 17, 5 + slotY, 0);
-                // GlStateManager.scale(0.5, 0.5, 0.5);
-                ItemStack stack = itemCost[i].getItemStack();
-                // stack.setCount(1);
-                itemRender.renderItemAndEffectIntoGUI(stack, 0, 0);
-                itemRender.renderItemOverlays(fontRenderer, stack, 0, 0);
-                RenderHelper.disableStandardItemLighting();
-                GlStateManager.popAttrib();
-                GlStateManager.popMatrix();
-
             }
         }
     }

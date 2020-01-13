@@ -31,10 +31,10 @@ public class Wallet implements IWallet {
     public int getAmount() {
         return amount;
     }
-    
+
     @Override
     public void addAmount(int amount) {
-        if ((long)amount + (long)this.amount > (long)Integer.MAX_VALUE) {
+        if ((long) amount + (long) this.amount > (long) Integer.MAX_VALUE) {
             this.amount = Integer.MAX_VALUE;
         } else {
             this.amount += amount;
@@ -48,7 +48,7 @@ public class Wallet implements IWallet {
             this.amount = 0;
         }
     }
-    
+
     @Override
     public String toString() {
         return "Wallet [currency=" + currency.getIdentifier() + ", amount=" + amount + "]";

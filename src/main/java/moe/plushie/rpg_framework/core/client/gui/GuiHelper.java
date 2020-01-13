@@ -3,6 +3,10 @@ package moe.plushie.rpg_framework.core.client.gui;
 import java.util.Iterator;
 import java.util.List;
 
+import moe.plushie.rpg_framework.api.core.IItemMatcher;
+import moe.plushie.rpg_framework.api.currency.ICost;
+import moe.plushie.rpg_framework.api.currency.ICurrency.ICurrencyVariant;
+import moe.plushie.rpg_framework.api.currency.IWallet;
 import moe.plushie.rpg_framework.core.client.lib.LibGuiResources;
 import moe.plushie.rpg_framework.core.common.lib.LibModInfo;
 import net.minecraft.client.Minecraft;
@@ -11,9 +15,11 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -24,6 +30,72 @@ public final class GuiHelper {
     private static final ResourceLocation PLAYER_TEXTURE = new ResourceLocation(LibGuiResources.PLAYER_INVENTORY);
     
     private GuiHelper() {}
+    
+    public static void renderCost(FontRenderer fontRenderer, RenderItem itemRender, ICost cost, int slotX, int slotY) {
+
+        if (cost.hasWalletCost()) {
+            IWallet wallet = cost.getWalletCost();
+            int amount = wallet.getAmount();
+            boolean used = false;
+            int renderCount = 0;
+            for (int i = 0; i < wallet.getCurrency().getCurrencyVariants().length; i++) {
+                if (amount > 0) {
+                    ICurrencyVariant variant = wallet.getCurrency().getCurrencyVariants()[wallet.getCurrency().getCurrencyVariants().length - i - 1];
+                    // variant = cost.getCurrency().getCurrencyVariants()[i];
+
+                    int count = 0;
+                    for (int j = 0; j < 22000; j++) {
+                        if (variant.getValue() <= amount) {
+                            amount -= variant.getValue();
+                            count++;
+                            used = true;
+                        } else {
+                            continue;
+                        }
+                    }
+
+                    if (used) {
+                        GlStateManager.pushMatrix();
+                        GlStateManager.pushAttrib();
+                        RenderHelper.enableGUIStandardItemLighting();
+                        GlStateManager.translate(22 + slotX + renderCount * 17, 5 + slotY, 0);
+                        // GlStateManager.scale(0.75, 0.75, 0.75);
+                        ItemStack stack = variant.getItem().getItemStack().copy();
+                        stack.setCount(1);
+                        itemRender.renderItemAndEffectIntoGUI(stack, 0, 0);
+                        if (count >= 1000) {
+                            itemRender.renderItemOverlayIntoGUI(fontRenderer, stack, 0, 0, String.valueOf(count / 1000) + "K");
+                        } else {
+                            itemRender.renderItemOverlayIntoGUI(fontRenderer, stack, 0, 0, String.valueOf(count));
+                        }
+                        RenderHelper.disableStandardItemLighting();
+                        GlStateManager.popAttrib();
+                        GlStateManager.popMatrix();
+                        renderCount++;
+                    }
+                }
+            }
+        }
+        if (cost.hasItemCost()) {
+            IItemMatcher[] itemCost = cost.getItemCost();
+            for (int i = 0; i < itemCost.length; i++) {
+
+                GlStateManager.pushMatrix();
+                GlStateManager.pushAttrib();
+                RenderHelper.enableGUIStandardItemLighting();
+                GlStateManager.translate(22 + slotX + i * 17, 5 + slotY, 0);
+                // GlStateManager.scale(0.5, 0.5, 0.5);
+                ItemStack stack = itemCost[i].getItemStack();
+                // stack.setCount(1);
+                itemRender.renderItemAndEffectIntoGUI(stack, 0, 0);
+                itemRender.renderItemOverlays(fontRenderer, stack, 0, 0);
+                RenderHelper.disableStandardItemLighting();
+                GlStateManager.popAttrib();
+                GlStateManager.popMatrix();
+
+            }
+        }
+    }
     
     public static void renderPlayerInvTexture(int x, int y) {
         Minecraft.getMinecraft().renderEngine.bindTexture(PLAYER_TEXTURE);

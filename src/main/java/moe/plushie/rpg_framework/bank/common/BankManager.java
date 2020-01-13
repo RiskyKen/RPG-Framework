@@ -21,7 +21,7 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public class BankManager implements IBankManager {
-    
+
     private static final String DIRECTORY_NAME = "bank";
 
     private final File currencyDirectory;
@@ -35,7 +35,7 @@ public class BankManager implements IBankManager {
         bankMap = new HashMap<String, IBank>();
         MinecraftForge.EVENT_BUS.register(this);
     }
-    
+
     public void reload(boolean syncWithClients) {
         RPGFramework.getLogger().info("Loading Banks");
         File[] files = currencyDirectory.listFiles(new FilenameFilter() {
@@ -52,28 +52,28 @@ public class BankManager implements IBankManager {
             syncToAll();
         }
     }
-    
+
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerLoggedInEvent event) {
         if (!event.player.getEntityWorld().isRemote) {
             syncToClient((EntityPlayerMP) event.player);
         }
     }
-    
+
     public void syncToClient(EntityPlayerMP entityPlayer) {
         RPGFramework.getLogger().info("Sending " + bankMap.size() + " bank list(s) to player " + entityPlayer.getName() + ".");
         PacketHandler.NETWORK_WRAPPER.sendTo(getSyncMessage(), entityPlayer);
     }
-    
+
     private void syncToAll() {
         RPGFramework.getLogger().info("Sending " + bankMap.size() + " bank list(s) to all players.");
         PacketHandler.NETWORK_WRAPPER.sendToAll(getSyncMessage());
     }
-    
+
     private IMessage getSyncMessage() {
         return new MessageServerSyncBanks(getBanks());
     }
-    
+
     public void gotBanksFromServer(IBank[] banks) {
         RPGFramework.getLogger().info("Got " + banks.length + " bank list(s) from server.");
         bankMap.clear();
@@ -81,7 +81,7 @@ public class BankManager implements IBankManager {
             bankMap.put(bank.getIdentifier(), bank);
         }
     }
-    
+
     private void loadBank(File bankFile) {
         RPGFramework.getLogger().info("Loading bank: " + bankFile.getName());
         JsonElement jsonElement = SerializeHelper.readJsonFile(bankFile);
@@ -92,7 +92,7 @@ public class BankManager implements IBankManager {
             }
         }
     }
-    
+
     public int getBankIndex(IBank bank) {
         if (bank == null) {
             return -1;
@@ -105,7 +105,7 @@ public class BankManager implements IBankManager {
         }
         return -1;
     }
-    
+
     public IBank getBank(int index) {
         IBank[] banks = getBanks();
         if (index >= 0 & index < banks.length) {
@@ -113,7 +113,7 @@ public class BankManager implements IBankManager {
         }
         return null;
     }
-    
+
     @Override
     public IBank getBank(String identifier) {
         return bankMap.get(identifier);

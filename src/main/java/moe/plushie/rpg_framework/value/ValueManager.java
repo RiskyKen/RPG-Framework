@@ -10,7 +10,7 @@ import net.minecraft.item.ItemStack;
 
 public final class ValueManager implements IValueManager {
 
-    private static final String DIRECTORY_NAME = "shop";
+    private static final String DIRECTORY_NAME = "value";
 
     private final File valueDirectory;
 

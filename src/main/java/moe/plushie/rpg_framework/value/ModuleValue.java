@@ -1,6 +1,7 @@
 package moe.plushie.rpg_framework.value;
 
-import moe.plushie.rpg_framework.core.RPGFramework;
+import java.io.File;
+
 import moe.plushie.rpg_framework.core.common.module.ModModule;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -13,11 +14,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ModuleValue extends ModModule {
 
-    private static ValueManager valueManager; 
-    
-    public ModuleValue() {
+    private static ValueManager valueManager;
+
+    public ModuleValue(File modDirectory) {
         super("value");
-        valueManager = new ValueManager(RPGFramework.getProxy().getModDirectory());
+        valueManager = new ValueManager(modDirectory);
     }
 
     @Override
@@ -49,7 +50,7 @@ public class ModuleValue extends ModModule {
     @Override
     public void serverStopping(FMLServerStoppingEvent event) {
     }
-    
+
     public static ValueManager getManager() {
         return valueManager;
     }
