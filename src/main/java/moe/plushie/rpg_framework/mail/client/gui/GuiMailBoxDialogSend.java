@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import com.mojang.authlib.GameProfile;
 
+import moe.plushie.rpg_framework.api.currency.ICost;
 import moe.plushie.rpg_framework.api.mail.IMailSystem;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.client.gui.AbstractGuiDialog;
@@ -22,6 +23,7 @@ import moe.plushie.rpg_framework.mail.common.inventory.ContainerMailBox;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -36,15 +38,17 @@ import scala.actors.threadpool.Arrays;
 public class GuiMailBoxDialogSend extends AbstractGuiDialog {
 
     private final IMailSystem mailSystem;
+    private final EntityPlayer player;
     private GuiLabeledTextField textFieldTo;
     private GuiLabeledTextField textFieldSubject;
     private GuiLabeledTextField textFieldBody;
     private GuiButtonExt buttonClose;
     private GuiButtonExt buttonSend;
 
-    public GuiMailBoxDialogSend(GuiScreen parent, IDialogCallback callback, IMailSystem mailSystem) {
+    public GuiMailBoxDialogSend(GuiScreen parent, IDialogCallback callback, IMailSystem mailSystem, EntityPlayer player) {
         super(parent, "send-mail", callback, 200, 247);
         this.mailSystem = mailSystem;
+        this.player = player;
         textFieldTo = new GuiLabeledTextField(fontRenderer, x + 10, y + 20, width - 20, 14);
         textFieldSubject = new GuiLabeledTextField(fontRenderer, x + 10, y + 40, width - 20, 14);
         textFieldBody = new GuiLabeledTextField(fontRenderer, x + 10, y + 60, width - 20, 62);
@@ -63,7 +67,7 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
         buttonList.clear();
 
         buttonClose = new GuiButtonExt(-1, x + width - 60 - 10, y + height - 30 - 90, 60, 16, "Close");
-        buttonSend = new GuiButtonExt(-1, x + width - 120 - 20, y + height - 30 - 90, 60, 16, "Send");
+        buttonSend = new GuiButtonExt(-1, x + width - 120 - 15, y + height - 30 - 90, 60, 16, "Send");
 
         buttonList.add(buttonClose);
         buttonList.add(buttonSend);
@@ -200,6 +204,7 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
         textFieldSubject.drawTextBox();
         textFieldBody.drawTextBox();
         drawTitle("Send Mail");
+        
     }
 
     @Override
@@ -207,7 +212,23 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
         super.drawForeground(mouseX, mouseY, partialTickTime);
         GuiHelper.renderPlayerInvlabel(x, y + 151, fontRenderer);
         fontRenderer.drawString("Attachments", x + 177 + 8, y + 151 + 5, 0x333333);
-        GuiHelper.renderCost(fontRenderer, mc.getRenderItem(), mailSystem.getMessageCost(), 0, 0);
+        ICost cost = mailSystem.getMessageCost();
+        NonNullList<ItemStack> attachments = getAttachments();
+        for (int i = 0; i < attachments.size(); i++) {
+            cost = cost.add(mailSystem.getAttachmentCost());
+        }
+        GuiHelper.renderCost(fontRenderer, mc.getRenderItem(), cost, x - 14, y + 120, cost.canAfford(player));
+    }
+
+    public NonNullList<ItemStack> getAttachments() {
+        ContainerMailBox containerMailBox = (ContainerMailBox) slotHandler.inventorySlots;
+        NonNullList<ItemStack> attachments = NonNullList.<ItemStack>create();
+        for (Slot slot : containerMailBox.getSlotsAttachmentsInput()) {
+            if (slot.getHasStack()) {
+                attachments.add(slot.getStack());
+            }
+        }
+        return attachments;
     }
 
     private boolean sendMail() {
@@ -222,13 +243,7 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
         Date sendDateTime = Calendar.getInstance().getTime();
         String subject = textFieldSubject.getText();
         String message = textFieldBody.getText();
-        ContainerMailBox containerMailBox = (ContainerMailBox) slotHandler.inventorySlots;
-        NonNullList<ItemStack> attachments = NonNullList.<ItemStack>create();
-        for (Slot slot : containerMailBox.getSlotsAttachmentsInput()) {
-            if (slot.getHasStack()) {
-                attachments.add(slot.getStack());
-            }
-        }
+        NonNullList<ItemStack> attachments = getAttachments();
         String[] split = textFieldTo.getText().trim().split(",");
         ArrayList<MailMessage> mailMessages = new ArrayList<MailMessage>();
         for (String textReceiver : split) {

@@ -149,7 +149,7 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
 
         }
         if (button == buttonNewMessage) {
-            openDialog(new GuiMailBoxDialogSend(this, this, mailSystem));
+            openDialog(new GuiMailBoxDialogSend(this, this, mailSystem, player));
         }
         if (button == buttonMessageReply) {
 

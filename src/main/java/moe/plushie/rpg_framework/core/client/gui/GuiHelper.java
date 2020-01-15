@@ -3,6 +3,8 @@ package moe.plushie.rpg_framework.core.client.gui;
 import java.util.Iterator;
 import java.util.List;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
+
 import moe.plushie.rpg_framework.api.core.IItemMatcher;
 import moe.plushie.rpg_framework.api.currency.ICost;
 import moe.plushie.rpg_framework.api.currency.ICurrency.ICurrencyVariant;
@@ -32,7 +34,16 @@ public final class GuiHelper {
     private GuiHelper() {}
     
     public static void renderCost(FontRenderer fontRenderer, RenderItem itemRender, ICost cost, int slotX, int slotY) {
+        renderCost(fontRenderer, itemRender, cost, slotX, slotY, true);
+    }
+    
+    public static void renderCost(FontRenderer fontRenderer, RenderItem itemRender, ICost cost, int slotX, int slotY, boolean canAfford) {
 
+        ChatFormatting colour = ChatFormatting.WHITE;
+        if (!canAfford) {
+            colour = ChatFormatting.RED;
+        }
+        
         if (cost.hasWalletCost()) {
             IWallet wallet = cost.getWalletCost();
             int amount = wallet.getAmount();
@@ -64,9 +75,9 @@ public final class GuiHelper {
                         stack.setCount(1);
                         itemRender.renderItemAndEffectIntoGUI(stack, 0, 0);
                         if (count >= 1000) {
-                            itemRender.renderItemOverlayIntoGUI(fontRenderer, stack, 0, 0, String.valueOf(count / 1000) + "K");
+                            itemRender.renderItemOverlayIntoGUI(fontRenderer, stack, 0, 0, colour + String.valueOf(count / 1000) + "K");
                         } else {
-                            itemRender.renderItemOverlayIntoGUI(fontRenderer, stack, 0, 0, String.valueOf(count));
+                            itemRender.renderItemOverlayIntoGUI(fontRenderer, stack, 0, 0, colour + String.valueOf(count));
                         }
                         RenderHelper.disableStandardItemLighting();
                         GlStateManager.popAttrib();
