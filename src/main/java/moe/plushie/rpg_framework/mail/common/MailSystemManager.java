@@ -14,9 +14,9 @@ import moe.plushie.rpg_framework.api.mail.IMailSystemManager;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
-import moe.plushie.rpg_framework.core.common.network.server.MessageServerMailResult;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerSyncMailSystems;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
+import moe.plushie.rpg_framework.mail.common.inventory.ContainerMailBox;
 import moe.plushie.rpg_framework.mail.common.serialize.MailSystemSerializer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.MinecraftForge;
@@ -127,6 +127,8 @@ public class MailSystemManager implements IMailSystemManager {
             }
             failed.add(mailMessage.getReceiver());
         }
-        PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerMailResult(success, failed), entityPlayer);
+        if (entityPlayer.openContainer != null && entityPlayer.openContainer instanceof ContainerMailBox) {
+            ((ContainerMailBox) entityPlayer.openContainer).onMailResult(entityPlayer, success, failed);
+        }
     }
 }

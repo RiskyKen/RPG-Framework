@@ -2,12 +2,15 @@ package moe.plushie.rpg_framework.mail.common.inventory;
 
 import java.util.ArrayList;
 
+import com.mojang.authlib.GameProfile;
+
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.inventory.ModTileContainer;
 import moe.plushie.rpg_framework.core.common.inventory.slot.SlotHidable;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerMailList;
+import moe.plushie.rpg_framework.core.common.network.server.MessageServerMailResult;
 import moe.plushie.rpg_framework.core.common.utils.UtilItems;
 import moe.plushie.rpg_framework.core.database.TableMail;
 import moe.plushie.rpg_framework.mail.common.MailMessage;
@@ -104,5 +107,14 @@ public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> {
                 TableMail.clearMessageItems(messageId);
             }
         }
+    }
+
+    public void onMailResult(EntityPlayerMP entityPlayer, ArrayList<GameProfile> success, ArrayList<GameProfile> failed) {
+        if (!success.isEmpty()) {
+            for (int i = 0; i < invAttachmentsInput.getSizeInventory(); i++) {
+                invAttachmentsInput.setInventorySlotContents(i, ItemStack.EMPTY);
+            }
+        }
+        PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerMailResult(success, failed), entityPlayer);
     }
 }
