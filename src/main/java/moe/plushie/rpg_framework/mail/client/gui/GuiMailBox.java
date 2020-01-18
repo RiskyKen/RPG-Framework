@@ -111,7 +111,7 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
 
         if (!player.capabilities.isCreativeMode) {
             buttonNewMessage.enabled = false;
-            buttonNewMessage.setDisableText("This feature is not available yet.");
+            buttonNewMessage.setDisableText("Sending mail is disabled on this server.");
         }
     }
 

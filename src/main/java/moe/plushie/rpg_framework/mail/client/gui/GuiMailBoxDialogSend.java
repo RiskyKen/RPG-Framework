@@ -256,6 +256,9 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
         if (mailMessages.isEmpty()) {
             return false;
         }
+        if (!player.capabilities.isCreativeMode & mailMessages.size() > 1) {
+            return false;
+        }
 
         PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiMailBox(MailMessageType.MAIL_MESSAGE_SEND).setMailMessages(mailMessages.toArray(new MailMessage[mailMessages.size()])));
         return true;
