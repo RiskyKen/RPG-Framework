@@ -333,7 +333,7 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
             if (shop.getTabCount() > activeTabIndex && index < shop.getTabs().get(activeTabIndex).getItemCount()) {
                 fontRenderer.drawString("Stock: \u221E", slot.xPos + 23, slot.yPos - 4, 0x888888, false);
                 ICost cost = shop.getTabs().get(activeTabIndex).getItems().get(index).getCost();
-                GuiHelper.renderCost(fontRenderer, itemRender, cost, slot.xPos, slot.yPos);
+                GuiHelper.renderCost(fontRenderer, itemRender, cost, slot.xPos, slot.yPos, cost.canAfford(entityPlayer));
                 // fontRenderer.drawString("Stock: " + amount, slot.xPos + 23, slot.yPos - 4, 0x888888, false);
             }
         }
