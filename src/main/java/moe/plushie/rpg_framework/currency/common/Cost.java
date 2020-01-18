@@ -47,12 +47,15 @@ public class Cost implements ICost {
             if (itemCost.length > 0) {
                 return true;
             }
-         }
+        }
         return false;
     }
 
     @Override
     public boolean canAfford(EntityPlayer player) {
+        if (player.capabilities.isCreativeMode) {
+            return true;
+        }
         if (hasWalletCost() & !hasItemCost()) {
             ICurrency currency = walletCost.getCurrency();
             if (CurrencyWalletHelper.consumeAmountFromInventory(currency, player.inventory, walletCost.getAmount(), true)) {
@@ -87,6 +90,9 @@ public class Cost implements ICost {
 
     @Override
     public void pay(EntityPlayer player) {
+        if (player.capabilities.isCreativeMode) {
+            return;
+        }
         if (hasWalletCost() & !hasItemCost()) {
             ICurrency currency = walletCost.getCurrency();
 
@@ -142,7 +148,7 @@ public class Cost implements ICost {
             }
         }
         if (hasItemCost()) {
-            //throw new NotImplementedException("Can not add item costs at this time.");
+            throw new NotImplementedException("Can not add item costs at this time.");
         }
 
         for (ICost cost : costs) {

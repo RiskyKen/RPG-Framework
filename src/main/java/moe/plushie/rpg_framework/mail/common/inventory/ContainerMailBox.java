@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.mojang.authlib.GameProfile;
 
+import moe.plushie.rpg_framework.api.currency.ICost;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.inventory.ModTileContainer;
@@ -22,6 +23,7 @@ import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
 
 public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> {
@@ -114,7 +116,27 @@ public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> {
             for (int i = 0; i < invAttachmentsInput.getSizeInventory(); i++) {
                 invAttachmentsInput.setInventorySlotContents(i, ItemStack.EMPTY);
             }
+            getSendCost().pay(entityPlayer);
         }
         PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerMailResult(success, failed), entityPlayer);
+    }
+    
+    public NonNullList<ItemStack> getAttachments() {
+        NonNullList<ItemStack> attachments = NonNullList.<ItemStack>create();
+        for (Slot slot : getSlotsAttachmentsInput()) {
+            if (slot.getHasStack()) {
+                attachments.add(slot.getStack());
+            }
+        }
+        return attachments;
+    }
+    
+    public ICost getSendCost() {
+        ICost cost = mailSystem.getMessageCost();
+        NonNullList<ItemStack> attachments = getAttachments();
+        for (int i = 0; i < attachments.size(); i++) {
+            cost = cost.add(mailSystem.getAttachmentCost());
+        }
+        return cost;
     }
 }

@@ -212,23 +212,17 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
         super.drawForeground(mouseX, mouseY, partialTickTime);
         GuiHelper.renderPlayerInvlabel(x, y + 151, fontRenderer);
         fontRenderer.drawString("Attachments", x + 177 + 8, y + 151 + 5, 0x333333);
-        ICost cost = mailSystem.getMessageCost();
-        NonNullList<ItemStack> attachments = getAttachments();
-        for (int i = 0; i < attachments.size(); i++) {
-            cost = cost.add(mailSystem.getAttachmentCost());
-        }
+        ICost cost = getSendCost();
         GuiHelper.renderCost(fontRenderer, mc.getRenderItem(), cost, x - 14, y + 120, cost.canAfford(player));
+        buttonSend.enabled = cost.canAfford(player);
     }
 
     public NonNullList<ItemStack> getAttachments() {
-        ContainerMailBox containerMailBox = (ContainerMailBox) slotHandler.inventorySlots;
-        NonNullList<ItemStack> attachments = NonNullList.<ItemStack>create();
-        for (Slot slot : containerMailBox.getSlotsAttachmentsInput()) {
-            if (slot.getHasStack()) {
-                attachments.add(slot.getStack());
-            }
-        }
-        return attachments;
+        return ((ContainerMailBox) slotHandler.inventorySlots).getAttachments();
+    }
+    
+    public ICost getSendCost() {
+        return ((ContainerMailBox) slotHandler.inventorySlots).getSendCost();
     }
 
     private boolean sendMail() {
