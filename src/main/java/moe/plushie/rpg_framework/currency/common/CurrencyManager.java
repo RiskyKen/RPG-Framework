@@ -127,4 +127,15 @@ public class CurrencyManager implements ICurrencyManager {
         }
         return null;
     }
+    
+    public ICurrency getDefault() {
+        ICurrency currency = getCurrency("common.json");
+        if (currency != null) {
+            return currency;
+        }
+        if (!currencyMap.isEmpty()) {
+            return currencyMap.values().toArray(new ICurrency[currencyMap.size()])[0];
+        }
+        return null;
+    }
 }

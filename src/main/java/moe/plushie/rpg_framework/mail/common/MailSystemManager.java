@@ -28,13 +28,13 @@ public class MailSystemManager implements IMailSystemManager {
 
     private static final String DIRECTORY_NAME = "mail";
 
-    private final File currencyDirectory;
+    private final File mailDirectory;
     private final HashMap<IIdentifier, MailSystem> mailSystemMap;
 
     public MailSystemManager(File modDirectory) {
-        currencyDirectory = new File(modDirectory, DIRECTORY_NAME);
-        if (!currencyDirectory.exists()) {
-            currencyDirectory.mkdir();
+        mailDirectory = new File(modDirectory, DIRECTORY_NAME);
+        if (!mailDirectory.exists()) {
+            mailDirectory.mkdir();
         }
         mailSystemMap = new HashMap<IIdentifier, MailSystem>();
         MinecraftForge.EVENT_BUS.register(this);
@@ -42,7 +42,7 @@ public class MailSystemManager implements IMailSystemManager {
 
     public void reload(boolean syncWithClients) {
         RPGFramework.getLogger().info("Loading Mail Systems");
-        File[] files = currencyDirectory.listFiles(new FilenameFilter() {
+        File[] files = mailDirectory.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
                 return name.endsWith(".json");

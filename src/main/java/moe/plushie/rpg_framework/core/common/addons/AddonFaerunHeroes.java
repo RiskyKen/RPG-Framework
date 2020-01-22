@@ -23,7 +23,7 @@ public class AddonFaerunHeroes extends ModAddon {
             NBTTagCompound compound = itemStack.getTagCompound().getCompoundTag(TAG_TIAMATRPG);
             if (compound.hasKey(TAG_VALUE, NBT.TAG_INT)) {
                 // TODO Make this load from a config or something.
-                ICurrency currency = RPGFramework.getProxy().getCurrencyManager().getCurrency("common.json");
+                ICurrency currency = RPGFramework.getProxy().getCurrencyManager().getDefault();
                 return new Cost(new Wallet(currency, compound.getInteger(TAG_VALUE)), null);
             }
         }
