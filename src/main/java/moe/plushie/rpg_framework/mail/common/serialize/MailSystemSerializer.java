@@ -16,6 +16,7 @@ public class MailSystemSerializer {
     private static final String PROP_ATTACHMENT_COST = "attachmentCost";
     private static final String PROP_INBOX_SIZE = "inboxSize";
     private static final String PROP_MAX_ATTACHMENTS = "maxAttachments";
+    private static final String PROP_ALLOW_SENDING_TO_SELF = "allowSendingToSelf";
 
     private MailSystemSerializer() {
     }
@@ -32,6 +33,7 @@ public class MailSystemSerializer {
         jsonObject.add(PROP_ATTACHMENT_COST, CostSerializer.serializeJson(mailSystem.getAttachmentCost(), false));
         jsonObject.addProperty(PROP_INBOX_SIZE, mailSystem.getInboxSize());
         jsonObject.addProperty(PROP_MAX_ATTACHMENTS, mailSystem.getMaxAttachments());
+        jsonObject.addProperty(PROP_ALLOW_SENDING_TO_SELF, mailSystem.getAllowSendToSelf());
 
         return jsonObject;
     }
@@ -46,13 +48,15 @@ public class MailSystemSerializer {
             ICost attachmentCost = CostSerializer.deserializeJson(jsonObject.get(PROP_ATTACHMENT_COST));
             int inboxSize = jsonObject.get(PROP_INBOX_SIZE).getAsInt();
             int maxAttachments = jsonObject.get(PROP_MAX_ATTACHMENTS).getAsInt();
+            boolean allowSendingToSelf = jsonObject.get(PROP_ALLOW_SENDING_TO_SELF).getAsBoolean();
 
             MailSystem mailSystem = new MailSystem(identifier, name)
                     .setCharacterLimit(characterLimit)
                     .setMessageCost(messageCost)
                     .setAttachmentCost(attachmentCost)
                     .setInboxSize(inboxSize)
-                    .setMaxAttachments(maxAttachments);
+                    .setMaxAttachments(maxAttachments)
+                    .setAllowSendToSelf(allowSendingToSelf);
 
             return mailSystem;
         } catch (Exception e) {

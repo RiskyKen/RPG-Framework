@@ -1,5 +1,6 @@
 package moe.plushie.rpg_framework.mail.client;
 
+import moe.plushie.rpg_framework.api.mail.IMailSystem;
 import moe.plushie.rpg_framework.core.common.init.ModBlocks;
 import moe.plushie.rpg_framework.core.common.lib.LibModInfo;
 import moe.plushie.rpg_framework.mail.common.blocks.BlockMailBox;
@@ -7,7 +8,6 @@ import moe.plushie.rpg_framework.mail.common.tileentities.TileEntityMailBox;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
@@ -26,9 +26,13 @@ public class RenderBlockMailBox extends TileEntitySpecialRenderer<TileEntityMail
         if (blockState.getBlock() == ModBlocks.MAIL_BOX) {
             facing = blockState.getValue(BlockMailBox.STATE_FACING);
         }
-
-        float angle = (((te.getWorld().getTotalWorldTime() + te.hashCode()) % 45) + partialTicks);
-        // RpgEconomy.getLogger().info("");
+        
+        IMailSystem mailSystem = te.getMailSystem();
+        if (mailSystem == null) {
+            return;
+        }
+        
+        
         bindTexture(TEXTURE_FLAG);
         float scale = 0.0625F;
         GlStateManager.pushMatrix();
@@ -51,22 +55,21 @@ public class RenderBlockMailBox extends TileEntitySpecialRenderer<TileEntityMail
         default:
             break;
         }
-
-        angle *= 4F;
-
-        if (angle > 90) {
-            angle = 90 - (angle - 90);
+        float angle = 0F;
+        if (MailCounter.getUnreadMailCount(mailSystem) > 0) {
+            angle = 90F;
         }
-
         GlStateManager.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
 
         GlStateManager.scale(1F, -1F, -1F);
+        
         modelMailBoxFlag.FlagPole.rotateAngleX = (float) Math.toRadians(angle + 90F);
+        
         // modelMailBoxFlag.FlagPole.rotateAngleX = (float) Math.toRadians(90);
         modelMailBoxFlag.render(null, 0, 0, 0, 0, 0, scale);
         super.render(te, x, y, z, partialTicks, destroyStage, alpha);
         GlStateManager.popMatrix();
 
-        drawNameplate(te, new ItemStack(ModBlocks.MAIL_BOX).getDisplayName(), x, y, z, 10);
+        //drawNameplate(te, mailSystem.getName(), x, y, z, 10);
     }
 }

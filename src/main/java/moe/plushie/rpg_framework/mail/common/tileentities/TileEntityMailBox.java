@@ -33,6 +33,9 @@ public class TileEntityMailBox extends ModAutoSyncTileEntity implements IGuiFact
     }
 
     public MailSystem getMailSystem() {
+        if (mailSystem == null) {
+            return RPGFramework.getProxy().getMailSystemManager().getMailSystem(new IdentifierString("main.json"));
+        }
         return mailSystem;
     }
 

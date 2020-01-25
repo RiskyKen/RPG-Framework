@@ -18,4 +18,6 @@ public interface IMailSystem {
     public int getInboxSize();
     
     public int getMaxAttachments();
+    
+    public boolean getAllowSendToSelf();
 }

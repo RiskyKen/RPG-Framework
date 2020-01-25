@@ -13,7 +13,6 @@ import moe.plushie.rpg_framework.api.mail.IMailSystem;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
-import moe.plushie.rpg_framework.core.database.driver.SQLiteDriver;
 import moe.plushie.rpg_framework.mail.common.MailListItem;
 import moe.plushie.rpg_framework.mail.common.MailMessage;
 import net.minecraft.entity.player.EntityPlayer;
@@ -104,6 +103,25 @@ public final class TableMail {
             e.printStackTrace();
         }
         return mailMessages;
+    }
+    
+    private static final String SQL_UNREAD_MESSAGES_GET = "SELECT COUNT(*) FROM mail WHERE mail_system=? AND player_id_receiver=? AND read=?";
+    
+    public static int getUnreadMessagesCount(EntityPlayer entityPlayer, IMailSystem mailSystem) {
+        int count = 0;
+        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_UNREAD_MESSAGES_GET)) {
+            DBPlayerInfo dbPlayerReceiver = TablePlayers.getPlayerInfo(entityPlayer.getGameProfile());
+            ps.setObject(1, mailSystem.getIdentifier().getValue());
+            ps.setInt(2, dbPlayerReceiver.getId());
+            ps.setBoolean(3, false);
+            ResultSet resultSet =  ps.executeQuery();
+            if (resultSet.next()) {
+                count = resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
     }
 
     private static final String SQL_MESSAGE_GET = "SELECT * FROM mail WHERE id=?";

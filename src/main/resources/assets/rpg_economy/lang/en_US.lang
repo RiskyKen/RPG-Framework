@@ -65,3 +65,6 @@ commands.rpg_economy:rpg_economy.mail.usage=<reload>
 keys.rpg_economy:category=RPG Framework
 keys.rpg_economy.open_wallet_1=Open Wallet 1
 keys.rpg_economy.open_wallet_2=Open Wallet 2
+
+# Chat
+chat.rpg_economy:unreadMessageCount=You have %d unread message(s).

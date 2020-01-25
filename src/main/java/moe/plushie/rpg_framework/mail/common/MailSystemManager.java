@@ -30,6 +30,7 @@ public class MailSystemManager implements IMailSystemManager {
 
     private final File mailDirectory;
     private final HashMap<IIdentifier, MailSystem> mailSystemMap;
+    private final MailNotificationManager notificationManager;
 
     public MailSystemManager(File modDirectory) {
         mailDirectory = new File(modDirectory, DIRECTORY_NAME);
@@ -37,7 +38,12 @@ public class MailSystemManager implements IMailSystemManager {
             mailDirectory.mkdir();
         }
         mailSystemMap = new HashMap<IIdentifier, MailSystem>();
+        notificationManager = new MailNotificationManager();
         MinecraftForge.EVENT_BUS.register(this);
+    }
+    
+    public MailNotificationManager getNotificationManager() {
+        return notificationManager;
     }
 
     public void reload(boolean syncWithClients) {
