@@ -17,6 +17,7 @@ public class GuiShopDialogRename extends AbstractGuiDialog {
         super(parent, name, callback, width, height);
         textFieldName = new GuiTextField(0, fontRenderer, 0, 0, width - 20, 12);
         textFieldName.setText(shopName);
+        slotHandler = null;
     }
 
     @Override

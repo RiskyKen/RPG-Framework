@@ -7,15 +7,15 @@ import moe.plushie.rpg_framework.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpg_framework.core.client.gui.IDialogCallback;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiIconButton;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiList;
-import moe.plushie.rpg_framework.core.client.gui.controls.GuiScrollbar;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiList.GuiListItem;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiList.IGuiListItem;
+import moe.plushie.rpg_framework.core.client.gui.controls.GuiScrollbar;
 import moe.plushie.rpg_framework.core.client.lib.LibGuiResources;
 import moe.plushie.rpg_framework.core.common.IdentifierInt;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.client.MessageClientGuiShopUpdate;
-import moe.plushie.rpg_framework.core.common.network.client.MessageClientRequestSync;
 import moe.plushie.rpg_framework.core.common.network.client.MessageClientGuiShopUpdate.ShopMessageType;
+import moe.plushie.rpg_framework.core.common.network.client.MessageClientRequestSync;
 import moe.plushie.rpg_framework.core.common.network.client.MessageClientRequestSync.SyncType;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -39,6 +39,7 @@ public class GuiShopDialogShopList extends AbstractGuiDialog {
     public GuiShopDialogShopList(GuiScreen parent, String name, IDialogCallback callback, int width, int height) {
         super(parent, name, callback, width, height);
         PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientRequestSync(SyncType.SHOPS_IDENTIFIERS));
+        slotHandler = null;
     }
 
     @Override
