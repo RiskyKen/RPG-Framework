@@ -19,6 +19,7 @@ public class MailSystem implements IMailSystem, Comparable<IMailSystem> {
     private ICost attachmentCost;
     private int inboxSize;
     private int maxAttachments;
+    private boolean sendingEnabled;
     private boolean allowSendingToSelf;
 
     public MailSystem(IIdentifier identifier, String name) {
@@ -79,6 +80,16 @@ public class MailSystem implements IMailSystem, Comparable<IMailSystem> {
     @Override
     public int getMaxAttachments() {
         return maxAttachments;
+    }
+
+    public MailSystem setSendingEnabled(boolean sendingEnabled) {
+        this.sendingEnabled = sendingEnabled;
+        return this;
+    }
+
+    @Override
+    public boolean isSendingEnabled() {
+        return this.sendingEnabled;
     }
 
     public MailSystem setAllowSendToSelf(boolean allowSendingToSelf) {

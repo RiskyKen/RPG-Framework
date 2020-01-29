@@ -3,6 +3,7 @@ package moe.plushie.rpg_framework.mail;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.module.ModModule;
 import moe.plushie.rpg_framework.core.database.TableMail;
+import moe.plushie.rpg_framework.mail.client.gui.GuiMailIcon;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -29,6 +30,7 @@ public class ModuleMail extends ModModule {
     @SideOnly(Side.CLIENT)
     @Override
     public void initRenderers() {
+        new GuiMailIcon();
     }
 
     @Override

@@ -86,6 +86,7 @@ public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> {
     }
 
     public void onClientSendMailMessages(EntityPlayerMP player, MailMessage[] mailMessages) {
+        // TODO check shit out.
         RPGFramework.getProxy().getMailSystemManager().onClientSendMailMessage(player, mailMessages);
     }
 

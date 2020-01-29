@@ -19,5 +19,7 @@ public interface IMailSystem {
     
     public int getMaxAttachments();
     
+    public boolean isSendingEnabled();
+    
     public boolean getAllowSendToSelf();
 }

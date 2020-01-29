@@ -16,6 +16,7 @@ public class MailSystemSerializer {
     private static final String PROP_ATTACHMENT_COST = "attachmentCost";
     private static final String PROP_INBOX_SIZE = "inboxSize";
     private static final String PROP_MAX_ATTACHMENTS = "maxAttachments";
+    private static final String PROP_SENDING_ENABLED = "sendingEnabled";
     private static final String PROP_ALLOW_SENDING_TO_SELF = "allowSendingToSelf";
 
     private MailSystemSerializer() {
@@ -33,6 +34,7 @@ public class MailSystemSerializer {
         jsonObject.add(PROP_ATTACHMENT_COST, CostSerializer.serializeJson(mailSystem.getAttachmentCost(), false));
         jsonObject.addProperty(PROP_INBOX_SIZE, mailSystem.getInboxSize());
         jsonObject.addProperty(PROP_MAX_ATTACHMENTS, mailSystem.getMaxAttachments());
+        jsonObject.addProperty(PROP_SENDING_ENABLED, mailSystem.isSendingEnabled());
         jsonObject.addProperty(PROP_ALLOW_SENDING_TO_SELF, mailSystem.getAllowSendToSelf());
 
         return jsonObject;
@@ -42,6 +44,7 @@ public class MailSystemSerializer {
         try {
             JsonObject jsonObject = json.getAsJsonObject();
 
+            // TODO check if values are in json.
             String name = jsonObject.get(PROP_NAME).getAsString();
             int characterLimit = jsonObject.get(PROP_CHARACTER_LIMIT).getAsInt();
             ICost messageCost = CostSerializer.deserializeJson(jsonObject.get(PROP_MESSAGE_COST));
@@ -49,6 +52,7 @@ public class MailSystemSerializer {
             int inboxSize = jsonObject.get(PROP_INBOX_SIZE).getAsInt();
             int maxAttachments = jsonObject.get(PROP_MAX_ATTACHMENTS).getAsInt();
             boolean allowSendingToSelf = jsonObject.get(PROP_ALLOW_SENDING_TO_SELF).getAsBoolean();
+            boolean sendingEnabled = jsonObject.get(PROP_SENDING_ENABLED).getAsBoolean();
 
             MailSystem mailSystem = new MailSystem(identifier, name)
                     .setCharacterLimit(characterLimit)
@@ -56,6 +60,7 @@ public class MailSystemSerializer {
                     .setAttachmentCost(attachmentCost)
                     .setInboxSize(inboxSize)
                     .setMaxAttachments(maxAttachments)
+                    .setSendingEnabled(sendingEnabled)
                     .setAllowSendToSelf(allowSendingToSelf);
 
             return mailSystem;
