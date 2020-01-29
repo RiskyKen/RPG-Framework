@@ -34,5 +34,14 @@
         "stream": false
       }
     ]
+  },
+  "mail_received": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "rpg_economy:mail/mail_received",
+        "stream": false
+      }
+    ]
   }
 }

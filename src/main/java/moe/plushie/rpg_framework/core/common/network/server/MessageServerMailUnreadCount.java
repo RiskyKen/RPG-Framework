@@ -6,6 +6,7 @@ import io.netty.buffer.ByteBuf;
 import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.mail.IMailSystem;
 import moe.plushie.rpg_framework.core.RPGFramework;
+import moe.plushie.rpg_framework.core.common.init.ModSounds;
 import moe.plushie.rpg_framework.core.common.lib.LibModInfo;
 import moe.plushie.rpg_framework.core.common.serialize.IdentifierSerialize;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
@@ -80,6 +81,7 @@ public class MessageServerMailUnreadCount implements IMessage {
                         if (display) {
                             TextComponentTranslation component = new TextComponentTranslation("chat." + LibModInfo.ID + ":unreadMessageCount", unreadCount);
                             mc.player.sendMessage(component);
+                            mc.player.playSound(ModSounds.MAIL_RECEIVED, 1.0F, 1.0F);
                         }
                     }
                 }

@@ -18,6 +18,7 @@ public class ModSounds {
     public static final SoundEvent COIN_WITHDRAW = createSoundEvent("coin_withdraw");
     public static final SoundEvent WALLET_CLOSE = createSoundEvent("wallet_close");
     public static final SoundEvent WALLET_OPEN = createSoundEvent("wallet_open");
+    public static final SoundEvent MAIL_RECEIVED = createSoundEvent("mail_received");
     
     public ModSounds() {
         MinecraftForge.EVENT_BUS.register(this);

@@ -164,7 +164,15 @@ public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> {
             Invocable inv = (Invocable) scriptEngine;
             Object result = inv.invokeFunction("result");
             Wallet walletCost = new Wallet(RPGFramework.getProxy().getCurrencyManager().getDefault());
-            walletCost.setAmount(MathHelper.ceil((Double) result));
+            if (result instanceof Integer) {
+                walletCost.setAmount((Integer) result);
+            }
+            if (result instanceof String) {
+                walletCost.setAmount(Integer.parseInt(result.toString()));
+            }
+            if (result instanceof Double) {
+                walletCost.setAmount(MathHelper.ceil((Double) result));
+            }
             cost = new Cost(walletCost, null);
         } catch (Exception e) {
             e.printStackTrace();
