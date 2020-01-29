@@ -31,7 +31,9 @@ public class MailSystemSerializer {
 
     private static final String PROP_TOAST_NOTIFICATION_AT_LOGIN = "toast_notification_at_login";
     private static final String PROP_TOAST_NOTIFICATION_ON_NEW_MESSAGE = "toast_notification_on_new_message";
-
+    
+    private static final String PROP_COSTALGORITHM = "cost_algorithm";
+    
     private static final String PROP_GUI_ICONS = "gui_icons";
 
     private MailSystemSerializer() {
@@ -56,6 +58,7 @@ public class MailSystemSerializer {
         jsonObject.addProperty(PROP_CHAT_NOTIFICATION_ON_NEW_MESSAGE, mailSystem.isChatNotificationOnNewMessage());
         jsonObject.addProperty(PROP_TOAST_NOTIFICATION_AT_LOGIN, mailSystem.isToastNotificationAtLogin());
         jsonObject.addProperty(PROP_TOAST_NOTIFICATION_ON_NEW_MESSAGE, mailSystem.isToastNotificationOnNewMessage());
+        jsonObject.addProperty(PROP_COSTALGORITHM, mailSystem.getCostAlgorithm());
         JsonArray jsonArray = new JsonArray();
         for (IGuiIcon guiIcon : mailSystem.getGuiIcons()) {
             JsonElement jsonElement = GuiIconSerialize.serializeJson(guiIcon);
@@ -79,13 +82,13 @@ public class MailSystemSerializer {
             int maxAttachments = 9;
             boolean sendingEnabled = true;
             boolean allowSendingToSelf = false;
-
             boolean mailboxFlagRender = true;
             int mailboxFlagRenderDistance = 32;
             boolean chatNotificationAtLogin = true;
             boolean chatNotificationOnNewMessage = true;
             boolean toastNotificationAtLogin = true;
             boolean toastNotificationOnNewMessage = true;
+            String costAlgorithm = "var result = function() {return ($messageCost + $attachmentCost * $attachmentCount)};";
             IGuiIcon[] guiIcons = new IGuiIcon[] {};
 
             if (jsonObject.has(PROP_NAME)) {
@@ -130,6 +133,9 @@ public class MailSystemSerializer {
             if (jsonObject.has(PROP_TOAST_NOTIFICATION_ON_NEW_MESSAGE)) {
                 toastNotificationOnNewMessage = jsonObject.get(PROP_TOAST_NOTIFICATION_ON_NEW_MESSAGE).getAsBoolean();
             }
+            if (jsonObject.has(PROP_COSTALGORITHM)) {
+                costAlgorithm = jsonObject.get(PROP_COSTALGORITHM).getAsString();
+            }
             if (jsonObject.has(PROP_GUI_ICONS)) {
                 JsonArray jsonArray = jsonObject.get(PROP_GUI_ICONS).getAsJsonArray();
                 guiIcons = new IGuiIcon[jsonArray.size()];
@@ -152,6 +158,7 @@ public class MailSystemSerializer {
                     .setChatNotificationOnNewMessage(chatNotificationOnNewMessage)
                     .setToastNotificationAtLogin(toastNotificationAtLogin)
                     .setToastNotificationOnNewMessage(toastNotificationOnNewMessage)
+                    .setCostAlgorithm(costAlgorithm)
                     .setGuiIcons(guiIcons);
 
             return mailSystem;

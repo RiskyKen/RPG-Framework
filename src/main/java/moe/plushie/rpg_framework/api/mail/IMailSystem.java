@@ -36,5 +36,7 @@ public interface IMailSystem {
 
     public boolean isToastNotificationOnNewMessage();
 
+    public String getCostAlgorithm();
+
     public IGuiIcon[] getGuiIcons();
 }

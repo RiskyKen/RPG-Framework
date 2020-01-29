@@ -28,6 +28,7 @@ public class MailSystem implements IMailSystem, Comparable<IMailSystem> {
     private boolean chatNotificationOnNewMessage;
     private boolean toastNotificationAtLogin;
     private boolean toastNotificationOnNewMessage;
+    private String costAlgorithm;
     private IGuiIcon[] guiIcons;
 
     public MailSystem(IIdentifier identifier, String name) {
@@ -178,6 +179,16 @@ public class MailSystem implements IMailSystem, Comparable<IMailSystem> {
     public MailSystem setToastNotificationOnNewMessage(boolean toastNotificationOnNewMessage) {
         this.toastNotificationOnNewMessage = toastNotificationOnNewMessage;
         return this;
+    }
+    
+    public MailSystem setCostAlgorithm(String costAlgorithm) {
+        this.costAlgorithm = costAlgorithm;
+        return this;
+    }
+
+    @Override
+    public String getCostAlgorithm() {
+        return this.costAlgorithm;
     }
 
     public MailSystem setGuiIcons(IGuiIcon[] guiIcons) {

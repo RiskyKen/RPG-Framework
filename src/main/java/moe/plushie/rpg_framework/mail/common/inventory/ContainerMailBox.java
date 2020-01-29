@@ -1,6 +1,12 @@
 package moe.plushie.rpg_framework.mail.common.inventory;
 
 import java.util.ArrayList;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+import javax.script.Invocable;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 
 import com.mojang.authlib.GameProfile;
 
@@ -14,9 +20,12 @@ import moe.plushie.rpg_framework.core.common.network.server.MessageServerMailLis
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerMailResult;
 import moe.plushie.rpg_framework.core.common.utils.UtilItems;
 import moe.plushie.rpg_framework.core.database.TableMail;
+import moe.plushie.rpg_framework.currency.common.Cost;
+import moe.plushie.rpg_framework.currency.common.Wallet;
 import moe.plushie.rpg_framework.mail.common.MailMessage;
 import moe.plushie.rpg_framework.mail.common.MailSystem;
 import moe.plushie.rpg_framework.mail.common.tileentities.TileEntityMailBox;
+import moe.plushie.rpg_framework.value.ModuleValue;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IContainerListener;
@@ -28,6 +37,7 @@ import net.minecraft.util.math.MathHelper;
 
 public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> {
 
+    private final ScriptEngine scriptEngine = new ScriptEngineManager(null).getEngineByName("nashorn");
     private final MailSystem mailSystem;
     private boolean synced = false;
 
@@ -54,6 +64,10 @@ public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> {
         for (Slot slot : slotsAttachmentsInput) {
             ((SlotHidable) slot).setVisible(true);
         }
+        scriptEngine.put("getAttachmentCount", (Supplier<Integer>) this::getAttachmentCount);
+        scriptEngine.put("getStackSize", (Function<Double, Integer>) this::getStackSize);
+        scriptEngine.put("getStackMaxSize", (Function<Double, Integer>) this::getStackMaxSize);
+        scriptEngine.put("getStackValue", (Function<Double, Integer>) this::getStackValue);
     }
 
     public ArrayList<Slot> getSlotsAttachmentsInput() {
@@ -91,12 +105,12 @@ public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> {
     }
 
     public void onClientSelectMessage(EntityPlayerMP player, int messageId) {
-        ((MailSystem) mailSystem).onClientSelectMessage(player, messageId);
+        mailSystem.onClientSelectMessage(player, messageId);
         // updateOutputSlots(messageId);
     }
 
     public void onClientDeleteMessage(EntityPlayerMP player, int messageId) {
-        ((MailSystem) mailSystem).onClientDeleteMessage(player, messageId);
+        mailSystem.onClientDeleteMessage(player, messageId);
     }
 
     public void onClientWithdrawItems(EntityPlayerMP player, int messageId) {
@@ -121,7 +135,7 @@ public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> {
         }
         PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerMailResult(success, failed), entityPlayer);
     }
-    
+
     public NonNullList<ItemStack> getAttachments() {
         NonNullList<ItemStack> attachments = NonNullList.<ItemStack>create();
         for (Slot slot : getSlotsAttachmentsInput()) {
@@ -131,13 +145,59 @@ public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> {
         }
         return attachments;
     }
-    
+
     public ICost getSendCost() {
-        ICost cost = mailSystem.getMessageCost();
+        ICost cost = Cost.NO_COST;
+
         NonNullList<ItemStack> attachments = getAttachments();
-        for (int i = 0; i < attachments.size(); i++) {
-            cost = cost.add(mailSystem.getAttachmentCost());
+
+        String costAlgorithm = mailSystem.getCostAlgorithm();
+
+        //costAlgorithm = "var result = function() {var value = 0; var i; for (i = 0; i < getAttachmentCount(); i++){ var j; for (j = 0; j < getStackSize(i); j++) { value += 1; }} return value;};";
+
+        costAlgorithm = costAlgorithm.replace("$messageCost", String.valueOf(mailSystem.getMessageCost().getWalletCost().getAmount()));
+        costAlgorithm = costAlgorithm.replace("$attachmentCost", String.valueOf(mailSystem.getAttachmentCost().getWalletCost().getAmount()));
+        costAlgorithm = costAlgorithm.replace("$attachmentCount", String.valueOf(attachments.size()));
+
+        try {
+            scriptEngine.eval(costAlgorithm);
+            Invocable inv = (Invocable) scriptEngine;
+            Object result = inv.invokeFunction("result");
+            Wallet walletCost = new Wallet(RPGFramework.getProxy().getCurrencyManager().getDefault());
+            walletCost.setAmount(MathHelper.ceil((Double) result));
+            cost = new Cost(walletCost, null);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
         return cost;
+    }
+
+    public int getAttachmentCount() {
+        return getAttachments().size();
+    }
+
+    public int getStackSize(double index) {
+        if (index < getAttachments().size()) {
+            return getAttachments().get((int) index).getCount();
+        }
+        return 0;
+    }
+
+    public int getStackMaxSize(double index) {
+        if (index < getAttachments().size()) {
+            return getAttachments().get((int) index).getMaxStackSize();
+        }
+        return 0;
+    }
+
+    public int getStackValue(double index) {
+        if (index < getAttachments().size()) {
+            ICost cost = ModuleValue.getManager().getValue(getAttachments().get((int) index));
+            if (cost.hasWalletCost()) {
+                return cost.getWalletCost().getAmount();
+            }
+        }
+        return 0;
     }
 }
