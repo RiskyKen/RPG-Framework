@@ -20,19 +20,19 @@ public class MailNotificationManager {
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerLoggedInEvent event) {
         if (!event.player.getEntityWorld().isRemote) {
-            syncToClient((EntityPlayerMP) event.player, true);
+            syncToClient((EntityPlayerMP) event.player, true, false);
         }
     }
 
-    public void syncToClient(EntityPlayerMP entityPlayer, boolean notification) {
+    public void syncToClient(EntityPlayerMP entityPlayer, boolean login, boolean update) {
         RPGFramework.getLogger().info("Sending mail notifications to player " + entityPlayer.getName() + ".");
         for (IMailSystem mailSystem : RPGFramework.getProxy().getMailSystemManager().getMailSystems()) {
-            PacketHandler.NETWORK_WRAPPER.sendTo(getSyncMessage(mailSystem, entityPlayer, notification), entityPlayer);
+            PacketHandler.NETWORK_WRAPPER.sendTo(getSyncMessage(mailSystem, entityPlayer, login, update), entityPlayer);
         }
     }
 
-    private IMessage getSyncMessage(IMailSystem mailSystem, EntityPlayerMP entityPlayer, boolean notification) {
+    private IMessage getSyncMessage(IMailSystem mailSystem, EntityPlayerMP entityPlayer, boolean login, boolean update) {
         int messageCount = TableMail.getUnreadMessagesCount(entityPlayer, mailSystem);
-        return new MessageServerMailUnreadCount(mailSystem, messageCount, notification);
+        return new MessageServerMailUnreadCount(mailSystem, messageCount, login,update );
     }
 }

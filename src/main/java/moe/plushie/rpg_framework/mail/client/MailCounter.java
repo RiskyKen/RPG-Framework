@@ -23,7 +23,7 @@ public final class MailCounter {
         }
     }
 
-    public static void setUnreadMailCount(IMailSystem mailSystem, int unreadCount, boolean notification) {
+    public static void setUnreadMailCount(IMailSystem mailSystem, int unreadCount) {
         RPGFramework.getLogger().info(String.format("Setting unread mail count to %d for %s.", unreadCount, mailSystem.getName()));
         synchronized (COUNT_MAP) {
             COUNT_MAP.put(mailSystem.getIdentifier(), unreadCount);

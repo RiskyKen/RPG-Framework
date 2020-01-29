@@ -120,6 +120,7 @@ public class MailSystem implements IMailSystem, Comparable<IMailSystem> {
         return this;
     }
 
+    @Override
     public boolean isMailboxFlagRender() {
         return mailboxFlagRender;
     }
@@ -129,6 +130,7 @@ public class MailSystem implements IMailSystem, Comparable<IMailSystem> {
         return this;
     }
 
+    @Override
     public int getMailboxFlagRenderDistance() {
         return mailboxFlagRenderDistance;
     }
@@ -138,6 +140,7 @@ public class MailSystem implements IMailSystem, Comparable<IMailSystem> {
         return this;
     }
 
+    @Override
     public boolean isChatNotificationAtLogin() {
         return chatNotificationAtLogin;
     }
@@ -147,6 +150,7 @@ public class MailSystem implements IMailSystem, Comparable<IMailSystem> {
         return this;
     }
 
+    @Override
     public boolean isChatNotificationOnNewMessage() {
         return chatNotificationOnNewMessage;
     }
@@ -156,6 +160,7 @@ public class MailSystem implements IMailSystem, Comparable<IMailSystem> {
         return this;
     }
 
+    @Override
     public boolean isToastNotificationAtLogin() {
         return toastNotificationAtLogin;
     }
@@ -165,6 +170,7 @@ public class MailSystem implements IMailSystem, Comparable<IMailSystem> {
         return this;
     }
 
+    @Override
     public boolean isToastNotificationOnNewMessage() {
         return toastNotificationOnNewMessage;
     }
@@ -195,7 +201,7 @@ public class MailSystem implements IMailSystem, Comparable<IMailSystem> {
         for (int i = 0; i < playerEntityList.size(); i++) {
             EntityPlayerMP entityPlayerMP = playerEntityList.get(i);
             if (entityPlayerMP.getGameProfile().getId().equals(mailMessage.getReceiver().getId()) | entityPlayerMP.getGameProfile().getName().equals(mailMessage.getReceiver().getName())) {
-                RPGFramework.getProxy().getMailSystemManager().getNotificationManager().syncToClient(entityPlayerMP, true);
+                RPGFramework.getProxy().getMailSystemManager().getNotificationManager().syncToClient(entityPlayerMP, false, true);
             }
         }
         return susscess;
@@ -207,6 +213,6 @@ public class MailSystem implements IMailSystem, Comparable<IMailSystem> {
 
     public void onClientSelectMessage(EntityPlayerMP entityPlayer, int messageId) {
         TableMail.markMessageasRead(messageId);
-        RPGFramework.getProxy().getMailSystemManager().getNotificationManager().syncToClient(entityPlayer, false);
+        RPGFramework.getProxy().getMailSystemManager().getNotificationManager().syncToClient(entityPlayer, false, false);
     }
 }

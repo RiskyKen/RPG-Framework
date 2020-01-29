@@ -23,22 +23,25 @@ public class MessageServerMailUnreadCount implements IMessage {
 
     private IMailSystem mailSystem;
     private int unreadCount;
-    private boolean notification;
+    private boolean login;
+    private boolean update;
 
     public MessageServerMailUnreadCount() {
     }
 
-    public MessageServerMailUnreadCount(IMailSystem mailSystem, int unreadCount, boolean notification) {
+    public MessageServerMailUnreadCount(IMailSystem mailSystem, int unreadCount, boolean login, boolean update) {
         this.mailSystem = mailSystem;
         this.unreadCount = unreadCount;
-        this.notification = notification;
+        this.login = login;
+        this.update = update;
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         ByteBufUtils.writeUTF8String(buf, IdentifierSerialize.serializeJson(mailSystem.getIdentifier()).toString());
         buf.writeInt(unreadCount);
-        buf.writeBoolean(notification);
+        buf.writeBoolean(login);
+        buf.writeBoolean(update);
     }
 
     @Override
@@ -47,27 +50,37 @@ public class MessageServerMailUnreadCount implements IMessage {
         IIdentifier identifier = IdentifierSerialize.deserializeJson(jsonElement);
         mailSystem = RPGFramework.getProxy().getMailSystemManager().getMailSystem(identifier);
         unreadCount = buf.readInt();
-        notification = buf.readBoolean();
+        login = buf.readBoolean();
+        update = buf.readBoolean();
     }
 
     public static class Handler implements IMessageHandler<MessageServerMailUnreadCount, IMessage> {
 
         @Override
         public IMessage onMessage(MessageServerMailUnreadCount message, MessageContext ctx) {
-            setMessageCount(message.mailSystem, message.unreadCount, message.notification);
+            setMessageCount(message.mailSystem, message.unreadCount, message.login, message.update);
             return null;
         }
 
         @SideOnly(Side.CLIENT)
-        public void setMessageCount(IMailSystem mailSystem, int unreadCount, boolean notification) {
+        public void setMessageCount(IMailSystem mailSystem, int unreadCount, boolean login, boolean update) {
             Minecraft mc = Minecraft.getMinecraft();
             mc.addScheduledTask(new Runnable() {
                 @Override
                 public void run() {
-                    MailCounter.setUnreadMailCount(mailSystem, unreadCount, notification);
-                    if (notification & unreadCount > 0) {
-                        TextComponentTranslation component = new TextComponentTranslation("chat." + LibModInfo.ID + ":unreadMessageCount", unreadCount);
-                        mc.player.sendMessage(component);
+                    MailCounter.setUnreadMailCount(mailSystem, unreadCount);
+                    if (unreadCount > 0) {
+                        boolean display = false;
+                        if (mailSystem.isChatNotificationAtLogin() & login) {
+                            display = true;
+                        }
+                        if (mailSystem.isChatNotificationOnNewMessage() & update) {
+                            display = true;
+                        }
+                        if (display) {
+                            TextComponentTranslation component = new TextComponentTranslation("chat." + LibModInfo.ID + ":unreadMessageCount", unreadCount);
+                            mc.player.sendMessage(component);
+                        }
                     }
                 }
             });
