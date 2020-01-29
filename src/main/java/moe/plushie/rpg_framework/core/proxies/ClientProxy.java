@@ -1,5 +1,6 @@
 package moe.plushie.rpg_framework.core.proxies;
 
+import moe.plushie.rpg_framework.core.client.gui.GuiIconRenderer;
 import moe.plushie.rpg_framework.core.client.gui.GuiResourceManager;
 import moe.plushie.rpg_framework.core.client.model.ICustomModel;
 import moe.plushie.rpg_framework.core.client.settings.Keybindings;
@@ -62,5 +63,6 @@ public class ClientProxy extends CommonProxy {
             module.initRenderers();
         }
         ModAddonManager.initRenderers();
+        new GuiIconRenderer();
     }
 }

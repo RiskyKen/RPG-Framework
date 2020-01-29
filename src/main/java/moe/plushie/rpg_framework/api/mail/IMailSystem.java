@@ -1,5 +1,6 @@
 package moe.plushie.rpg_framework.api.mail;
 
+import moe.plushie.rpg_framework.api.core.IGuiIcon;
 import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.currency.ICost;
 
@@ -21,5 +22,7 @@ public interface IMailSystem {
     
     public boolean isSendingEnabled();
     
-    public boolean getAllowSendToSelf();
+    public boolean isAllowSendingToSelf();
+    
+    public IGuiIcon[] getGuiIcons();
 }

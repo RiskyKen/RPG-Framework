@@ -2,6 +2,7 @@ package moe.plushie.rpg_framework.mail.common;
 
 import java.util.List;
 
+import moe.plushie.rpg_framework.api.core.IGuiIcon;
 import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.currency.ICost;
 import moe.plushie.rpg_framework.api.mail.IMailSystem;
@@ -21,6 +22,13 @@ public class MailSystem implements IMailSystem, Comparable<IMailSystem> {
     private int maxAttachments;
     private boolean sendingEnabled;
     private boolean allowSendingToSelf;
+    private boolean mailboxFlagRender;
+    private int mailboxFlagRenderDistance;
+    private boolean chatNotificationAtLogin;
+    private boolean chatNotificationOnNewMessage;
+    private boolean toastNotificationAtLogin;
+    private boolean toastNotificationOnNewMessage;
+    private IGuiIcon[] guiIcons;
 
     public MailSystem(IIdentifier identifier, String name) {
         this.identifier = identifier;
@@ -82,6 +90,11 @@ public class MailSystem implements IMailSystem, Comparable<IMailSystem> {
         return maxAttachments;
     }
 
+    public MailSystem setMaxAttachments(int maxAttachments) {
+        this.maxAttachments = maxAttachments;
+        return this;
+    }
+
     public MailSystem setSendingEnabled(boolean sendingEnabled) {
         this.sendingEnabled = sendingEnabled;
         return this;
@@ -98,18 +111,82 @@ public class MailSystem implements IMailSystem, Comparable<IMailSystem> {
     }
 
     @Override
-    public boolean getAllowSendToSelf() {
-        return this.allowSendingToSelf;
+    public boolean isAllowSendingToSelf() {
+        return allowSendingToSelf;
+    }
+
+    public MailSystem setAllowSendingToSelf(boolean allowSendingToSelf) {
+        this.allowSendingToSelf = allowSendingToSelf;
+        return this;
+    }
+
+    public boolean isMailboxFlagRender() {
+        return mailboxFlagRender;
+    }
+
+    public MailSystem setMailboxFlagRender(boolean mailboxFlagRender) {
+        this.mailboxFlagRender = mailboxFlagRender;
+        return this;
+    }
+
+    public int getMailboxFlagRenderDistance() {
+        return mailboxFlagRenderDistance;
+    }
+
+    public MailSystem setMailboxFlagRenderDistance(int mailboxFlagRenderDistance) {
+        this.mailboxFlagRenderDistance = mailboxFlagRenderDistance;
+        return this;
+    }
+
+    public boolean isChatNotificationAtLogin() {
+        return chatNotificationAtLogin;
+    }
+
+    public MailSystem setChatNotificationAtLogin(boolean chatNotificationAtLogin) {
+        this.chatNotificationAtLogin = chatNotificationAtLogin;
+        return this;
+    }
+
+    public boolean isChatNotificationOnNewMessage() {
+        return chatNotificationOnNewMessage;
+    }
+
+    public MailSystem setChatNotificationOnNewMessage(boolean chatNotificationOnNewMessage) {
+        this.chatNotificationOnNewMessage = chatNotificationOnNewMessage;
+        return this;
+    }
+
+    public boolean isToastNotificationAtLogin() {
+        return toastNotificationAtLogin;
+    }
+
+    public MailSystem setToastNotificationAtLogin(boolean toastNotificationAtLogin) {
+        this.toastNotificationAtLogin = toastNotificationAtLogin;
+        return this;
+    }
+
+    public boolean isToastNotificationOnNewMessage() {
+        return toastNotificationOnNewMessage;
+    }
+
+    public MailSystem setToastNotificationOnNewMessage(boolean toastNotificationOnNewMessage) {
+        this.toastNotificationOnNewMessage = toastNotificationOnNewMessage;
+        return this;
+    }
+
+    public MailSystem setGuiIcons(IGuiIcon[] guiIcons) {
+        this.guiIcons = guiIcons;
+        return this;
+    }
+
+    @Override
+    public IGuiIcon[] getGuiIcons() {
+        return this.guiIcons;
     }
 
     @Override
     public int compareTo(IMailSystem o) {
         return name.compareTo(o.getName());
-    }
-
-    public MailSystem setMaxAttachments(int maxAttachments) {
-        this.maxAttachments = maxAttachments;
-        return this;
     }
 
     public boolean onClientSendMailMessage(EntityPlayerMP player, MailMessage mailMessage) {
