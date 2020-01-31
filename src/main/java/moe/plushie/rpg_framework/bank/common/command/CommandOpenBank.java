@@ -33,10 +33,12 @@ public class CommandOpenBank extends ModCommand {
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+        // /rpg bank open "<bank> [playerShow] [playerBank]"
         if (args.length <= getParentCount()) {
             throw new WrongUsageException(getUsage(sender), (Object)args);
         }
         
+        int identifierArgCount = 1;
         if (!args[getParentCount()].startsWith("\"")) {
             throw new WrongUsageException(getUsage(sender), (Object)args);
         }
@@ -46,6 +48,7 @@ public class CommandOpenBank extends ModCommand {
                 break;
             }
             bankIdentifier += args[i];
+            identifierArgCount++;
         }
         if (bankIdentifier.length() < 3) {
             throw new WrongUsageException(getUsage(sender), (Object)args);
@@ -56,28 +59,31 @@ public class CommandOpenBank extends ModCommand {
         
         bankIdentifier = bankIdentifier.substring(1, bankIdentifier.length() - 1);
         
-        
-        
-        RPGFramework.getLogger().info("bankIdentifier:" + bankIdentifier);
-        
         IBank bank = RPGFramework.getProxy().getBankManager().getBank(bankIdentifier);
-        EntityPlayer player = getCommandSenderAsPlayer(sender);
         
-        //DBPlayer dbPlayer = Database.PLAYERS_TABLE.getPlayer(player);
-
-        if (args.length > getParentCount()) {
+        
+        EntityPlayer playerShow = getCommandSenderAsPlayer(sender);
+        //EntityPlayer playerBank = getCommandSenderAsPlayer(sender);
+        
+        if (args.length > identifierArgCount + getParentCount()) {
+            playerShow = getPlayer(server, sender, args[getParentCount() + identifierArgCount]);
+        }
+        /*
+        if (args.length > identifierArgCount + getParentCount() + 1) {
+            RPGFramework.getLogger().info("Setting player");
+            playerBank = getPlayer(server, sender, args[getParentCount() + identifierArgCount + 1]);
+        }
+        */
+        
+        if (args.length + identifierArgCount > getParentCount()) {
             //playerId = Database.PLAYERS_TABLE.getPlayerId(args[getParentCount() + 1]);
         }
-        
-        /*if (playerId == -1) {
-            throw new PlayerNotFoundException("commands.generic.player.unspecified");
-        }
-        
+
         if (bank == null) {
             throw new WrongUsageException(getUsage(sender), (Object)args);
-        }*/
+        }
         
         int index = RPGFramework.getProxy().getBankManager().getBankIndex(bank);
-        FMLNetworkHandler.openGui(player, RPGFramework.getInstance(), EnumGuiId.BANK_COMMAND.ordinal(), server.getEntityWorld(), index, 0, 0);
+        FMLNetworkHandler.openGui(playerShow, RPGFramework.getInstance(), EnumGuiId.BANK_COMMAND.ordinal(), server.getEntityWorld(), index, 0, 0);
     }
 }
