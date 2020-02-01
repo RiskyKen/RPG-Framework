@@ -38,7 +38,7 @@ public class TileEntityMailBox extends ModAutoSyncTileEntity implements IGuiFact
 
     public MailSystem getMailSystem() {
         if (mailSystem == null) {
-            return RPGFramework.getProxy().getMailSystemManager().getMailSystem(new IdentifierString("main.json"));
+            return null;
         }
         return mailSystem;
     }
@@ -83,13 +83,19 @@ public class TileEntityMailBox extends ModAutoSyncTileEntity implements IGuiFact
 
     @Override
     public Container getServerGuiElement(EntityPlayer player, World world, BlockPos pos) {
-        return new ContainerMailBox(this, player, getMailSystem());
+        if (getMailSystem() != null) {
+            return new ContainerMailBox(this, player, getMailSystem());
+        }
+        return null;
     }
 
     @SideOnly(Side.CLIENT)
     @Override
     public GuiScreen getClientGuiElement(EntityPlayer player, World world, BlockPos pos) {
-        return new GuiMailBox(this, player, getMailSystem());
+        if (getMailSystem() != null) {
+            return new GuiMailBox(this, player, getMailSystem());
+        }
+        return null;
     }
 
     @SideOnly(Side.CLIENT)

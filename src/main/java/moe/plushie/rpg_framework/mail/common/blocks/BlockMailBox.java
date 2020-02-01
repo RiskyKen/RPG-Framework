@@ -141,7 +141,7 @@ public class BlockMailBox extends AbstractModBlockContainer {
             MailSystem mailSystem = ((TileEntityMailBox) tileEntity).getMailSystem();
             MailboxTexture texture = ((TileEntityMailBox) tileEntity).getMailboxTexture();
             if (mailSystem != null) {
-                //ItemBlockMailBox.setMailSystemOnStack(itemStack, mailSystem);
+                ItemBlockMailBox.setMailSystemOnStack(itemStack, mailSystem);
             }
             if (texture != null) {
                 itemStack.setItemDamage(texture.ordinal());

@@ -1,5 +1,7 @@
 package moe.plushie.rpg_framework.mail.common.items.block;
 
+import java.util.List;
+
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.items.block.ModItemBlock;
@@ -9,6 +11,7 @@ import moe.plushie.rpg_framework.mail.common.blocks.BlockMailBox.MailboxTexture;
 import moe.plushie.rpg_framework.mail.common.tileentities.TileEntityMailBox;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -19,6 +22,8 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemBlockMailBox extends ModItemBlock {
 
@@ -33,26 +38,32 @@ public class ItemBlockMailBox extends ModItemBlock {
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
         if (this.isInCreativeTab(tab)) {
-            for (int i = 0; i < MailboxTexture.values().length; i++) {
-                items.add(new ItemStack(this, 1, i));
-            }
             MailSystemManager mailSystemManager = RPGFramework.getProxy().getMailSystemManager();
             for (MailSystem mailSystem : mailSystemManager.getMailSystems()) {
-                ItemStack itemStack = getStackFromMailSystem(mailSystem);
-                if (!itemStack.isEmpty()) {
-                    //tems.add(itemStack);
+                for (int i = 0; i < MailboxTexture.values().length; i++) {
+                    ItemStack stack = new ItemStack(this, 1, i);
+                    if (!stack.isEmpty()) {
+                        setMailSystemOnStack(stack,  mailSystem);
+                        items.add(stack);
+                    }
                 }
             }
         }
     }
-
+    
+    @SideOnly(Side.CLIENT)
     @Override
-    public String getItemStackDisplayName(ItemStack stack) {
+    public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+        super.addInformation(stack, worldIn, tooltip, flagIn);
+        MailboxTexture texture = MailboxTexture.BLUE;
+        if (stack.getMetadata() >= 0 & stack.getMetadata() < MailboxTexture.values().length) {
+            texture = MailboxTexture.values()[stack.getMetadata()];
+        }
+        tooltip.add("Style: " + texture.toString().toLowerCase());
         MailSystem mailSystem = getMailSystemFromStack(stack);
         if (mailSystem != null) {
-            //return super.getItemStackDisplayName(stack) + " (" + mailSystem.getName() + ")";
+            tooltip.add("Mail System: " + mailSystem.getName());
         }
-        return super.getItemStackDisplayName(stack);
     }
 
     public static MailSystem getMailSystemFromStack(ItemStack itemStack) {
@@ -75,7 +86,7 @@ public class ItemBlockMailBox extends ModItemBlock {
         if (!itemStack.hasTagCompound()) {
             itemStack.setTagCompound(new NBTTagCompound());
         }
-        itemStack.getTagCompound().setString(TAG_MAIL_SYSTEM, mailSystem.getIdentifier().toString());
+        itemStack.getTagCompound().setString(TAG_MAIL_SYSTEM, (String) mailSystem.getIdentifier().getValue());
     }
 
     @Override
@@ -88,7 +99,7 @@ public class ItemBlockMailBox extends ModItemBlock {
         }
         TileEntity tileEntity = world.getTileEntity(pos);
         if (tileEntity != null && tileEntity instanceof TileEntityMailBox) {
-            //((TileEntityMailBox) tileEntity).setMailSystem(mailSystem);
+            ((TileEntityMailBox) tileEntity).setMailSystem(mailSystem);
             ((TileEntityMailBox) tileEntity).setMailboxTexture(texture);
         }
         return flag;
