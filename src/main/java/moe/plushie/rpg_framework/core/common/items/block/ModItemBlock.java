@@ -14,6 +14,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ModItemBlock extends ItemBlock {
 
+    protected boolean makeSubNames = true;
+    
     public ModItemBlock(Block block) {
         super(block);
     }
@@ -30,7 +32,7 @@ public class ModItemBlock extends ItemBlock {
 
     protected String getModdedUnlocalizedName(String unlocalizedName, ItemStack stack) {
         String name = unlocalizedName.substring(unlocalizedName.indexOf(".") + 1);
-        if (hasSubtypes) {
+        if (hasSubtypes & makeSubNames) {
             return "tile." + LibModInfo.ID.toLowerCase() + ":" + name + "." + stack.getItemDamage();
         } else {
             return "tile." + LibModInfo.ID.toLowerCase() + ":" + name;

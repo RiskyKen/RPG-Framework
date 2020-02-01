@@ -1,9 +1,5 @@
 {
 	"__comment": "Designed by Andrew0030 with Cubik Studio - https://cubik.studio",
-	"textures": {
-		"particle": "rpg_economy:blocks/mail_box/mail_box",
-		"texture": "rpg_economy:blocks/mail_box/mail_box"
-	},
 	"elements": [ 	 
 		{
 			"__comment": "Box1",

@@ -1,10 +1,115 @@
 {
   "forge_marker": 1,
+   "defaults": {
+      "textures": {
+        "particle": "rpg_economy:blocks/mail_box/mailbox_blue",
+        "texture": "rpg_economy:blocks/mail_box/mailbox_blue",
+        "texture1": "rpg_economy:blocks/mail_box/mailbox_flag"
+      },
+    "model": "rpg_economy:mail_box"
+    
+  },
   "variants": {
-    "normal": [{"model": "rpg_economy:mail_box_inventory"}],
-    "facing=north": {"model": "rpg_economy:mail_box"},
-    "facing=east": {"model": "rpg_economy:mail_box", "y": 90},
-    "facing=south": {"model": "rpg_economy:mail_box", "y": 180},
-    "facing=west": {"model": "rpg_economy:mail_box", "y": 270}
+    "normal": {"model": "rpg_economy:mail_box_inventory"},
+    "blue": {
+      "model": "rpg_economy:mail_box_inventory",
+      "textures": {
+        "particle": "rpg_economy:blocks/mail_box/mailbox_blue",
+        "texture": "rpg_economy:blocks/mail_box/mailbox_blue"
+      }
+    },
+    "grayscale": {
+      "model": "rpg_economy:mail_box_inventory",
+      "textures": {
+        "particle": "rpg_economy:blocks/mail_box/mailbox_grayscale",
+        "texture": "rpg_economy:blocks/mail_box/mailbox_grayscale"
+      }
+    },
+    "log_1": {
+      "model": "rpg_economy:mail_box_inventory",
+      "textures": {
+        "particle": "rpg_economy:blocks/mail_box/mailbox_log_1",
+        "texture": "rpg_economy:blocks/mail_box/mailbox_log_1"
+      }
+    },
+    "log_2": {
+      "model": "rpg_economy:mail_box_inventory",
+      "textures": {
+        "particle": "rpg_economy:blocks/mail_box/mailbox_log_2",
+        "texture": "rpg_economy:blocks/mail_box/mailbox_log_2"
+      }
+    },
+    "log_3": {
+      "model": "rpg_economy:mail_box_inventory",
+      "textures": {
+        "particle": "rpg_economy:blocks/mail_box/mailbox_log_3",
+        "texture": "rpg_economy:blocks/mail_box/mailbox_log_3"
+      }
+    },
+    "log_4": {
+      "model": "rpg_economy:mail_box_inventory",
+      "textures": {
+        "particle": "rpg_economy:blocks/mail_box/mailbox_log_4",
+        "texture": "rpg_economy:blocks/mail_box/mailbox_log_4"
+      }
+    },
+    "log_5": {
+      "model": "rpg_economy:mail_box_inventory",
+      "textures": {
+        "particle": "rpg_economy:blocks/mail_box/mailbox_log_5",
+        "texture": "rpg_economy:blocks/mail_box/mailbox_log_5"
+      }
+    },
+    
+    "style": {
+      "blue": {
+        "textures": {
+          "particle": "rpg_economy:blocks/mail_box/mailbox_blue",
+          "texture": "rpg_economy:blocks/mail_box/mailbox_blue"
+        }
+      },
+      "grayscale": {
+        "textures": {
+          "particle": "rpg_economy:blocks/mail_box/mailbox_grayscale",
+          "texture": "rpg_economy:blocks/mail_box/mailbox_grayscale"
+        }
+      },
+      "log_1": {
+        "textures": {
+          "particle": "rpg_economy:blocks/mail_box/mailbox_log_1",
+          "texture": "rpg_economy:blocks/mail_box/mailbox_log_1"
+        }
+      },
+      "log_2": {
+        "textures": {
+          "particle": "rpg_economy:blocks/mail_box/mailbox_log_2",
+          "texture": "rpg_economy:blocks/mail_box/mailbox_log_2"
+        }
+      },
+      "log_3": {
+        "textures": {
+          "particle": "rpg_economy:blocks/mail_box/mailbox_log_3",
+          "texture": "rpg_economy:blocks/mail_box/mailbox_log_3"
+        }
+      },
+      "log_4": {
+        "textures": {
+          "particle": "rpg_economy:blocks/mail_box/mailbox_log_4",
+          "texture": "rpg_economy:blocks/mail_box/mailbox_log_4"
+        }
+      },
+      "log_5": {
+        "textures": {
+          "particle": "rpg_economy:blocks/mail_box/mailbox_log_5",
+          "texture": "rpg_economy:blocks/mail_box/mailbox_log_5"
+        }
+      }
+    },
+    "facing": {
+      "north": {},
+      "east": {"y": 90},
+      "south": {"y": 180},
+      "west": {"y": 270}
+    }
   }
 }
