@@ -64,13 +64,13 @@ public class TileEntityMailBox extends ModAutoSyncTileEntity implements IGuiFact
 
     @Override
     public Container getServerGuiElement(EntityPlayer player, World world, BlockPos pos) {
-        return new ContainerMailBox(this, player);
+        return new ContainerMailBox(this, player, getMailSystem());
     }
 
     @SideOnly(Side.CLIENT)
     @Override
     public GuiScreen getClientGuiElement(EntityPlayer player, World world, BlockPos pos) {
-        return new GuiMailBox(this, player);
+        return new GuiMailBox(this, player, getMailSystem());
     }
 
     @SideOnly(Side.CLIENT)

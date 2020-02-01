@@ -11,8 +11,8 @@ import javax.script.ScriptEngineManager;
 import com.mojang.authlib.GameProfile;
 
 import moe.plushie.rpg_framework.api.currency.ICost;
+import moe.plushie.rpg_framework.api.mail.IMailSystem;
 import moe.plushie.rpg_framework.core.RPGFramework;
-import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.inventory.ModTileContainer;
 import moe.plushie.rpg_framework.core.common.inventory.slot.SlotHidable;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
@@ -38,16 +38,16 @@ import net.minecraft.util.math.MathHelper;
 public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> {
 
     private final ScriptEngine scriptEngine = new ScriptEngineManager(null).getEngineByName("nashorn");
-    private final MailSystem mailSystem;
+    private final IMailSystem mailSystem;
     private boolean synced = false;
 
     private final InventoryBasic invAttachmentsInput;
 
     private final ArrayList<Slot> slotsAttachmentsInput;
 
-    public ContainerMailBox(TileEntityMailBox tileEntity, EntityPlayer entityPlayer) {
+    public ContainerMailBox(TileEntityMailBox tileEntity, EntityPlayer entityPlayer, IMailSystem mailSystem) {
         super(entityPlayer, tileEntity);
-        this.mailSystem = RPGFramework.getProxy().getMailSystemManager().getMailSystem(new IdentifierString("main.json"));
+        this.mailSystem = mailSystem;
 
         invAttachmentsInput = new InventoryBasic("attachmentsInput", false, mailSystem.getMaxAttachments());
 
@@ -105,12 +105,12 @@ public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> {
     }
 
     public void onClientSelectMessage(EntityPlayerMP player, int messageId) {
-        mailSystem.onClientSelectMessage(player, messageId);
+        ((MailSystem)mailSystem).onClientSelectMessage(player, messageId);
         // updateOutputSlots(messageId);
     }
 
     public void onClientDeleteMessage(EntityPlayerMP player, int messageId) {
-        mailSystem.onClientDeleteMessage(player, messageId);
+        ((MailSystem)mailSystem).onClientDeleteMessage(player, messageId);
     }
 
     public void onClientWithdrawItems(EntityPlayerMP player, int messageId) {

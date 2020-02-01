@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL11;
 
 import com.mojang.authlib.GameProfile;
 
+import moe.plushie.rpg_framework.api.mail.IMailSystem;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpg_framework.core.client.gui.GuiHelper;
@@ -16,14 +17,12 @@ import moe.plushie.rpg_framework.core.client.gui.controls.GuiIconButton;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiList;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiList.IGuiListItem;
 import moe.plushie.rpg_framework.core.client.lib.LibGuiResources;
-import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.inventory.slot.SlotHidable;
 import moe.plushie.rpg_framework.core.common.lib.LibBlockNames;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.client.MessageClientGuiMailBox;
 import moe.plushie.rpg_framework.core.common.network.client.MessageClientGuiMailBox.MailMessageType;
 import moe.plushie.rpg_framework.mail.common.MailMessage;
-import moe.plushie.rpg_framework.mail.common.MailSystem;
 import moe.plushie.rpg_framework.mail.common.inventory.ContainerMailBox;
 import moe.plushie.rpg_framework.mail.common.tileentities.TileEntityMailBox;
 import net.minecraft.client.Minecraft;
@@ -46,7 +45,7 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
 
     private final TileEntityMailBox tileEntity;
     private final EntityPlayer player;
-    private final MailSystem mailSystem;
+    private final IMailSystem mailSystem;
 
     private ArrayList<MailMessage> mailMessages;
     private int mailPage = 0;
@@ -59,11 +58,11 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
     private GuiIconButton buttonMessageDelete;
     private GuiIconButton buttonMessageWithdrawItems;
 
-    public GuiMailBox(TileEntityMailBox tileEntity, EntityPlayer entityPlayer) {
-        super(new ContainerMailBox(tileEntity, entityPlayer));
+    public GuiMailBox(TileEntityMailBox tileEntity, EntityPlayer entityPlayer, IMailSystem mailSystem) {
+        super(new ContainerMailBox(tileEntity, entityPlayer, mailSystem));
         this.tileEntity = tileEntity;
         this.player = entityPlayer;
-        this.mailSystem = RPGFramework.getProxy().getMailSystemManager().getMailSystem(new IdentifierString("main.json"));
+        this.mailSystem = mailSystem;
         this.mailMessages = new ArrayList<MailMessage>();
 
         for (Slot slot : getContainer().getSlotsAttachmentsInput()) {
@@ -260,7 +259,7 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
         GL11.glPushMatrix();
         GL11.glTranslatef(-guiLeft, -guiTop, 0F);
         for (int i = 0; i < buttonList.size(); i++) {
-            GuiButton button = (GuiButton) buttonList.get(i);
+            GuiButton button = buttonList.get(i);
             if (button instanceof GuiIconButton) {
                 ((GuiIconButton) button).drawRollover(mc, mouseX, mouseY);
             }
