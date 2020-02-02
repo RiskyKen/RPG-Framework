@@ -94,8 +94,8 @@ public class GuiDropDownList extends GuiButtonExt {
                         mouseDown = false;
                         Minecraft mc = Minecraft.getMinecraft();
                         ScaledResolution reso = new ScaledResolution(mc);
-                        double scaleWidth = (double) mc.displayWidth / reso.getScaledWidth_double();
-                        double scaleHeight = (double) mc.displayHeight / reso.getScaledHeight_double();
+                        double scaleWidth = mc.displayWidth / reso.getScaledWidth_double();
+                        double scaleHeight = mc.displayHeight / reso.getScaledHeight_double();
                         int mouseX = (int) (Mouse.getX() / scaleWidth);
                         int mouseY = (int) (-(Mouse.getY() - mc.displayHeight) / scaleHeight);
                         mouseReleased(mouseX, mouseY);

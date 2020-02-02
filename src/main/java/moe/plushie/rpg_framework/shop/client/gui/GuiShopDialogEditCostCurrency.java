@@ -132,7 +132,10 @@ public class GuiShopDialogEditCostCurrency extends AbstractGuiDialog implements 
             for (int i = 0; i < currency.getCurrencyVariants().length; i++) {
                 ICurrencyVariant variant = currency.getCurrencyVariants()[currency.getCurrencyVariants().length - 1 - i];
                 ItemStack stack = variant.getItem().getItemStack();
+                GlStateManager.color(1, 1, 1, 1);
+                GlStateManager.disableDepth();
                 mc.getRenderItem().renderItemAndEffectIntoGUI(stack, x + 122 + 19 * i, y + 44);
+
                 if (armoutLeft > 0) {
                     int count = 0;
                     for (int j = 0; j < 22000; j++) {

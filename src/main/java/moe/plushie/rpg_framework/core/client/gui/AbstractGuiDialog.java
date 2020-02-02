@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiIconButton;
 import moe.plushie.rpg_framework.core.common.lib.LibModInfo;
 import net.minecraft.client.Minecraft;
@@ -61,7 +62,6 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
             GuiContainer guiContainer = (GuiContainer) parent;
             slotHandler = new GuiSlotHandler(guiContainer);
         }
-        // initGui();
     }
 
     public void initGui() {
@@ -172,6 +172,8 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
     }
 
     public void drawFull(int mouseX, int mouseY, float partialTickTime) {
+        oldMouseX = mouseX;
+        oldMouseY = mouseY;
         GlStateManager.disableRescaleNormal();
         RenderHelper.disableStandardItemLighting();
         GlStateManager.disableLighting();
@@ -180,7 +182,7 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
 
         RenderHelper.enableGUIStandardItemLighting();
         GlStateManager.pushMatrix();
-        GlStateManager.translate((float) x, (float) y, 0.0F);
+        GlStateManager.translate(x, y, 0.0F);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.enableRescaleNormal();
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0F, 240.0F);
@@ -189,10 +191,21 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
         RenderHelper.disableStandardItemLighting();
 
         GlStateManager.popMatrix();
+        
         drawForeground(mouseX, mouseY, partialTickTime);
         GlStateManager.enableLighting();
         GlStateManager.enableDepth();
         RenderHelper.enableStandardItemLighting();
+        
+        if (isDialogOpen()) {
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+            GlStateManager.disableLighting();
+            GlStateManager.disableDepth();
+            //RPGFramework.getLogger().info(oldMouseX);
+            //GL11.glTranslatef(x, y, 0);
+            dialog.drawFull(oldMouseX, oldMouseY, 0);
+            //GL11.glTranslatef(-x, -y, 0);
+        }
     }
 
     protected void updateSlots(boolean restore) {
@@ -248,13 +261,15 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
         }
 
         drawBackground(mouseX, mouseY, partialTickTime);
-        // GlStateManager.translate(-x, -y, 0);
+        GlStateManager.translate(-x, -y, 0);
         drawForeground(mouseX, mouseY, partialTickTime);
 
         if (isDialogOpen()) {
-            // GL11.glTranslatef(-guiLeft, -guiTop, 0);
-            dialog.draw(oldMouseX, oldMouseY, 0);
-            // GL11.glTranslatef(guiLeft, guiTop, 0);
+            GL11.glColor4f(1, 1, 1, 1);
+             GL11.glTranslatef(x, y, 0);
+             RPGFramework.getLogger().info(mouseX);
+            dialog.drawFull(oldMouseX, oldMouseY, 0);
+            GL11.glTranslatef(-x, -y, 0);
         }
         GL11.glPopAttrib();
         // GL11.glPopAttrib();

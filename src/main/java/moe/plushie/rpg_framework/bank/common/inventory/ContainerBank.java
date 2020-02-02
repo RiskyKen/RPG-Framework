@@ -7,9 +7,13 @@ import moe.plushie.rpg_framework.core.common.inventory.ModContainer;
 import moe.plushie.rpg_framework.core.common.inventory.slot.SlotHidable;
 import moe.plushie.rpg_framework.core.database.DBPlayer;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.IInventoryChangedListener;
 import net.minecraft.inventory.InventoryBasic;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ContainerBank extends ModContainer implements IInventoryChangedListener {
 
@@ -19,8 +23,10 @@ public class ContainerBank extends ModContainer implements IInventoryChangedList
     private final IBankAccount bankAccount;
 
     private InventoryBasic inventory;
-    private int activeTab = 0;
     private boolean updatingSlots = false;
+
+    private int unlockedTabs = 0;
+    private int activeTab = 0;
 
     public ContainerBank(EntityPlayer player, IBank bank, DBPlayer sourcePlayer) {
         super(player.inventory);
@@ -32,7 +38,6 @@ public class ContainerBank extends ModContainer implements IInventoryChangedList
         } else {
             this.bankAccount = null;
         }
-        
 
         int panelSizeX = 176;
         int panelSizeY = 21;
@@ -56,6 +61,32 @@ public class ContainerBank extends ModContainer implements IInventoryChangedList
 
         addPlayerSlots(panelSizeX / 2 - 176 / 2 + 8, panelSizeY + 17);
     }
+    
+    public int getUnlockedTabs() {
+        return unlockedTabs;
+    }
+
+    @Override
+    public void detectAndSendChanges() {
+        super.detectAndSendChanges();
+        if (bankAccount == null) {
+            return;
+        }
+        for (int i = 0; i < this.listeners.size(); ++i) {
+            IContainerListener icontainerlistener = this.listeners.get(i);
+            if (unlockedTabs != bankAccount.getTabCount()) {
+                icontainerlistener.sendWindowProperty(this, 0, bankAccount.getTabCount());
+            }
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void updateProgressBar(int id, int data) {
+        if (id == 0) {
+            unlockedTabs = data;
+        }
+    }
 
     private void updateSlotForTab() {
         if (player.getEntityWorld().isRemote) {
@@ -64,7 +95,11 @@ public class ContainerBank extends ModContainer implements IInventoryChangedList
         if (bankAccount != null) {
             updatingSlots = true;
             for (int i = 0; i < bank.getTabSlotCount(); i++) {
-                inventory.setInventorySlotContents(i, bankAccount.getTab(getActiveTab()).getStackInSlot(i));
+                if (activeTab < 0) {
+                    inventory.setInventorySlotContents(i, ItemStack.EMPTY);
+                } else {
+                    inventory.setInventorySlotContents(i, bankAccount.getTab(getActiveTab()).getStackInSlot(i));
+                }
             }
             updatingSlots = false;
         }
@@ -91,7 +126,6 @@ public class ContainerBank extends ModContainer implements IInventoryChangedList
         if (updatingSlots) {
             return;
         }
-
         if (bankAccount != null & sourcePlayer != null) {
             for (int i = 0; i < bank.getTabSlotCount(); i++) {
                 bankAccount.getTab(getActiveTab()).setInventorySlotContents(i, inventory.getStackInSlot(i));

@@ -33,6 +33,7 @@ public class GuiShopDialogTabEdit extends AbstractGuiDialog {
         textFieldName = new GuiTextField(0, fontRenderer, 0, 0, width - 20, 12);
         textFieldName.setText(shopTab.getName());
         iconIndex = shopTab.getIconIndex();
+        slotHandler = null;
     }
 
     @Override

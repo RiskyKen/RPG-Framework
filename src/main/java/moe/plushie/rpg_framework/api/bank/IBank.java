@@ -24,6 +24,8 @@ public interface IBank {
     public int getTabMaxCount();
     
     public int getTabUnlockableCount();
+    
+    public int getTabIconIndex();
 
     public ICost getTabUnlockCost(int index);
 }

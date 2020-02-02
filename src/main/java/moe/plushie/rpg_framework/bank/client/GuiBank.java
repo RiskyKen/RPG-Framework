@@ -1,19 +1,25 @@
 package moe.plushie.rpg_framework.bank.client;
 
+import org.lwjgl.opengl.GL11;
+
 import moe.plushie.rpg_framework.api.bank.IBank;
 import moe.plushie.rpg_framework.bank.common.inventory.ContainerBank;
 import moe.plushie.rpg_framework.core.client.gui.GuiHelper;
+import moe.plushie.rpg_framework.core.client.gui.controls.GuiIconButton;
+import moe.plushie.rpg_framework.core.client.gui.controls.GuiTab;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiTabbed;
 import moe.plushie.rpg_framework.core.client.lib.LibGuiResources;
 import moe.plushie.rpg_framework.core.common.lib.LibBlockNames;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class GuiBank extends GuiTabbed {
+public class GuiBank extends GuiTabbed<ContainerBank> {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation(LibGuiResources.BANK);
     private static int activeTabIndex = 0;
@@ -22,7 +28,8 @@ public class GuiBank extends GuiTabbed {
 
     private int panelSizeX;
     private int panelSizeY;
-
+    private int unlockedTabs;
+    
     public GuiBank(EntityPlayer player, IBank bank) {
         super(new ContainerBank(player, bank, null), false);
         this.bank = bank;
@@ -43,6 +50,25 @@ public class GuiBank extends GuiTabbed {
 
         this.ySize += 98 + 1;
         super.initGui();
+        tabController.x = getGuiLeft() - 17;
+        tabController.width = xSize + 42;
+        addTabs();
+    }
+    
+    private void addTabs() {
+        tabController.clearTabs();
+        if (bank == null) {
+            tabController.setActiveTabIndex(-1);
+            return;
+        }
+        tabController.setTabsPerSide(bank.getTabMaxCount() / 2);
+        int iconIndex = bank.getTabIconIndex();
+        int y = MathHelper.floor(iconIndex / 16);
+        int x = iconIndex - (y * 16);
+        for (int i = 0; i < unlockedTabs; i++) {
+            tabController.addTab(new GuiTab(tabController, "Tab " + (i + 1)).setIconLocation(x * 16, y * 16).setTabTextureSize(26, 30).setPadding(0, 4, 3, 3));
+        }
+        tabController.setActiveTabIndex(0);
     }
 
     @Override
@@ -58,6 +84,20 @@ public class GuiBank extends GuiTabbed {
     @Override
     public String getName() {
         return LibBlockNames.BANK;
+    }
+    
+    @Override
+    public void updateScreen() {
+        if (getContainer().getUnlockedTabs() != unlockedTabs) {
+            unlockedTabs = getContainer().getUnlockedTabs();
+            addTabs();
+        }
+        super.updateScreen();
+    }
+    
+    @Override
+    protected void actionPerformed(GuiButton button) {
+        super.actionPerformed(button);
     }
 
     @Override
@@ -94,6 +134,16 @@ public class GuiBank extends GuiTabbed {
         fontRenderer.drawString(title, xSize / 2 - titleWidth / 2, 6, 0x333333);
 
         GuiHelper.renderPlayerInvlabel(xSize / 2 - 176 / 2, panelSizeY + 1, fontRenderer);
+        GL11.glPushMatrix();
+        GL11.glTranslatef(-guiLeft, -guiTop, 0F);
+        tabController.drawHoverText(mc, mouseX, mouseY);
+        for (int i = 0; i < buttonList.size(); i++) {
+            GuiButton button = buttonList.get(i);
+            if (button instanceof GuiIconButton) {
+                ((GuiIconButton) button).drawRollover(mc, mouseX, mouseY);
+            }
+        }
+        GL11.glPopMatrix();
     }
 
     private String getTitle() {

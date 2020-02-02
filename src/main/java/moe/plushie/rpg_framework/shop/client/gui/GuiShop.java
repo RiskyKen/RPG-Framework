@@ -1,7 +1,5 @@
 package moe.plushie.rpg_framework.shop.client.gui;
 
-import java.io.IOException;
-
 import org.lwjgl.opengl.GL11;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
@@ -45,7 +43,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class GuiShop extends GuiTabbed implements IDialogCallback {
+public class GuiShop extends GuiTabbed<ContainerShop> implements IDialogCallback {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation(LibGuiResources.SHOP);
     private static final int TEXTURE_SIZE_X = 176;
@@ -55,10 +53,6 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
     private final boolean hasTile;
     private int activeTabIndex = 0;
     private IShop shop;
-
-    protected AbstractGuiDialog dialog;
-    int oldMouseX;
-    int oldMouseY;
 
     private GuiIconButton buttonShopList;
     private GuiIconButton buttonStats;
@@ -212,11 +206,6 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         this.drawDefaultBackground();
-        oldMouseX = mouseX;
-        oldMouseY = mouseY;
-        if (isDialogOpen()) {
-            mouseX = mouseY = 0;
-        }
         super.drawScreen(mouseX, mouseY, partialTicks);
         this.renderHoveredToolTip(mouseX, mouseY);
     }
@@ -305,18 +294,12 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
             }
         }
         GlStateManager.popMatrix();
-
-        if (isDialogOpen()) {
-            GL11.glTranslatef(-guiLeft, -guiTop, 0);
-            dialog.draw(oldMouseX, oldMouseY, 0);
-            GL11.glTranslatef(guiLeft, guiTop, 0);
-        }
-
+        
         GL11.glPushMatrix();
         GL11.glTranslatef(-guiLeft, -guiTop, 0F);
         tabController.drawHoverText(mc, mouseX, mouseY);
         for (int i = 0; i < buttonList.size(); i++) {
-            GuiButton button = (GuiButton) buttonList.get(i);
+            GuiButton button = buttonList.get(i);
             if (button instanceof GuiIconButton) {
                 ((GuiIconButton) button).drawRollover(mc, mouseX, mouseY);
             }
@@ -498,50 +481,5 @@ public class GuiShop extends GuiTabbed implements IDialogCallback {
             activeTabIndex = -1;
         }
         PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.TAB_CHANGED).setTabIndex(activeTabIndex));
-    }
-
-    @Override
-    protected void mouseClicked(int mouseX, int mouseY, int button) throws IOException {
-        if (isDialogOpen()) {
-            dialog.mouseClicked(mouseX, mouseY, button);
-        } else {
-            super.mouseClicked(mouseX, mouseY, button);
-        }
-    }
-
-    @Override
-    protected void mouseClickMove(int mouseX, int mouseY, int lastButtonClicked, long timeSinceMouseClick) {
-        if (isDialogOpen()) {
-            dialog.mouseClickMove(mouseX, mouseY, lastButtonClicked, timeSinceMouseClick);
-        } else {
-            super.mouseClickMove(mouseX, mouseY, lastButtonClicked, timeSinceMouseClick);
-        }
-    }
-
-    @Override
-    protected void mouseReleased(int mouseX, int mouseY, int state) {
-        if (isDialogOpen()) {
-            dialog.mouseMovedOrUp(mouseX, mouseY, state);
-        } else {
-            super.mouseReleased(mouseX, mouseY, state);
-        }
-    }
-
-    @Override
-    protected void keyTyped(char c, int keycode) throws IOException {
-        if (isDialogOpen()) {
-            dialog.keyTyped(c, keycode);
-        } else {
-            super.keyTyped(c, keycode);
-        }
-    }
-
-    public void openDialog(AbstractGuiDialog dialog) {
-        this.dialog = dialog;
-        dialog.initGui();
-    }
-
-    protected boolean isDialogOpen() {
-        return dialog != null;
     }
 }

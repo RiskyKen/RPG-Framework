@@ -18,6 +18,7 @@ public final class BankSerializer {
     private static final String PROP_TAB_SLOT_COUNT_HEIGHT = "tabSlotCountHeight";
     private static final String PROP_TAB_STARTING_COUNT = "tabStartingCount";
     private static final String PROP_TAB_MAX_COUNT = "tabMaxCount";
+    private static final String PROP_TAB_ICON_INDEX = "tabIconIndex";
     private static final String PROP_TAB_UNLOCK_COSTS = "tabUnlockCosts";
     
     private BankSerializer() {
@@ -32,6 +33,7 @@ public final class BankSerializer {
         jsonObject.addProperty(PROP_TAB_SLOT_COUNT_HEIGHT, bank.getTabSlotCountHeight());
         jsonObject.addProperty(PROP_TAB_STARTING_COUNT, bank.getTabStartingCount());
         jsonObject.addProperty(PROP_TAB_MAX_COUNT, bank.getTabMaxCount());
+        jsonObject.addProperty(PROP_TAB_ICON_INDEX, bank.getTabIconIndex());
         JsonArray arrayCosts = new JsonArray();
         for (int i = 0; i < bank.getTabUnlockableCount(); i++) {
             arrayCosts.add(CostSerializer.serializeJson(bank.getTabUnlockCost(i), compact));
@@ -50,12 +52,13 @@ public final class BankSerializer {
             int tabSlotCountHeight = jsonObject.get(PROP_TAB_SLOT_COUNT_HEIGHT).getAsInt();
             int tabStartingCount = jsonObject.get(PROP_TAB_STARTING_COUNT).getAsInt();
             int tabMaxCount = jsonObject.get(PROP_TAB_MAX_COUNT).getAsInt();
+            int tabIconIndex = jsonObject.get(PROP_TAB_ICON_INDEX).getAsInt();
             JsonArray arrayCosts = jsonObject.get(PROP_TAB_UNLOCK_COSTS).getAsJsonArray();
             ICost[] tabUnlockCosts = new ICost[arrayCosts.size()];
             for (int i = 0; i < arrayCosts.size(); i++) {
                 tabUnlockCosts[i] = CostSerializer.deserializeJson(arrayCosts.get(i));
             }
-            return new Bank(identifier, name, depositCost, withdrawCost, tabSlotCountWidth, tabSlotCountHeight, tabStartingCount, tabMaxCount, tabUnlockCosts);
+            return new Bank(identifier, name, depositCost, withdrawCost, tabSlotCountWidth, tabSlotCountHeight, tabStartingCount, tabMaxCount, tabIconIndex, tabUnlockCosts);
         } catch (Exception e) {
             e.printStackTrace();
         }

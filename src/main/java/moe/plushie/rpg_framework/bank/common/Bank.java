@@ -14,9 +14,10 @@ public class Bank implements IBank, Comparable<IBank> {
     private final int tabSlotCountHeight;
     private final int tabStartingCount;
     private final int tabMaxCount;
+    private final int tabIconIndex;
     private final ICost[] tabUnlockCosts;
 
-    public Bank(String identifier, String name, ICost depositCost, ICost withdrawCost, int tabSlotCountWidth, int tabSlotCountHeight, int tabStartingCount, int tabMaxCount, ICost[] tabUnlockCosts) {
+    public Bank(String identifier, String name, ICost depositCost, ICost withdrawCost, int tabSlotCountWidth, int tabSlotCountHeight, int tabStartingCount, int tabMaxCount, int tabIconIndex, ICost[] tabUnlockCosts) {
         this.identifier = identifier;
         this.name = name;
         this.depositCost = depositCost;
@@ -25,6 +26,7 @@ public class Bank implements IBank, Comparable<IBank> {
         this.tabSlotCountHeight = tabSlotCountHeight;
         this.tabStartingCount = tabStartingCount;
         this.tabMaxCount = tabMaxCount;
+        this.tabIconIndex = tabIconIndex;
         this.tabUnlockCosts = tabUnlockCosts;
     }
 
@@ -57,7 +59,7 @@ public class Bank implements IBank, Comparable<IBank> {
     public int getTabSlotCountHeight() {
         return tabSlotCountHeight;
     }
-    
+
     @Override
     public int getTabSlotCount() {
         return tabSlotCountWidth * tabSlotCountHeight;
@@ -72,10 +74,15 @@ public class Bank implements IBank, Comparable<IBank> {
     public int getTabMaxCount() {
         return tabMaxCount;
     }
-    
+
     @Override
     public int getTabUnlockableCount() {
         return getTabMaxCount() - getTabStartingCount();
+    }
+
+    @Override
+    public int getTabIconIndex() {
+        return tabIconIndex;
     }
 
     @Override
