@@ -2,11 +2,10 @@ package moe.plushie.rpg_framework.bank.common.inventory;
 
 import moe.plushie.rpg_framework.api.bank.IBank;
 import moe.plushie.rpg_framework.api.bank.IBankAccount;
-import moe.plushie.rpg_framework.api.bank.IBankCapability;
-import moe.plushie.rpg_framework.bank.common.capability.BankCapability;
 import moe.plushie.rpg_framework.bank.common.serialize.BankAccountSerializer;
 import moe.plushie.rpg_framework.core.common.inventory.ModContainer;
 import moe.plushie.rpg_framework.core.common.inventory.slot.SlotHidable;
+import moe.plushie.rpg_framework.core.database.DBPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.IInventoryChangedListener;
@@ -16,14 +15,24 @@ public class ContainerBank extends ModContainer implements IInventoryChangedList
 
     private final EntityPlayer player;
     private final IBank bank;
+    private final DBPlayer sourcePlayer;
+    private final IBankAccount bankAccount;
+
     private InventoryBasic inventory;
     private int activeTab = 0;
     private boolean updatingSlots = false;
 
-    public ContainerBank(EntityPlayer player, IBank bank) {
+    public ContainerBank(EntityPlayer player, IBank bank, DBPlayer sourcePlayer) {
         super(player.inventory);
         this.player = player;
         this.bank = bank;
+        this.sourcePlayer = sourcePlayer;
+        if (sourcePlayer != null) {
+            this.bankAccount = BankAccountSerializer.deserializeDatabase(sourcePlayer, getBank());
+        } else {
+            this.bankAccount = null;
+        }
+        
 
         int panelSizeX = 176;
         int panelSizeY = 21;
@@ -41,7 +50,7 @@ public class ContainerBank extends ModContainer implements IInventoryChangedList
                     addSlotToContainer(new SlotHidable(inventory, x + y * bank.getTabSlotCountWidth(), xOff + 18 * x, posY + y * 18));
                 }
             }
-
+            setActiveTab(0);
             updateSlotForTab();
         }
 
@@ -52,12 +61,10 @@ public class ContainerBank extends ModContainer implements IInventoryChangedList
         if (player.getEntityWorld().isRemote) {
             return;
         }
-        IBankCapability bankCapability = BankCapability.get(player);
-        if (bankCapability != null) {
+        if (bankAccount != null) {
             updatingSlots = true;
-            IBankAccount account = bankCapability.getBank(bank);
             for (int i = 0; i < bank.getTabSlotCount(); i++) {
-                inventory.setInventorySlotContents(i, account.getTab(getActiveTab()).getStackInSlot(i));
+                inventory.setInventorySlotContents(i, bankAccount.getTab(getActiveTab()).getStackInSlot(i));
             }
             updatingSlots = false;
         }
@@ -73,6 +80,7 @@ public class ContainerBank extends ModContainer implements IInventoryChangedList
 
     public void setActiveTab(int activeTab) {
         this.activeTab = activeTab;
+        updateSlotForTab();
     }
 
     @Override
@@ -84,13 +92,11 @@ public class ContainerBank extends ModContainer implements IInventoryChangedList
             return;
         }
 
-        IBankCapability bankCapability = BankCapability.get(player);
-        if (bankCapability != null) {
-            IBankAccount account = bankCapability.getBank(bank);
+        if (bankAccount != null & sourcePlayer != null) {
             for (int i = 0; i < bank.getTabSlotCount(); i++) {
-                account.getTab(getActiveTab()).setInventorySlotContents(i, inventory.getStackInSlot(i));
+                bankAccount.getTab(getActiveTab()).setInventorySlotContents(i, inventory.getStackInSlot(i));
             }
-            BankAccountSerializer.serializeDatabase(player, account);
+            BankAccountSerializer.serializeDatabase(sourcePlayer, bankAccount);
         }
     }
 }

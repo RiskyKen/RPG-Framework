@@ -7,8 +7,8 @@ import moe.plushie.rpg_framework.api.bank.IBank;
 import moe.plushie.rpg_framework.api.bank.IBankAccount;
 import moe.plushie.rpg_framework.bank.common.BankAccount;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
+import moe.plushie.rpg_framework.core.database.DBPlayer;
 import moe.plushie.rpg_framework.core.database.TableBankAccounts;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 
 public final class BankAccountSerializer {
@@ -50,20 +50,20 @@ public final class BankAccountSerializer {
         return null;
     }
 
-    public static void serializeDatabase(EntityPlayer player, IBankAccount account) {
+    public static void serializeDatabase(DBPlayer dbPlayer, IBankAccount account) {
         TableBankAccounts.create();
         String tabs = serializeJson(account, true).toString();
-        if (!TableBankAccounts.isAccountInDatabase(player, account.getBank().getIdentifier())) {
-            TableBankAccounts.setAccount(player, account.getBank().getIdentifier(), tabs);
+        if (!TableBankAccounts.isAccountInDatabase(dbPlayer, account.getBank().getIdentifier())) {
+            TableBankAccounts.setAccount(dbPlayer, account.getBank().getIdentifier(), tabs);
         } else {
-            TableBankAccounts.updateAccount(player, account.getBank().getIdentifier(), tabs);
+            TableBankAccounts.updateAccount(dbPlayer, account.getBank().getIdentifier(), tabs);
         }
     }
 
-    public static BankAccount deserializeDatabase(EntityPlayer player, IBank bank) {
+    public static BankAccount deserializeDatabase(DBPlayer dbPlayer, IBank bank) {
         TableBankAccounts.create();
-        if (TableBankAccounts.isAccountInDatabase(player, bank.getIdentifier())) {
-            String tabs = TableBankAccounts.getAccountTabs(player, bank.getIdentifier());
+        if (TableBankAccounts.isAccountInDatabase(dbPlayer, bank.getIdentifier())) {
+            String tabs = TableBankAccounts.getAccountTabs(dbPlayer, bank.getIdentifier());
             JsonElement tabsJson = SerializeHelper.stringToJson(tabs);
             deserializeJson(tabsJson, bank);
             return deserializeJson(tabsJson, bank);

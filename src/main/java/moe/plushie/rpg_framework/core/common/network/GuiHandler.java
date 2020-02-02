@@ -1,5 +1,6 @@
 package moe.plushie.rpg_framework.core.common.network;
 
+import moe.plushie.rpg_framework.api.bank.IBank;
 import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.bank.client.GuiBank;
 import moe.plushie.rpg_framework.bank.common.inventory.ContainerBank;
@@ -10,6 +11,8 @@ import moe.plushie.rpg_framework.core.common.init.ModItems;
 import moe.plushie.rpg_framework.core.common.inventory.ContainerManager;
 import moe.plushie.rpg_framework.core.common.inventory.IGuiFactory;
 import moe.plushie.rpg_framework.core.common.lib.EnumGuiId;
+import moe.plushie.rpg_framework.core.database.DBPlayerInfo;
+import moe.plushie.rpg_framework.core.database.TablePlayers;
 import moe.plushie.rpg_framework.currency.client.gui.GuiWallet;
 import moe.plushie.rpg_framework.currency.common.Currency;
 import moe.plushie.rpg_framework.currency.common.CurrencyWalletHelper;
@@ -65,7 +68,12 @@ public class GuiHandler implements IGuiHandler {
             }
             break;
         case BANK_COMMAND:
-            return new ContainerBank(player, RPGFramework.getProxy().getBankManager().getBank(x));
+            IBank bank = RPGFramework.getProxy().getBankManager().getBank(x);
+            DBPlayerInfo dbPlayer = TablePlayers.getPlayer(y);
+            if (bank == null | dbPlayer.getId() < 0 | dbPlayer == DBPlayerInfo.MISSING_INFO) {
+                return null;
+            }
+            return new ContainerBank(player, bank, dbPlayer);
         case SHOP_COMMAND:
             IIdentifier identifier = new IdentifierInt(x);
             return new ContainerShop(player, RPGFramework.getProxy().getShopManager().getShop(identifier), null);
@@ -114,7 +122,11 @@ public class GuiHandler implements IGuiHandler {
             }
             break;
         case BANK_COMMAND:
-            return new GuiBank(player, RPGFramework.getProxy().getBankManager().getBank(x));
+            IBank bank = RPGFramework.getProxy().getBankManager().getBank(x);
+            if (bank == null) {
+                return null;
+            }
+            return new GuiBank(player, bank);
         case SHOP_COMMAND:
             return new GuiShop(player, false);
         case LOOT_EDITOR_COMMAND:

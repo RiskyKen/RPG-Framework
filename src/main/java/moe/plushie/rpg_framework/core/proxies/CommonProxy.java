@@ -7,7 +7,6 @@ import moe.plushie.rpg_framework.api.currency.ICurrency;
 import moe.plushie.rpg_framework.auction.ModuleAuction;
 import moe.plushie.rpg_framework.bank.ModuleBank;
 import moe.plushie.rpg_framework.bank.common.BankManager;
-import moe.plushie.rpg_framework.bank.common.capability.BankCapabilityManager;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.addons.ModAddonManager;
 import moe.plushie.rpg_framework.core.common.command.CommandRpg;
@@ -100,7 +99,6 @@ public class CommonProxy {
         modSounds = new ModSounds();
 
         CurrencyCapabilityManager.register();
-        BankCapabilityManager.register();
 
         for (IModModule module : ModModule.MOD_MODULES) {
             module.preInit(event);

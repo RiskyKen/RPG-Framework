@@ -5,9 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import moe.plushie.rpg_framework.core.database.driver.SQLiteDriver;
-import net.minecraft.entity.player.EntityPlayer;
-
 public final class TableBankAccounts {
 
     private final static String TABLE_NAME = "bank_accounts";
@@ -27,8 +24,7 @@ public final class TableBankAccounts {
         DatabaseManager.executeUpdate(sql);
     }
 
-    public static String getAccountTabs(EntityPlayer player, String bankIdentifier) {
-        DBPlayer dbPlayer = TablePlayers.getPlayer(player.getGameProfile());
+    public static String getAccountTabs(DBPlayer dbPlayer, String bankIdentifier) {
         String tabs = null;
         try (Connection conn = DatabaseManager.getConnection();) {
             String sqlUpdate = "UPDATE bank_accounts SET times_opened = times_opened + 1, last_access=datetime('now') WHERE bank_identifier=? AND player_id=?";
@@ -53,8 +49,7 @@ public final class TableBankAccounts {
         return tabs;
     }
 
-    public static int setAccount(EntityPlayer player, String bankIdentifier, String tabs) {
-        DBPlayer dbPlayer = TablePlayers.getPlayer(player.getGameProfile());
+    public static int setAccount(DBPlayer dbPlayer, String bankIdentifier, String tabs) {
         int id = -1;
         String sql = "INSERT INTO bank_accounts (id, player_id, bank_identifier, tabs, times_opened, last_access, last_change) VALUES (NULL, ?, ?, ?, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
         try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -69,8 +64,7 @@ public final class TableBankAccounts {
         return id;
     }
 
-    public static void updateAccount(EntityPlayer player, String bankIdentifier, String tabs) {
-        DBPlayer dbPlayer = TablePlayers.getPlayer(player.getGameProfile());
+    public static void updateAccount(DBPlayer dbPlayer, String bankIdentifier, String tabs) {
         String sql = "UPDATE bank_accounts SET tabs=?, last_access=datetime('now'), last_change=datetime('now') WHERE player_id=? AND bank_identifier=?";
         try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, tabs);
@@ -82,9 +76,8 @@ public final class TableBankAccounts {
         }
     }
 
-    public static boolean isAccountInDatabase(EntityPlayer player, String bankIdentifier) {
+    public static boolean isAccountInDatabase(DBPlayer dbPlayer, String bankIdentifier) {
         boolean foundAccount = false;
-        DBPlayer dbPlayer = TablePlayers.getPlayer(player.getGameProfile());
         String sql = "SELECT * FROM bank_accounts WHERE bank_identifier=? AND player_id=?";
         try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, bankIdentifier);

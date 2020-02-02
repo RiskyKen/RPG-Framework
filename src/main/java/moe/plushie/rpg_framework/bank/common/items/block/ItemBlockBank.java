@@ -59,9 +59,9 @@ public class ItemBlockBank extends ModItemBlock {
         return null;
     }
 
-    public static ItemStack getStackFromBank(IBank mailSystem) {
+    public static ItemStack getStackFromBank(IBank bank) {
         ItemStack itemStack = new ItemStack(ModBlocks.BANK);
-        setBankOnStack(itemStack, mailSystem);
+        setBankOnStack(itemStack, bank);
         return itemStack;
     }
     
@@ -82,5 +82,4 @@ public class ItemBlockBank extends ModItemBlock {
         }
         return flag;
     }
-
 }

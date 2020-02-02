@@ -5,13 +5,10 @@ import com.google.gson.JsonElement;
 import io.netty.buffer.ByteBuf;
 import moe.plushie.rpg_framework.api.bank.IBank;
 import moe.plushie.rpg_framework.api.bank.IBankAccount;
-import moe.plushie.rpg_framework.api.bank.IBankCapability;
-import moe.plushie.rpg_framework.bank.common.capability.BankCapability;
 import moe.plushie.rpg_framework.bank.common.serialize.BankAccountSerializer;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -63,6 +60,7 @@ public class MessageServerSyncBankAccount implements IMessage, IMessageHandler<M
         Minecraft.getMinecraft().addScheduledTask(new Runnable() {
             @Override
             public void run() {
+                /*
                 EntityPlayer player = Minecraft.getMinecraft().player;
                 IBankCapability capability = BankCapability.get(player);
                 if (capability != null) {
@@ -70,6 +68,7 @@ public class MessageServerSyncBankAccount implements IMessage, IMessageHandler<M
                         capability.setBankAccount(bankAccounts[i]);
                     }
                 }
+                */
             }
         });
     }

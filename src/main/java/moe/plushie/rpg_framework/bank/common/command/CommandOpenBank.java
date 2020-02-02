@@ -2,10 +2,14 @@ package moe.plushie.rpg_framework.bank.common.command;
 
 import java.util.List;
 
+import com.mojang.authlib.GameProfile;
+
 import moe.plushie.rpg_framework.api.bank.IBank;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.command.ModCommand;
 import moe.plushie.rpg_framework.core.common.lib.EnumGuiId;
+import moe.plushie.rpg_framework.core.database.DBPlayer;
+import moe.plushie.rpg_framework.core.database.TablePlayers;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
@@ -61,29 +65,35 @@ public class CommandOpenBank extends ModCommand {
         
         IBank bank = RPGFramework.getProxy().getBankManager().getBank(bankIdentifier);
         
-        
-        EntityPlayer playerShow = getCommandSenderAsPlayer(sender);
+        // Player we want to display to.
+        EntityPlayer playerTarget = null;
+        // Players bank that will be opened.
+        GameProfile playerSource = null;
+        DBPlayer sourcePlayer;
         //EntityPlayer playerBank = getCommandSenderAsPlayer(sender);
         
         if (args.length > identifierArgCount + getParentCount()) {
-            playerShow = getPlayer(server, sender, args[getParentCount() + identifierArgCount]);
+            playerTarget = getPlayer(server, sender, args[getParentCount() + identifierArgCount]);
+            
+        } else {
+            playerTarget = getCommandSenderAsPlayer(sender);
         }
-        /*
-        if (args.length > identifierArgCount + getParentCount() + 1) {
-            RPGFramework.getLogger().info("Setting player");
-            playerBank = getPlayer(server, sender, args[getParentCount() + identifierArgCount + 1]);
-        }
-        */
+        playerSource = playerTarget.getGameProfile();
         
-        if (args.length + identifierArgCount > getParentCount()) {
-            //playerId = Database.PLAYERS_TABLE.getPlayerId(args[getParentCount() + 1]);
+        
+        if (args.length > identifierArgCount + getParentCount() + 1) {
+            String sourceName = args[getParentCount() + identifierArgCount + 1];
+            playerSource = new GameProfile(null, sourceName);
         }
+        
+        sourcePlayer = TablePlayers.getPlayer(playerSource);
+        
 
-        if (bank == null) {
+        if (bank == null | playerTarget == null | playerSource == null) {
             throw new WrongUsageException(getUsage(sender), (Object)args);
         }
         
         int index = RPGFramework.getProxy().getBankManager().getBankIndex(bank);
-        FMLNetworkHandler.openGui(playerShow, RPGFramework.getInstance(), EnumGuiId.BANK_COMMAND.ordinal(), server.getEntityWorld(), index, 0, 0);
+        FMLNetworkHandler.openGui(playerTarget, RPGFramework.getInstance(), EnumGuiId.BANK_COMMAND.ordinal(), server.getEntityWorld(), index, sourcePlayer.getId(), 0);
     }
 }

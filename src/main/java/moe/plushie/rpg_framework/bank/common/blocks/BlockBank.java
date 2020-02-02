@@ -18,6 +18,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistry;
 
@@ -34,6 +35,7 @@ public class BlockBank extends AbstractModBlockContainer {
         return new BlockStateContainer(this, new IProperty[] { STATE_FACING });
     }
 
+    @Override
     public IBlockState getStateFromMeta(int meta) {
         boolean northSouthBit = getBitBool(meta, 0);
         boolean posNegBit = getBitBool(meta, 1);
@@ -54,6 +56,7 @@ public class BlockBank extends AbstractModBlockContainer {
         return this.getDefaultState().withProperty(STATE_FACING, facing);
     }
 
+    @Override
     public int getMetaFromState(IBlockState state) {
         EnumFacing facing = state.getValue(STATE_FACING);
         int meta = 0;
@@ -88,8 +91,19 @@ public class BlockBank extends AbstractModBlockContainer {
     }
 
     @Override
+    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+        ItemStack itemStack = new ItemStack(this);
+        TileEntity te = world.getTileEntity(pos);
+        if (te != null && te instanceof TileEntityBank) {
+            if (((TileEntityBank) te).getBank() != null) {
+                ItemBlockBank.setBankOnStack(itemStack, ((TileEntityBank) te).getBank());
+            }
+        }
+        return itemStack;
+    }
+
+    @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
         return new TileEntityBank();
     }
-
 }

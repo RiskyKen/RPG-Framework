@@ -24,7 +24,7 @@ public class GuiBank extends GuiTabbed {
     private int panelSizeY;
 
     public GuiBank(EntityPlayer player, IBank bank) {
-        super(new ContainerBank(player, bank), false);
+        super(new ContainerBank(player, bank, null), false);
         this.bank = bank;
     }
 
