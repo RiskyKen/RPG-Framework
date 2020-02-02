@@ -8,7 +8,6 @@ import org.lwjgl.opengl.GL11;
 import com.mojang.authlib.GameProfile;
 
 import moe.plushie.rpg_framework.api.mail.IMailSystem;
-import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpg_framework.core.client.gui.GuiHelper;
 import moe.plushie.rpg_framework.core.client.gui.IDialogCallback;
@@ -268,7 +267,7 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
     }
 
     public void gotListFromServer(ArrayList<MailMessage> mailMessages) {
-        RPGFramework.getLogger().info("Got message list from server.");
+        //RPGFramework.getLogger().info("Got message list from server.");
         this.mailMessages = mailMessages;
         updateMailList(mailPage);
     }

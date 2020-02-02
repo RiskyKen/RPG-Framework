@@ -43,5 +43,14 @@
         "stream": false
       }
     ]
+  },
+  "boop": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "rpg_economy:misc/boop",
+        "stream": false
+      }
+    ]
   }
 }

@@ -7,6 +7,7 @@ import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.currency.ICost;
 import moe.plushie.rpg_framework.api.mail.IMailSystem;
 import moe.plushie.rpg_framework.core.RPGFramework;
+import moe.plushie.rpg_framework.core.common.utils.PlayerUtils;
 import moe.plushie.rpg_framework.core.database.TableMail;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -180,7 +181,7 @@ public class MailSystem implements IMailSystem, Comparable<IMailSystem> {
         this.toastNotificationOnNewMessage = toastNotificationOnNewMessage;
         return this;
     }
-    
+
     public MailSystem setCostAlgorithm(String costAlgorithm) {
         this.costAlgorithm = costAlgorithm;
         return this;
@@ -211,7 +212,7 @@ public class MailSystem implements IMailSystem, Comparable<IMailSystem> {
         List<EntityPlayerMP> playerEntityList = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers();
         for (int i = 0; i < playerEntityList.size(); i++) {
             EntityPlayerMP entityPlayerMP = playerEntityList.get(i);
-            if (entityPlayerMP.getGameProfile().getId().equals(mailMessage.getReceiver().getId()) | entityPlayerMP.getGameProfile().getName().equals(mailMessage.getReceiver().getName())) {
+            if (PlayerUtils.gameProfilesMatch(entityPlayerMP.getGameProfile(), mailMessage.getReceiver())) {
                 RPGFramework.getProxy().getMailSystemManager().getNotificationManager().syncToClient(entityPlayerMP, false, true);
             }
         }

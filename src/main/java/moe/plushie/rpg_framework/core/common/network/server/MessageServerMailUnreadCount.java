@@ -1,6 +1,9 @@
 package moe.plushie.rpg_framework.core.common.network.server;
 
+import java.util.UUID;
+
 import com.google.gson.JsonElement;
+import com.mojang.authlib.GameProfile;
 
 import io.netty.buffer.ByteBuf;
 import moe.plushie.rpg_framework.api.core.IIdentifier;
@@ -9,6 +12,7 @@ import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.init.ModSounds;
 import moe.plushie.rpg_framework.core.common.lib.LibModInfo;
 import moe.plushie.rpg_framework.core.common.serialize.IdentifierSerialize;
+import moe.plushie.rpg_framework.core.common.utils.PlayerUtils;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import moe.plushie.rpg_framework.mail.client.MailCounter;
 import net.minecraft.client.Minecraft;
@@ -57,6 +61,8 @@ public class MessageServerMailUnreadCount implements IMessage {
 
     public static class Handler implements IMessageHandler<MessageServerMailUnreadCount, IMessage> {
 
+        private static final GameProfile PROFILE_SKY = new GameProfile(UUID.fromString("2b10d8f1-3273-48a8-9061-cd5e02f45be2"), "skylandersking");
+        
         @Override
         public IMessage onMessage(MessageServerMailUnreadCount message, MessageContext ctx) {
             setMessageCount(message.mailSystem, message.unreadCount, message.login, message.update);
@@ -81,7 +87,11 @@ public class MessageServerMailUnreadCount implements IMessage {
                         if (display) {
                             TextComponentTranslation component = new TextComponentTranslation("chat." + LibModInfo.ID + ":unreadMessageCount", unreadCount);
                             mc.player.sendMessage(component);
-                            mc.player.playSound(ModSounds.MAIL_RECEIVED, 1.0F, 1.0F);
+                            if (PlayerUtils.gameProfilesMatch(mc.player.getGameProfile(), PROFILE_SKY)) {
+                                mc.player.playSound(ModSounds.BOOP, 1.0F, 1.0F);
+                            } else {
+                                mc.player.playSound(ModSounds.MAIL_RECEIVED, 1.0F, 1.0F);
+                            }
                         }
                     }
                 }
