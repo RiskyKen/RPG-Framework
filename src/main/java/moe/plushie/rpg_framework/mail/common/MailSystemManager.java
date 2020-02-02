@@ -41,7 +41,7 @@ public class MailSystemManager implements IMailSystemManager {
         notificationManager = new MailNotificationManager();
         MinecraftForge.EVENT_BUS.register(this);
     }
-    
+
     public MailNotificationManager getNotificationManager() {
         return notificationManager;
     }
@@ -67,6 +67,7 @@ public class MailSystemManager implements IMailSystemManager {
     public void onPlayerLoggedIn(PlayerLoggedInEvent event) {
         if (!event.player.getEntityWorld().isRemote) {
             syncToClient((EntityPlayerMP) event.player);
+            notificationManager.onPlayerLoggedIn(event);
         }
     }
 

@@ -6,18 +6,14 @@ import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerMailUnreadCount;
 import moe.plushie.rpg_framework.core.database.TableMail;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public class MailNotificationManager {
 
     public MailNotificationManager() {
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
-    @SubscribeEvent
     public void onPlayerLoggedIn(PlayerLoggedInEvent event) {
         if (!event.player.getEntityWorld().isRemote) {
             syncToClient((EntityPlayerMP) event.player, true, false);
@@ -33,6 +29,6 @@ public class MailNotificationManager {
 
     private IMessage getSyncMessage(IMailSystem mailSystem, EntityPlayerMP entityPlayer, boolean login, boolean update) {
         int messageCount = TableMail.getUnreadMessagesCount(entityPlayer, mailSystem);
-        return new MessageServerMailUnreadCount(mailSystem, messageCount, login,update );
+        return new MessageServerMailUnreadCount(mailSystem, messageCount, login, update);
     }
 }
