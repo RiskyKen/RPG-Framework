@@ -4,19 +4,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import moe.plushie.rpg_framework.core.client.gui.ModGuiContainer;
-import moe.plushie.rpg_framework.core.client.lib.LibGuiResources;
 import moe.plushie.rpg_framework.core.common.inventory.ModContainer;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public abstract class GuiTabbed<CONTAINER_TYPE extends ModContainer> extends ModGuiContainer<CONTAINER_TYPE> {
-
-    protected static final ResourceLocation TEXTURE_BACKGROUND = new ResourceLocation(LibGuiResources.BACKGROUND);
-    protected static final ResourceLocation TEXTURE_BUTTONS = new ResourceLocation(LibGuiResources.BUTTONS);
-    protected static final ResourceLocation TEXTURE_ICONS = new ResourceLocation(LibGuiResources.ICONS);
     
     protected GuiTabController tabController;
     protected ArrayList<GuiTabPanel> tabList;

@@ -4,12 +4,16 @@ import org.lwjgl.opengl.GL11;
 
 import moe.plushie.rpg_framework.api.bank.IBank;
 import moe.plushie.rpg_framework.bank.common.inventory.ContainerBank;
+import moe.plushie.rpg_framework.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpg_framework.core.client.gui.GuiHelper;
+import moe.plushie.rpg_framework.core.client.gui.IDialogCallback;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiIconButton;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiTab;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiTabbed;
 import moe.plushie.rpg_framework.core.client.lib.LibGuiResources;
 import moe.plushie.rpg_framework.core.common.lib.LibBlockNames;
+import moe.plushie.rpg_framework.core.common.network.PacketHandler;
+import moe.plushie.rpg_framework.core.common.network.client.MessageClientGuiButton;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
@@ -19,13 +23,14 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class GuiBank extends GuiTabbed<ContainerBank> {
+public class GuiBank extends GuiTabbed<ContainerBank> implements IDialogCallback {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation(LibGuiResources.BANK);
     private static int activeTabIndex = 0;
 
     private final IBank bank;
 
+    private GuiIconButton buttonAddTab = new GuiIconButton(this, 0, xSize, ySize, 20, 20, TEXTURE);
     private int panelSizeX;
     private int panelSizeY;
     private int unlockedTabs;
@@ -37,6 +42,8 @@ public class GuiBank extends GuiTabbed<ContainerBank> {
 
     @Override
     public void initGui() {
+        super.initGui();
+        buttonList.clear();
         panelSizeX = 176;
         panelSizeY = 21;
 
@@ -53,22 +60,31 @@ public class GuiBank extends GuiTabbed<ContainerBank> {
         tabController.x = getGuiLeft() - 17;
         tabController.width = xSize + 42;
         addTabs();
+        
+        buttonAddTab = new GuiIconButton(this, 0, width / 2 + 89, getGuiTop() + panelSizeY + 1, 16, 16, TEXTURE_BUTTONS);
+        buttonAddTab.setDrawButtonBackground(false).setIconLocation(208, 176, 16, 16);
+        buttonAddTab.setHoverText("Buy New Tab...");
+        buttonList.add(buttonAddTab);
     }
     
     private void addTabs() {
+        int oldActive = getActiveTab();
         tabController.clearTabs();
         if (bank == null) {
             tabController.setActiveTabIndex(-1);
             return;
         }
+        if (bank != null & oldActive == -1) {
+            oldActive = 0;
+        }
         tabController.setTabsPerSide(bank.getTabMaxCount() / 2);
         int iconIndex = bank.getTabIconIndex();
         int y = MathHelper.floor(iconIndex / 16);
         int x = iconIndex - (y * 16);
-        for (int i = 0; i < unlockedTabs; i++) {
+        for (int i = 0; i < unlockedTabs + bank.getTabStartingCount(); i++) {
             tabController.addTab(new GuiTab(tabController, "Tab " + (i + 1)).setIconLocation(x * 16, y * 16).setTabTextureSize(26, 30).setPadding(0, 4, 3, 3));
         }
-        tabController.setActiveTabIndex(0);
+        tabController.setActiveTabIndex(oldActive);
     }
 
     @Override
@@ -92,12 +108,19 @@ public class GuiBank extends GuiTabbed<ContainerBank> {
             unlockedTabs = getContainer().getUnlockedTabs();
             addTabs();
         }
+        buttonAddTab.visible = unlockedTabs < bank.getTabUnlockableCount();
         super.updateScreen();
     }
     
     @Override
     protected void actionPerformed(GuiButton button) {
         super.actionPerformed(button);
+        if (button == tabController) {
+            PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiButton().setButtonID(getActiveTab()));
+        }
+        if (button == buttonAddTab) {
+            openDialog(new GuiBankDialogBuyTab(this, "buyTab", this, bank, getContainer().getUnlockedTabs()));
+        }
     }
 
     @Override
@@ -151,6 +174,17 @@ public class GuiBank extends GuiTabbed<ContainerBank> {
             return bank.getName();
         } else {
             return GuiHelper.getLocalControlName(getName(), "invalidBank");
+        }
+    }
+
+    @Override
+    public void dialogResult(AbstractGuiDialog dialog, DialogResult result) {
+        if (result == DialogResult.CANCEL) {
+            closeDialog();
+        }
+        if (result == DialogResult.OK) {
+            PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiButton().setButtonID(-2));
+            closeDialog();
         }
     }
 }

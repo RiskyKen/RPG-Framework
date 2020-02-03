@@ -366,7 +366,7 @@ public class GuiShop extends GuiTabbed<ContainerShop> implements IDialogCallback
             setEditMode(!editMode);
         }
         if (button == buttonShopList) {
-            openDialog(new GuiShopDialogShopList(this, "shopList", this, 310, 230));
+            openDialog(new GuiShopDialogShopList(this, "shopList", this));
         }
         if (button == buttonRename) {
             openDialog(new GuiShopDialogRename(this, "shopRename", this, 190, 100, shop.getName()));

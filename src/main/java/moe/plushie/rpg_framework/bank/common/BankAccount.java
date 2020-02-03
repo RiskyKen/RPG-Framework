@@ -33,7 +33,7 @@ public class BankAccount implements IBankAccount {
 
     @Override
     public int getTabUnlockCount() {
-        return parentBank.getTabStartingCount() - tabs.size();
+        return tabs.size() - parentBank.getTabStartingCount();
     }
 
     @Override

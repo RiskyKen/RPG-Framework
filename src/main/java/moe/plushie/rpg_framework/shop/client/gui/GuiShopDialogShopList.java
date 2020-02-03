@@ -36,8 +36,8 @@ public class GuiShopDialogShopList extends AbstractGuiDialog {
 
     private final ArrayList<IGuiListItem> items = new ArrayList<IGuiListItem>();
 
-    public GuiShopDialogShopList(GuiScreen parent, String name, IDialogCallback callback, int width, int height) {
-        super(parent, name, callback, width, height);
+    public GuiShopDialogShopList(GuiScreen parent, String name, IDialogCallback callback) {
+        super(parent, name, callback, 310, 230);
         PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientRequestSync(SyncType.SHOPS_IDENTIFIERS));
         slotHandler = null;
     }

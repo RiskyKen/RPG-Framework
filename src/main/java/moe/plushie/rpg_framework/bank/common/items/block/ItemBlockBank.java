@@ -57,7 +57,6 @@ public class ItemBlockBank extends ModItemBlock {
         if (itemStack.hasTagCompound()) {
             if (itemStack.getTagCompound().hasKey(TAG_BANK, NBT.TAG_STRING)) {
                 BankManager bankManager = RPGFramework.getProxy().getBankManager();
-
                 JsonElement jsonElement = SerializeHelper.stringToJson(itemStack.getTagCompound().getString(TAG_BANK));
                 return bankManager.getBank(IdentifierSerialize.deserializeJson(jsonElement));
             }
