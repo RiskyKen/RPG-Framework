@@ -4,8 +4,10 @@ import com.google.gson.JsonElement;
 
 import io.netty.buffer.ByteBuf;
 import moe.plushie.rpg_framework.api.bank.IBank;
+import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.bank.common.serialize.BankSerializer;
 import moe.plushie.rpg_framework.core.RPGFramework;
+import moe.plushie.rpg_framework.core.common.utils.ByteBufHelper;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -28,7 +30,7 @@ public class MessageServerSyncBanks implements IMessage, IMessageHandler<Message
         buf.writeInt(banks.length);
         for (int i = 0; i < banks.length; i++) {
             JsonElement jsonCurrency = BankSerializer.serializeJson(banks[i], true);
-            ByteBufUtils.writeUTF8String(buf, banks[i].getIdentifier());
+            ByteBufHelper.writeIdentifier(buf, banks[i].getIdentifier());
             ByteBufUtils.writeUTF8String(buf, jsonCurrency.toString());
         }
     }
@@ -38,7 +40,7 @@ public class MessageServerSyncBanks implements IMessage, IMessageHandler<Message
         int size = buf.readInt();
         banks = new IBank[size];
         for (int i = 0; i < size; i++) {
-            String identifier = ByteBufUtils.readUTF8String(buf);
+            IIdentifier identifier = ByteBufHelper.readIdentifier(buf);
             String jsonString = ByteBufUtils.readUTF8String(buf);
             JsonElement jsonCurrency = SerializeHelper.stringToJson(jsonString);
             if (jsonCurrency != null) {

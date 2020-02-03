@@ -1,10 +1,11 @@
 package moe.plushie.rpg_framework.api.bank;
 
+import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.currency.ICost;
 
 public interface IBank {
 
-    public String getIdentifier();
+    public IIdentifier getIdentifier();
 
     /** Name of the bank. */
     public String getName();

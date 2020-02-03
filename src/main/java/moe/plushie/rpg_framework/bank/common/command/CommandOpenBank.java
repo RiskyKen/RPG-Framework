@@ -6,6 +6,7 @@ import com.mojang.authlib.GameProfile;
 
 import moe.plushie.rpg_framework.api.bank.IBank;
 import moe.plushie.rpg_framework.core.RPGFramework;
+import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.command.ModCommand;
 import moe.plushie.rpg_framework.core.common.lib.EnumGuiId;
 import moe.plushie.rpg_framework.core.database.DBPlayer;
@@ -63,7 +64,7 @@ public class CommandOpenBank extends ModCommand {
         
         bankIdentifier = bankIdentifier.substring(1, bankIdentifier.length() - 1);
         
-        IBank bank = RPGFramework.getProxy().getBankManager().getBank(bankIdentifier);
+        IBank bank = RPGFramework.getProxy().getBankManager().getBank(new IdentifierString(bankIdentifier));
         
         // Player we want to display to.
         EntityPlayer playerTarget = null;

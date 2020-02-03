@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import moe.plushie.rpg_framework.api.bank.IBank;
+import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.currency.ICost;
 import moe.plushie.rpg_framework.bank.common.Bank;
 import moe.plushie.rpg_framework.currency.common.serialize.CostSerializer;
@@ -20,10 +21,10 @@ public final class BankSerializer {
     private static final String PROP_TAB_MAX_COUNT = "tabMaxCount";
     private static final String PROP_TAB_ICON_INDEX = "tabIconIndex";
     private static final String PROP_TAB_UNLOCK_COSTS = "tabUnlockCosts";
-    
+
     private BankSerializer() {
     }
-    
+
     public static JsonElement serializeJson(IBank bank, boolean compact) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty(PROP_NAME, bank.getName());
@@ -41,24 +42,47 @@ public final class BankSerializer {
         jsonObject.add(PROP_TAB_UNLOCK_COSTS, arrayCosts);
         return jsonObject;
     }
-    
-    public static Bank deserializeJson(JsonElement json, String identifier) {
+
+    public static Bank deserializeJson(JsonElement json, IIdentifier identifier) {
         try {
             JsonObject jsonObject = json.getAsJsonObject();
-            String name = jsonObject.get(PROP_NAME).getAsString();
-            ICost depositCost = CostSerializer.deserializeJson(jsonObject.get(PROP_DEPOSIT_COST));
-            ICost withdrawCost = CostSerializer.deserializeJson(jsonObject.get(PROP_WITHDRAW_COST));
-            int tabSlotCountWidth = jsonObject.get(PROP_TAB_SLOT_COUNT_WIDTH).getAsInt();
-            int tabSlotCountHeight = jsonObject.get(PROP_TAB_SLOT_COUNT_HEIGHT).getAsInt();
-            int tabStartingCount = jsonObject.get(PROP_TAB_STARTING_COUNT).getAsInt();
-            int tabMaxCount = jsonObject.get(PROP_TAB_MAX_COUNT).getAsInt();
-            int tabIconIndex = jsonObject.get(PROP_TAB_ICON_INDEX).getAsInt();
-            JsonArray arrayCosts = jsonObject.get(PROP_TAB_UNLOCK_COSTS).getAsJsonArray();
-            ICost[] tabUnlockCosts = new ICost[arrayCosts.size()];
-            for (int i = 0; i < arrayCosts.size(); i++) {
-                tabUnlockCosts[i] = CostSerializer.deserializeJson(arrayCosts.get(i));
+
+            Bank bank = new Bank(identifier);
+
+            if (jsonObject.has(PROP_NAME)) {
+                bank.setName(jsonObject.get(PROP_NAME).getAsString());
             }
-            return new Bank(identifier, name, depositCost, withdrawCost, tabSlotCountWidth, tabSlotCountHeight, tabStartingCount, tabMaxCount, tabIconIndex, tabUnlockCosts);
+            if (jsonObject.has(PROP_DEPOSIT_COST)) {
+                bank.setDepositCost(CostSerializer.deserializeJson(jsonObject.get(PROP_DEPOSIT_COST)));
+            }
+            if (jsonObject.has(PROP_WITHDRAW_COST)) {
+                bank.setWithdrawCost(CostSerializer.deserializeJson(jsonObject.get(PROP_WITHDRAW_COST)));
+            }
+            if (jsonObject.has(PROP_TAB_SLOT_COUNT_WIDTH)) {
+                bank.setTabSlotCountWidth(jsonObject.get(PROP_TAB_SLOT_COUNT_WIDTH).getAsInt());
+            }
+            if (jsonObject.has(PROP_TAB_SLOT_COUNT_HEIGHT)) {
+                bank.setTabSlotCountHeight(jsonObject.get(PROP_TAB_SLOT_COUNT_HEIGHT).getAsInt());
+            }
+            if (jsonObject.has(PROP_TAB_STARTING_COUNT)) {
+                bank.setTabStartingCount(jsonObject.get(PROP_TAB_STARTING_COUNT).getAsInt());
+            }
+            if (jsonObject.has(PROP_TAB_MAX_COUNT)) {
+                bank.setTabMaxCount(jsonObject.get(PROP_TAB_MAX_COUNT).getAsInt());
+            }
+            if (jsonObject.has(PROP_TAB_ICON_INDEX)) {
+                bank.setTabIconIndex(jsonObject.get(PROP_TAB_ICON_INDEX).getAsInt());
+            }
+            if (jsonObject.has(PROP_TAB_UNLOCK_COSTS)) {
+                JsonArray arrayCosts = jsonObject.get(PROP_TAB_UNLOCK_COSTS).getAsJsonArray();
+                ICost[] tabUnlockCosts = new ICost[arrayCosts.size()];
+                for (int i = 0; i < arrayCosts.size(); i++) {
+                    tabUnlockCosts[i] = CostSerializer.deserializeJson(arrayCosts.get(i));
+                }
+                bank.setTabUnlockCosts(tabUnlockCosts);
+            }
+
+            return bank;
         } catch (Exception e) {
             e.printStackTrace();
         }

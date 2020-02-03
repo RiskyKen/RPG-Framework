@@ -9,8 +9,10 @@ import com.google.gson.JsonElement;
 
 import moe.plushie.rpg_framework.api.bank.IBank;
 import moe.plushie.rpg_framework.api.bank.IBankManager;
+import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.bank.common.serialize.BankSerializer;
 import moe.plushie.rpg_framework.core.RPGFramework;
+import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerSyncBanks;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
@@ -25,14 +27,14 @@ public class BankManager implements IBankManager {
     private static final String DIRECTORY_NAME = "bank";
 
     private final File currencyDirectory;
-    private final HashMap<String, IBank> bankMap;
+    private final HashMap<IIdentifier, IBank> bankMap;
 
     public BankManager(File modDirectory) {
         currencyDirectory = new File(modDirectory, DIRECTORY_NAME);
         if (!currencyDirectory.exists()) {
             currencyDirectory.mkdir();
         }
-        bankMap = new HashMap<String, IBank>();
+        bankMap = new HashMap<IIdentifier, IBank>();
         MinecraftForge.EVENT_BUS.register(this);
     }
 
@@ -86,7 +88,7 @@ public class BankManager implements IBankManager {
         RPGFramework.getLogger().info("Loading bank: " + bankFile.getName());
         JsonElement jsonElement = SerializeHelper.readJsonFile(bankFile);
         if (jsonElement != null) {
-            Bank bank = BankSerializer.deserializeJson(jsonElement, bankFile.getName());
+            Bank bank = BankSerializer.deserializeJson(jsonElement, new IdentifierString(bankFile.getName()));
             if (bank != null) {
                 bankMap.put(bank.getIdentifier(), bank);
             }
@@ -115,7 +117,7 @@ public class BankManager implements IBankManager {
     }
 
     @Override
-    public IBank getBank(String identifier) {
+    public IBank getBank(IIdentifier identifier) {
         return bankMap.get(identifier);
     }
 

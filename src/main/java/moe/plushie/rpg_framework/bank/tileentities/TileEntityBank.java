@@ -1,11 +1,16 @@
 package moe.plushie.rpg_framework.bank.tileentities;
 
+import com.google.gson.JsonElement;
+
 import moe.plushie.rpg_framework.api.bank.IBank;
+import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.bank.client.GuiBank;
 import moe.plushie.rpg_framework.bank.common.inventory.ContainerBank;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.inventory.IGuiFactory;
+import moe.plushie.rpg_framework.core.common.serialize.IdentifierSerialize;
 import moe.plushie.rpg_framework.core.common.tileentities.ModAutoSyncTileEntity;
+import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import moe.plushie.rpg_framework.core.database.DBPlayer;
 import moe.plushie.rpg_framework.core.database.TablePlayers;
 import net.minecraft.client.gui.GuiScreen;
@@ -19,10 +24,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileEntityBank extends ModAutoSyncTileEntity implements IGuiFactory {
-    
+
     private static final String TAG_MAIL_SYSTEM = "mailSystem";
 
-    private String bankIdentifier;
+    private IIdentifier bankIdentifier;
 
     public TileEntityBank() {
     }
@@ -48,11 +53,16 @@ public class TileEntityBank extends ModAutoSyncTileEntity implements IGuiFactory
         dirtySync();
     }
 
+    public boolean haveBank() {
+        return getBank() != null;
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         if (compound.hasKey(TAG_MAIL_SYSTEM, NBT.TAG_STRING)) {
-            bankIdentifier = compound.getString(TAG_MAIL_SYSTEM);
+            JsonElement jsonElement = SerializeHelper.stringToJson(compound.getString(TAG_MAIL_SYSTEM));
+            bankIdentifier = IdentifierSerialize.deserializeJson(jsonElement);
         } else {
             bankIdentifier = null;
         }
@@ -62,20 +72,28 @@ public class TileEntityBank extends ModAutoSyncTileEntity implements IGuiFactory
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound = super.writeToNBT(compound);
         if (bankIdentifier != null) {
-            compound.setString(TAG_MAIL_SYSTEM, bankIdentifier);
+            compound.setString(TAG_MAIL_SYSTEM, IdentifierSerialize.serializeJson(bankIdentifier).toString());
         }
         return compound;
     }
 
     @Override
     public Container getServerGuiElement(EntityPlayer player, World world, BlockPos pos) {
-        DBPlayer dbPlayer = TablePlayers.getPlayer(player.getGameProfile());
-        return new ContainerBank(player, getBank(), dbPlayer);
+        if (haveBank()) {
+            DBPlayer dbPlayer = TablePlayers.getPlayer(player.getGameProfile());
+            return new ContainerBank(player, getBank(), dbPlayer);
+        } else {
+            return null;
+        }
     }
 
     @SideOnly(Side.CLIENT)
     @Override
     public GuiScreen getClientGuiElement(EntityPlayer player, World world, BlockPos pos) {
-        return new GuiBank(player, getBank());
+        if (haveBank()) {
+            return new GuiBank(player, getBank());
+        } else {
+            return null;
+        }
     }
 }
