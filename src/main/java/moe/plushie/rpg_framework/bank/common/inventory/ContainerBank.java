@@ -132,9 +132,6 @@ public class ContainerBank extends ModContainer implements IInventoryChangedList
             return;
         }
         if (bankAccount != null & sourcePlayer != null) {
-            if (bankAccount.getTabCount() > 1) {
-                bankAccount.removeTab(1);
-            }
             for (int i = 0; i < bank.getTabSlotCount(); i++) {
                 bankAccount.getTab(getActiveTab()).setInventorySlotContents(i, inventory.getStackInSlot(i));
             }
