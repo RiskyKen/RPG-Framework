@@ -33,6 +33,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -104,9 +105,6 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
 
         buttonMessageWithdrawItems.enabled = false;
 
-        buttonListPre.enabled = false;
-        buttonListNext.enabled = false;
-
         if (!player.capabilities.isCreativeMode) {
             buttonNewMessage.enabled = false;
             buttonNewMessage.setDisableText("Sending mail is disabled on this server.");
@@ -141,10 +139,12 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         if (button == buttonListPre) {
-
+            mailPage--;
+            updateMailList(mailPage);
         }
         if (button == buttonListNext) {
-
+            mailPage++;
+            updateMailList(mailPage);
         }
         if (button == buttonNewMessage) {
             openDialog(new GuiMailBoxDialogSend(this, this, mailSystem, player));
@@ -219,6 +219,8 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
         GuiHelper.renderPlayerInvlabel(0, 151, fontRenderer);
 
         IGuiListItem guiListItem = listMail.getSelectedListEntry();
+        
+        fontRenderer.drawString((mailPage + 1) + "/" + getMaxPages(), 40, 135, 0x404040);
 
         String message = "";
 
@@ -265,17 +267,31 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
         }
         GL11.glPopMatrix();
     }
+    
+    private int getMaxPages() {
+        return MathHelper.ceil(mailMessages.size() / 6F);
+    }
 
     public void gotListFromServer(ArrayList<MailMessage> mailMessages) {
-        //RPGFramework.getLogger().info("Got message list from server.");
         this.mailMessages = mailMessages;
         updateMailList(mailPage);
     }
 
     public void updateMailList(int page) {
         listMail.clearList();
-        for (MailMessage mailMessage : mailMessages) {
-            listMail.addListItem(new GuiMailListItem(mailMessage));
+        if (mailPage < 0) {
+            mailPage = 0;
+        }
+        if (mailPage > getMaxPages() - 1) {
+            mailPage = getMaxPages() - 1;
+        }
+        for (int i = 0; i < 6; i++) {
+            int messageIndex = i + mailPage * 6;
+            if (messageIndex < mailMessages.size()) {
+                listMail.addListItem(new GuiMailListItem(mailMessages.get(messageIndex)));
+            } else {
+                break;
+            }
         }
     }
 
