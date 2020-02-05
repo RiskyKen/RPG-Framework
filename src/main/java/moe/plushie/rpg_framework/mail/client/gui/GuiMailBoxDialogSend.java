@@ -1,6 +1,7 @@
 package moe.plushie.rpg_framework.mail.client.gui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
@@ -32,7 +33,6 @@ import net.minecraftforge.fml.client.config.GuiButtonExt;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import scala.actors.threadpool.Arrays;
 
 @SideOnly(Side.CLIENT)
 public class GuiMailBoxDialogSend extends AbstractGuiDialog {
