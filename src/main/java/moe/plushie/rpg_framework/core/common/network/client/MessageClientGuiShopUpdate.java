@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import io.netty.buffer.ByteBuf;
 import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.currency.ICost;
+import moe.plushie.rpg_framework.api.shop.IShop.IShopTab.TabType;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.utils.ByteBufHelper;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
@@ -26,7 +27,8 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
     private int tabIconIndex;
     private ICost cost;
     private int slotIndex;
-    
+    private TabType tabType;
+
     public MessageClientGuiShopUpdate() {
     }
 
@@ -48,28 +50,33 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
         this.tabIndex = tabIndex;
         return this;
     }
-    
+
     public MessageClientGuiShopUpdate setTabName(String tabName) {
         this.tabName = tabName;
         return this;
     }
-    
+
     public MessageClientGuiShopUpdate setTabIconIndex(int tabIconIndex) {
         this.tabIconIndex = tabIconIndex;
         return this;
     }
-    
+
     public MessageClientGuiShopUpdate setCost(int slotIndex, ICost cost) {
         this.slotIndex = slotIndex;
         this.cost = cost;
         return this;
     }
-    
+
     public MessageClientGuiShopUpdate setSlotIndex(int slotIndex) {
         this.slotIndex = slotIndex;
         return this;
     }
-    
+
+    public MessageClientGuiShopUpdate setTabType(TabType tabType) {
+        this.tabType = tabType;
+        return this;
+    }
+
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(type.ordinal());
@@ -77,10 +84,12 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
         case TAB_ADD:
             buf.writeInt(tabIconIndex);
             ByteBufUtils.writeUTF8String(buf, tabName);
+            ByteBufUtils.writeUTF8String(buf, tabType.toString());
             break;
         case TAB_EDIT:
             buf.writeInt(tabIconIndex);
             ByteBufUtils.writeUTF8String(buf, tabName);
+            ByteBufUtils.writeUTF8String(buf, tabType.toString());
             break;
         case TAB_REMOVE:
             buf.writeInt(tabIndex);
@@ -132,10 +141,12 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
         case TAB_ADD:
             tabIconIndex = buf.readInt();
             tabName = ByteBufUtils.readUTF8String(buf);
+            tabType = TabType.valueOf(ByteBufUtils.readUTF8String(buf));
             break;
         case TAB_EDIT:
             tabIconIndex = buf.readInt();
             tabName = ByteBufUtils.readUTF8String(buf);
+            tabType = TabType.valueOf(ByteBufUtils.readUTF8String(buf));
             break;
         case TAB_REMOVE:
             tabIndex = buf.readInt();
@@ -193,10 +204,10 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
             ContainerShop containerShop = (ContainerShop) player.openContainer;
             switch (message.type) {
             case TAB_ADD:
-                containerShop.tabAdd(message.tabIconIndex, message.tabName);
+                containerShop.tabAdd(message.tabIconIndex, message.tabName, message.tabType);
                 break;
             case TAB_EDIT:
-                containerShop.tabEdit(message.tabIconIndex, message.tabName);
+                containerShop.tabEdit(message.tabIconIndex, message.tabName, message.tabType);
                 break;
             case TAB_REMOVE:
                 containerShop.tabRemove(message.tabIndex);
@@ -221,7 +232,7 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
                 break;
             case SHOP_RENAME:
                 containerShop.shopRename(message.shopName);
-                break; 
+                break;
             case TAB_CHANGED:
                 containerShop.changeTab(message.tabIndex);
                 break;
@@ -267,13 +278,13 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
         TAB_CHANGED(false),
         TAB_MOVE_UP(true),
         TAB_MOVE_DOWN(true);
-        
+
         private final boolean needsCreative;
-        
+
         private ShopMessageType(boolean needsCreative) {
             this.needsCreative = needsCreative;
         }
-        
+
         public boolean getNeedsCreative() {
             return needsCreative;
         }

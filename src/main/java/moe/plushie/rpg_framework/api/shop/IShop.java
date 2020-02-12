@@ -25,6 +25,8 @@ public interface IShop {
 
         public int getIconIndex();
 
+        public TabType getTabType();
+
         public ArrayList<IShopItem> getPageItems(int pageIndex);
 
         public ArrayList<IShopItem> getItems();
@@ -32,6 +34,11 @@ public interface IShop {
         public int getItemCount();
 
         public int getPageCount();
+
+        public static enum TabType {
+            BUY,
+            SELL
+        }
     }
 
     public static interface IShopItem {
@@ -47,9 +54,9 @@ public interface IShop {
         public Date getLastPurchase();
 
         public int getTotalSold();
-    }
 
-    public static enum RestockType {
-        NONE, TRIGGER, TIME
+        public static enum RestockType {
+            NONE, TRIGGER, TIME
+        }
     }
 }

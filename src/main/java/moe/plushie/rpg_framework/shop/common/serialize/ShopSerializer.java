@@ -11,6 +11,7 @@ import moe.plushie.rpg_framework.api.currency.ICost;
 import moe.plushie.rpg_framework.api.shop.IShop;
 import moe.plushie.rpg_framework.api.shop.IShop.IShopItem;
 import moe.plushie.rpg_framework.api.shop.IShop.IShopTab;
+import moe.plushie.rpg_framework.api.shop.IShop.IShopTab.TabType;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import moe.plushie.rpg_framework.currency.common.Cost;
 import moe.plushie.rpg_framework.currency.common.serialize.CostSerializer;
@@ -27,6 +28,7 @@ public class ShopSerializer {
     private static final String PROP_TABS = "tabs";
     private static final String PROP_TAB_NAME = "name";
     private static final String PROP_TAB_ICON_INDEX = "iconIndex";
+    private static final String PROP_TAB_TYPE = "tabType";
     private static final String PROP_TAB_ITEMS = "items";
 
     private static final String PROP_TAB_ITEM = "item";
@@ -58,6 +60,7 @@ public class ShopSerializer {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty(PROP_TAB_NAME, tab.getName());
         jsonObject.addProperty(PROP_TAB_ICON_INDEX, tab.getIconIndex());
+        jsonObject.addProperty(PROP_TAB_TYPE, tab.getTabType().toString());
         JsonArray jsonArrayItems = new JsonArray();
         for (int i = 0; i < tab.getItems().size(); i++) {
             IShopItem item = tab.getItems().get(i);
@@ -103,24 +106,40 @@ public class ShopSerializer {
     }
 
     private static IShopTab deserializeTab(JsonObject jsonObject) throws NBTException {
-        String name = jsonObject.get(PROP_TAB_NAME).getAsString();
-        int iconIndex = jsonObject.get(PROP_TAB_ICON_INDEX).getAsInt();
-        JsonArray jsonArrayItems = jsonObject.get(PROP_TAB_ITEMS).getAsJsonArray();
+        String name = "";
+        int iconIndex = 0;
+        TabType tabType = TabType.BUY;
         ArrayList<IShopItem> tabItems = new ArrayList<IShopItem>();
         for (int i = 0; i < 8; i++) {
-            tabItems.add(new ShopItem(ItemStack.EMPTY, new Cost(null, null)));
+            tabItems.add(new ShopItem(ItemStack.EMPTY, Cost.NO_COST));
         }
-        for (int i = 0; i < jsonArrayItems.size(); i++) {
-            JsonObject itemJson = jsonArrayItems.get(i).getAsJsonObject();
-            IShopItem item = deserializeItem(jsonArrayItems.get(i).getAsJsonObject());
-            if (itemJson.has(PROP_TAB_ITEM_SLOT)) {
-                tabItems.set(itemJson.get(PROP_TAB_ITEM_SLOT).getAsInt(), item);
-            } else {
-                tabItems.set(i, item);
+
+        if (jsonObject.has(PROP_NAME)) {
+            name = jsonObject.get(PROP_TAB_NAME).getAsString();
+        }
+
+        if (jsonObject.has(PROP_TAB_ICON_INDEX)) {
+            iconIndex = jsonObject.get(PROP_TAB_ICON_INDEX).getAsInt();
+        }
+
+        if (jsonObject.has(PROP_TAB_TYPE)) {
+            tabType = TabType.valueOf(jsonObject.get(PROP_TAB_TYPE).getAsString().toUpperCase());
+        }
+
+        if (jsonObject.has(PROP_TAB_ITEMS)) {
+            JsonArray jsonArrayItems = jsonObject.get(PROP_TAB_ITEMS).getAsJsonArray();
+            for (int i = 0; i < jsonArrayItems.size(); i++) {
+                JsonObject itemJson = jsonArrayItems.get(i).getAsJsonObject();
+                IShopItem item = deserializeItem(jsonArrayItems.get(i).getAsJsonObject());
+                if (itemJson.has(PROP_TAB_ITEM_SLOT)) {
+                    tabItems.set(itemJson.get(PROP_TAB_ITEM_SLOT).getAsInt(), item);
+                } else {
+                    tabItems.set(i, item);
+                }
             }
         }
 
-        return new ShopTab(name, iconIndex, tabItems);
+        return new ShopTab(name, iconIndex, tabType, tabItems);
     }
 
     private static IShopItem deserializeItem(JsonObject jsonObject) throws NBTException {

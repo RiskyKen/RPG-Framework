@@ -66,20 +66,23 @@ public class Shop implements IShop, Comparable<IShop> {
 
         private final String name;
         private final int iconIndex;
+        private final TabType tabType;
         private final ArrayList<IShopItem> shopItems;
 
-        public ShopTab(String name, int iconIndex) {
+        public ShopTab(String name, int iconIndex, TabType tabType) {
             this.name = name;
             this.iconIndex = iconIndex;
+            this.tabType = tabType;
             this.shopItems = new ArrayList<IShop.IShopItem>();
             for (int i = 0; i < 8; i++) {
-                shopItems.add(new ShopItem(ItemStack.EMPTY, new Cost(null, null)));
+                shopItems.add(new ShopItem(ItemStack.EMPTY, Cost.NO_COST));
             }
         }
 
-        public ShopTab(String name, int iconIndex, ArrayList<IShopItem> shopItems) {
+        public ShopTab(String name, int iconIndex, TabType tabType, ArrayList<IShopItem> shopItems) {
             this.name = name;
             this.iconIndex = iconIndex;
+            this.tabType = tabType;
             this.shopItems = shopItems;
         }
 
@@ -91,6 +94,11 @@ public class Shop implements IShop, Comparable<IShop> {
         @Override
         public int getIconIndex() {
             return iconIndex;
+        }
+        
+        @Override
+        public TabType getTabType() {
+            return tabType;
         }
 
         @Override

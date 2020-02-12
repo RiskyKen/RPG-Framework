@@ -7,6 +7,7 @@ import moe.plushie.rpg_framework.api.currency.ICost;
 import moe.plushie.rpg_framework.api.shop.IShop;
 import moe.plushie.rpg_framework.api.shop.IShop.IShopItem;
 import moe.plushie.rpg_framework.api.shop.IShop.IShopTab;
+import moe.plushie.rpg_framework.api.shop.IShop.IShopTab.TabType;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.config.ConfigHandler;
 import moe.plushie.rpg_framework.core.common.init.ModSounds;
@@ -186,14 +187,14 @@ public class ContainerShop extends ModContainer {
         }
     }
 
-    public void tabAdd(int iconIndex, String tabName) {
-        shop.getTabs().add(new ShopTab(tabName, iconIndex));
+    public void tabAdd(int iconIndex, String tabName, TabType tabType) {
+        shop.getTabs().add(new ShopTab(tabName, iconIndex, tabType));
         sendShopToListeners(true);
     }
 
-    public void tabEdit(int iconIndex, String tabName) {
+    public void tabEdit(int iconIndex, String tabName, TabType tabType) {
         IShopTab tabOld = shop.getTabs().get(activeTabIndex);
-        shop.getTabs().set(activeTabIndex, new ShopTab(tabName, iconIndex, tabOld.getItems()));
+        shop.getTabs().set(activeTabIndex, new ShopTab(tabName, iconIndex, tabType, tabOld.getItems()));
         sendShopToListeners(true);
     }
 

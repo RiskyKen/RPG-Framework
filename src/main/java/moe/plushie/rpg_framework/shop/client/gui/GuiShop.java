@@ -11,6 +11,7 @@ import moe.plushie.rpg_framework.api.currency.ICurrencyCapability;
 import moe.plushie.rpg_framework.api.currency.IWallet;
 import moe.plushie.rpg_framework.api.shop.IShop;
 import moe.plushie.rpg_framework.api.shop.IShop.IShopTab;
+import moe.plushie.rpg_framework.api.shop.IShop.IShopTab.TabType;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpg_framework.core.client.gui.GuiHelper;
@@ -294,7 +295,7 @@ public class GuiShop extends GuiTabbed<ContainerShop> implements IDialogCallback
             }
         }
         GlStateManager.popMatrix();
-        
+
         GL11.glPushMatrix();
         GL11.glTranslatef(-guiLeft, -guiTop, 0F);
         tabController.drawHoverText(mc, mouseX, mouseY);
@@ -375,7 +376,7 @@ public class GuiShop extends GuiTabbed<ContainerShop> implements IDialogCallback
         // PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.SHOP_SAVE));
         // }
         if (button == buttonEditTabAdd) {
-            openDialog(new GuiShopDialogTabAdd(this, "tabAdd", this, 190, 100));
+            openDialog(new GuiShopDialogTabAdd(this, "tabAdd", this));
         }
         if (button == buttonEditTabRemove) {
             if (activeTabIndex == -1) {
@@ -387,7 +388,7 @@ public class GuiShop extends GuiTabbed<ContainerShop> implements IDialogCallback
             if (activeTabIndex == -1) {
                 return;
             }
-            openDialog(new GuiShopDialogTabEdit(this, "tabEdit", this, 190, 100, shop.getTabs().get(activeTabIndex)));
+            openDialog(new GuiShopDialogTabEdit(this, "tabEdit", this, shop.getTabs().get(activeTabIndex)));
         }
         if (button == buttonEditTabUp) {
             if (activeTabIndex == -1) {
@@ -430,7 +431,8 @@ public class GuiShop extends GuiTabbed<ContainerShop> implements IDialogCallback
             if (dialog instanceof GuiShopDialogTabAdd) {
                 String name = ((GuiShopDialogTabAdd) dialog).getTabName();
                 int iconIndex = ((GuiShopDialogTabAdd) dialog).getTabIconIndex();
-                PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.TAB_ADD).setTabName(name).setTabIconIndex(iconIndex));
+                TabType tabType = ((GuiShopDialogTabAdd) dialog).getTabType();
+                PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.TAB_ADD).setTabName(name).setTabIconIndex(iconIndex).setTabType(tabType));
             }
             if (dialog instanceof GuiShopDialogTabRemove) {
                 PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.TAB_REMOVE).setTabIndex(activeTabIndex));
@@ -440,7 +442,8 @@ public class GuiShop extends GuiTabbed<ContainerShop> implements IDialogCallback
             if (dialog instanceof GuiShopDialogTabEdit) {
                 String name = ((GuiShopDialogTabEdit) dialog).getTabName();
                 int iconIndex = ((GuiShopDialogTabEdit) dialog).getTabIconIndex();
-                PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.TAB_EDIT).setTabName(name).setTabIconIndex(iconIndex));
+                TabType tabType = ((GuiShopDialogTabEdit) dialog).getTabType();
+                PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.TAB_EDIT).setTabName(name).setTabIconIndex(iconIndex).setTabType(tabType));
             }
             if (dialog instanceof GuiShopDialogEditCost) {
                 ICost cost = ((GuiShopDialogEditCost) dialog).getCost();
