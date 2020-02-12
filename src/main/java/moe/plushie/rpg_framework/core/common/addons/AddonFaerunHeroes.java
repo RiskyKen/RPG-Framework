@@ -55,7 +55,7 @@ public class AddonFaerunHeroes extends ModAddon {
     }
 
     public void setItemData(ItemStack itemStack, IItemData itemData) {
-        if (itemData != null || itemData == ItemData.ITEM_DATA_MISSING) {
+        if (itemData != null || itemData != ItemData.ITEM_DATA_MISSING) {
             // Create tag compound if needed.
             if (!itemStack.hasTagCompound()) {
                 itemStack.setTagCompound(new NBTTagCompound());
