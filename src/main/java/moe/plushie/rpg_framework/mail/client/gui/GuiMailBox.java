@@ -96,18 +96,18 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
         buttonMessageDelete.setDrawButtonBackground(false).setIconLocation(208, 160, 16, 16);
         buttonMessageWithdrawItems.setDrawButtonBackground(false).setIconLocation(208, 128, 16, 16);
 
-        buttonListPre.setHoverText("Previous Page");
-        buttonListNext.setHoverText("Next Page");
-        buttonNewMessage.setHoverText("New Message");
-        buttonMessageReply.setHoverText("Reply");
-        buttonMessageDelete.setHoverText("Delete");
-        buttonMessageWithdrawItems.setHoverText("Withdraw Items");
+        buttonListPre.setHoverText(GuiHelper.getLocalControlName(getName(), "button.previous_page"));
+        buttonListNext.setHoverText(GuiHelper.getLocalControlName(getName(), "button.next_page"));
+        buttonNewMessage.setHoverText(GuiHelper.getLocalControlName(getName(), "button.new_message"));
+        buttonMessageReply.setHoverText(GuiHelper.getLocalControlName(getName(), "button.reply"));
+        buttonMessageDelete.setHoverText(GuiHelper.getLocalControlName(getName(), "button.previous_page"));
+        buttonMessageWithdrawItems.setHoverText(GuiHelper.getLocalControlName(getName(), "button.withdraw_items"));
 
         buttonMessageWithdrawItems.enabled = false;
 
         if (!player.capabilities.isCreativeMode) {
             buttonNewMessage.enabled = false;
-            buttonNewMessage.setDisableText("Sending mail is disabled on this server.");
+            buttonNewMessage.setDisableText(GuiHelper.getLocalControlName(getName(), "button.new_message.disable"));
         }
     }
 
@@ -147,7 +147,7 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
             updateMailList(mailPage);
         }
         if (button == buttonNewMessage) {
-            openDialog(new GuiMailBoxDialogSend(this, this, mailSystem, player));
+            openDialog(new GuiMailBoxDialogSend(this, GuiHelper.getLocalControlName(getName(), "tab.send_mail"), this, mailSystem, player));
         }
         if (button == buttonMessageReply) {
 
@@ -219,7 +219,7 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
         GuiHelper.renderPlayerInvlabel(0, 151, fontRenderer);
 
         IGuiListItem guiListItem = listMail.getSelectedListEntry();
-        
+
         fontRenderer.drawString((mailPage + 1) + "/" + getMaxPages(), 40, 135, 0x404040);
 
         String message = "";
@@ -267,7 +267,7 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
         }
         GL11.glPopMatrix();
     }
-    
+
     private int getMaxPages() {
         return MathHelper.ceil(mailMessages.size() / 6F);
     }

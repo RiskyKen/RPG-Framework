@@ -49,12 +49,32 @@ item.rpg_economy:basic_loot_bag.name=Basic Loot Bag
 # Creative tab
 itemGroup.rpg_economy=RPG Framework
 
-# Inventory
-inventory.rpg_economy:mailbox.tab.reading.name=Reading
-inventory.rpg_economy:mailbox.tab.sending.name=Sending
-inventory.rpg_economy:wallet.name=Wallet
-inventory.rpg_economy:bank.invalidBank=§4Invalid Bank
+# Inventory - Common
+inventory.rpg_economy:common.button_close=Close
+inventory.rpg_economy:common.button_cancel=Canel
+inventory.rpg_economy:common.button_ok=OK
+
+# Inventory - Bank
+inventory.rpg_economy:bank.buy_new_tab=Buy New Tab...
+inventory.rpg_economy:bank.tab.name=Tab %d
+inventory.rpg_economy:bank.tab.buy_tab.name=Buy Tab
+inventory.rpg_economy:bank.invalid_bank=§4Invalid Bank
+
+# Inventory - Mailbox
 inventory.rpg_economy:mailbox.name=Mail Box
+inventory.rpg_economy:mailbox.button.previous_page=Previous Page
+inventory.rpg_economy:mailbox.button.next_page=Next Page
+inventory.rpg_economy:mailbox.button.new_message=New Message
+inventory.rpg_economy:mailbox.button.new_message.disable=Sending mail is disabled on this server.
+inventory.rpg_economy:mailbox.button.reply=Reply
+inventory.rpg_economy:mailbox.button.withdraw_items=Withdraw Items
+
+inventory.rpg_economy:mailbox.tab.send_mail.name=Send Mail
+inventory.rpg_economy:mailbox.tab.send_mail.button.send=Send
+inventory.rpg_economy:mailbox.tab.send_mail.label.attachments=Attachments
+
+# Inventory - Wallet
+inventory.rpg_economy:wallet.name=Wallet
 
 # Commands
 commands.rpg_economy:rpg_economy.usage=<currency | mail>

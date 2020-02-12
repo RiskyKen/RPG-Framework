@@ -15,6 +15,7 @@ import moe.plushie.rpg_framework.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpg_framework.core.client.gui.GuiHelper;
 import moe.plushie.rpg_framework.core.client.gui.IDialogCallback;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiLabeledTextField;
+import moe.plushie.rpg_framework.core.client.lib.LibGuiResources;
 import moe.plushie.rpg_framework.core.common.inventory.slot.SlotHidable;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.client.MessageClientGuiMailBox;
@@ -24,6 +25,7 @@ import moe.plushie.rpg_framework.mail.common.inventory.ContainerMailBox;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -45,8 +47,8 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
     private GuiButtonExt buttonClose;
     private GuiButtonExt buttonSend;
 
-    public GuiMailBoxDialogSend(GuiScreen parent, IDialogCallback callback, IMailSystem mailSystem, EntityPlayer player) {
-        super(parent, "send-mail", callback, 200, 247);
+    public GuiMailBoxDialogSend(GuiScreen parent, String name, IDialogCallback callback, IMailSystem mailSystem, EntityPlayer player) {
+        super(parent, name, callback, 200, 247);
         this.mailSystem = mailSystem;
         this.player = player;
         textFieldTo = new GuiLabeledTextField(fontRenderer, x + 10, y + 20, width - 20, 14);
@@ -65,9 +67,9 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
     public void initGui() {
         super.initGui();
         buttonList.clear();
-
-        buttonClose = new GuiButtonExt(-1, x + width - 60 - 10, y + height - 30 - 90, 60, 16, "Close");
-        buttonSend = new GuiButtonExt(-1, x + width - 120 - 15, y + height - 30 - 90, 60, 16, "Send");
+        
+        buttonClose = new GuiButtonExt(-1, x + width - 60 - 10, y + height - 30 - 90, 60, 16, I18n.format(LibGuiResources.Controls.BUTTON_CLOSE));
+        buttonSend = new GuiButtonExt(-1, x + width - 120 - 15, y + height - 30 - 90, 60, 16, I18n.format(name + ".button.send"));
 
         buttonList.add(buttonClose);
         buttonList.add(buttonSend);
@@ -203,15 +205,14 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
         textFieldTo.drawTextBox();
         textFieldSubject.drawTextBox();
         textFieldBody.drawTextBox();
-        drawTitle("Send Mail");
-        
+        drawTitle();
     }
 
     @Override
     public void drawForeground(int mouseX, int mouseY, float partialTickTime) {
         super.drawForeground(mouseX, mouseY, partialTickTime);
         GuiHelper.renderPlayerInvlabel(x, y + 151, fontRenderer);
-        fontRenderer.drawString("Attachments", x + 177 + 8, y + 151 + 5, 0x333333);
+        fontRenderer.drawString(I18n.format(name + ".label.attachments"), x + 177 + 8, y + 151 + 5, 0x333333);
         ICost cost = getSendCost();
         GuiHelper.renderCost(fontRenderer, mc.getRenderItem(), cost, x - 14, y + 120, cost.canAfford(player));
         buttonSend.enabled = cost.canAfford(player);

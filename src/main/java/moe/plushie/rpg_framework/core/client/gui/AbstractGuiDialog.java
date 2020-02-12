@@ -18,6 +18,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.Slot;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiUtils;
@@ -66,9 +67,8 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
 
     public void initGui() {
         this.x = (this.parent.width - this.width) / 2;
-        this.y = (this.parent.height  - this.height) / 2;
-        
-        
+        this.y = (this.parent.height - this.height) / 2;
+
         if (isDialogOpen()) {
             dialog.initGui();
         }
@@ -191,20 +191,20 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
         RenderHelper.disableStandardItemLighting();
 
         GlStateManager.popMatrix();
-        
+
         drawForeground(mouseX, mouseY, partialTickTime);
         GlStateManager.enableLighting();
         GlStateManager.enableDepth();
         RenderHelper.enableStandardItemLighting();
-        
+
         if (isDialogOpen()) {
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             GlStateManager.disableLighting();
             GlStateManager.disableDepth();
-            //RPGFramework.getLogger().info(oldMouseX);
-            //GL11.glTranslatef(x, y, 0);
+            // RPGFramework.getLogger().info(oldMouseX);
+            // GL11.glTranslatef(x, y, 0);
             dialog.drawFull(oldMouseX, oldMouseY, 0);
-            //GL11.glTranslatef(-x, -y, 0);
+            // GL11.glTranslatef(-x, -y, 0);
         }
     }
 
@@ -266,8 +266,8 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
 
         if (isDialogOpen()) {
             GL11.glColor4f(1, 1, 1, 1);
-             GL11.glTranslatef(x, y, 0);
-             RPGFramework.getLogger().info(mouseX);
+            GL11.glTranslatef(x, y, 0);
+            RPGFramework.getLogger().info(mouseX);
             dialog.drawFull(oldMouseX, oldMouseY, 0);
             GL11.glTranslatef(-x, -y, 0);
         }
@@ -308,10 +308,11 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
     }
 
     protected void drawTitle() {
-        drawTitle(name);
+        drawTitle(name + ".name");
     }
 
     protected void drawTitle(String text) {
+        text = I18n.format(text);
         int titleWidth = fontRenderer.getStringWidth(text);
         fontRenderer.drawString(text, x + width / 2 - titleWidth / 2, y + 6, 4210752);
     }
