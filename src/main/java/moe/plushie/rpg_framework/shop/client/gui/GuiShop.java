@@ -128,20 +128,26 @@ public class GuiShop extends GuiTabbed<ContainerShop> implements IDialogCallback
         buttonEditTabDown.setDrawButtonBackground(false).setIconLocation(208, 112, 16, 16);
 
         for (int i = 0; i < buttonCostEdit.length; i++) {
-            buttonCostEdit[i].setDrawButtonBackground(false).setIconLocation(101, 91, 13, 9).setHoverText("Edit Cost");
+            buttonCostEdit[i].setDrawButtonBackground(false).setIconLocation(101, 91, 13, 9).setHoverText(GuiHelper.getLocalControlName(getName(), "button.edit_cost"));
         }
 
-        buttonShopList.setHoverText("Shop List...").setDisableText(ChatFormatting.RED + "Shop must be opened from a block to use this option.");
-        buttonStats.setHoverText("Stats...");
-        buttonEditMode.setHoverText("Edit Mode").setDisableText(ChatFormatting.RED + "Shop must be LINKED to use this option.");
-        buttonRename.setHoverText("Rename Shop...").setDisableText(ChatFormatting.RED + "Shop must be in EDIT MODE to use this option.");
-        // buttonSave.setHoverText("Save Shop").setDisableText(ChatFormatting.RED + "Shop must be in EDIT MODE to use this option.");
+        buttonShopList.setHoverText(GuiHelper.getLocalControlName(getName(), "button.shop_list"));
+        buttonShopList.setDisableText(GuiHelper.getLocalControlName(getName(), "button.shop_list.no_block"));
 
-        buttonEditTabAdd.setHoverText("Add Tab");
-        buttonEditTabRemove.setHoverText("Remove Tab");
-        buttonEditTabEdit.setHoverText("Edit Tab");
-        buttonEditTabUp.setHoverText("Move Tab Up");
-        buttonEditTabDown.setHoverText("Move Tab Down");
+        buttonStats.setHoverText(GuiHelper.getLocalControlName(getName(), "button.stats"));
+        buttonEditMode.setHoverText(GuiHelper.getLocalControlName(getName(), "button.edit_mode"));
+        buttonEditMode.setDisableText(GuiHelper.getLocalControlName(getName(), "common.not_linked"));
+        buttonRename.setHoverText(GuiHelper.getLocalControlName(getName(), "button.rename_shop"));
+        buttonRename.setDisableText(GuiHelper.getLocalControlName(getName(), "common.need_edit_mode"));
+
+        // buttonSave.setHoverText(GuiHelper.getLocalControlName(getName(), "button.save");
+        // buttonSave.setDisableText(GuiHelper.getLocalControlName(getName(), "common.need_edit_mode");
+
+        buttonEditTabAdd.setHoverText(GuiHelper.getLocalControlName(getName(), "button.tab_add"));
+        buttonEditTabRemove.setHoverText(GuiHelper.getLocalControlName(getName(), "button.tab_remove"));
+        buttonEditTabEdit.setHoverText(GuiHelper.getLocalControlName(getName(), "button.tab_edit"));
+        buttonEditTabUp.setHoverText(GuiHelper.getLocalControlName(getName(), "button.tab_move_up"));
+        buttonEditTabDown.setHoverText(GuiHelper.getLocalControlName(getName(), "button.tab_move_down"));
 
         updateEditButtons();
 
@@ -183,32 +189,25 @@ public class GuiShop extends GuiTabbed<ContainerShop> implements IDialogCallback
             buttonCostEdit[i].enabled = slot.getHasStack();
         }
 
-        if (isShopLinked()) {
-            buttonStats.setHoverText("Stats").setDisableText(ChatFormatting.RED + "Coming soon. \u2122");
+        if (!isShopLinked()) {
+            buttonStats.setDisableText(GuiHelper.getLocalControlName(getName(), "common.not_linked"));
         } else {
-            buttonStats.setDisableText(ChatFormatting.RED + "Shop must be LINKED to use this option.");
+            buttonStats.setDisableText(ChatFormatting.RED + "Coming soon. \u2122");
         }
 
         if (editMode) {
-            buttonEditTabAdd.setDisableText(ChatFormatting.RED + "Tab list is full.");
-            buttonEditTabRemove.setDisableText(ChatFormatting.RED + "Must have one tab to use this option.");
-            buttonEditTabEdit.setDisableText(ChatFormatting.RED + "Must have one tab to use this option.");
-            buttonEditTabUp.setDisableText(ChatFormatting.RED + "Already at top.");
-            buttonEditTabDown.setHoverText("Move Tab Down").setDisableText(ChatFormatting.RED + "Already at bottom.");
+            buttonEditTabAdd.setDisableText(GuiHelper.getLocalControlName(getName(), "button.tab_add.full"));
+            buttonEditTabRemove.setDisableText(GuiHelper.getLocalControlName(getName(), "button.tab_remove.empty"));
+            buttonEditTabEdit.setDisableText(GuiHelper.getLocalControlName(getName(), "button.tab_edit.empty"));
+            buttonEditTabUp.setDisableText(GuiHelper.getLocalControlName(getName(), "button.tab_move_up.at_top"));
+            buttonEditTabDown.setDisableText(GuiHelper.getLocalControlName(getName(), "button.tab_move_down.at_bottom"));
         } else {
-            buttonEditTabAdd.setDisableText(ChatFormatting.RED + "Shop must be in EDIT MODE to use this option.");
-            buttonEditTabRemove.setDisableText(ChatFormatting.RED + "Shop must be in EDIT MODE to use this option.");
-            buttonEditTabEdit.setDisableText(ChatFormatting.RED + "Shop must be in EDIT MODE to use this option.");
-            buttonEditTabUp.setDisableText(ChatFormatting.RED + "Shop must be in EDIT MODE to use this option.");
-            buttonEditTabDown.setDisableText(ChatFormatting.RED + "Shop must be in EDIT MODE to use this option.");
+            buttonEditTabAdd.setDisableText(GuiHelper.getLocalControlName(getName(), "common.need_edit_mode"));
+            buttonEditTabRemove.setDisableText(GuiHelper.getLocalControlName(getName(), "common.need_edit_mode"));
+            buttonEditTabEdit.setDisableText(GuiHelper.getLocalControlName(getName(), "common.need_edit_mode"));
+            buttonEditTabUp.setDisableText(GuiHelper.getLocalControlName(getName(), "common.need_edit_mode"));
+            buttonEditTabDown.setDisableText(GuiHelper.getLocalControlName(getName(), "common.need_edit_mode"));
         }
-    }
-
-    @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        this.drawDefaultBackground();
-        super.drawScreen(mouseX, mouseY, partialTicks);
-        this.renderHoveredToolTip(mouseX, mouseY);
     }
 
     @Override
@@ -244,20 +243,18 @@ public class GuiShop extends GuiTabbed<ContainerShop> implements IDialogCallback
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         updateEditButtons();
-        String title = "Loading...";
-        int titleColour = 0x333333;
+        String title = GuiHelper.getLocalControlName(getName(), "name.loading");
         if (shop != null) {
             title = shop.getName();
         }
         if (!isShopLinked()) {
-            title = "SHOP NOT LINKED";
-            titleColour = 0xAA0000;
+            title = GuiHelper.getLocalControlName(getName(), "name.not_linked");
         }
         if (editMode) {
-            title = ChatFormatting.DARK_RED + "EDIT MODE - " + ChatFormatting.RESET + title + ChatFormatting.DARK_RED + " - EDIT MODE";
+            title = GuiHelper.getLocalControlName(getName(), "name.edit_mode", title);
         }
         int titleWidth = fontRenderer.getStringWidth(title);
-        fontRenderer.drawString(title, xSize / 2 - titleWidth / 2, 6, titleColour);
+        fontRenderer.drawString(title, xSize / 2 - titleWidth / 2, 6, 0x333333);
 
         if (ConfigHandler.options.showPlayerInventoryInShopGUI) {
             GuiHelper.renderPlayerInvlabel(16, 145 + 1, fontRenderer);
@@ -268,7 +265,7 @@ public class GuiShop extends GuiTabbed<ContainerShop> implements IDialogCallback
             renderItemDetails(i);
         }
 
-        fontRenderer.drawString("Player Money", 200, 151, 0x333333);
+        fontRenderer.drawString(GuiHelper.getLocalControlName(getName(), "label.player_money"), 200, 151, 0x333333);
         CurrencyManager currencyManager = RPGFramework.getProxy().getCurrencyManager();
         ICurrency[] currencies = currencyManager.getCurrencies();
         int yCur = 0;
@@ -367,28 +364,28 @@ public class GuiShop extends GuiTabbed<ContainerShop> implements IDialogCallback
             setEditMode(!editMode);
         }
         if (button == buttonShopList) {
-            openDialog(new GuiShopDialogShopList(this, "shopList", this));
+            openDialog(new GuiShopDialogShopList(this, GuiHelper.getLocalControlName(getName(), "dialog.shop_list"), this));
         }
         if (button == buttonRename) {
-            openDialog(new GuiShopDialogRename(this, "shopRename", this, 190, 100, shop.getName()));
+            openDialog(new GuiShopDialogRename(this, GuiHelper.getLocalControlName(getName(), "dialog.shop_rename"), this, 190, 100, shop.getName()));
         }
         // if (button == buttonSave) {
         // PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.SHOP_SAVE));
         // }
         if (button == buttonEditTabAdd) {
-            openDialog(new GuiShopDialogTabAdd(this, "tabAdd", this));
+            openDialog(new GuiShopDialogTabAdd(this, GuiHelper.getLocalControlName(getName(), "dialog.tab_add"), this));
         }
         if (button == buttonEditTabRemove) {
             if (activeTabIndex == -1) {
                 return;
             }
-            openDialog(new GuiShopDialogTabRemove(this, "tabRemove", this, 190, 100, shop.getTabs().get(activeTabIndex)));
+            openDialog(new GuiShopDialogTabRemove(this, GuiHelper.getLocalControlName(getName(), "dialog.tab_remove"), this, 190, 100, shop.getTabs().get(activeTabIndex)));
         }
         if (button == buttonEditTabEdit) {
             if (activeTabIndex == -1) {
                 return;
             }
-            openDialog(new GuiShopDialogTabEdit(this, "tabEdit", this, shop.getTabs().get(activeTabIndex)));
+            openDialog(new GuiShopDialogTabEdit(this, GuiHelper.getLocalControlName(getName(), "dialog.tab_edit"), this, shop.getTabs().get(activeTabIndex)));
         }
         if (button == buttonEditTabUp) {
             if (activeTabIndex == -1) {
@@ -412,7 +409,7 @@ public class GuiShop extends GuiTabbed<ContainerShop> implements IDialogCallback
             }
             if (button == buttonCostEdit[i]) {
                 // ((ContainerShop)inventorySlots).gotCostRequest(i);
-                openDialog(new GuiShopDialogEditCost(this, "editCost", this, 210, 120, i, shop.getTabs().get(activeTabIndex).getItems().get(i).getCost()));
+                openDialog(new GuiShopDialogEditCost(this, GuiHelper.getLocalControlName(getName(), "dialog.cost_edit"), this, 210, 120, i, shop.getTabs().get(activeTabIndex).getItems().get(i).getCost()));
             }
         }
     }

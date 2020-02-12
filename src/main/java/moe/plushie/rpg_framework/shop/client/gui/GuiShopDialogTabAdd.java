@@ -48,7 +48,7 @@ public class GuiShopDialogTabAdd extends AbstractGuiDialog implements IDropDownL
             dropDownTabTye.addListItem(tabType.toString(), tabType.toString(), true);
         }
         dropDownTabTye.setListSelectedIndex(0);
-        
+
         textFieldName.x = x + 10;
         textFieldName.y = y + 18;
 
@@ -92,9 +92,6 @@ public class GuiShopDialogTabAdd extends AbstractGuiDialog implements IDropDownL
     @Override
     public void drawForeground(int mouseX, int mouseY, float partialTickTime) {
         super.drawForeground(mouseX, mouseY, partialTickTime);
-        String title = "Add Tab";
-        int titleWidth = fontRenderer.getStringWidth(title);
-        fontRenderer.drawString(title, x + width / 2 - titleWidth / 2, y + 6, 4210752);
         textFieldName.drawTextBox();
 
         GlStateManager.color(1F, 1F, 1F, 1F);
@@ -106,11 +103,11 @@ public class GuiShopDialogTabAdd extends AbstractGuiDialog implements IDropDownL
         int textWidth = fontRenderer.getStringWidth(iconText);
         drawTexturedModalRect(x + width / 2 - 8, y + 35, 16 * iconX, 16 * iconY, 16, 16);
         fontRenderer.drawString(iconText, x + width / 2 - textWidth / 2, y + 52, 0x333333);
-        
+
         fontRenderer.drawString("Tab Type:", x + 10, y + 62, 0x333333);
-        
+
         dropDownTabTye.drawForeground(mc, mouseX, mouseY, partialTickTime);
-        // drawTitle();
+        drawTitle();
     }
 
     public String getTabName() {
@@ -120,7 +117,7 @@ public class GuiShopDialogTabAdd extends AbstractGuiDialog implements IDropDownL
     public int getTabIconIndex() {
         return iconIndex;
     }
-    
+
     public TabType getTabType() {
         return tabType;
     }

@@ -51,10 +51,7 @@ public class GuiShopDialogTabRemove extends AbstractGuiDialog {
     @Override
     public void drawForeground(int mouseX, int mouseY, float partialTickTime) {
         super.drawForeground(mouseX, mouseY, partialTickTime);
-        String title = "Remove Tab";
-        int titleWidth = fontRenderer.getStringWidth(title);
-        fontRenderer.drawString(title, x + width / 2 - titleWidth / 2, y + 6, 4210752);
-        // drawTitle();
+        drawTitle();
 
         GlStateManager.color(1F, 1F, 1F, 1F);
         mc.renderEngine.bindTexture(ICONS);

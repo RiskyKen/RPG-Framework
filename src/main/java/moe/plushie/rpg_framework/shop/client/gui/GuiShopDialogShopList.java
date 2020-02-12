@@ -110,15 +110,12 @@ public class GuiShopDialogShopList extends AbstractGuiDialog {
     public void drawForeground(int mouseX, int mouseY, float partialTickTime) {
         listShops.drawList(mouseX, mouseY, partialTickTime);
         super.drawForeground(mouseX, mouseY, partialTickTime);
-        String title = "Shop List";
-        int titleWidth = fontRenderer.getStringWidth(title);
-        fontRenderer.drawString(title, x + width / 2 - titleWidth / 2, y + 6, 4210752);
         if (listShops.getTotalListHeight() <= listShops.getVisibleHeight()) {
             listShops.setScrollAmount(0);
         } else {
             listShops.setScrollAmount(scrollbar.getValue());
         }
-        // drawTitle();
+        drawTitle();
     }
 
     public void gotShopIdentifiersFromServer(IIdentifier[] shopIdentifiers, String[] shopNames) {

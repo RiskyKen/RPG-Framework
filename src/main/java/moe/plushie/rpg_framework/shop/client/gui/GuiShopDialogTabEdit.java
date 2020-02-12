@@ -20,21 +20,21 @@ public class GuiShopDialogTabEdit extends AbstractGuiDialog implements IDropDown
     private final static ResourceLocation ICONS = new ResourceLocation(LibGuiResources.ICONS);
 
     private final IShopTab shopTab;
-    
+
     private GuiButtonExt buttonClose;
     private GuiButtonExt buttonEdit;
     private GuiButtonExt buttonIconPre;
     private GuiButtonExt buttonIconNext;
     private GuiTextField textFieldName;
     private GuiDropDownList dropDownTabTye;
-    
+
     private int iconIndex;
     private TabType tabType = TabType.BUY;
-    
+
     public GuiShopDialogTabEdit(GuiScreen parent, String name, IDialogCallback callback, IShopTab shopTab) {
         super(parent, name, callback, 190, 150);
         this.shopTab = shopTab;
-        
+
         textFieldName = new GuiTextField(0, fontRenderer, 0, 0, width - 20, 12);
         textFieldName.setText(shopTab.getName());
         iconIndex = shopTab.getIconIndex();
@@ -57,10 +57,10 @@ public class GuiShopDialogTabEdit extends AbstractGuiDialog implements IDropDown
                 dropDownTabTye.setListSelectedIndex(i);
             }
         }
-        
+
         textFieldName.x = x + 10;
         textFieldName.y = y + 18;
-        
+
         buttonList.add(buttonClose);
         buttonList.add(buttonEdit);
         buttonList.add(buttonIconPre);
@@ -106,23 +106,20 @@ public class GuiShopDialogTabEdit extends AbstractGuiDialog implements IDropDown
     @Override
     public void drawForeground(int mouseX, int mouseY, float partialTickTime) {
         super.drawForeground(mouseX, mouseY, partialTickTime);
-        String title = "Edit Tab";
-        int titleWidth = fontRenderer.getStringWidth(title);
-        fontRenderer.drawString(title, x + width / 2 - titleWidth / 2, y + 6, 4210752);
         textFieldName.drawTextBox();
-        // drawTitle();
-        
+        drawTitle();
+
         GlStateManager.color(1F, 1F, 1F, 1F);
         mc.renderEngine.bindTexture(ICONS);
         int iconY = MathHelper.floor(iconIndex / 16);
         int iconX = iconIndex - (y * 16);
-        
+
         String iconText = iconIndex + "/255";
         int textWidth = fontRenderer.getStringWidth(iconText);
         drawTexturedModalRect(x + width / 2 - 8, y + 35, 16 * iconX, 16 * iconY, 16, 16);
         fontRenderer.drawString(iconText, x + width / 2 - textWidth / 2, y + 52, 0x333333);
         fontRenderer.drawString("Tab Type:", x + 10, y + 62, 0x333333);
-        
+
         dropDownTabTye.drawForeground(mc, mouseX, mouseY, partialTickTime);
     }
 
@@ -133,7 +130,7 @@ public class GuiShopDialogTabEdit extends AbstractGuiDialog implements IDropDown
     public int getTabIconIndex() {
         return iconIndex;
     }
-    
+
     public TabType getTabType() {
         return tabType;
     }

@@ -19,12 +19,12 @@ public class GuiShopDialogEditCost extends AbstractGuiDialog implements IDropDow
     private GuiButtonExt buttonEdit;
     private GuiDropDownList dropDownCostTypes;
     private GuiButtonExt buttonEditType;
-    
+
     private final int slotIndex;
     private ICost cost;
-    
+
     private ICost costNew;
-    
+
     public GuiShopDialogEditCost(GuiScreen parent, String name, IDialogCallback callback, int width, int height, int index, ICost cost) {
         super(parent, name, callback, width, height);
         this.slotIndex = index;
@@ -44,9 +44,9 @@ public class GuiShopDialogEditCost extends AbstractGuiDialog implements IDropDow
         buttonClose = new GuiButtonExt(-1, x + width - 80 - 10, y + height - 30, 80, 20, "Close");
         buttonEdit = new GuiButtonExt(-1, x + width - 160 - 20, y + height - 30, 80, 20, "Edit");
         dropDownCostTypes = new GuiDropDownList(0, x + 10, y + 25, 100, "", this);
-        buttonEditType = new GuiButtonExt(-1, x + 120, y + 25, 80, 20, "Edit Cost"); 
-        
-        String[] costTypes = new String[] { "Free", "Currency", "Items", "Ore Dictionary"};
+        buttonEditType = new GuiButtonExt(-1, x + 120, y + 25, 80, 20, "Edit Cost");
+
+        String[] costTypes = new String[] { "Free", "Currency", "Items", "Ore Dictionary" };
         for (String type : costTypes) {
             dropDownCostTypes.addListItem(type);
         }
@@ -59,7 +59,7 @@ public class GuiShopDialogEditCost extends AbstractGuiDialog implements IDropDow
         if (cost != null && cost.hasItemCost()) {
             dropDownCostTypes.setListSelectedIndex(2);
         }
-        
+
         buttonEditType.enabled = dropDownCostTypes.getListSelectedIndex() > 0;
 
         buttonList.add(buttonClose);
@@ -97,10 +97,7 @@ public class GuiShopDialogEditCost extends AbstractGuiDialog implements IDropDow
     @Override
     public void drawForeground(int mouseX, int mouseY, float partialTickTime) {
         super.drawForeground(mouseX, mouseY, partialTickTime);
-        String title = "Edit Cost";
-        int titleWidth = fontRenderer.getStringWidth(title);
-        fontRenderer.drawString(title, x + width / 2 - titleWidth / 2, y + 6, 4210752);
-        // drawTitle();
+        drawTitle();
 
         GlStateManager.color(1F, 1F, 1F, 1F);
         mc.renderEngine.bindTexture(ICONS);
@@ -110,7 +107,7 @@ public class GuiShopDialogEditCost extends AbstractGuiDialog implements IDropDow
     public ICost getCost() {
         return costNew;
     }
-    
+
     public int getSlotIndex() {
         return slotIndex;
     }
@@ -123,7 +120,7 @@ public class GuiShopDialogEditCost extends AbstractGuiDialog implements IDropDow
             this.costNew = Cost.NO_COST;
         }
     }
-    
+
     @Override
     public void dialogResult(AbstractGuiDialog dialog, DialogResult result) {
         if (result == DialogResult.CANCEL) {
@@ -131,12 +128,12 @@ public class GuiShopDialogEditCost extends AbstractGuiDialog implements IDropDow
         }
         if (result == DialogResult.OK) {
             if (dialog instanceof GuiShopDialogEditCostCurrency) {
-                IWallet wallet = ((GuiShopDialogEditCostCurrency)dialog).getWallet();
+                IWallet wallet = ((GuiShopDialogEditCostCurrency) dialog).getWallet();
                 costNew = new Cost(wallet, null);
                 closeDialog();
             }
             if (dialog instanceof GuiShopDialogEditCostItems) {
-                IItemMatcher[] matchers = ((GuiShopDialogEditCostItems)dialog).getCost();
+                IItemMatcher[] matchers = ((GuiShopDialogEditCostItems) dialog).getCost();
                 costNew = new Cost(null, matchers);
                 closeDialog();
             }
