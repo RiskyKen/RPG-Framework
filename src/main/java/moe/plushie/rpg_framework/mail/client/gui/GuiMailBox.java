@@ -147,7 +147,7 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
             updateMailList(mailPage);
         }
         if (button == buttonNewMessage) {
-            openDialog(new GuiMailBoxDialogSend(this, GuiHelper.getLocalControlName(getName(), "tab.send_mail"), this, mailSystem, player));
+            openDialog(new GuiMailBoxDialogSend(this, GuiHelper.getLocalControlName(getName(), "dialog.send_mail"), this, mailSystem, player));
         }
         if (button == buttonMessageReply) {
 
