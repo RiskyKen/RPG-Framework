@@ -1,0 +1,164 @@
+# The following codes can be added to the start of text to style it.
+# §0 Black
+# §1 Dark Blue
+# §2 Dark Green
+# §3 Dark Aqua
+# §4 Dark Red
+# §5 Dark Purple
+# §6 Gold
+# §7 Gray
+# §8 Dark Gray
+# §9 Blue
+# §a Green
+# §b Aqua
+# §c Red
+# §d Light Purple
+# §e Yellow
+# §f White
+# §l Bold
+# §m Strikethrough
+# §n Underline
+# §o Italic
+# §r Reset 
+#
+# A new line can be inserted with %n. Please add/remove new lines to fit the localisations you are writing.
+
+# Block names
+tile.rpg_economy:mailbox.name=Caixa de correio
+tile.rpg_economy:auction.name=Casa de leilão
+tile.rpg_economy:shop.name=Loja
+tile.rpg_economy:bank.name=Banco
+
+# Block tooltips
+#tile.rpg_economy:mailbox.tooltip=É uma caixa de correio!
+
+# Item names
+item.rpg_economy:currency.0.name=Moeda de cobre
+item.rpg_economy:currency.1.name=Moeda de prata
+item.rpg_economy:currency.2.name=Moeda de ouro
+item.rpg_economy:currency.3.name=Moeda de platina
+item.rpg_economy:currency.4.name=Moeda de esmeralda
+item.rpg_economy:currency.5.name=Moeda de diamante
+item.rpg_economy:wallet.name=Maleta
+item.rpg_economy:loot_bag.name=Saco de loot
+item.rpg_economy:basic_loot_bag.name=Saco de loot básico
+
+# Item tooltips
+#item.rpg_economy:currency.0.tooltip=Teste
+
+# Creative tab
+itemGroup.rpg_economy=Estrutura de RPG
+
+
+# Inventory - Common
+inventory.rpg_economy:common.button_close=Fechar
+inventory.rpg_economy:common.button_cancel=Cancelar
+inventory.rpg_economy:common.button_ok=Ok
+inventory.rpg_economy:common.button_edit=Editar
+inventory.rpg_economy:common.tab_type.buy=Comprar
+inventory.rpg_economy:common.tab_type.sell=Vender
+inventory.rpg_economy:common.none=Nada
+inventory.rpg_economy:common.previous=Anterior
+inventory.rpg_economy:common.next=Próximo
+
+
+# Inventory - Bank
+inventory.rpg_economy:bank.tab.name=Aba %d
+inventory.rpg_economy:bank.button.buy_new_tab=Comprar nova aba...
+
+inventory.rpg_economy:bank.dialog.buy_tab.name=Comprar aba
+inventory.rpg_economy:bank.dialog.buy_tab.label.unlock_cost=Custo de desbloqueio:
+
+
+# Inventory - Mailbox
+inventory.rpg_economy:mailbox.name=Caixa de mensagens
+
+inventory.rpg_economy:mailbox.button.previous_page=Página anterior
+inventory.rpg_economy:mailbox.button.next_page=Página seguinte
+inventory.rpg_economy:mailbox.button.new_message=Nova mensagem
+inventory.rpg_economy:mailbox.button.new_message.disable=O envio de mensagens está desabilitado nesse servidor.
+inventory.rpg_economy:mailbox.button.reply=Responder
+inventory.rpg_economy:mailbox.button.withdraw_items=Retirar itens
+
+inventory.rpg_economy:mailbox.dialog.send_mail.name=Enviar mensagem
+inventory.rpg_economy:mailbox.dialog.send_mail.button.send=Enviar
+inventory.rpg_economy:mailbox.dialog.send_mail.label.attachments=Anexos
+
+
+# Inventory - Shop
+inventory.rpg_economy:shop.name.loading=Carregando...
+inventory.rpg_economy:shop.name.not_linked=§4LOJA NÃO LINKADA
+inventory.rpg_economy:shop.name.edit_mode=§4MODO DE EDIÇÃO - §r%s§4 - MODO DE EDIÇÃO
+
+inventory.rpg_economy:shop.common.not_linked=§rA loja deve estar LINKADA para usar essa opção.
+inventory.rpg_economy:shop.common.need_edit_mode=§rA loja deve estar no MODO DE EDIÇÃO para usar essa opção.
+
+inventory.rpg_economy:shop.button.edit_cost=Editar o preço
+inventory.rpg_economy:shop.button.shop_list=Lista de lojas...
+inventory.rpg_economy:shop.button.shop_list.no_block=§rA loja deve ser aberta em um bloco para usar essa opção.
+inventory.rpg_economy:shop.button.stats=Estatísticas...
+inventory.rpg_economy:shop.button.edit_mode=Modo de edição
+inventory.rpg_economy:shop.button.rename_shop=Renomear loja...
+inventory.rpg_economy:shop.button.tab_add=Adicionar aba...
+inventory.rpg_economy:shop.button.tab_add.full=§rA lista de abas está cheia.
+inventory.rpg_economy:shop.button.tab_remove=Remover aba...
+inventory.rpg_economy:shop.button.tab_remove.empty=§rÉ necessário ao menos uma aba para usar essa opção.
+inventory.rpg_economy:shop.button.tab_edit=Editar aba...
+inventory.rpg_economy:shop.button.tab_edit.empty=§rÉ necessário ao menos uma aba para usar essa opção.
+inventory.rpg_economy:shop.button.tab_move_up=Mover aba para cima
+inventory.rpg_economy:shop.button.tab_move_up.at_top=§rJá está no topo.
+inventory.rpg_economy:shop.button.tab_move_down=Mover aba para baixo
+inventory.rpg_economy:shop.button.tab_move_down.at_bottom=§rJá está no fundo.
+
+inventory.rpg_economy:shop.label.player_money=Saldo do jogador
+inventory.rpg_economy:shop.label.stock=Estoque: %s
+
+inventory.rpg_economy:shop.dialog.shop_list.name=Lista de lojas
+inventory.rpg_economy:shop.dialog.shop_list.button.set=Definir
+inventory.rpg_economy:shop.dialog.shop_list.button.shop_add=Adicionar loja...
+inventory.rpg_economy:shop.dialog.shop_list.button.shop_remove=Remover loja
+
+inventory.rpg_economy:shop.dialog.shop_rename.name=Renomear loja
+
+inventory.rpg_economy:shop.dialog.tab_add.name=Adicionar aba
+inventory.rpg_economy:shop.dialog.tab_add.button.add=Adicionar
+inventory.rpg_economy:shop.dialog.tab_add.label.tab_type=Tipo de aba:
+
+inventory.rpg_economy:shop.dialog.tab_remove.name=Remover aba
+
+inventory.rpg_economy:shop.dialog.tab_edit.name=Editar aba
+inventory.rpg_economy:shop.dialog.tab_edit.button.edit=Editar
+
+inventory.rpg_economy:shop.dialog.cost_edit.name=Editar o preço
+inventory.rpg_economy:shop.dialog.cost_edit.button.edit=Editar
+inventory.rpg_economy:shop.dialog.cost_edit.button.cost_edit=Editar o preço
+inventory.rpg_economy:shop.dialog.cost_edit.cost_type.free=Grátis
+inventory.rpg_economy:shop.dialog.cost_edit.cost_type.currency=Moedas
+inventory.rpg_economy:shop.dialog.cost_edit.cost_type.items=Itens
+inventory.rpg_economy:shop.dialog.cost_edit.cost_type.ore_dictionary=Dicionário de minérios
+
+inventory.rpg_economy:shop.dialog.cost_edit.dialog.edit_currency.name=Editar o preço em moedas
+
+inventory.rpg_economy:shop.dialog.cost_edit.dialog.edit_items.name=Editar o preço do item
+inventory.rpg_economy:shop.dialog.cost_edit.dialog.edit_items.button.meta.yes=Meta igual
+inventory.rpg_economy:shop.dialog.cost_edit.dialog.edit_items.button.meta.no=Meta não igual
+inventory.rpg_economy:shop.dialog.cost_edit.dialog.edit_items.button.nbt.yes=NBT igual
+inventory.rpg_economy:shop.dialog.cost_edit.dialog.edit_items.button.nbt.no=NBT não igual
+
+
+# Inventory - Wallet
+inventory.rpg_economy:wallet.name=Maleta
+
+
+# Commands
+commands.rpg_economy:rpg_economy.usage=<saldo | mensagem>
+commands.rpg_economy:rpg_economy.currency.usage=<recarregar>
+commands.rpg_economy:rpg_economy.mail.usage=<recarregar>
+
+# Keybindings
+keys.rpg_economy:category=Estrutura de RPG
+keys.rpg_economy.open_wallet_1=Abrir a maleta 1
+keys.rpg_economy.open_wallet_2=Abrir a maleta 2
+
+# Chat
+chat.rpg_economy:unreadMessageCount=Você tem %d mensagem(ns) não lida(s).
