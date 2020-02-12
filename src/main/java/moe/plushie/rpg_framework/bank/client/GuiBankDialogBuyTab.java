@@ -7,24 +7,24 @@ import moe.plushie.rpg_framework.core.client.gui.GuiHelper;
 import moe.plushie.rpg_framework.core.client.gui.IDialogCallback;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
 
 public class GuiBankDialogBuyTab extends AbstractGuiDialog {
 
     private final IBank bank;
     private final int unlockedTabs;
-    
+
     private GuiButtonExt buttonCancel;
     private GuiButtonExt buttonOK;
-    
-    
+
     public GuiBankDialogBuyTab(GuiScreen parent, String name, IDialogCallback callback, IBank bank, int unlockedTabs) {
         super(parent, name, callback, 190, 100);
         this.bank = bank;
         this.unlockedTabs = unlockedTabs;
         slotHandler = null;
     }
-    
+
     @Override
     public void initGui() {
         super.initGui();
@@ -37,7 +37,7 @@ public class GuiBankDialogBuyTab extends AbstractGuiDialog {
         buttonList.add(buttonOK);
         buttonOK.enabled = bank.getTabUnlockCost(unlockedTabs).canAfford(mc.player);
     }
-    
+
     @Override
     protected void actionPerformed(GuiButton button) {
         if (button == buttonCancel) {
@@ -47,17 +47,13 @@ public class GuiBankDialogBuyTab extends AbstractGuiDialog {
             returnDialogResult(DialogResult.OK);
         }
     }
-    
+
     @Override
     public void drawForeground(int mouseX, int mouseY, float partialTickTime) {
         super.drawForeground(mouseX, mouseY, partialTickTime);
-        String title = "Buy Tab";
-        int titleWidth = fontRenderer.getStringWidth(title);
-        fontRenderer.drawString(title, x + width / 2 - titleWidth / 2, y + 6, 4210752);
-        
         ICost cost = bank.getTabUnlockCost(unlockedTabs);
-        fontRenderer.drawString("Unlock Cost:", x + 10, y + 25, 4210752);
+        fontRenderer.drawString(I18n.format(name + ".label.unlock_cost"), x + 10, y + 25, 4210752);
         GuiHelper.renderCost(fontRenderer, mc.getRenderItem(), cost, x - 12, y + 30, cost.canAfford(mc.player));
-        // drawTitle();
+        drawTitle();
     }
 }

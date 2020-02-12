@@ -57,8 +57,9 @@ inventory.rpg_economy:common.button_ok=OK
 # Inventory - Bank
 inventory.rpg_economy:bank.button.buy_new_tab=Buy New Tab...
 inventory.rpg_economy:bank.tab.name=Tab %d
-inventory.rpg_economy:bank.dialog.buy_tab.name=Buy Tab
 inventory.rpg_economy:bank.invalid_bank=§4Invalid Bank
+inventory.rpg_economy:bank.dialog.buy_tab.name=Buy Tab
+inventory.rpg_economy:bank.dialog.buy_tab.label.unlock_cost=Unlock Cost:
 
 # Inventory - Mailbox
 inventory.rpg_economy:mailbox.name=Mail Box
@@ -68,7 +69,6 @@ inventory.rpg_economy:mailbox.button.new_message=New Message
 inventory.rpg_economy:mailbox.button.new_message.disable=Sending mail is disabled on this server.
 inventory.rpg_economy:mailbox.button.reply=Reply
 inventory.rpg_economy:mailbox.button.withdraw_items=Withdraw Items
-
 inventory.rpg_economy:mailbox.dialog.send_mail.name=Send Mail
 inventory.rpg_economy:mailbox.dialog.send_mail.button.send=Send
 inventory.rpg_economy:mailbox.dialog.send_mail.label.attachments=Attachments

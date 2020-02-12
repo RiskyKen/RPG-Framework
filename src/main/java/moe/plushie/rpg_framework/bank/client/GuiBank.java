@@ -63,7 +63,7 @@ public class GuiBank extends GuiTabbed<ContainerBank> implements IDialogCallback
         
         buttonAddTab = new GuiIconButton(this, 0, width / 2 + 89, getGuiTop() + panelSizeY + 1, 16, 16, TEXTURE_BUTTONS);
         buttonAddTab.setDrawButtonBackground(false).setIconLocation(208, 176, 16, 16);
-        buttonAddTab.setHoverText("Buy New Tab...");
+        buttonAddTab.setHoverText(GuiHelper.getLocalControlName(getName(), "button.buy_new_tab"));
         buttonList.add(buttonAddTab);
     }
     
@@ -82,7 +82,7 @@ public class GuiBank extends GuiTabbed<ContainerBank> implements IDialogCallback
         int y = MathHelper.floor(iconIndex / 16);
         int x = iconIndex - (y * 16);
         for (int i = 0; i < unlockedTabs + bank.getTabStartingCount(); i++) {
-            tabController.addTab(new GuiTab(tabController, "Tab " + (i + 1)).setIconLocation(x * 16, y * 16).setTabTextureSize(26, 30).setPadding(0, 4, 3, 3));
+            tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.name", (i + 1))).setIconLocation(x * 16, y * 16).setTabTextureSize(26, 30).setPadding(0, 4, 3, 3));
         }
         tabController.setActiveTabIndex(oldActive);
     }
@@ -119,7 +119,7 @@ public class GuiBank extends GuiTabbed<ContainerBank> implements IDialogCallback
             PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiButton().setButtonID(getActiveTab()));
         }
         if (button == buttonAddTab) {
-            openDialog(new GuiBankDialogBuyTab(this, "buyTab", this, bank, getContainer().getUnlockedTabs()));
+            openDialog(new GuiBankDialogBuyTab(this, GuiHelper.getLocalControlName(getName(), "dialog.buy_tab") , this, bank, getContainer().getUnlockedTabs()));
         }
     }
 
@@ -173,7 +173,7 @@ public class GuiBank extends GuiTabbed<ContainerBank> implements IDialogCallback
         if (bank != null) {
             return bank.getName();
         } else {
-            return GuiHelper.getLocalControlName(getName(), "invalidBank");
+            return GuiHelper.getLocalControlName(getName(), "invalid_bank");
         }
     }
 
