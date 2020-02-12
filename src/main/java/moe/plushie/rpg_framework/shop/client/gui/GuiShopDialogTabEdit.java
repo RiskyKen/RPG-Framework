@@ -11,6 +11,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
@@ -34,7 +35,6 @@ public class GuiShopDialogTabEdit extends AbstractGuiDialog implements IDropDown
     public GuiShopDialogTabEdit(GuiScreen parent, String name, IDialogCallback callback, IShopTab shopTab) {
         super(parent, name, callback, 190, 150);
         this.shopTab = shopTab;
-
         textFieldName = new GuiTextField(0, fontRenderer, 0, 0, width - 20, 12);
         textFieldName.setText(shopTab.getName());
         iconIndex = shopTab.getIconIndex();
@@ -46,13 +46,13 @@ public class GuiShopDialogTabEdit extends AbstractGuiDialog implements IDropDown
         super.initGui();
         buttonList.clear();
 
-        buttonClose = new GuiButtonExt(-1, x + width - 80 - 10, y + height - 30, 80, 20, "Close");
-        buttonEdit = new GuiButtonExt(-1, x + width - 160 - 20, y + height - 30, 80, 20, "Edit");
+        buttonClose = new GuiButtonExt(-1, x + width - 80 - 10, y + height - 30, 80, 20, I18n.format("inventory.rpg_economy:common.button_close"));
+        buttonEdit = new GuiButtonExt(-1, x + width - 160 - 20, y + height - 30, 80, 20, I18n.format("inventory.rpg_economy:common.button_edit"));
         buttonIconPre = new GuiButtonExt(-1, x + 20 - 10, y + 35, 20, 20, "<");
         buttonIconNext = new GuiButtonExt(-1, x + width - 30, y + 35, 20, 20, ">");
         dropDownTabTye = new GuiDropDownList(-1, x + 10, y + 72, width - 20, "", this);
         for (int i = 0; i < TabType.values().length; i++) {
-            dropDownTabTye.addListItem(TabType.values()[i].toString(), TabType.values()[i].toString(), true);
+            dropDownTabTye.addListItem(I18n.format("inventory.rpg_economy:common.tab_type." + TabType.values()[i].toString().toLowerCase()), TabType.values()[i].toString(), TabType.values()[i] == TabType.BUY);
             if (TabType.values()[i] == shopTab.getTabType()) {
                 dropDownTabTye.setListSelectedIndex(i);
             }

@@ -19,6 +19,7 @@ import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -52,11 +53,11 @@ public class GuiShopDialogEditCostCurrency extends AbstractGuiDialog implements 
         super.initGui();
         buttonList.clear();
 
-        buttonClose = new GuiButtonExt(-1, x + width - 80 - 10, y + height - 30, 80, 20, "Close");
-        buttonEdit = new GuiButtonExt(-1, x + width - 160 - 20, y + height - 30, 80, 20, "Edit");
+        buttonClose = new GuiButtonExt(-1, x + width - 80 - 10, y + height - 30, 80, 20, I18n.format("inventory.rpg_economy:common.button_close"));
+        buttonEdit = new GuiButtonExt(-1, x + width - 160 - 20, y + height - 30, 80, 20, I18n.format("inventory.rpg_economy:common.button_edit"));
         dropDownCurrencyTypes = new GuiDropDownList(-1, x + 10, y + 25, 100, "", this);
 
-        dropDownCurrencyTypes.addListItem("None", "", true);
+        dropDownCurrencyTypes.addListItem(I18n.format("inventory.rpg_economy:common.none"), "", true);
         dropDownCurrencyTypes.setListSelectedIndex(0);
         CurrencyManager currencyManager = RPGFramework.getProxy().getCurrencyManager();
         for (int i = 0; i < currencyManager.getCurrencies().length; i++) {
@@ -158,10 +159,7 @@ public class GuiShopDialogEditCostCurrency extends AbstractGuiDialog implements 
         }
         GlStateManager.popAttrib();
         super.drawForeground(mouseX, mouseY, partialTickTime);
-        String title = "Edit Cost";
-        int titleWidth = fontRenderer.getStringWidth(title);
-        fontRenderer.drawString(title, x + width / 2 - titleWidth / 2, y + 6, 4210752);
-        // drawTitle();
+        drawTitle();
 
         GlStateManager.color(1F, 1F, 1F, 1F);
         // mc.renderEngine.bindTexture(ICONS);

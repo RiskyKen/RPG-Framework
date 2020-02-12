@@ -49,10 +49,17 @@ item.rpg_economy:basic_loot_bag.name=Basic Loot Bag
 # Creative tab
 itemGroup.rpg_economy=RPG Framework
 
+
 # Inventory - Common
 inventory.rpg_economy:common.button_close=Close
-inventory.rpg_economy:common.button_cancel=Canel
+inventory.rpg_economy:common.button_cancel=Cancel
 inventory.rpg_economy:common.button_ok=OK
+inventory.rpg_economy:common.button_edit=Edit
+inventory.rpg_economy:common.tab_type.buy=Buy
+inventory.rpg_economy:common.tab_type.sell=Sell
+inventory.rpg_economy:common.none=None
+inventory.rpg_economy:common.previous=Previous
+inventory.rpg_economy:common.next=Next
 
 
 # Inventory - Bank
@@ -107,11 +114,36 @@ inventory.rpg_economy:shop.label.player_money=Player Money
 inventory.rpg_economy:shop.label.stock=Stock: %s
 
 inventory.rpg_economy:shop.dialog.shop_list.name=Shop List
+inventory.rpg_economy:shop.dialog.shop_list.button.set=Set
+inventory.rpg_economy:shop.dialog.shop_list.button.shop_add=Add Shop...
+inventory.rpg_economy:shop.dialog.shop_list.button.shop_remove=Remove Shop
+
 inventory.rpg_economy:shop.dialog.shop_rename.name=Rename Shop
+
 inventory.rpg_economy:shop.dialog.tab_add.name=Add Tab
+inventory.rpg_economy:shop.dialog.tab_add.button.add=Add
+inventory.rpg_economy:shop.dialog.tab_add.label.tab_type=Tab Type:
+
 inventory.rpg_economy:shop.dialog.tab_remove.name=Remove Tab
+
 inventory.rpg_economy:shop.dialog.tab_edit.name=Edit Tab
+inventory.rpg_economy:shop.dialog.tab_edit.button.edit=Edit
+
 inventory.rpg_economy:shop.dialog.cost_edit.name=Edit Cost
+inventory.rpg_economy:shop.dialog.cost_edit.button.edit=Edit
+inventory.rpg_economy:shop.dialog.cost_edit.button.cost_edit=Edit Cost
+inventory.rpg_economy:shop.dialog.cost_edit.cost_type.free=Free
+inventory.rpg_economy:shop.dialog.cost_edit.cost_type.currency=Currency
+inventory.rpg_economy:shop.dialog.cost_edit.cost_type.items=Items
+inventory.rpg_economy:shop.dialog.cost_edit.cost_type.ore_dictionary=Ore Dictionary
+
+inventory.rpg_economy:shop.dialog.cost_edit.dialog.edit_currency.name=Edit Currency Cost
+
+inventory.rpg_economy:shop.dialog.cost_edit.dialog.edit_items.name=Edit Item Cost
+inventory.rpg_economy:shop.dialog.cost_edit.dialog.edit_items.button.meta.yes=Match Meta
+inventory.rpg_economy:shop.dialog.cost_edit.dialog.edit_items.button.meta.no=Don't Match Meta
+inventory.rpg_economy:shop.dialog.cost_edit.dialog.edit_items.button.nbt.yes=Match NBT
+inventory.rpg_economy:shop.dialog.cost_edit.dialog.edit_items.button.nbt.no=Don't Match NBT
 
 
 # Inventory - Wallet

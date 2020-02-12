@@ -19,6 +19,7 @@ import moe.plushie.rpg_framework.core.common.network.client.MessageClientRequest
 import moe.plushie.rpg_framework.core.common.network.client.MessageClientRequestSync.SyncType;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
 
@@ -47,16 +48,16 @@ public class GuiShopDialogShopList extends AbstractGuiDialog {
         super.initGui();
         buttonList.clear();
 
-        buttonClose = new GuiButtonExt(-1, x + width - 80 - 10, y + height - 30, 80, 20, "Close");
-        buttonSet = new GuiButtonExt(-1, x + width - 160 - 20, y + height - 30, 80, 20, "Set");
+        buttonClose = new GuiButtonExt(-1, x + width - 80 - 10, y + height - 30, 80, 20, I18n.format("inventory.rpg_economy:common.button_close"));
+        buttonSet = new GuiButtonExt(-1, x + width - 160 - 20, y + height - 30, 80, 20, I18n.format(name + ".button.set"));
         buttonEditTabAdd = new GuiIconButton(parent, 0, x + 6, y + height - 30, 16, 16, TEXTURE_SHOP);
         buttonEditTabRemove = new GuiIconButton(parent, 0, x + 24, y + height - 30, 16, 16, TEXTURE_SHOP);
 
         buttonEditTabAdd.setDrawButtonBackground(false).setIconLocation(208, 176, 16, 16);
         buttonEditTabRemove.setDrawButtonBackground(false).setIconLocation(208, 160, 16, 16);
 
-        buttonEditTabAdd.setHoverText("Add Shop...");
-        buttonEditTabRemove.setHoverText("Remove Shop");
+        buttonEditTabAdd.setHoverText(I18n.format(name + ".button.shop_add"));
+        buttonEditTabRemove.setHoverText(I18n.format(name + ".button.shop_remove"));
 
         listShops = new GuiList(x + 5, y + 15, width - 20, height - 50, 12);
         for (IGuiListItem listItem : items) {

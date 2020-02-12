@@ -7,6 +7,7 @@ import moe.plushie.rpg_framework.core.client.lib.LibGuiResources;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
@@ -31,8 +32,8 @@ public class GuiShopDialogTabRemove extends AbstractGuiDialog {
         super.initGui();
         buttonList.clear();
 
-        buttonCancel = new GuiButtonExt(-1, x + width - 80 - 10, y + height - 30, 80, 20, "Close");
-        buttonOK = new GuiButtonExt(-1, x + width - 160 - 20, y + height - 30, 80, 20, "Remove");
+        buttonCancel = new GuiButtonExt(-1, x + width - 80 - 10, y + height - 30, 80, 20, I18n.format("inventory.rpg_economy:common.button_cancel"));
+        buttonOK = new GuiButtonExt(-1, x + width - 160 - 20, y + height - 30, 80, 20, I18n.format("inventory.rpg_economy:common.button_ok"));
 
         buttonList.add(buttonCancel);
         buttonList.add(buttonOK);

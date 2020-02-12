@@ -5,6 +5,7 @@ import moe.plushie.rpg_framework.core.client.gui.IDialogCallback;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
 
 public class GuiShopDialogRename extends AbstractGuiDialog {
@@ -25,8 +26,8 @@ public class GuiShopDialogRename extends AbstractGuiDialog {
         super.initGui();
         buttonList.clear();
 
-        buttonClose = new GuiButtonExt(-1, x + width - 80 - 10, y + height - 30, 80, 20, "Close");
-        buttonOK = new GuiButtonExt(-1, x + width - 160 - 20, y + height - 30, 80, 20, "OK");
+        buttonClose = new GuiButtonExt(-1, x + width - 80 - 10, y + height - 30, 80, 20, I18n.format("inventory.rpg_economy:common.button_close"));
+        buttonOK = new GuiButtonExt(-1, x + width - 160 - 20, y + height - 30, 80, 20, I18n.format("inventory.rpg_economy:common.button_ok"));
 
         textFieldName.x = x + 10;
         textFieldName.y = y + 18;

@@ -10,6 +10,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
@@ -39,13 +40,13 @@ public class GuiShopDialogTabAdd extends AbstractGuiDialog implements IDropDownL
         super.initGui();
         buttonList.clear();
 
-        buttonClose = new GuiButtonExt(-1, x + width - 80 - 10, y + height - 30, 80, 20, "Close");
-        buttonAdd = new GuiButtonExt(-1, x + width - 160 - 20, y + height - 30, 80, 20, "Add");
+        buttonClose = new GuiButtonExt(-1, x + width - 80 - 10, y + height - 30, 80, 20, I18n.format("inventory.rpg_economy:common.button_close"));
+        buttonAdd = new GuiButtonExt(-1, x + width - 160 - 20, y + height - 30, 80, 20, I18n.format(name + ".button.add"));
         buttonIconPre = new GuiButtonExt(-1, x + 20 - 10, y + 35, 20, 20, "<");
         buttonIconNext = new GuiButtonExt(-1, x + width - 30, y + 35, 20, 20, ">");
         dropDownTabTye = new GuiDropDownList(-1, x + 10, y + 72, width - 20, "", this);
         for (TabType tabType : TabType.values()) {
-            dropDownTabTye.addListItem(tabType.toString(), tabType.toString(), true);
+            dropDownTabTye.addListItem(I18n.format("inventory.rpg_economy:common.tab_type." + tabType.toString().toLowerCase()), tabType.toString(), tabType == TabType.BUY);
         }
         dropDownTabTye.setListSelectedIndex(0);
 
@@ -104,7 +105,7 @@ public class GuiShopDialogTabAdd extends AbstractGuiDialog implements IDropDownL
         drawTexturedModalRect(x + width / 2 - 8, y + 35, 16 * iconX, 16 * iconY, 16, 16);
         fontRenderer.drawString(iconText, x + width / 2 - textWidth / 2, y + 52, 0x333333);
 
-        fontRenderer.drawString("Tab Type:", x + 10, y + 62, 0x333333);
+        fontRenderer.drawString(I18n.format(name + ".label.tab_type"), x + 10, y + 62, 0x333333);
 
         dropDownTabTye.drawForeground(mc, mouseX, mouseY, partialTickTime);
         drawTitle();

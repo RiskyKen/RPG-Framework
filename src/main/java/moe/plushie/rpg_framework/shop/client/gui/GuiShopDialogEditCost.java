@@ -11,6 +11,7 @@ import moe.plushie.rpg_framework.currency.common.Cost;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
 
 public class GuiShopDialogEditCost extends AbstractGuiDialog implements IDropDownListCallback {
@@ -41,14 +42,14 @@ public class GuiShopDialogEditCost extends AbstractGuiDialog implements IDropDow
         super.initGui();
         buttonList.clear();
 
-        buttonClose = new GuiButtonExt(-1, x + width - 80 - 10, y + height - 30, 80, 20, "Close");
-        buttonEdit = new GuiButtonExt(-1, x + width - 160 - 20, y + height - 30, 80, 20, "Edit");
+        buttonClose = new GuiButtonExt(-1, x + width - 80 - 10, y + height - 30, 80, 20, I18n.format("inventory.rpg_economy:common.button_close"));
+        buttonEdit = new GuiButtonExt(-1, x + width - 160 - 20, y + height - 30, 80, 20, I18n.format("inventory.rpg_economy:common.button_edit"));
         dropDownCostTypes = new GuiDropDownList(0, x + 10, y + 25, 100, "", this);
-        buttonEditType = new GuiButtonExt(-1, x + 120, y + 25, 80, 20, "Edit Cost");
+        buttonEditType = new GuiButtonExt(-1, x + 120, y + 25, 80, 20, I18n.format(name + ".button.cost_edit"));
 
-        String[] costTypes = new String[] { "Free", "Currency", "Items", "Ore Dictionary" };
+        String[] costTypes = new String[] { "free", "currency", "items", "ore_dictionary" };
         for (String type : costTypes) {
-            dropDownCostTypes.addListItem(type);
+            dropDownCostTypes.addListItem(I18n.format(name + ".cost_type." + type), "", !type.equals("ore_dictionary"));
         }
 
         dropDownCostTypes.setListSelectedIndex(0);
@@ -82,14 +83,14 @@ public class GuiShopDialogEditCost extends AbstractGuiDialog implements IDropDow
                 if (costNew != null) {
                     wallet = costNew.getWalletCost();
                 }
-                openDialog(new GuiShopDialogEditCostCurrency(parent, "editCurrency", this, 280, 130, wallet));
+                openDialog(new GuiShopDialogEditCostCurrency(parent, name + ".dialog.edit_currency", this, 280, 130, wallet));
             }
             if (dropDownCostTypes.getListSelectedIndex() == 2) {
                 IItemMatcher[] itemCost = null;
                 if (costNew != null) {
                     itemCost = costNew.getItemCost();
                 }
-                openDialog(new GuiShopDialogEditCostItems(parent, "editItems", this, 190, 220, slotIndex, itemCost));
+                openDialog(new GuiShopDialogEditCostItems(parent, name + ".dialog.edit_items", this, 190, 220, slotIndex, itemCost));
             }
         }
     }
