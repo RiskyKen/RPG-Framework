@@ -88,7 +88,7 @@ public class GuiShop extends GuiTabbed<ContainerShop> implements IDialogCallback
     public void initGui() {
         this.xSize = 320;
         this.ySize = 145;
-        if (ConfigHandler.options.showPlayerInventoryInShopGUI) {
+        if (ConfigHandler.optionsShared.showPlayerInventoryInShopGUI) {
             this.ySize += 98 + 1;
         }
         super.initGui();
@@ -235,7 +235,7 @@ public class GuiShop extends GuiTabbed<ContainerShop> implements IDialogCallback
                 // drawTexturedModalRect(getGuiLeft() + slot.xPos - 1, getGuiTop() + slot.yPos - 1, 238, 0, 18, 18);
             }
         }
-        if (ConfigHandler.options.showPlayerInventoryInShopGUI) {
+        if (ConfigHandler.optionsShared.showPlayerInventoryInShopGUI) {
             GuiHelper.renderPlayerInvTexture(getGuiLeft() + 16, getGuiTop() + 145 + 1);
         }
     }
@@ -256,7 +256,7 @@ public class GuiShop extends GuiTabbed<ContainerShop> implements IDialogCallback
         int titleWidth = fontRenderer.getStringWidth(title);
         fontRenderer.drawString(title, xSize / 2 - titleWidth / 2, 6, 0x333333);
 
-        if (ConfigHandler.options.showPlayerInventoryInShopGUI) {
+        if (ConfigHandler.optionsShared.showPlayerInventoryInShopGUI) {
             GuiHelper.renderPlayerInvlabel(16, 145 + 1, fontRenderer);
         }
 

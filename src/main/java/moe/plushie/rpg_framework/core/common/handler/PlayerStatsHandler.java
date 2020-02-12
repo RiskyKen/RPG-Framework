@@ -20,7 +20,7 @@ public final class PlayerStatsHandler {
 
     static {
         TablePlayers.create();
-        if (ConfigHandler.options.heatmapTrackingRate > 0) {
+        if (ConfigHandler.optionsShared.heatmapTrackingRate > 0) {
             TableHeatmaps.create();
         }
     }
@@ -42,13 +42,13 @@ public final class PlayerStatsHandler {
 
     @SubscribeEvent
     public static void onWorldTickEvent(WorldTickEvent event) {
-        if (event.phase == Phase.START | event.side == Side.CLIENT | ConfigHandler.options.heatmapTrackingRate == 0) {
+        if (event.phase == Phase.START | event.side == Side.CLIENT | ConfigHandler.optionsShared.heatmapTrackingRate == 0) {
             return;
         }
         
         World world = event.world;
         world.profiler.startSection(LibModInfo.ID + "heatmapUpdates");
-        if ((world.getTotalWorldTime() % (20L * ((long) ConfigHandler.options.heatmapTrackingRate))) != 0) {
+        if ((world.getTotalWorldTime() % (20L * (ConfigHandler.optionsShared.heatmapTrackingRate))) != 0) {
             return;
         }
         world.profiler.startSection("createTable");

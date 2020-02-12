@@ -1,4 +1,4 @@
-package moe.plushie.rpg_framework.value;
+package moe.plushie.rpg_framework.itemData;
 
 import java.io.File;
 
@@ -12,13 +12,13 @@ import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ModuleValue extends ModModule {
+public class ModuleItemData extends ModModule {
 
-    private static ValueManager valueManager;
+    private static ItemDataManager itemDataManager;
 
-    public ModuleValue(File modDirectory) {
-        super("value");
-        valueManager = new ValueManager(modDirectory);
+    public ModuleItemData(File modDirectory) {
+        super("item_data");
+        itemDataManager = new ItemDataManager(modDirectory);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class ModuleValue extends ModModule {
 
     @Override
     public void serverAboutToStart(FMLServerAboutToStartEvent event) {
-        valueManager.reload();
+        itemDataManager.reload();
     }
 
     @Override
@@ -51,7 +51,7 @@ public class ModuleValue extends ModModule {
     public void serverStopping(FMLServerStoppingEvent event) {
     }
 
-    public static ValueManager getManager() {
-        return valueManager;
+    public static ItemDataManager getManager() {
+        return itemDataManager;
     }
 }

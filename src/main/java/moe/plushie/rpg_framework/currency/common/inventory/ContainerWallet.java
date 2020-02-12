@@ -34,7 +34,7 @@ public class ContainerWallet extends ModContainer implements IButtonPress {
 
         inventoryWallet = new ModInventory("wallet", currency.getCurrencyVariants().length);
 
-        if (ConfigHandler.options.showPlayerInventoryInWalletGUI) {
+        if (ConfigHandler.optionsShared.showPlayerInventoryInWalletGUI) {
             addPlayerSlots(8, 114);
         }
 
@@ -42,10 +42,10 @@ public class ContainerWallet extends ModContainer implements IButtonPress {
         int slotSpacing = 1;
         int slotSize = 18;
 
-        int halfSizeX = (int) ((float) sizeX / 2F);
+        int halfSizeX = (int) (sizeX / 2F);
         int slotCount = currency.getCurrencyVariants().length;
         int slotTotalWidth = (slotSize + slotSpacing) * slotCount - 1;
-        int halfSlotTotalWidth = (int) ((float) slotTotalWidth / 2F);
+        int halfSlotTotalWidth = (int) (slotTotalWidth / 2F);
 
         for (int i = 0; i < currency.getCurrencyVariants().length; i++) {
             addSlotToContainer(new SlotCurrency(currency, currency.getCurrencyVariants()[i], inventoryWallet, i, halfSizeX - halfSlotTotalWidth + i * (slotSize + slotSpacing), 54));

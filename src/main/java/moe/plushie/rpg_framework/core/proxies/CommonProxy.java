@@ -26,12 +26,12 @@ import moe.plushie.rpg_framework.currency.ModuleCurrency;
 import moe.plushie.rpg_framework.currency.common.Currency;
 import moe.plushie.rpg_framework.currency.common.CurrencyManager;
 import moe.plushie.rpg_framework.currency.common.capability.CurrencyCapabilityManager;
+import moe.plushie.rpg_framework.itemData.ItemDataManager;
+import moe.plushie.rpg_framework.itemData.ModuleItemData;
 import moe.plushie.rpg_framework.mail.ModuleMail;
 import moe.plushie.rpg_framework.mail.common.MailSystemManager;
 import moe.plushie.rpg_framework.shop.ModuleShop;
 import moe.plushie.rpg_framework.shop.common.ShopManager;
-import moe.plushie.rpg_framework.value.ModuleValue;
-import moe.plushie.rpg_framework.value.ValueManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.Mod;
@@ -57,13 +57,13 @@ public class CommonProxy {
     private ModSounds modSounds;
 
     private CurrencyManager currencyManager;
-    private ValueManager valueManager;
+    private ItemDataManager valueManager;
     private MailSystemManager mailSystemManager;
     private ShopManager shopManager;
     private BankManager bankManager;
 
     private IModModule moduleCurrency = new ModuleCurrency();
-    private IModModule moduleValue = new ModuleValue(getModDirectory());
+    private IModModule moduleItemData = new ModuleItemData(getModDirectory());
     private IModModule moduleMail = new ModuleMail();
     private IModModule moduleShop = new ModuleShop();
     private IModModule moduleBank = new ModuleBank();

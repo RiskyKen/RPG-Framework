@@ -56,7 +56,7 @@ public class GuiWallet extends GuiContainer {
     public void initGui() {
         this.xSize = TEXTURE_SIZE_X;
         this.ySize = TEXTURE_SIZE_Y;
-        if (ConfigHandler.options.showPlayerInventoryInWalletGUI) {
+        if (ConfigHandler.optionsShared.showPlayerInventoryInWalletGUI) {
             this.ySize += 98 + 1;
         }
         super.initGui();
@@ -64,10 +64,10 @@ public class GuiWallet extends GuiContainer {
         int slotSpacing = 1;
         int slotSize = 18;
         
-        int halfSizeX = (int) ((float) xSize / 2F);
+        int halfSizeX = (int) (xSize / 2F);
         int slotCount = currency.getCurrencyVariants().length;
         int slotTotalWidth = (slotSize + slotSpacing) * slotCount - 1;
-        int halfSlotTotalWidth = (int) ((float) slotTotalWidth / 2F);
+        int halfSlotTotalWidth = (int) (slotTotalWidth / 2F);
         int startX = halfSizeX - halfSlotTotalWidth - 1;
         
         for (int i = 0; i < slotCount; i++) {
@@ -113,7 +113,7 @@ public class GuiWallet extends GuiContainer {
                 drawTexturedModalRect(getGuiLeft() + slot.xPos - 1, getGuiTop() + slot.yPos - 1, 238, 0, 18, 18);
             }
         }
-        if (ConfigHandler.options.showPlayerInventoryInWalletGUI) {
+        if (ConfigHandler.optionsShared.showPlayerInventoryInWalletGUI) {
             GuiHelper.renderPlayerInvTexture(getGuiLeft(), getGuiTop() + TEXTURE_SIZE_Y + 1);
         }
     }
@@ -128,7 +128,7 @@ public class GuiWallet extends GuiContainer {
         int valueWidth = fontRenderer.getStringWidth(value);
         fontRenderer.drawString(value, 139 - valueWidth, 21, 0x333333);
         
-        if (ConfigHandler.options.showPlayerInventoryInWalletGUI) {
+        if (ConfigHandler.optionsShared.showPlayerInventoryInWalletGUI) {
             GuiHelper.renderPlayerInvlabel(0, TEXTURE_SIZE_Y + 1, fontRenderer);
         }
         GlStateManager.pushMatrix();

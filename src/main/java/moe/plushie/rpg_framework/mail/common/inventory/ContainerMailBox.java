@@ -22,10 +22,10 @@ import moe.plushie.rpg_framework.core.common.utils.UtilItems;
 import moe.plushie.rpg_framework.core.database.TableMail;
 import moe.plushie.rpg_framework.currency.common.Cost;
 import moe.plushie.rpg_framework.currency.common.Wallet;
+import moe.plushie.rpg_framework.itemData.ModuleItemData;
 import moe.plushie.rpg_framework.mail.common.MailMessage;
 import moe.plushie.rpg_framework.mail.common.MailSystem;
 import moe.plushie.rpg_framework.mail.common.tileentities.TileEntityMailBox;
-import moe.plushie.rpg_framework.value.ModuleValue;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IContainerListener;
@@ -201,7 +201,7 @@ public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> {
 
     public int getStackValue(double index) {
         if (index < getAttachments().size()) {
-            ICost cost = ModuleValue.getManager().getValue(getAttachments().get((int) index));
+            ICost cost = ModuleItemData.getManager().getValue(getAttachments().get((int) index));
             if (cost.hasWalletCost()) {
                 return cost.getWalletCost().getAmount();
             }

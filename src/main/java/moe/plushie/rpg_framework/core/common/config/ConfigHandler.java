@@ -12,11 +12,13 @@ public class ConfigHandler {
     public static final String CATEGORY_CURRENCY = "Currency";
     public static final String CATEGORY_MAIL = "Mail";
     public static final String CATEGORY_SHOP = "Shop ";
+    public static final String CATEGORY_VALUE = "Value";
     
     public static Configuration config;
     
-    public static ConfigOptions options = new ConfigOptions();
-    public static ConfigOptions loaded = new ConfigOptions();
+    public static ConfigOptionsShared optionsShared = new ConfigOptionsShared();
+    public static ConfigOptionsShared optionsSharedLoaded = new ConfigOptionsShared();
+    public static ConfigOptionsLocal optionsLocal = new ConfigOptionsLocal();
     
     public static void init(File file) {
         if (config == null) {
@@ -33,7 +35,7 @@ public class ConfigHandler {
         if (config.hasChanged()) {
             config.save();
         }
-        loaded = options;
+        optionsSharedLoaded = optionsShared;
     }
 
     private static void checkIfUpdated() {
@@ -41,15 +43,19 @@ public class ConfigHandler {
         if (LibModInfo.VERSION.startsWith("@VER")) {
             return;
         }
-        if (versionCompare(options.lastVersion.replaceAll("-", "."), localVersion.replaceAll("-", ".")) < 0) {
-            RPGFramework.getLogger().info(String.format("Updated from version %s to version %s.", options.lastVersion, localVersion));
+        if (optionsLocal.lastVersion.equals("0.0")) {
+            optionsLocal.firstRun = true;
+            RPGFramework.getLogger().info("First run detected.");
+        }
+        if (versionCompare(optionsLocal.lastVersion.replaceAll("-", "."), localVersion.replaceAll("-", ".")) < 0) {
+            RPGFramework.getLogger().info(String.format("Updated from version %s to version %s.", optionsLocal.lastVersion, localVersion));
             config.getCategory(CATEGORY_GENERAL).get("lastVersion").set(localVersion);
             if (config.hasChanged()) {
                 config.save();
             }
-            options.hasUpdated = true;
+            optionsLocal.hasUpdated = true;
         } else {
-            options.hasUpdated = false;
+            optionsLocal.hasUpdated = false;
         }
     }
     
@@ -57,25 +63,25 @@ public class ConfigHandler {
         config.setCategoryComment(CATEGORY_GENERAL, "General settings.");
         
         if (!LibModInfo.VERSION.startsWith("@VER")) {
-            options.lastVersion = config.getString("lastVersion", CATEGORY_GENERAL, "0.0",
+            optionsLocal.lastVersion = config.getString("lastVersion", CATEGORY_GENERAL, "0.0",
                     "Used by the mod to check if it has been updated.");
         }
         
-        options.heatmapTrackingRate = config.getInt("heatmapTrackingRate", CATEGORY_GENERAL, 5, 0, 300,
+        optionsShared.heatmapTrackingRate = config.getInt("heatmapTrackingRate", CATEGORY_GENERAL, 5, 0, 300,
                 "How often in seconds a players location is added to the heatmap. 0 = Disabled.");
     }
     
     private static void loadCategoryCurrency() {
         config.setCategoryComment(CATEGORY_CURRENCY, "Setting to do with the currency system.");
         
-        options.showPlayerInventoryInWalletGUI = config.getBoolean("showPlayerInventoryInWalletGUI", CATEGORY_CURRENCY, true, 
+        optionsShared.showPlayerInventoryInWalletGUI = config.getBoolean("showPlayerInventoryInWalletGUI", CATEGORY_CURRENCY, true, 
                 "Is the players inventory shown in the wallet GUI.");
     }
     
     private static void loadCategoryShop() {
         config.setCategoryComment(CATEGORY_SHOP, "Setting to do with the shop system.");
         
-        options.showPlayerInventoryInShopGUI = config.getBoolean("showPlayerInventoryInShopGUI", CATEGORY_SHOP, true,
+        optionsShared.showPlayerInventoryInShopGUI = config.getBoolean("showPlayerInventoryInShopGUI", CATEGORY_SHOP, true,
                 "Is the players inventory shown in the shop GUI.");
     }
 
