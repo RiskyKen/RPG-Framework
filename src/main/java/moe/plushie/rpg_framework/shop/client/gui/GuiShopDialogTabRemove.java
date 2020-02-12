@@ -23,6 +23,7 @@ public class GuiShopDialogTabRemove extends AbstractGuiDialog {
     public GuiShopDialogTabRemove(GuiScreen parent, String name, IDialogCallback callback, int width, int height, IShopTab shopTab) {
         super(parent, name, callback, width, height);
         this.shopTab = shopTab;
+        this.slotHandler = null;
     }
 
     @Override
