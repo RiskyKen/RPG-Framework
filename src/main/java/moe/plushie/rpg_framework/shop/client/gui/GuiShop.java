@@ -247,7 +247,7 @@ public class GuiShop extends GuiTabbed<ContainerShop> implements IDialogCallback
         if (shop != null) {
             title = shop.getName();
         }
-        if (!isShopLinked()) {
+        if (!isShopLinked() & !getContainer().isLoadingShop()) {
             title = GuiHelper.getLocalControlName(getName(), "name.not_linked");
         }
         if (editMode) {

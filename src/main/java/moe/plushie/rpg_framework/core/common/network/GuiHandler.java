@@ -76,7 +76,7 @@ public class GuiHandler implements IGuiHandler {
             return new ContainerBank(player, bank, dbPlayer);
         case SHOP_COMMAND:
             IIdentifier identifier = new IdentifierInt(x);
-            return new ContainerShop(player, RPGFramework.getProxy().getShopManager().getShop(identifier), null);
+            return new ContainerShop(player, identifier, null);
         case LOOT_EDITOR_COMMAND:
             return new ContainerLootEditor(player);
         case BASIC_LOOT_BAG:

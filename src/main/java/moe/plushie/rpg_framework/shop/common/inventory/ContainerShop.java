@@ -16,6 +16,8 @@ import moe.plushie.rpg_framework.core.common.inventory.slot.SlotHidable;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerShop;
 import moe.plushie.rpg_framework.core.common.utils.UtilItems;
+import moe.plushie.rpg_framework.core.database.DatabaseExecutor;
+import moe.plushie.rpg_framework.core.database.DatabaseExecutor.IShopLoadCallback;
 import moe.plushie.rpg_framework.shop.common.Shop.ShopItem;
 import moe.plushie.rpg_framework.shop.common.Shop.ShopTab;
 import moe.plushie.rpg_framework.shop.common.ShopManager;
@@ -24,14 +26,17 @@ import moe.plushie.rpg_framework.shop.common.tileentities.TileEntityShop;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ClickType;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ContainerShop extends ModContainer {
+public class ContainerShop extends ModContainer implements IShopLoadCallback {
 
     private final InventoryBasic invShop;
     private final InventoryBasic invPrice;
@@ -44,11 +49,13 @@ public class ContainerShop extends ModContainer {
     private boolean editMode = false;
     private int activeTabIndex = 0;
     private boolean dirty = false;
-
-    public ContainerShop(EntityPlayer entityPlayer, IShop shop, TileEntityShop tileEntityShop) {
+    private boolean loadingShop = true;
+    private boolean loadingShopLast = true;
+    
+    public ContainerShop(EntityPlayer entityPlayer, IIdentifier identifier, TileEntityShop tileEntityShop) {
         super(entityPlayer.inventory);
         this.player = entityPlayer;
-        this.shop = shop;
+        // this.shop = shop;
         this.tileEntity = tileEntityShop;
         invShop = new InventoryBasic("shop", false, 8);
         invPrice = new InventoryBasic("price", false, 5);
@@ -76,6 +83,8 @@ public class ContainerShop extends ModContainer {
             addSlotToContainerAndList(slotHidable, slotsPrice);
             slotHidable.setVisible(true);
         }
+        // sendShopToListeners(false);
+        loadShop(identifier);
     }
 
     public ArrayList<Slot> getSlotsShop() {
@@ -84,6 +93,11 @@ public class ContainerShop extends ModContainer {
 
     public ArrayList<Slot> getSlotsPrice() {
         return slotsPrice;
+    }
+    
+    private void loadShop(IIdentifier identifier) {
+        loadingShop = true;
+        DatabaseExecutor.loadShop(this, identifier);
     }
 
     @Override
@@ -105,6 +119,34 @@ public class ContainerShop extends ModContainer {
             }
         }
         return super.slotClick(slotId, dragType, clickTypeIn, player);
+    }
+    
+    @Override
+    public void detectAndSendChanges() {
+        super.detectAndSendChanges();
+        for (int i = 0; i < this.listeners.size(); ++i) {
+            IContainerListener icontainerlistener = this.listeners.get(i);
+            if (loadingShop != loadingShopLast) {
+                if (loadingShop) {
+                    icontainerlistener.sendWindowProperty(this, 0, 1);
+                } else {
+                    icontainerlistener.sendWindowProperty(this, 0, 0);
+                }
+            }
+        }
+        loadingShopLast = loadingShop;
+    }
+    
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void updateProgressBar(int id, int data) {
+        if (id == 0) {
+            loadingShop = data == 1;
+        }
+    }
+    
+    public boolean isLoadingShop() {
+        return loadingShop;
     }
 
     @Override
@@ -164,6 +206,11 @@ public class ContainerShop extends ModContainer {
 
     public void setShop(IShop shop) {
         this.shop = shop;
+        if (!player.getEntityWorld().isRemote) {
+            changeTab(0);
+            sendShopToListeners(false);
+            PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerShop(shop, false), (EntityPlayerMP) player);
+        }
     }
 
     public void onSlotChanged(int slotIndex, ItemStack stack) {
@@ -266,10 +313,11 @@ public class ContainerShop extends ModContainer {
     public void setShopIdentifier(IIdentifier identifier) {
         if (tileEntity != null) {
             tileEntity.setShop(identifier);
+            shop = null;
             changeTab(0);
         }
-        shop = RPGFramework.getProxy().getShopManager().getShop(identifier);
         sendShopToListeners(false);
+        loadShop(identifier);
     }
 
     private void sendShopToListeners(boolean update) {
@@ -291,5 +339,11 @@ public class ContainerShop extends ModContainer {
         ShopManager shopManager = RPGFramework.getProxy().getShopManager();
         shopManager.removeShop(shopIdentifier);
         shopManager.syncToClient((EntityPlayerMP) player);
+    }
+
+    @Override
+    public void onShopLoad(IShop shop) {
+        setShop(shop);
+        loadingShop = false;
     }
 }

@@ -3,8 +3,6 @@ package moe.plushie.rpg_framework.shop.common.blocks;
 import moe.plushie.rpg_framework.core.common.blocks.AbstractModBlockContainer;
 import moe.plushie.rpg_framework.core.common.lib.EnumGuiId;
 import moe.plushie.rpg_framework.core.common.lib.LibBlockNames;
-import moe.plushie.rpg_framework.core.common.network.PacketHandler;
-import moe.plushie.rpg_framework.core.common.network.server.MessageServerShop;
 import moe.plushie.rpg_framework.shop.common.tileentities.TileEntityShop;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.properties.IProperty;
@@ -13,7 +11,6 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -34,6 +31,7 @@ public class BlockShop extends AbstractModBlockContainer {
         return new BlockStateContainer(this, new IProperty[] { STATE_FACING });
     }
 
+    @Override
     public IBlockState getStateFromMeta(int meta) {
         boolean northSouthBit = getBitBool(meta, 0);
         boolean posNegBit = getBitBool(meta, 1);
@@ -54,6 +52,7 @@ public class BlockShop extends AbstractModBlockContainer {
         return this.getDefaultState().withProperty(STATE_FACING, facing);
     }
 
+    @Override
     public int getMetaFromState(IBlockState state) {
         EnumFacing facing = state.getValue(STATE_FACING);
         int meta = 0;
@@ -79,13 +78,6 @@ public class BlockShop extends AbstractModBlockContainer {
             return false;
         }
         openGui(playerIn, EnumGuiId.SHOP_TILE.ordinal(), worldIn, pos, state, facing);
-        if (!worldIn.isRemote) {
-            TileEntity te = worldIn.getTileEntity(pos);
-            if (te != null && te instanceof TileEntityShop) {
-                PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerShop(((TileEntityShop)te).getShop(), false), (EntityPlayerMP) playerIn);
-            }
-        }
-        
         return true;
     }
 

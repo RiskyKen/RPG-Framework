@@ -1,8 +1,6 @@
 package moe.plushie.rpg_framework.shop.common.tileentities;
 
 import moe.plushie.rpg_framework.api.core.IIdentifier;
-import moe.plushie.rpg_framework.api.shop.IShop;
-import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.inventory.IGuiFactory;
 import moe.plushie.rpg_framework.core.common.serialize.IdentifierSerialize;
 import moe.plushie.rpg_framework.core.common.tileentities.ModAutoSyncTileEntity;
@@ -32,10 +30,6 @@ public class TileEntityShop extends ModAutoSyncTileEntity implements IGuiFactory
     public TileEntityShop(Shop shop) {
         setShop(shop);
         this.shopIdentifier = shop.getIdentifier();
-    }
-
-    public IShop getShop() {
-        return RPGFramework.getProxy().getShopManager().getShop(shopIdentifier);
     }
 
     public void setShop(IIdentifier shopIdentifier) {
@@ -69,7 +63,7 @@ public class TileEntityShop extends ModAutoSyncTileEntity implements IGuiFactory
     
     @Override
     public Container getServerGuiElement(EntityPlayer player, World world, BlockPos pos) {
-        return new ContainerShop(player, getShop(), this);
+        return new ContainerShop(player, shopIdentifier, this);
     }
 
     @SideOnly(Side.CLIENT)
