@@ -209,6 +209,7 @@ public class ContainerShop extends ModContainer implements IShopLoadCallback {
             changeTab(0);
             sendShopToListeners(false);
             PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerShop(shop, false), (EntityPlayerMP) player);
+            loadingShop = false;
         }
     }
 
@@ -344,6 +345,5 @@ public class ContainerShop extends ModContainer implements IShopLoadCallback {
     @Override
     public void onShopLoad(IShop shop) {
         setShop(shop);
-        loadingShop = false;
     }
 }
