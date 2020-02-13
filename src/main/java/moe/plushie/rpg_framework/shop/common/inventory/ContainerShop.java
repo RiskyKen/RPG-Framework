@@ -8,7 +8,7 @@ import moe.plushie.rpg_framework.api.shop.IShop;
 import moe.plushie.rpg_framework.api.shop.IShop.IShopItem;
 import moe.plushie.rpg_framework.api.shop.IShop.IShopTab;
 import moe.plushie.rpg_framework.api.shop.IShop.IShopTab.TabType;
-import moe.plushie.rpg_framework.core.RPGFramework;
+import moe.plushie.rpg_framework.api.shop.IShopManager.IShopLoadCallback;
 import moe.plushie.rpg_framework.core.common.config.ConfigHandler;
 import moe.plushie.rpg_framework.core.common.init.ModSounds;
 import moe.plushie.rpg_framework.core.common.inventory.ModContainer;
@@ -16,8 +16,7 @@ import moe.plushie.rpg_framework.core.common.inventory.slot.SlotHidable;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerShop;
 import moe.plushie.rpg_framework.core.common.utils.UtilItems;
-import moe.plushie.rpg_framework.core.database.DatabaseExecutor;
-import moe.plushie.rpg_framework.core.database.DatabaseExecutor.IShopLoadCallback;
+import moe.plushie.rpg_framework.shop.ModuleShop;
 import moe.plushie.rpg_framework.shop.common.Shop.ShopItem;
 import moe.plushie.rpg_framework.shop.common.Shop.ShopTab;
 import moe.plushie.rpg_framework.shop.common.ShopManager;
@@ -51,7 +50,7 @@ public class ContainerShop extends ModContainer implements IShopLoadCallback {
     private boolean dirty = false;
     private boolean loadingShop = true;
     private boolean loadingShopLast = true;
-    
+
     public ContainerShop(EntityPlayer entityPlayer, IIdentifier identifier, TileEntityShop tileEntityShop) {
         super(entityPlayer.inventory);
         this.player = entityPlayer;
@@ -94,10 +93,10 @@ public class ContainerShop extends ModContainer implements IShopLoadCallback {
     public ArrayList<Slot> getSlotsPrice() {
         return slotsPrice;
     }
-    
+
     private void loadShop(IIdentifier identifier) {
         loadingShop = true;
-        DatabaseExecutor.loadShop(this, identifier);
+        ModuleShop.getShopManager().getShop(this, identifier);
     }
 
     @Override
@@ -120,7 +119,7 @@ public class ContainerShop extends ModContainer implements IShopLoadCallback {
         }
         return super.slotClick(slotId, dragType, clickTypeIn, player);
     }
-    
+
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
@@ -136,7 +135,7 @@ public class ContainerShop extends ModContainer implements IShopLoadCallback {
         }
         loadingShopLast = loadingShop;
     }
-    
+
     @SideOnly(Side.CLIENT)
     @Override
     public void updateProgressBar(int id, int data) {
@@ -144,7 +143,7 @@ public class ContainerShop extends ModContainer implements IShopLoadCallback {
             loadingShop = data == 1;
         }
     }
-    
+
     public boolean isLoadingShop() {
         return loadingShop;
     }
@@ -223,7 +222,6 @@ public class ContainerShop extends ModContainer implements IShopLoadCallback {
         if (activeTabIndex == -1) {
             return;
         }
-        dirty = true;
         IShopTab shopTab = shop.getTabs().get(activeTabIndex);
         ICost cost = shopTab.getItems().get(slotIndex).getCost();
 
@@ -274,7 +272,7 @@ public class ContainerShop extends ModContainer implements IShopLoadCallback {
     }
 
     public void saveShop() {
-        RPGFramework.getProxy().getShopManager().saveShop(shop);
+        ModuleShop.getShopManager().saveShop(shop);
     }
 
     public void shopRename(String shopName) {
@@ -294,6 +292,9 @@ public class ContainerShop extends ModContainer implements IShopLoadCallback {
     }
 
     public void setEditMode(boolean editMode) {
+        if (editMode) {
+           dirty = true; 
+        }
         this.editMode = editMode;
     }
 
@@ -321,7 +322,6 @@ public class ContainerShop extends ModContainer implements IShopLoadCallback {
     }
 
     private void sendShopToListeners(boolean update) {
-        dirty = true;
         for (int j = 0; j < this.listeners.size(); ++j) {
             if (listeners.get(j) instanceof EntityPlayerMP) {
                 PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerShop(shop, update), (EntityPlayerMP) listeners.get(j));
@@ -330,13 +330,13 @@ public class ContainerShop extends ModContainer implements IShopLoadCallback {
     }
 
     public void addShop(String shopName) {
-        ShopManager shopManager = RPGFramework.getProxy().getShopManager();
+        ShopManager shopManager = ModuleShop.getShopManager();
         shopManager.addShop(shopName);
         shopManager.syncToClient((EntityPlayerMP) player);
     }
 
     public void removeShop(IIdentifier shopIdentifier) {
-        ShopManager shopManager = RPGFramework.getProxy().getShopManager();
+        ShopManager shopManager = ModuleShop.getShopManager();
         shopManager.removeShop(shopIdentifier);
         shopManager.syncToClient((EntityPlayerMP) player);
     }

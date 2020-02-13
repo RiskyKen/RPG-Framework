@@ -3,6 +3,7 @@ package moe.plushie.rpg_framework.core.common.network.client;
 import io.netty.buffer.ByteBuf;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.loot.common.LootTableHelper;
+import moe.plushie.rpg_framework.shop.ModuleShop;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -43,7 +44,7 @@ public class MessageClientRequestSync implements IMessage, IMessageHandler<Messa
                     RPGFramework.getProxy().getCurrencyManager().syncToClient(player);
                     break;
                 case SHOPS_IDENTIFIERS:
-                    RPGFramework.getProxy().getShopManager().syncToClient(player);
+                    ModuleShop.getShopManager().syncToClient(player);
                     break;
                 case MAIL_SYSTEMS:
                     RPGFramework.getProxy().getMailSystemManager().syncToClient(player);

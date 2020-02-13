@@ -1,6 +1,9 @@
 package moe.plushie.rpg_framework.shop;
 
+import java.io.File;
+
 import moe.plushie.rpg_framework.core.common.module.ModModule;
+import moe.plushie.rpg_framework.shop.common.ShopManager;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -12,8 +15,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ModuleShop extends ModModule {
 
-    public ModuleShop() {
+    private static ShopManager shopManager;
+    
+    public ModuleShop(File modDirectory) {
         super("shop");
+        shopManager = new ShopManager(modDirectory);
     }
 
     @Override
@@ -43,5 +49,9 @@ public class ModuleShop extends ModModule {
 
     @Override
     public void serverStopping(FMLServerStoppingEvent event) {
+    }
+    
+    public static ShopManager getShopManager() {
+        return shopManager;
     }
 }

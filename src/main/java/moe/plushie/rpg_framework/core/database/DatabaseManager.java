@@ -4,12 +4,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import moe.plushie.rpg_framework.core.database.driver.IDatabaseDriver;
 import moe.plushie.rpg_framework.core.database.driver.SQLiteDriver;
 
 public final class DatabaseManager {
-
+    
+    public static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(10);
     private static final IDatabaseDriver DATABASE_DRIVER = new SQLiteDriver();
 
     private DatabaseManager() {

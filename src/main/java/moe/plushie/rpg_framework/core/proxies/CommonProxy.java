@@ -31,7 +31,6 @@ import moe.plushie.rpg_framework.itemData.ModuleItemData;
 import moe.plushie.rpg_framework.mail.ModuleMail;
 import moe.plushie.rpg_framework.mail.common.MailSystemManager;
 import moe.plushie.rpg_framework.shop.ModuleShop;
-import moe.plushie.rpg_framework.shop.common.ShopManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.Mod;
@@ -58,14 +57,13 @@ public class CommonProxy {
 
     private CurrencyManager currencyManager;
     private ItemDataManager valueManager;
-    private MailSystemManager mailSystemManager;
-    private ShopManager shopManager;
+    private MailSystemManager mailSystemManager;;
     private BankManager bankManager;
 
     private IModModule moduleCurrency = new ModuleCurrency();
     private IModModule moduleItemData = new ModuleItemData(getModDirectory());
     private IModModule moduleMail = new ModuleMail();
-    private IModModule moduleShop = new ModuleShop();
+    private IModModule moduleShop = new ModuleShop(getModDirectory());
     private IModModule moduleBank = new ModuleBank();
     private IModModule moduleAuction = new ModuleAuction();
 
@@ -81,17 +79,16 @@ public class CommonProxy {
         if (!modDirectory.exists()) {
             modDirectory.mkdir();
         }
-        
+
         ModAddonManager.preInit();
 
         currencyManager = new CurrencyManager(modDirectory);
         mailSystemManager = new MailSystemManager(modDirectory);
-        shopManager = new ShopManager(modDirectory);
         bankManager = new BankManager(modDirectory);
 
         ReflectionHelper.setPrivateValue(RpgEconomyAPI.class, null, currencyManager, "currencyManager");
         ReflectionHelper.setPrivateValue(RpgEconomyAPI.class, null, mailSystemManager, "mailSystemManager");
-        ReflectionHelper.setPrivateValue(RpgEconomyAPI.class, null, shopManager, "shopManager");
+        ReflectionHelper.setPrivateValue(RpgEconomyAPI.class, null, ModuleShop.getShopManager(), "shopManager");
         ReflectionHelper.setPrivateValue(RpgEconomyAPI.class, null, bankManager, "bankManager");
 
         modBlocks = new ModBlocks();
@@ -113,7 +110,7 @@ public class CommonProxy {
         for (IModModule module : ModModule.MOD_MODULES) {
             module.init(event);
         }
-        
+
         ModAddonManager.init();
     }
 
@@ -145,11 +142,11 @@ public class CommonProxy {
             module.serverStopping(event);
         }
     }
-    
+
     public File getInstanceDirectory() {
         return instanceDirectory;
     }
-    
+
     public File getConfigDirectory() {
         return configDirectory;
     }
@@ -164,10 +161,6 @@ public class CommonProxy {
 
     public MailSystemManager getMailSystemManager() {
         return mailSystemManager;
-    }
-
-    public ShopManager getShopManager() {
-        return shopManager;
     }
 
     public BankManager getBankManager() {

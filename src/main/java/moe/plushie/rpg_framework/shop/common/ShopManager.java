@@ -19,10 +19,12 @@ import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerSyncShops;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
+import moe.plushie.rpg_framework.core.database.DatabaseManager;
 import moe.plushie.rpg_framework.core.database.TableShops;
 import moe.plushie.rpg_framework.shop.common.serialize.ShopSerializer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class ShopManager implements IShopManager {
 
@@ -45,7 +47,7 @@ public class ShopManager implements IShopManager {
         ArrayList<IIdentifier> identifiers = new ArrayList<IIdentifier>();
         TableShops.getShopList(identifiers, null, null);
         for (IIdentifier identifier : identifiers) {
-            exportShop(getShop(identifier));
+            exportShop(TableShops.getShop(identifier));
         }
     }
 
@@ -65,8 +67,14 @@ public class ShopManager implements IShopManager {
     }
 
     public void saveShop(IShop shop) {
-        RPGFramework.getLogger().info("Saving shop: " + shop.getIdentifier());
-        TableShops.updateShop(shop);
+        DatabaseManager.EXECUTOR.execute(new Runnable() {
+            
+            @Override
+            public void run() {
+                RPGFramework.getLogger().info("Saving shop: " + shop.getIdentifier());
+                TableShops.updateShop(shop);
+            }
+        });
     }
 
     public void exportShop(IShop shop) {
@@ -92,11 +100,24 @@ public class ShopManager implements IShopManager {
     }
 
     @Override
-    public IShop getShop(IIdentifier identifier) {
+    public void getShop(IShopLoadCallback callback, IIdentifier identifier) {
         if (identifier == null) {
-            return null;
+            callback.onShopLoad(null);
+            return;
         }
-        return TableShops.getShop(identifier);
+        DatabaseManager.EXECUTOR.execute(new Runnable() {
+            
+            @Override
+            public void run() {
+                IShop shop = TableShops.getShop(identifier);
+                FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onShopLoad(shop);
+                    }
+                });
+            }
+        });
     }
 
     @Override
