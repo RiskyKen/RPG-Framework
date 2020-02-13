@@ -208,8 +208,8 @@ public class ContainerShop extends ModContainer implements IShopLoadCallback {
         if (!player.getEntityWorld().isRemote) {
             changeTab(0);
             sendShopToListeners(false);
-            PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerShop(shop, false), (EntityPlayerMP) player);
             loadingShop = false;
+            PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerShop(shop, false), (EntityPlayerMP) player);
         }
     }
 
