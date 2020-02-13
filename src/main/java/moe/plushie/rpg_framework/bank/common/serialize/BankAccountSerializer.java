@@ -51,7 +51,6 @@ public final class BankAccountSerializer {
     }
 
     public static void serializeDatabase(DBPlayer dbPlayer, IBankAccount account) {
-        TableBankAccounts.create();
         String tabs = serializeJson(account, true).toString();
         if (!TableBankAccounts.isAccountInDatabase(dbPlayer, account.getBank().getIdentifier())) {
             TableBankAccounts.setAccount(dbPlayer, account.getBank().getIdentifier(), tabs);
@@ -61,7 +60,6 @@ public final class BankAccountSerializer {
     }
 
     public static BankAccount deserializeDatabase(DBPlayer dbPlayer, IBank bank) {
-        TableBankAccounts.create();
         if (TableBankAccounts.isAccountInDatabase(dbPlayer, bank.getIdentifier())) {
             String tabs = TableBankAccounts.getAccountTabs(dbPlayer, bank.getIdentifier());
             JsonElement tabsJson = SerializeHelper.stringToJson(tabs);

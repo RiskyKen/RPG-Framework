@@ -5,6 +5,7 @@ import java.util.List;
 import com.mojang.authlib.GameProfile;
 
 import moe.plushie.rpg_framework.api.bank.IBank;
+import moe.plushie.rpg_framework.bank.ModuleBank;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.command.ModCommand;
@@ -64,7 +65,7 @@ public class CommandOpenBank extends ModCommand {
         
         bankIdentifier = bankIdentifier.substring(1, bankIdentifier.length() - 1);
         
-        IBank bank = RPGFramework.getProxy().getBankManager().getBank(new IdentifierString(bankIdentifier));
+        IBank bank = ModuleBank.getBankManager().getBank(new IdentifierString(bankIdentifier));
         
         // Player we want to display to.
         EntityPlayer playerTarget = null;
@@ -94,7 +95,7 @@ public class CommandOpenBank extends ModCommand {
             throw new WrongUsageException(getUsage(sender), (Object)args);
         }
         
-        int index = RPGFramework.getProxy().getBankManager().getBankIndex(bank);
+        int index = ModuleBank.getBankManager().getBankIndex(bank);
         FMLNetworkHandler.openGui(playerTarget, RPGFramework.getInstance(), EnumGuiId.BANK_COMMAND.ordinal(), server.getEntityWorld(), index, sourcePlayer.getId(), 0);
     }
 }

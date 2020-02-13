@@ -1,6 +1,8 @@
 package moe.plushie.rpg_framework.bank;
 
-import moe.plushie.rpg_framework.core.RPGFramework;
+import java.io.File;
+
+import moe.plushie.rpg_framework.bank.common.BankManager;
 import moe.plushie.rpg_framework.core.common.module.ModModule;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -13,8 +15,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ModuleBank extends ModModule {
 
-    public ModuleBank() {
+    private static BankManager bankManager;
+
+    public ModuleBank(File modDirectory) {
         super("bank");
+        bankManager = new BankManager(modDirectory);
     }
 
     @Override
@@ -36,7 +41,7 @@ public class ModuleBank extends ModModule {
 
     @Override
     public void serverAboutToStart(FMLServerAboutToStartEvent event) {
-        RPGFramework.getProxy().getBankManager().reload(false);
+        bankManager.reload(false);
     }
 
     @Override
@@ -45,5 +50,9 @@ public class ModuleBank extends ModModule {
 
     @Override
     public void serverStopping(FMLServerStoppingEvent event) {
+    }
+
+    public static BankManager getBankManager() {
+        return bankManager;
     }
 }

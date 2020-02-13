@@ -111,6 +111,7 @@ public class ShopManager implements IShopManager {
             public void run() {
                 IShop shop = TableShops.getShop(identifier);
                 FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(new Runnable() {
+                    
                     @Override
                     public void run() {
                         callback.onShopLoad(shop);

@@ -6,7 +6,6 @@ import moe.plushie.rpg_framework.api.RpgEconomyAPI;
 import moe.plushie.rpg_framework.api.currency.ICurrency;
 import moe.plushie.rpg_framework.auction.ModuleAuction;
 import moe.plushie.rpg_framework.bank.ModuleBank;
-import moe.plushie.rpg_framework.bank.common.BankManager;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.addons.ModAddonManager;
 import moe.plushie.rpg_framework.core.common.command.CommandRpg;
@@ -57,15 +56,14 @@ public class CommonProxy {
 
     private CurrencyManager currencyManager;
     private ItemDataManager valueManager;
-    private MailSystemManager mailSystemManager;;
-    private BankManager bankManager;
+    private MailSystemManager mailSystemManager;
 
-    private IModModule moduleCurrency = new ModuleCurrency();
-    private IModModule moduleItemData = new ModuleItemData(getModDirectory());
-    private IModModule moduleMail = new ModuleMail();
-    private IModModule moduleShop = new ModuleShop(getModDirectory());
-    private IModModule moduleBank = new ModuleBank();
-    private IModModule moduleAuction = new ModuleAuction();
+    private IModModule moduleCurrency;
+    private IModModule moduleItemData;
+    private IModModule moduleMail;
+    private IModModule moduleShop;
+    private IModModule moduleBank;
+    private IModModule moduleAuction;
 
     public void preInit(FMLPreInitializationEvent event) {
         modConfigDirectory = new File(event.getSuggestedConfigurationFile().getParentFile(), LibModInfo.ID);
@@ -82,14 +80,20 @@ public class CommonProxy {
 
         ModAddonManager.preInit();
 
+        moduleCurrency = new ModuleCurrency();
+        moduleItemData = new ModuleItemData(getModDirectory());
+        moduleMail = new ModuleMail();
+        moduleShop = new ModuleShop(getModDirectory());
+        moduleBank = new ModuleBank(getModDirectory());
+        moduleAuction = new ModuleAuction();
+
         currencyManager = new CurrencyManager(modDirectory);
         mailSystemManager = new MailSystemManager(modDirectory);
-        bankManager = new BankManager(modDirectory);
 
         ReflectionHelper.setPrivateValue(RpgEconomyAPI.class, null, currencyManager, "currencyManager");
         ReflectionHelper.setPrivateValue(RpgEconomyAPI.class, null, mailSystemManager, "mailSystemManager");
         ReflectionHelper.setPrivateValue(RpgEconomyAPI.class, null, ModuleShop.getShopManager(), "shopManager");
-        ReflectionHelper.setPrivateValue(RpgEconomyAPI.class, null, bankManager, "bankManager");
+        ReflectionHelper.setPrivateValue(RpgEconomyAPI.class, null, ModuleBank.getBankManager(), "bankManager");
 
         modBlocks = new ModBlocks();
         modItems = new ModItems();
@@ -161,10 +165,6 @@ public class CommonProxy {
 
     public MailSystemManager getMailSystemManager() {
         return mailSystemManager;
-    }
-
-    public BankManager getBankManager() {
-        return bankManager;
     }
 
     public void onClentKeyPress(EntityPlayerMP player, ModKey modKey) {

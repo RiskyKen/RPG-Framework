@@ -4,9 +4,9 @@ import com.google.gson.JsonElement;
 
 import moe.plushie.rpg_framework.api.bank.IBank;
 import moe.plushie.rpg_framework.api.core.IIdentifier;
+import moe.plushie.rpg_framework.bank.ModuleBank;
 import moe.plushie.rpg_framework.bank.client.GuiBank;
 import moe.plushie.rpg_framework.bank.common.inventory.ContainerBank;
-import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.inventory.IGuiFactory;
 import moe.plushie.rpg_framework.core.common.serialize.IdentifierSerialize;
 import moe.plushie.rpg_framework.core.common.tileentities.ModAutoSyncTileEntity;
@@ -41,7 +41,7 @@ public class TileEntityBank extends ModAutoSyncTileEntity implements IGuiFactory
     }
 
     public IBank getBank() {
-        return RPGFramework.getProxy().getBankManager().getBank(bankIdentifier);
+        return ModuleBank.getBankManager().getBank(bankIdentifier);
     }
 
     public void setBank(IBank bank) {

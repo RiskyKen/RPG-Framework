@@ -6,18 +6,27 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import com.google.gson.JsonElement;
+import com.mojang.authlib.GameProfile;
 
 import moe.plushie.rpg_framework.api.bank.IBank;
+import moe.plushie.rpg_framework.api.bank.IBankAccount;
 import moe.plushie.rpg_framework.api.bank.IBankManager;
 import moe.plushie.rpg_framework.api.core.IIdentifier;
+import moe.plushie.rpg_framework.bank.common.serialize.BankAccountSerializer;
 import moe.plushie.rpg_framework.bank.common.serialize.BankSerializer;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerSyncBanks;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
+import moe.plushie.rpg_framework.core.database.DBPlayer;
+import moe.plushie.rpg_framework.core.database.DBPlayerInfo;
+import moe.plushie.rpg_framework.core.database.DatabaseManager;
+import moe.plushie.rpg_framework.core.database.TableBankAccounts;
+import moe.plushie.rpg_framework.core.database.TablePlayers;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -36,6 +45,7 @@ public class BankManager implements IBankManager {
         }
         bankMap = new HashMap<IIdentifier, IBank>();
         MinecraftForge.EVENT_BUS.register(this);
+        TableBankAccounts.create();
     }
 
     public void reload(boolean syncWithClients) {
@@ -119,6 +129,48 @@ public class BankManager implements IBankManager {
     @Override
     public IBank getBank(IIdentifier identifier) {
         return bankMap.get(identifier);
+    }
+    
+    @Override
+    public void getBankAccount(IBankAccountLoadCallback callback, IBank bank, GameProfile sourcePlayer) {
+        if (bank == null | sourcePlayer == null) {
+            callback.onBackAccountLoad(null);
+            return;
+        }
+        DBPlayer dbPlayer = TablePlayers.getPlayer(sourcePlayer);
+        if (dbPlayer.getId() < 0 | dbPlayer == DBPlayerInfo.MISSING_INFO) {
+            callback.onBackAccountLoad(null);
+            return;
+        }
+        getBankAccount(callback, bank, dbPlayer);
+    }
+    
+    public void getBankAccount(IBankAccountLoadCallback callback, IBank bank, DBPlayer sourcePlayer) {
+        if (bank == null | sourcePlayer == null) {
+            callback.onBackAccountLoad(null);
+            return;
+        }
+        DatabaseManager.EXECUTOR.execute(new Runnable() {
+            
+            @Override
+            public void run() {
+                IBankAccount bankAccount = BankAccountSerializer.deserializeDatabase(sourcePlayer, bank);
+                /*try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }*/
+                FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                        callback.onBackAccountLoad(bankAccount);
+                    }
+                });
+                
+            }
+        });
     }
 
     @Override
