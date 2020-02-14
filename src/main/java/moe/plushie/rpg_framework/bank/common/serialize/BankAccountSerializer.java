@@ -35,11 +35,13 @@ public final class BankAccountSerializer {
             JsonArray jsonArray = (JsonArray) json;
             for (int i = 0; i < jsonArray.size(); i++) {
                 JsonArray itemsArray = jsonArray.get(i).getAsJsonArray();
-                account.unlockTab();
-                IInventory inventory = account.getTab(i);
-                for (int j = 0; j < inventory.getSizeInventory(); j++) {
-                    if (j < inventory.getSizeInventory()) {
-                        inventory.setInventorySlotContents(j, SerializeHelper.readItemFromJson(itemsArray.get(j)));
+                if (i < account.getBank().getTabMaxCount()) {
+                    account.unlockTab();
+                    IInventory inventory = account.getTab(i);
+                    for (int j = 0; j < inventory.getSizeInventory(); j++) {
+                        if (j < itemsArray.size()) {
+                            inventory.setInventorySlotContents(j, SerializeHelper.readItemFromJson(itemsArray.get(j)));
+                        }
                     }
                 }
             }
