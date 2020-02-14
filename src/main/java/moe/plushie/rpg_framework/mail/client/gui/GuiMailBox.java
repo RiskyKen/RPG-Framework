@@ -63,7 +63,9 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
         this.tileEntity = tileEntity;
         this.player = entityPlayer;
         this.mailSystem = mailSystem;
-        this.mailMessages = new ArrayList<MailMessage>();
+        synchronized (mailMessages) {
+            this.mailMessages = new ArrayList<MailMessage>();
+        }
 
         for (Slot slot : getContainer().getSlotsAttachmentsInput()) {
             ((SlotHidable) slot).setVisible(false);
@@ -269,11 +271,15 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
     }
 
     private int getMaxPages() {
-        return MathHelper.ceil(mailMessages.size() / 6F);
+        synchronized (mailMessages) {
+            return MathHelper.ceil(mailMessages.size() / 6F);
+        }
     }
 
     public void gotListFromServer(ArrayList<MailMessage> mailMessages) {
-        this.mailMessages = mailMessages;
+        synchronized (mailMessages) {
+            this.mailMessages = mailMessages;
+        }
         updateMailList(mailPage);
     }
 
@@ -285,12 +291,14 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
         if (mailPage > getMaxPages() - 1) {
             mailPage = getMaxPages() - 1;
         }
-        for (int i = 0; i < 6; i++) {
-            int messageIndex = i + mailPage * 6;
-            if (messageIndex < mailMessages.size()) {
-                listMail.addListItem(new GuiMailListItem(mailMessages.get(messageIndex)));
-            } else {
-                break;
+        synchronized (mailMessages) {
+            for (int i = 0; i < 6; i++) {
+                int messageIndex = i + mailPage * 6;
+                if (messageIndex < mailMessages.size()) {
+                    listMail.addListItem(new GuiMailListItem(mailMessages.get(messageIndex)));
+                } else {
+                    break;
+                }
             }
         }
     }
