@@ -331,6 +331,9 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
     }
 
     public void update() {
+        if (isDialogOpen()) {
+            dialog.update();
+        }
     }
 
     @Override

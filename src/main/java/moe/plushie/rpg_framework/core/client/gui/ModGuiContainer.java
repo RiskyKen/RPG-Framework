@@ -82,6 +82,14 @@ public abstract class ModGuiContainer<CONTAINER_TYPE extends ModContainer> exten
             super.mouseReleased(mouseX, mouseY, state);
         }
     }
+    
+    @Override
+    public void updateScreen() {
+        if (isDialogOpen()) {
+            dialog.update();
+        }
+        super.updateScreen();
+    }
 
     @Override
     protected void keyTyped(char c, int keycode) throws IOException {
