@@ -188,7 +188,9 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
         }
         buttonMessageReply.enabled = listMail.getSelectedIndex() != -1;
         buttonMessageDelete.enabled = listMail.getSelectedIndex() != -1;
-
+        buttonListPre.enabled = mailPage > 0;
+        buttonListNext.enabled = mailPage < getMaxPages() - 1;
+        
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
