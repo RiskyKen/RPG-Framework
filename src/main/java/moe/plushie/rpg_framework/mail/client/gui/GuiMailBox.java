@@ -270,7 +270,7 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
 
     private int getMaxPages() {
         synchronized (mailMessages) {
-            return MathHelper.ceil(mailMessages.size() / 6F);
+            return Math.max(MathHelper.ceil(mailMessages.size() / 6F), 1);
         }
     }
 
@@ -283,12 +283,7 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
 
     public void updateMailList(int page) {
         listMail.clearList();
-        if (mailPage < 0) {
-            mailPage = 0;
-        }
-        if (mailPage > getMaxPages() - 1) {
-            mailPage = getMaxPages() - 1;
-        }
+        mailPage = MathHelper.clamp(mailPage, 0, getMaxPages() - 1);
         synchronized (mailMessages) {
             for (int i = 0; i < 6; i++) {
                 int messageIndex = i + mailPage * 6;
