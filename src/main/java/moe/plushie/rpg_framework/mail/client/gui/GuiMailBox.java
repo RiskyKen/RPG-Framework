@@ -147,10 +147,13 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
             updateMailList(mailPage);
         }
         if (button == buttonNewMessage) {
-            openDialog(new GuiMailBoxDialogSend(this, GuiHelper.getLocalControlName(getName(), "dialog.send_mail"), this, mailSystem, player));
+            openDialog(new GuiMailBoxDialogSend(this, GuiHelper.getLocalControlName(getName(), "dialog.send_mail"), this, mailSystem, player, "", ""));
         }
         if (button == buttonMessageReply) {
-
+            if (listMail.getSelectedListEntry() != null && listMail.getSelectedListEntry() instanceof GuiMailListItem) {
+                MailMessage mailMessage = ((GuiMailListItem) listMail.getSelectedListEntry()).mailMessage;
+                openDialog(new GuiMailBoxDialogSend(this, GuiHelper.getLocalControlName(getName(), "dialog.send_mail"), this, mailSystem, player, mailMessage.getSender().getName(), "RE: " + mailMessage.getSubject()));
+            }
         }
         if (button == buttonMessageDelete) {
             if (listMail.getSelectedListEntry() != null && listMail.getSelectedListEntry() instanceof GuiMailListItem) {
@@ -185,9 +188,6 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
         }
         buttonMessageReply.enabled = listMail.getSelectedIndex() != -1;
         buttonMessageDelete.enabled = listMail.getSelectedIndex() != -1;
-
-        // TEMP
-        buttonMessageReply.enabled = false;
 
         super.drawScreen(mouseX, mouseY, partialTicks);
     }

@@ -47,7 +47,7 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
     private GuiButtonExt buttonClose;
     private GuiButtonExt buttonSend;
 
-    public GuiMailBoxDialogSend(GuiScreen parent, String name, IDialogCallback callback, IMailSystem mailSystem, EntityPlayer player) {
+    public GuiMailBoxDialogSend(GuiScreen parent, String name, IDialogCallback callback, IMailSystem mailSystem, EntityPlayer player, String to, String subject) {
         super(parent, name, callback, 200, 247);
         this.mailSystem = mailSystem;
         this.player = player;
@@ -61,13 +61,16 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
 
         textFieldTo.setMaxStringLength(500);
         textFieldBody.setMaxStringLength(500);
+
+        textFieldTo.setText(to);
+        textFieldSubject.setText(subject);
     }
 
     @Override
     public void initGui() {
         super.initGui();
         buttonList.clear();
-        
+
         buttonClose = new GuiButtonExt(-1, x + width - 60 - 10, y + height - 30 - 90, 60, 16, I18n.format(LibGuiResources.Controls.BUTTON_CLOSE));
         buttonSend = new GuiButtonExt(-1, x + width - 120 - 15, y + height - 30 - 90, 60, 16, I18n.format(name + ".button.send"));
 
@@ -221,7 +224,7 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
     public NonNullList<ItemStack> getAttachments() {
         return ((ContainerMailBox) slotHandler.inventorySlots).getAttachments();
     }
-    
+
     public ICost getSendCost() {
         return ((ContainerMailBox) slotHandler.inventorySlots).getSendCost();
     }
