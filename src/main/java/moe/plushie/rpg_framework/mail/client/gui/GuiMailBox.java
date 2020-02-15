@@ -63,9 +63,7 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
         this.tileEntity = tileEntity;
         this.player = entityPlayer;
         this.mailSystem = mailSystem;
-        synchronized (mailMessages) {
-            this.mailMessages = new ArrayList<MailMessage>();
-        }
+        this.mailMessages = new ArrayList<MailMessage>();
 
         for (Slot slot : getContainer().getSlotsAttachmentsInput()) {
             ((SlotHidable) slot).setVisible(false);
