@@ -155,12 +155,6 @@ public class BankManager implements IBankManager {
             @Override
             public void run() {
                 IBankAccount bankAccount = BankAccountSerializer.deserializeDatabase(sourcePlayer, bank);
-                /*try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }*/
                 FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(new Runnable() {
                     
                     @Override

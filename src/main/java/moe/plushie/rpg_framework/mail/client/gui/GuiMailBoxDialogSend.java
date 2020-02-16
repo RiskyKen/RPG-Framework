@@ -15,6 +15,8 @@ import moe.plushie.rpg_framework.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpg_framework.core.client.gui.GuiHelper;
 import moe.plushie.rpg_framework.core.client.gui.IDialogCallback;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiLabeledTextField;
+import moe.plushie.rpg_framework.core.client.gui.controls.GuiScrollbar;
+import moe.plushie.rpg_framework.core.client.gui.controls.GuiTextFieldCustom;
 import moe.plushie.rpg_framework.core.client.lib.LibGuiResources;
 import moe.plushie.rpg_framework.core.common.inventory.slot.SlotHidable;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
@@ -43,7 +45,8 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
     private final EntityPlayer player;
     private GuiLabeledTextField textFieldTo;
     private GuiLabeledTextField textFieldSubject;
-    private GuiLabeledTextField textFieldBody;
+    private GuiTextFieldCustom textFieldBody;
+    private GuiScrollbar scrollbar;
     private GuiButtonExt buttonClose;
     private GuiButtonExt buttonSend;
 
@@ -53,14 +56,15 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
         this.player = player;
         textFieldTo = new GuiLabeledTextField(fontRenderer, x + 10, y + 20, width - 20, 14);
         textFieldSubject = new GuiLabeledTextField(fontRenderer, x + 10, y + 40, width - 20, 14);
-        textFieldBody = new GuiLabeledTextField(fontRenderer, x + 10, y + 60, width - 20, 62);
+        textFieldBody = new GuiTextFieldCustom(x + 10, y + 60, width - 20, 62);
 
+        // TODO Add to lang file.
         textFieldTo.setEmptyLabel("To");
         textFieldSubject.setEmptyLabel("Subject");
         textFieldBody.setEmptyLabel("Message");
 
         textFieldTo.setMaxStringLength(500);
-        textFieldBody.setMaxStringLength(500);
+        textFieldBody.setMaxStringLength(mailSystem.getCharacterLimit());
 
         textFieldTo.setText(to);
         textFieldSubject.setText(subject);
@@ -87,7 +91,10 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
 
         textFieldBody.y = y + 60;
         textFieldBody.x = x + 10;
-        textFieldBody.width = width - 20;
+        textFieldBody.width = width - 31;
+
+        scrollbar = new GuiScrollbar(-1, textFieldBody.x + textFieldBody.width + 1, textFieldBody.y, 10, textFieldBody.height, "", false);
+        buttonList.add(scrollbar);
     }
 
     @Override
@@ -115,10 +122,21 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
         if (textFieldSubject.textboxKeyTyped(c, keycode)) {
             return true;
         }
-        if (textFieldBody.textboxKeyTyped(c, keycode)) {
+        if (textFieldBody.keyTyped(c, keycode)) {
             return true;
         }
         return super.keyTyped(c, keycode);
+    }
+
+    @Override
+    public void update() {
+        textFieldTo.updateCursorCounter();
+        textFieldSubject.updateCursorCounter();
+        textFieldBody.updateCursorCounter();
+
+        // RPGFramework.getLogger().info("line count: " + textFieldBody.height);
+        scrollbar.setSliderMaxValue(textFieldBody.getScrollHeight(fontRenderer));
+        textFieldBody.setScrollAmount(scrollbar.getValue());
     }
 
     @Override
@@ -130,7 +148,6 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
             if (sendMail()) {
                 buttonSend.enabled = false;
                 buttonClose.enabled = false;
-                // returnDialogResult(DialogResult.OK);
             }
         }
     }
@@ -207,7 +224,7 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
 
         textFieldTo.drawTextBox();
         textFieldSubject.drawTextBox();
-        textFieldBody.drawTextBox();
+        textFieldBody.drawButton(mc, mouseX, mouseY, partialTickTime);
         drawTitle();
     }
 
