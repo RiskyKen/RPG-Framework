@@ -58,10 +58,9 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
         textFieldSubject = new GuiLabeledTextField(fontRenderer, x + 10, y + 40, width - 20, 14);
         textFieldBody = new GuiTextFieldCustom(x + 10, y + 60, width - 20, 62);
 
-        // TODO Add to lang file.
-        textFieldTo.setEmptyLabel("To");
-        textFieldSubject.setEmptyLabel("Subject");
-        textFieldBody.setEmptyLabel("Message");
+        textFieldTo.setEmptyLabel(I18n.format(name + ".textbox.to.empty"));
+        textFieldSubject.setEmptyLabel(I18n.format(name + ".textbox.subject.empty"));
+        textFieldBody.setEmptyLabel(I18n.format(name + ".textbox.message.empty"));
 
         textFieldTo.setMaxStringLength(500);
         textFieldBody.setMaxStringLength(mailSystem.getCharacterLimit());
