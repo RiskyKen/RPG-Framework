@@ -51,15 +51,15 @@ itemGroup.rpg_economy=RPG Framework
 
 
 # Inventory - Common
-inventory.rpg_economy:common.button_close=Close
-inventory.rpg_economy:common.button_cancel=Cancel
-inventory.rpg_economy:common.button_ok=OK
-inventory.rpg_economy:common.button_edit=Edit
+inventory.rpg_economy:common.button.close=Close
+inventory.rpg_economy:common.button.cancel=Cancel
+inventory.rpg_economy:common.button.ok=OK
+inventory.rpg_economy:common.button.edit=Edit
 inventory.rpg_economy:common.tab_type.buy=Buy
 inventory.rpg_economy:common.tab_type.sell=Sell
 inventory.rpg_economy:common.none=None
-inventory.rpg_economy:common.previous=Previous
-inventory.rpg_economy:common.next=Next
+inventory.rpg_economy:common.button.previous=Previous
+inventory.rpg_economy:common.button.next=Next
 
 
 # Inventory - Bank

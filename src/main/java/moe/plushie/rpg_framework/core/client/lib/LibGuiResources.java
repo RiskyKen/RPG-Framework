@@ -27,8 +27,15 @@ public class LibGuiResources {
 
         private static final String PREFIX = "inventory." + LibModInfo.ID + ":common.";
 
-        public static final String BUTTON_CLOSE = PREFIX + "button_close";
-        public static final String BUTTON_CANCEL = PREFIX + "button_cancel";
-        public static final String BUTTON_OK = PREFIX + "button_ok";
+        public static final String BUTTON_CLOSE = PREFIX + "button.close";
+        public static final String BUTTON_CANCEL = PREFIX + "button.cancel";
+        public static final String BUTTON_OK = PREFIX + "button.ok";
+        public static final String BUTTON_EDIT = PREFIX + "button.edit";
+        
+        public static final String TAB_TYPE_BUY = PREFIX + "tab_type.buy";
+        public static final String TAB_TYPE_SELL = PREFIX + "tab_type.sell";
+        public static final String NONE = PREFIX + "none";
+        public static final String BUTTON_PREVIOUS = PREFIX + "button.previous";
+        public static final String BUTTON_NEXT = PREFIX + "button.next";
     }
 }
