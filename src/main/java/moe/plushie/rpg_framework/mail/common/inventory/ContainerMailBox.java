@@ -71,6 +71,18 @@ public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> implem
         scriptEngine.put("getStackMaxSize", (Function<Double, Integer>) this::getStackMaxSize);
         scriptEngine.put("getStackValue", (Function<Double, Integer>) this::getStackValue);
     }
+    
+    @Override
+    public void onContainerClosed(EntityPlayer playerIn) {
+        if (!playerIn.getEntityWorld().isRemote) {
+            for (int i = 0; i < slotsAttachmentsInput.size(); i++) {
+                if (slotsAttachmentsInput.get(i).getHasStack()) {
+                    UtilItems.spawnItemAtEntity(getEntityPlayer(), slotsAttachmentsInput.get(i).getStack(), true);
+                }
+            }
+        }
+        super.onContainerClosed(playerIn);
+    }
 
     public ArrayList<Slot> getSlotsAttachmentsInput() {
         return slotsAttachmentsInput;
