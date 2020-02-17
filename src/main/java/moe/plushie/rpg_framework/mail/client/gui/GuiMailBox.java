@@ -267,6 +267,9 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
             message += "To: " + mailMessage.getReceiver().getName() + "\n\n";
             message += "Subject: " + mailMessage.getSubject() + "\n\n";
             message += mailMessage.getMessageText();
+            
+            message = message.replace("@sender", mailMessage.getSender().getName());
+            message = message.replace("@receiver", mailMessage.getReceiver().getName());
         } else {
             message += "Select a mail message.";
         }
@@ -397,6 +400,14 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
             }
             fontRenderer.drawString(getDisplayName(), x + 17, y, colour);
             GlStateManager.color(1F, 1F, 1F, 1F);
+        }
+        
+        @Override
+        public String getDisplayName() {
+            String display = super.getDisplayName();
+            display = display.replace("@sender", mailMessage.getSender().getName());
+            display = display.replace("@receiver", mailMessage.getReceiver().getName());
+            return display;
         }
     }
 
