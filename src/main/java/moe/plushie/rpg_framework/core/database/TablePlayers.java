@@ -6,11 +6,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import com.mojang.authlib.GameProfile;
-
-import moe.plushie.rpg_framework.core.database.driver.SQLiteDriver;
 
 public final class TablePlayers {
 
@@ -84,8 +83,26 @@ public final class TablePlayers {
         }
         return playerInfo;
     }
-    
+
+    private static final String SQL_GET_ALL_PLAYERS = "SELECT uuid, username FROM players";
+
+    public static ArrayList<GameProfile> getAllPlayers() {
+        ArrayList<GameProfile> gameProfiles = new ArrayList<GameProfile>();
+        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_GET_ALL_PLAYERS)) {
+            ResultSet resultSet = ps.executeQuery();
+            while (resultSet.next()) {
+                UUID uuid = UUID.fromString(resultSet.getString("uuid"));
+                String username = resultSet.getString("username");
+                gameProfiles.add(new GameProfile(uuid, username));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return gameProfiles;
+    }
+
     private static final String SQL_GET_PLAYER_USERNAME = "SELECT id FROM players WHERE username=? COLLATE NOCASE";
+
     public static DBPlayer getPlayer(Connection conn, String username) {
         DBPlayer playerInfo = DBPlayer.MISSING;
         try (PreparedStatement ps = conn.prepareStatement(SQL_GET_PLAYER_USERNAME)) {
@@ -99,13 +116,13 @@ public final class TablePlayers {
         }
         return playerInfo;
     }
-    
+
     private static final String SQL_GET_PLAYER_UUID = "SELECT id FROM players WHERE uuid=?";
-    
+
     public static PreparedStatement createPreStatementPlayerUUID(Connection conn) throws SQLException {
         return conn.prepareStatement(SQL_GET_PLAYER_UUID);
     }
-    
+
     public static DBPlayer getPlayer(Connection conn, UUID uuid) {
         DBPlayer playerInfo = DBPlayer.MISSING;
         try (PreparedStatement ps = createPreStatementPlayerUUID(conn)) {
@@ -115,7 +132,7 @@ public final class TablePlayers {
         }
         return playerInfo;
     }
-    
+
     public static DBPlayer getPlayerUUID(Connection conn, PreparedStatement ps, UUID uuid) throws SQLException {
         DBPlayer playerInfo = DBPlayer.MISSING;
         ps.setString(1, uuid.toString());
@@ -125,9 +142,9 @@ public final class TablePlayers {
         }
         return playerInfo;
     }
-    
+
     private static final String SQL_GET_PLAYER_ID = "SELECT * FROM players WHERE id=?";
-    
+
     public static DBPlayerInfo getPlayer(int id) {
         DBPlayerInfo playerInfo = DBPlayerInfo.MISSING_INFO;
         try (Connection conn = DatabaseManager.getConnection()) {
@@ -137,7 +154,7 @@ public final class TablePlayers {
         }
         return playerInfo;
     }
-    
+
     public static DBPlayerInfo getPlayer(Connection conn, int id) {
         DBPlayerInfo playerInfo = DBPlayerInfo.MISSING_INFO;
         try (PreparedStatement ps = conn.prepareStatement(SQL_GET_PLAYER_ID)) {

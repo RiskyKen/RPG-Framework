@@ -34,6 +34,10 @@ public class MailMessage implements IMailMessage {
         this.attachments = attachments;
         this.read = read;
     }
+    
+    public MailMessage updateReceiver(GameProfile receiver) {
+        return new MailMessage(id, mailSystem, sender, receiver, sendDateTime, subject, messageText, attachments, read);
+    }
 
     public int getId() {
         return id;

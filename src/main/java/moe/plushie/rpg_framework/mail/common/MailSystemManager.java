@@ -19,8 +19,10 @@ import moe.plushie.rpg_framework.core.common.network.server.MessageServerSyncMai
 import moe.plushie.rpg_framework.core.common.utils.PlayerUtils;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import moe.plushie.rpg_framework.core.database.DatabaseManager;
+import moe.plushie.rpg_framework.core.database.TablePlayers;
 import moe.plushie.rpg_framework.mail.common.serialize.MailSystemSerializer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.management.UserListWhitelist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -127,25 +129,36 @@ public class MailSystemManager implements IMailSystemManager {
     @Override
     public void onSendMailMessages(IMailSendCallback callback, GameProfile[] receivers, MailMessage mailMessage) {
         DatabaseManager.EXECUTOR.execute(new Runnable() {
+            MailSystem mailSystem = getMailSystem(mailMessage.getMailSystem().getIdentifier());
+
             @Override
             public void run() {
                 ArrayList<GameProfile> success = new ArrayList<GameProfile>();
                 ArrayList<GameProfile> failed = new ArrayList<GameProfile>();
-                MailSystem mailSystem = getMailSystem(mailMessage.getMailSystem().getIdentifier());
+                ArrayList<GameProfile> specialNames = new ArrayList<GameProfile>();
                 if (mailSystem != null) {
                     for (GameProfile receiver : receivers) {
-                        MailMessage m = new MailMessage(mailMessage.getId(), mailMessage.getMailSystem(), mailMessage.getSender(), receiver, mailMessage.getSendDateTime(), mailMessage.getSubject(), mailMessage.getMessageText(), mailMessage.getAttachments(), mailMessage.isRead());
-                        if (mailSystem.onSendMailMessage(m)) {
-                            success.add(receiver);
-                            continue;
+                        if (receiver.getName() != null && receiver.getName().startsWith("@")) {
+                            specialNames.add(receiver);
                         } else {
-                            failed.add(receiver);
+                            if (mailSystem.onSendMailMessage(mailMessage.updateReceiver(receiver))) {
+                                success.add(receiver);
+                            } else {
+                                failed.add(receiver);
+                            }
                         }
                     }
                 }
                 FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(new Runnable() {
                     @Override
                     public void run() {
+                        for (GameProfile special : specialNames) {
+                            if (sendSpecialMailMessage(special.getName(), mailMessage)) {
+                                success.add(special);
+                            } else {
+                                failed.add(special);
+                            }
+                        }
                         if (!success.isEmpty()) {
                             notifyClients(success);
                         }
@@ -155,6 +168,97 @@ public class MailSystemManager implements IMailSystemManager {
                     }
                 });
 
+            }
+        });
+    }
+
+    private boolean sendSpecialMailMessage(String specialName, MailMessage mailMessage) {
+        if (specialName.equalsIgnoreCase("@a")) {
+            sendToAll(mailMessage);
+            return true;
+        }
+        if (specialName.equalsIgnoreCase("@online")) {
+            sendToAllOnline(mailMessage);
+            return true;
+        }
+        if (specialName.equalsIgnoreCase("@whitelist")) {
+            sendToWhiteList(mailMessage);
+            return true;
+        }
+        return false;
+    }
+
+    private void sendToAll(MailMessage mailMessage) {
+        MailSystem mailSystem = getMailSystem(mailMessage.getMailSystem().getIdentifier());
+        if (mailSystem == null) {
+            return;
+        }
+        DatabaseManager.EXECUTOR.execute(new Runnable() {
+            @Override
+            public void run() {
+                ArrayList<GameProfile> gameProfiles = TablePlayers.getAllPlayers();
+                for (GameProfile profile : gameProfiles) {
+                    if (mailSystem.onSendMailMessage(mailMessage.updateReceiver(profile))) {
+                        notifyClientMainThread(profile);
+                    }
+                }
+            }
+        });
+    }
+
+    private void sendToAllOnline(MailMessage mailMessage) {
+        MailSystem mailSystem = getMailSystem(mailMessage.getMailSystem().getIdentifier());
+        if (mailSystem == null) {
+            return;
+        }
+        List<EntityPlayerMP> playerEntityList = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers();
+        for (int i = 0; i < playerEntityList.size(); i++) {
+            EntityPlayerMP entityPlayerMP = playerEntityList.get(i);
+            GameProfile profile = new GameProfile(entityPlayerMP.getGameProfile().getId(), entityPlayerMP.getGameProfile().getName());
+            DatabaseManager.EXECUTOR.execute(new Runnable() {
+                @Override
+                public void run() {
+                    if (mailSystem.onSendMailMessage(mailMessage.updateReceiver(profile))) {
+                        notifyClientMainThread(profile);
+                    }
+                }
+            });
+        }
+
+    }
+
+    private void sendToWhiteList(MailMessage mailMessage) {
+        MailSystem mailSystem = getMailSystem(mailMessage.getMailSystem().getIdentifier());
+        if (mailSystem == null) {
+            return;
+        }
+        UserListWhitelist whiteList = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getWhitelistedPlayers();
+        for (String key : whiteList.getKeys()) {
+            GameProfile gameProfile = whiteList.getByName(key);
+            GameProfile profile = new GameProfile(gameProfile.getId(), gameProfile.getName());
+            DatabaseManager.EXECUTOR.execute(new Runnable() {
+                @Override
+                public void run() {
+                    if (mailSystem.onSendMailMessage(mailMessage.updateReceiver(profile))) {
+                        notifyClientMainThread(profile);
+                    }
+                }
+            });
+        }
+    }
+
+    private void notifyClientMainThread(GameProfile clientProfile) {
+        FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(new Runnable() {
+            @Override
+            public void run() {
+                List<EntityPlayerMP> playerEntityList = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers();
+                for (int i = 0; i < playerEntityList.size(); i++) {
+                    EntityPlayerMP entityPlayerMP = playerEntityList.get(i);
+                    if (PlayerUtils.gameProfilesMatch(entityPlayerMP.getGameProfile(), clientProfile)) {
+                        RPGFramework.getProxy().getMailSystemManager().getNotificationManager().syncToClient(entityPlayerMP, false, true);
+                        break;
+                    }
+                }
             }
         });
     }
