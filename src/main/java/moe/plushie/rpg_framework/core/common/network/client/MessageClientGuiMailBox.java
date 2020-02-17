@@ -1,6 +1,7 @@
 package moe.plushie.rpg_framework.core.common.network.client;
 
 import com.google.gson.JsonElement;
+import com.mojang.authlib.GameProfile;
 
 import io.netty.buffer.ByteBuf;
 import moe.plushie.rpg_framework.api.core.IIdentifier;
@@ -12,6 +13,10 @@ import moe.plushie.rpg_framework.mail.common.MailMessage;
 import moe.plushie.rpg_framework.mail.common.inventory.ContainerMailBox;
 import moe.plushie.rpg_framework.mail.common.serialize.MailMessageSerializer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.NBTException;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -20,7 +25,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class MessageClientGuiMailBox implements IMessage, IMessageHandler<MessageClientGuiMailBox, IMessage> {
 
     private MailMessageType messageType;
-    private MailMessage[] mailMessages;
+    private GameProfile[] receivers;
+    private MailMessage mailMessage;
     private IMailSystem mailSystem;
     private int messageId;
 
@@ -31,8 +37,9 @@ public class MessageClientGuiMailBox implements IMessage, IMessageHandler<Messag
         this.messageType = messageType;
     }
 
-    public MessageClientGuiMailBox setMailMessages(MailMessage[] mailMessages) {
-        this.mailMessages = mailMessages;
+    public MessageClientGuiMailBox setMailMessages(GameProfile[] receivers, MailMessage mailMessage) {
+        this.receivers = receivers;
+        this.mailMessage = mailMessage;
         return this;
     }
 
@@ -53,11 +60,11 @@ public class MessageClientGuiMailBox implements IMessage, IMessageHandler<Messag
         case MAIL_CHANGE:
             break;
         case MAIL_MESSAGE_SEND:
-            buf.writeInt(mailMessages.length);
-            for (int i = 0; i < mailMessages.length; i++) {
-                JsonElement jsonElement = MailMessageSerializer.serializeJson(mailMessages[i], true);
-                ByteBufUtils.writeUTF8String(buf, jsonElement.toString());
+            buf.writeInt(receivers.length);
+            for (int i = 0; i < receivers.length; i++) {
+                ByteBufUtils.writeUTF8String(buf, NBTUtil.writeGameProfile(new NBTTagCompound(), receivers[i]).toString());
             }
+            ByteBufUtils.writeUTF8String(buf, MailMessageSerializer.serializeJson(mailMessage, true).toString());
             break;
         case MAIL_MESSAGE_REQUEST:
             break;
@@ -84,11 +91,17 @@ public class MessageClientGuiMailBox implements IMessage, IMessageHandler<Messag
             break;
         case MAIL_MESSAGE_SEND:
             int count = buf.readInt();
-            mailMessages = new MailMessage[count];
+            receivers = new GameProfile[count];
             for (int i = 0; i < count; i++) {
-                String mailJson = ByteBufUtils.readUTF8String(buf);
-                mailMessages[i] = MailMessageSerializer.deserializeJson(SerializeHelper.stringToJson(mailJson));
+                String receiverJson = ByteBufUtils.readUTF8String(buf);
+                try {
+                    receivers[i] = NBTUtil.readGameProfileFromNBT(JsonToNBT.getTagFromJson(receiverJson));
+                } catch (NBTException e) {
+                    e.printStackTrace();
+                }
             }
+            String mailJson = ByteBufUtils.readUTF8String(buf);
+            mailMessage = MailMessageSerializer.deserializeJson(SerializeHelper.stringToJson(mailJson));
             break;
         case MAIL_MESSAGE_REQUEST:
             break;
@@ -106,12 +119,12 @@ public class MessageClientGuiMailBox implements IMessage, IMessageHandler<Messag
             break;
         }
     }
-    
+
     private void writeMailSystem(ByteBuf buf, IMailSystem mailSystem) {
         JsonElement json = IdentifierSerialize.serializeJson(mailSystem.getIdentifier());
         ByteBufUtils.writeUTF8String(buf, json.toString());
     }
-    
+
     private IMailSystem readMailSystem(ByteBuf buf) {
         JsonElement json = SerializeHelper.stringToJson(ByteBufUtils.readUTF8String(buf));
         IIdentifier identifier = IdentifierSerialize.deserializeJson(json);
@@ -127,11 +140,11 @@ public class MessageClientGuiMailBox implements IMessage, IMessageHandler<Messag
                 return null;
             }
         }
-        
+
         if (!(player.openContainer != null && player.openContainer instanceof ContainerMailBox)) {
             return null;
         }
-        
+
         ContainerMailBox containerMailBox = (ContainerMailBox) player.openContainer;
 
         switch (message.messageType) {
@@ -139,7 +152,7 @@ public class MessageClientGuiMailBox implements IMessage, IMessageHandler<Messag
 
             break;
         case MAIL_MESSAGE_SEND:
-            containerMailBox.onClientSendMailMessages(player, message.mailMessages);
+            containerMailBox.onClientSendMailMessages(player, message.receivers, message.mailMessage);
             containerMailBox.markDirty();
             break;
         case MAIL_MESSAGE_REQUEST:
@@ -157,7 +170,7 @@ public class MessageClientGuiMailBox implements IMessage, IMessageHandler<Messag
             containerMailBox.markDirty();
             break;
         }
-        
+
         return null;
     }
 
@@ -176,7 +189,7 @@ public class MessageClientGuiMailBox implements IMessage, IMessageHandler<Messag
 
         /** Delete a mail message. */
         MAIL_MESSAGE_DELETE(false),
-        
+
         MAIL_MESSAGE_WITHDRAW_ITEMS(false);
 
         private final boolean needsCreative;

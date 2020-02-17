@@ -11,6 +11,8 @@ import net.minecraft.util.NonNullList;
 
 public class MailMessage implements IMailMessage {
 
+    public static final int SUBJECT_CHARACTER_LIMIT = 32;
+    
     private final int id;
     private final IMailSystem mailSystem;
     private final GameProfile sender;
@@ -57,14 +59,17 @@ public class MailMessage implements IMailMessage {
         return sendDateTime;
     }
 
+    @Override
     public String getSubject() {
         return subject;
     }
 
+    @Override
     public String getMessageText() {
         return messageText;
     }
 
+    @Override
     public NonNullList<ItemStack> getAttachments() {
         return attachments;
     }

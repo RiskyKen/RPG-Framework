@@ -129,7 +129,7 @@ public class CurrencyManager implements ICurrencyManager {
     }
     
     public ICurrency getDefault() {
-        ICurrency currency = getCurrency("common.json");
+        ICurrency currency = getCurrency("Common");
         if (currency != null) {
             return currency;
         }

@@ -5,6 +5,7 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import com.google.gson.JsonElement;
 import com.mojang.authlib.GameProfile;
@@ -15,11 +16,13 @@ import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerSyncMailSystems;
+import moe.plushie.rpg_framework.core.common.utils.PlayerUtils;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
-import moe.plushie.rpg_framework.mail.common.inventory.ContainerMailBox;
+import moe.plushie.rpg_framework.core.database.DatabaseManager;
 import moe.plushie.rpg_framework.mail.common.serialize.MailSystemSerializer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -121,21 +124,50 @@ public class MailSystemManager implements IMailSystemManager {
         return mailSystemMap.keySet().toArray(new String[mailSystemMap.size()]);
     }
 
-    public void onClientSendMailMessage(EntityPlayerMP entityPlayer, MailMessage[] mailMessages) {
-        ArrayList<GameProfile> success = new ArrayList<GameProfile>();
-        ArrayList<GameProfile> failed = new ArrayList<GameProfile>();
-        for (MailMessage mailMessage : mailMessages) {
-            MailSystem mailSystem = getMailSystem(mailMessage.getMailSystem().getIdentifier());
-            if (mailSystem != null) {
-                if (mailSystem.onClientSendMailMessage(entityPlayer, mailMessage)) {
-                    success.add(mailMessage.getReceiver());
-                    continue;
+    @Override
+    public void onSendMailMessages(IMailSendCallback callback, GameProfile[] receivers, MailMessage mailMessage) {
+        DatabaseManager.EXECUTOR.execute(new Runnable() {
+            @Override
+            public void run() {
+                ArrayList<GameProfile> success = new ArrayList<GameProfile>();
+                ArrayList<GameProfile> failed = new ArrayList<GameProfile>();
+                MailSystem mailSystem = getMailSystem(mailMessage.getMailSystem().getIdentifier());
+                if (mailSystem != null) {
+                    for (GameProfile receiver : receivers) {
+                        MailMessage m = new MailMessage(mailMessage.getId(), mailMessage.getMailSystem(), mailMessage.getSender(), receiver, mailMessage.getSendDateTime(), mailMessage.getSubject(), mailMessage.getMessageText(), mailMessage.getAttachments(), mailMessage.isRead());
+                        if (mailSystem.onSendMailMessage(m)) {
+                            success.add(receiver);
+                            continue;
+                        } else {
+                            failed.add(receiver);
+                        }
+                    }
+                }
+                FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!success.isEmpty()) {
+                            notifyClients(success);
+                        }
+                        if (callback != null) {
+                            callback.onMailResult(success, failed);
+                        }
+                    }
+                });
+
+            }
+        });
+    }
+
+    private void notifyClients(ArrayList<GameProfile> clientProfiles) {
+        List<EntityPlayerMP> playerEntityList = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers();
+        for (GameProfile profile : clientProfiles) {
+            for (int i = 0; i < playerEntityList.size(); i++) {
+                EntityPlayerMP entityPlayerMP = playerEntityList.get(i);
+                if (PlayerUtils.gameProfilesMatch(entityPlayerMP.getGameProfile(), profile)) {
+                    RPGFramework.getProxy().getMailSystemManager().getNotificationManager().syncToClient(entityPlayerMP, false, true);
                 }
             }
-            failed.add(mailMessage.getReceiver());
-        }
-        if (entityPlayer.openContainer != null && entityPlayer.openContainer instanceof ContainerMailBox) {
-            ((ContainerMailBox) entityPlayer.openContainer).onMailResult(entityPlayer, success, failed);
         }
     }
 }

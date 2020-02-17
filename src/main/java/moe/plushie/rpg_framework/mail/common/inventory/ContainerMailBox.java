@@ -12,12 +12,14 @@ import com.mojang.authlib.GameProfile;
 
 import moe.plushie.rpg_framework.api.currency.ICost;
 import moe.plushie.rpg_framework.api.mail.IMailSystem;
+import moe.plushie.rpg_framework.api.mail.IMailSystemManager.IMailSendCallback;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.inventory.ModTileContainer;
 import moe.plushie.rpg_framework.core.common.inventory.slot.SlotHidable;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerMailList;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerMailResult;
+import moe.plushie.rpg_framework.core.common.utils.PlayerUtils;
 import moe.plushie.rpg_framework.core.common.utils.UtilItems;
 import moe.plushie.rpg_framework.core.database.TableMail;
 import moe.plushie.rpg_framework.currency.common.Cost;
@@ -35,7 +37,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
 
-public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> {
+public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> implements IMailSendCallback {
 
     private final ScriptEngine scriptEngine = new ScriptEngineManager(null).getEngineByName("nashorn");
     private final IMailSystem mailSystem;
@@ -99,18 +101,63 @@ public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> {
         }
     }
 
-    public void onClientSendMailMessages(EntityPlayerMP player, MailMessage[] mailMessages) {
-        // TODO check shit out.
-        RPGFramework.getProxy().getMailSystemManager().onClientSendMailMessage(player, mailMessages);
+    public void onClientSendMailMessages(EntityPlayerMP player, GameProfile[] receivers, MailMessage mailMessage) {
+        // Mail security checks.
+        if (!player.capabilities.isCreativeMode) {
+            if (!mailSystem.isSendingEnabled()) {
+                RPGFramework.getLogger().warn(String.format("User %s tried to send a message, when sending is disalbed.", getEntityPlayer().getName()));
+                return;
+            }
+            if (!getSendCost().canAfford(getEntityPlayer())) {
+                RPGFramework.getLogger().warn(String.format("User %s tried to send a message they can not afford.", getEntityPlayer().getName()));
+                return;
+            }
+            if (receivers.length != 1) {
+                RPGFramework.getLogger().warn(String.format("User %s tried to send a message to more than one player.", getEntityPlayer().getName()));
+                return;
+            }
+            if (PlayerUtils.gameProfilesMatch(receivers[0], getEntityPlayer().getGameProfile()) & !mailSystem.isAllowSendingToSelf()) {
+                RPGFramework.getLogger().warn(String.format("User %s tried to send a message to themselves, this is not allowed!", getEntityPlayer().getName()));
+                return;
+            }
+            if (mailMessage.getAttachments().size() > mailSystem.getMaxAttachments()) {
+                RPGFramework.getLogger().warn(String.format("User %s tried to send a message with more attachments than is allowed.", getEntityPlayer().getName()));
+                return;
+            }
+            if (mailMessage.getMessageText().length() > mailSystem.getCharacterLimit()) {
+                RPGFramework.getLogger().warn(String.format("User %s tried to send a message, with a body that is over the character limit.", getEntityPlayer().getName()));
+                return;
+            }
+            if (mailMessage.getSubject().length() > MailMessage.SUBJECT_CHARACTER_LIMIT) {
+                RPGFramework.getLogger().warn(String.format("User %s tried to send a message, with a subject that is over the character limit.", getEntityPlayer().getName()));
+                return;
+            }
+            if (receivers[0].getName() != null && receivers[0].getName().startsWith("@")) {
+                RPGFramework.getLogger().warn(String.format("User %s tried to send a message, with a special receiver name.", getEntityPlayer().getName()));
+                return;
+            }
+        }
+        RPGFramework.getProxy().getMailSystemManager().onSendMailMessages(this, receivers, mailMessage);
+    }
+
+    @Override
+    public void onMailResult(ArrayList<GameProfile> success, ArrayList<GameProfile> failed) {
+        if (!success.isEmpty()) {
+            for (int i = 0; i < invAttachmentsInput.getSizeInventory(); i++) {
+                invAttachmentsInput.setInventorySlotContents(i, ItemStack.EMPTY);
+            }
+            getSendCost().pay(getEntityPlayer());
+        }
+        PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerMailResult(success, failed), (EntityPlayerMP) getEntityPlayer());
     }
 
     public void onClientSelectMessage(EntityPlayerMP player, int messageId) {
-        ((MailSystem)mailSystem).onClientSelectMessage(player, messageId);
+        ((MailSystem) mailSystem).onClientSelectMessage(player, messageId);
         // updateOutputSlots(messageId);
     }
 
     public void onClientDeleteMessage(EntityPlayerMP player, int messageId) {
-        ((MailSystem)mailSystem).onClientDeleteMessage(player, messageId);
+        ((MailSystem) mailSystem).onClientDeleteMessage(player, messageId);
     }
 
     public void onClientWithdrawItems(EntityPlayerMP player, int messageId) {
@@ -124,16 +171,6 @@ public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> {
                 TableMail.clearMessageItems(messageId);
             }
         }
-    }
-
-    public void onMailResult(EntityPlayerMP entityPlayer, ArrayList<GameProfile> success, ArrayList<GameProfile> failed) {
-        if (!success.isEmpty()) {
-            for (int i = 0; i < invAttachmentsInput.getSizeInventory(); i++) {
-                invAttachmentsInput.setInventorySlotContents(i, ItemStack.EMPTY);
-            }
-            getSendCost().pay(entityPlayer);
-        }
-        PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerMailResult(success, failed), entityPlayer);
     }
 
     public NonNullList<ItemStack> getAttachments() {
@@ -153,7 +190,7 @@ public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> {
 
         String costAlgorithm = mailSystem.getCostAlgorithm();
 
-        //costAlgorithm = "var result = function() {var value = 0; var i; for (i = 0; i < getAttachmentCount(); i++){ var j; for (j = 0; j < getStackSize(i); j++) { value += 1; }} return value;};";
+        // costAlgorithm = "var result = function() {var value = 0; var i; for (i = 0; i < getAttachmentCount(); i++){ var j; for (j = 0; j < getStackSize(i); j++) { value += 1; }} return value;};";
 
         costAlgorithm = costAlgorithm.replace("$messageCost", String.valueOf(mailSystem.getMessageCost().getWalletCost().getAmount()));
         costAlgorithm = costAlgorithm.replace("$attachmentCost", String.valueOf(mailSystem.getAttachmentCost().getWalletCost().getAmount()));

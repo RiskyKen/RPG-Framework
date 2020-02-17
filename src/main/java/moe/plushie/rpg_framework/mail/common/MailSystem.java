@@ -1,16 +1,12 @@
 package moe.plushie.rpg_framework.mail.common;
 
-import java.util.List;
-
 import moe.plushie.rpg_framework.api.core.IGuiIcon;
 import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.currency.ICost;
 import moe.plushie.rpg_framework.api.mail.IMailSystem;
 import moe.plushie.rpg_framework.core.RPGFramework;
-import moe.plushie.rpg_framework.core.common.utils.PlayerUtils;
 import moe.plushie.rpg_framework.core.database.TableMail;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class MailSystem implements IMailSystem, Comparable<IMailSystem> {
 
@@ -207,16 +203,8 @@ public class MailSystem implements IMailSystem, Comparable<IMailSystem> {
         return name.compareTo(o.getName());
     }
 
-    public boolean onClientSendMailMessage(EntityPlayerMP player, MailMessage mailMessage) {
-        boolean susscess = TableMail.addMessage(mailMessage);
-        List<EntityPlayerMP> playerEntityList = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers();
-        for (int i = 0; i < playerEntityList.size(); i++) {
-            EntityPlayerMP entityPlayerMP = playerEntityList.get(i);
-            if (PlayerUtils.gameProfilesMatch(entityPlayerMP.getGameProfile(), mailMessage.getReceiver())) {
-                RPGFramework.getProxy().getMailSystemManager().getNotificationManager().syncToClient(entityPlayerMP, false, true);
-            }
-        }
-        return susscess;
+    public boolean onSendMailMessage(MailMessage mailMessage) {
+        return TableMail.addMessage(mailMessage);
     }
 
     public void onClientDeleteMessage(EntityPlayerMP entityPlayer, int messageId) {

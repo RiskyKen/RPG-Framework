@@ -46,7 +46,9 @@ public final class MailMessageSerializer {
         jsonObject.addProperty(PROP_ID, mailMessage.getId());
         jsonObject.add(PROP_MAIL_SYSTEM, IdentifierSerialize.serializeJson(mailMessage.getMailSystem().getIdentifier()));
         jsonObject.addProperty(PROP_SENDER, NBTUtil.writeGameProfile(new NBTTagCompound(), mailMessage.getSender()).toString());
-        jsonObject.addProperty(PROP_RECEIVER, NBTUtil.writeGameProfile(new NBTTagCompound(), mailMessage.getReceiver()).toString());
+        if (mailMessage.getReceiver() != null) {
+            jsonObject.addProperty(PROP_RECEIVER, NBTUtil.writeGameProfile(new NBTTagCompound(), mailMessage.getReceiver()).toString());
+        }
         jsonObject.addProperty(PROP_SEND_DATE_TIME, SDF.format(mailMessage.getSendDateTime()));
         jsonObject.addProperty(PROP_SUBJECT, mailMessage.getSubject());
         jsonObject.addProperty(PROP_MESSAGE_TEXT, mailMessage.getMessageText());
@@ -65,31 +67,48 @@ public final class MailMessageSerializer {
         try {
             JsonObject jsonObject = json.getAsJsonObject();
 
-            JsonElement elementId = jsonObject.get(PROP_ID);
-            JsonElement elementMailSystem = jsonObject.get(PROP_MAIL_SYSTEM);
-            JsonElement elementSender = jsonObject.get(PROP_SENDER);
-            JsonElement elementReceiver = jsonObject.get(PROP_RECEIVER);
-            JsonElement elementSendDateTime = jsonObject.get(PROP_SEND_DATE_TIME);
-            JsonElement elementSubject = jsonObject.get(PROP_SUBJECT);
-            JsonElement elementMessageText = jsonObject.get(PROP_MESSAGE_TEXT);
-            JsonElement elementAttachments = jsonObject.get(PROP_ATTACHMENTS);
-            JsonElement elementRead = jsonObject.get(PROP_READ);
-
-            int id = elementId.getAsInt();
-            MailSystem mailSystem = RPGFramework.getProxy().getMailSystemManager().getMailSystem(IdentifierSerialize.deserializeJson(elementMailSystem));
-            GameProfile sender = NBTUtil.readGameProfileFromNBT(JsonToNBT.getTagFromJson(elementSender.getAsString()));
-            GameProfile receiver = NBTUtil.readGameProfileFromNBT(JsonToNBT.getTagFromJson(elementReceiver.getAsString()));
-            Date sendDateTime = SDF.parse(elementSendDateTime.getAsString());
-            String subject = elementSubject.getAsString();
-            String messageText = elementMessageText.getAsString();
-
-            JsonArray jsonArray = elementAttachments.getAsJsonArray();
+            int id = -1;
+            MailSystem mailSystem = null;
+            GameProfile sender = null;
+            GameProfile receiver = null;
+            Date sendDateTime = null;
+            String subject = "";
+            String messageText = "";
             NonNullList<ItemStack> attachments = NonNullList.<ItemStack>create();
-            for (int i = 0; i < jsonArray.size(); i++) {
-                JsonObject jsonAttachment = jsonArray.get(i).getAsJsonObject();
-                attachments.add(SerializeHelper.readItemFromJson(jsonAttachment));
+            boolean read = false;
+
+            if (jsonObject.has(PROP_ID)) {
+                id = jsonObject.get(PROP_ID).getAsInt();
             }
-            boolean read = elementRead.getAsBoolean();
+            if (jsonObject.has(PROP_MAIL_SYSTEM)) {
+                mailSystem = RPGFramework.getProxy().getMailSystemManager().getMailSystem(IdentifierSerialize.deserializeJson(jsonObject.get(PROP_MAIL_SYSTEM)));
+            }
+            if (jsonObject.has(PROP_SENDER)) {
+                sender = NBTUtil.readGameProfileFromNBT(JsonToNBT.getTagFromJson(jsonObject.get(PROP_SENDER).getAsString()));
+            }
+            if (jsonObject.has(PROP_RECEIVER)) {
+                receiver = NBTUtil.readGameProfileFromNBT(JsonToNBT.getTagFromJson(jsonObject.get(PROP_RECEIVER).getAsString()));
+            }
+            if (jsonObject.has(PROP_SEND_DATE_TIME)) {
+                sendDateTime = SDF.parse(jsonObject.get(PROP_SEND_DATE_TIME).getAsString());
+            }
+            if (jsonObject.has(PROP_SUBJECT)) {
+                subject = jsonObject.get(PROP_SUBJECT).getAsString();
+            }
+            if (jsonObject.has(PROP_MESSAGE_TEXT)) {
+                messageText = jsonObject.get(PROP_MESSAGE_TEXT).getAsString();
+            }
+            if (jsonObject.has(PROP_ATTACHMENTS)) {
+                JsonArray jsonArray = jsonObject.get(PROP_ATTACHMENTS).getAsJsonArray();
+                for (int i = 0; i < jsonArray.size(); i++) {
+                    JsonObject jsonAttachment = jsonArray.get(i).getAsJsonObject();
+                    attachments.add(SerializeHelper.readItemFromJson(jsonAttachment));
+                }
+
+            }
+            if (jsonObject.has(PROP_READ)) {
+                read = jsonObject.get(PROP_READ).getAsBoolean();
+            }
 
             return new MailMessage(id, mailSystem, sender, receiver, sendDateTime, subject, messageText, attachments, read);
         } catch (Exception e) {

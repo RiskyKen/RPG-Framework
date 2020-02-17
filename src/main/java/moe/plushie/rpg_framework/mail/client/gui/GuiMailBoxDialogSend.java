@@ -259,7 +259,9 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
         String message = textFieldBody.getText();
         NonNullList<ItemStack> attachments = getAttachments();
         String[] split = textFieldTo.getText().trim().split(",");
-        ArrayList<MailMessage> mailMessages = new ArrayList<MailMessage>();
+        MailMessage mailMessage = new MailMessage(-1, mailSystem, sender, null, sendDateTime, subject, message, attachments, false);
+        ArrayList<GameProfile> receivers = new ArrayList<GameProfile>();
+        
         for (String textReceiver : split) {
             GameProfile receiver = null;
             try {
@@ -270,17 +272,16 @@ public class GuiMailBoxDialogSend extends AbstractGuiDialog {
             if (receiver == null) {
                 receiver = new GameProfile(null, textReceiver.trim());
             }
-            mailMessages.add(new MailMessage(-1, mailSystem, sender, receiver, sendDateTime, subject, message, attachments, false));
-
+            receivers.add(receiver);
         }
-        if (mailMessages.isEmpty()) {
+        if (receivers.isEmpty()) {
             return false;
         }
-        if (!player.capabilities.isCreativeMode & mailMessages.size() > 1) {
+        if (!player.capabilities.isCreativeMode & receivers.size() > 1) {
             return false;
         }
 
-        PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiMailBox(MailMessageType.MAIL_MESSAGE_SEND).setMailMessages(mailMessages.toArray(new MailMessage[mailMessages.size()])));
+        PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiMailBox(MailMessageType.MAIL_MESSAGE_SEND).setMailMessages(receivers.toArray(new GameProfile[receivers.size()]), mailMessage));
         return true;
     }
 
