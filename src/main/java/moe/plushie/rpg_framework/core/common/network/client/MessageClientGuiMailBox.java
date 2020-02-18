@@ -8,6 +8,7 @@ import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.mail.IMailSystem;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.serialize.IdentifierSerialize;
+import moe.plushie.rpg_framework.core.common.utils.ByteBufHelper;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import moe.plushie.rpg_framework.mail.common.MailMessage;
 import moe.plushie.rpg_framework.mail.common.inventory.ContainerMailBox;
@@ -64,7 +65,7 @@ public class MessageClientGuiMailBox implements IMessage, IMessageHandler<Messag
             for (int i = 0; i < receivers.length; i++) {
                 ByteBufUtils.writeUTF8String(buf, NBTUtil.writeGameProfile(new NBTTagCompound(), receivers[i]).toString());
             }
-            ByteBufUtils.writeUTF8String(buf, MailMessageSerializer.serializeJson(mailMessage, true).toString());
+            ByteBufHelper.writeString(buf, MailMessageSerializer.serializeJson(mailMessage, true).toString());
             break;
         case MAIL_MESSAGE_REQUEST:
             break;
@@ -100,7 +101,7 @@ public class MessageClientGuiMailBox implements IMessage, IMessageHandler<Messag
                     e.printStackTrace();
                 }
             }
-            String mailJson = ByteBufUtils.readUTF8String(buf);
+            String mailJson = ByteBufHelper.readString(buf);
             mailMessage = MailMessageSerializer.deserializeJson(SerializeHelper.stringToJson(mailJson));
             break;
         case MAIL_MESSAGE_REQUEST:

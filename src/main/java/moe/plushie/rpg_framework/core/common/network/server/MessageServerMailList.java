@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import com.google.gson.JsonElement;
 
 import io.netty.buffer.ByteBuf;
+import moe.plushie.rpg_framework.core.common.utils.ByteBufHelper;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import moe.plushie.rpg_framework.mail.client.gui.GuiMailBox;
 import moe.plushie.rpg_framework.mail.common.MailMessage;
 import moe.plushie.rpg_framework.mail.common.serialize.MailMessageSerializer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -35,7 +35,7 @@ public class MessageServerMailList implements IMessage {
         for (int i = 0; i < mailMessages.size(); i++) {
             MailMessage mailMessage = mailMessages.get(i);
             JsonElement mailJson = MailMessageSerializer.serializeJson(mailMessage, true);
-            ByteBufUtils.writeUTF8String(buf, mailJson.toString());
+            ByteBufHelper.writeString(buf, mailJson.toString());
         }
     }
 
@@ -44,7 +44,7 @@ public class MessageServerMailList implements IMessage {
         mailMessages = new ArrayList<MailMessage>();
         int size = buf.readInt();
         for (int i = 0; i < size; i++) {
-            JsonElement mailJson = SerializeHelper.stringToJson(ByteBufUtils.readUTF8String(buf));
+            JsonElement mailJson = SerializeHelper.stringToJson(ByteBufHelper.readString(buf));
             MailMessage mailMessage = MailMessageSerializer.deserializeJson(mailJson);
             mailMessages.add(mailMessage);
         }
