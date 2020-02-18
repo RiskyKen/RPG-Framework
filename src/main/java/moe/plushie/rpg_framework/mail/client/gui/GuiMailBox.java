@@ -8,7 +8,6 @@ import org.lwjgl.opengl.GL11;
 
 import com.mojang.authlib.GameProfile;
 
-import moe.plushie.rpg_framework.api.mail.IMailMessage;
 import moe.plushie.rpg_framework.api.mail.IMailSystem;
 import moe.plushie.rpg_framework.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpg_framework.core.client.gui.GuiHelper;
@@ -253,26 +252,9 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
         GuiHelper.renderLocalizedGuiName(fontRenderer, xSize, getName());
 
         GuiHelper.renderPlayerInvlabel(0, 151, fontRenderer);
-
-        IGuiListItem guiListItem = listMail.getSelectedListEntry();
-
         fontRenderer.drawString((mailListPage + 1) + "/" + getMaxListPages(), 40, 135, 0x404040);
 
-        String message = "";
-
-        if (guiListItem != null && guiListItem instanceof GuiMailListItem) {
-            MailMessage mailMessage = ((GuiMailListItem) guiListItem).getMailMessage();
-            message += "From: " + mailMessage.getSender().getName() + "\n";
-
-            message += "To: " + mailMessage.getReceiver().getName() + "\n\n";
-            message += "Subject: " + mailMessage.getSubject() + "\n\n";
-            message += mailMessage.getMessageText();
-            
-            message = message.replace("@sender", mailMessage.getSender().getName());
-            message = message.replace("@receiver", mailMessage.getReceiver().getName());
-        } else {
-            message += "Select a mail message.";
-        }
+        String message = getFullMessageText();
 
         if (listMail.getSelectedListEntry() != null && listMail.getSelectedListEntry() instanceof GuiMailListItem) {
             GlStateManager.pushMatrix();
@@ -316,6 +298,25 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
         }
         GL11.glPopMatrix();
     }
+    
+    public String getFullMessageText() {
+        String message = "";
+        IGuiListItem guiListItem = listMail.getSelectedListEntry();
+        if (guiListItem != null && guiListItem instanceof GuiMailListItem) {
+            MailMessage mailMessage = ((GuiMailListItem) guiListItem).getMailMessage();
+            message += "From: " + mailMessage.getSender().getName() + "\n";
+
+            message += "To: " + mailMessage.getReceiver().getName() + "\n\n";
+            message += "Subject: " + mailMessage.getSubject() + "\n\n";
+            message += mailMessage.getMessageText();
+            
+            message = message.replace("@sender", mailMessage.getSender().getName());
+            message = message.replace("@receiver", mailMessage.getReceiver().getName());
+        } else {
+            message += "Select a mail message.";
+        }
+        return message;
+    }
 
     private int getMaxListPages() {
         synchronized (mailMessages) {
@@ -346,14 +347,8 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
     }
 
     private int getMaxMessagePages() {
-        if (listMail.getSelectedListEntry() != null && listMail.getSelectedListEntry() instanceof GuiMailListItem) {
-            GuiMailListItem mailListItem = (GuiMailListItem) listMail.getSelectedListEntry();
-            IMailMessage mailMessage = mailListItem.mailMessage;
-            List<String> messageLines = fontRenderer.listFormattedStringToWidth(mailMessage.getMessageText(), MESSAGE_TEXT_WIDTH);
-            int totalHeight = messageLines.size() * fontRenderer.FONT_HEIGHT;
-            return MathHelper.ceil((float) totalHeight / (float) MESSAGE_TEXT_HEIGHT);
-        }
-        return 1;
+        List<String> messageLines = fontRenderer.listFormattedStringToWidth(getFullMessageText(), MESSAGE_TEXT_WIDTH);
+        return MathHelper.ceil((float) messageLines.size() / (float) MESSAGE_LINES_PRE_PAGE);
     }
 
     private void updateMessagePage() {
