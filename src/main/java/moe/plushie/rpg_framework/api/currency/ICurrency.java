@@ -1,10 +1,11 @@
 package moe.plushie.rpg_framework.api.currency;
 
+import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.core.IItemMatcher;
 
 public interface ICurrency {
 
-    public String getIdentifier();
+    public IIdentifier getIdentifier();
 
     /** Name of the currency. (this is used as the currency ID) */
     public String getName();

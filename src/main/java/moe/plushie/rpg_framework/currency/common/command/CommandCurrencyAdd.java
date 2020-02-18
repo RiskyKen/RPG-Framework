@@ -6,6 +6,7 @@ import moe.plushie.rpg_framework.api.currency.ICurrency;
 import moe.plushie.rpg_framework.api.currency.ICurrencyCapability;
 import moe.plushie.rpg_framework.api.currency.IWallet;
 import moe.plushie.rpg_framework.core.RPGFramework;
+import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.command.ModCommand;
 import moe.plushie.rpg_framework.currency.common.capability.CurrencyCapability;
 import net.minecraft.command.CommandException;
@@ -38,7 +39,7 @@ public class CommandCurrencyAdd extends ModCommand {
         String playerText = args[getParentCount() + 1];
         String amountText = args[getParentCount() + 2];
         
-        ICurrency currency = RPGFramework.getProxy().getCurrencyManager().getCurrency(currencyText);
+        ICurrency currency = RPGFramework.getProxy().getCurrencyManager().getCurrency(new IdentifierString(currencyText));
         EntityPlayerMP entityPlayer = getPlayer(server, sender, playerText);
         int amount = parseInt(amountText, 0);
         

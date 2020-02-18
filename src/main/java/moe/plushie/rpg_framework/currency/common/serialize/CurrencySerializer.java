@@ -7,8 +7,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.core.IItemMatcher;
 import moe.plushie.rpg_framework.api.currency.ICurrency.ICurrencyWalletInfo;
+import moe.plushie.rpg_framework.core.common.serialize.IdentifierSerialize;
 import moe.plushie.rpg_framework.core.common.serialize.ItemMacherSerializer;
 import moe.plushie.rpg_framework.currency.common.Currency;
 import moe.plushie.rpg_framework.currency.common.Currency.CurrencyVariant;
@@ -16,7 +18,8 @@ import moe.plushie.rpg_framework.currency.common.Currency.CurrencyWalletInfo;
 import net.minecraft.nbt.NBTException;
 
 public final class CurrencySerializer {
-
+    
+    private static final String PROP_IDENTIFIER = "identifier";
     private static final String PROP_NAME = "name";
     private static final String PROP_DISPLAY_FORMAT = "displayFormat";
 
@@ -70,10 +73,14 @@ public final class CurrencySerializer {
         return jsonObject;
     }
 
-    public static Currency deserializeJson(JsonElement json) {
+    public static Currency deserializeJson(JsonElement json, IIdentifier identifier) {
         try {
             JsonObject jsonCurrency = json.getAsJsonObject();
 
+            if (jsonCurrency.has(PROP_IDENTIFIER)) {
+                identifier = IdentifierSerialize.deserializeJson(jsonCurrency.get(PROP_IDENTIFIER));
+            }
+            
             String name = jsonCurrency.get(PROP_NAME).getAsString();
             String displayFormat = jsonCurrency.get(PROP_DISPLAY_FORMAT).getAsString();
             CurrencyWalletInfo walletInfo = deserializeCurrencyWalletInfo(jsonCurrency.get(PROP_WALLET).getAsJsonObject());
@@ -82,8 +89,9 @@ public final class CurrencySerializer {
             for (int i = 0; i < jsonVariants.size(); i++) {
                 variants.add(deserializeCurrencyVariant(jsonVariants.get(i).getAsJsonObject()));
             }
+            
             Collections.sort(variants);
-            return new Currency(name, name, displayFormat, walletInfo, variants.toArray(new CurrencyVariant[variants.size()]));
+            return new Currency(identifier, name, displayFormat, walletInfo, variants.toArray(new CurrencyVariant[variants.size()]));
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -1,10 +1,13 @@
 package moe.plushie.rpg_framework.currency.common.items;
 
+import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.currency.ICurrency;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.init.ModItems;
 import moe.plushie.rpg_framework.core.common.items.AbstractModItem;
 import moe.plushie.rpg_framework.core.common.lib.LibItemNames;
+import moe.plushie.rpg_framework.core.common.serialize.IdentifierSerialize;
+import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import moe.plushie.rpg_framework.currency.common.Currency;
 import moe.plushie.rpg_framework.currency.common.CurrencyManager;
 import net.minecraft.creativetab.CreativeTabs;
@@ -52,8 +55,14 @@ public class ItemWallet extends AbstractModItem {
         if (itemStack.getItem() == ModItems.WALLET) {
             if (itemStack.hasTagCompound()) {
                 if (itemStack.getTagCompound().hasKey(TAG_CURRENCY, NBT.TAG_STRING)) {
-                    CurrencyManager currencyManager = RPGFramework.getProxy().getCurrencyManager();
-                    return currencyManager.getCurrency(itemStack.getTagCompound().getString(TAG_CURRENCY));
+                    try {
+                        String currencyJson = itemStack.getTagCompound().getString(TAG_CURRENCY);
+                        IIdentifier identifier = IdentifierSerialize.deserializeJson(SerializeHelper.stringToJson(currencyJson));
+                        CurrencyManager currencyManager = RPGFramework.getProxy().getCurrencyManager();
+                        return currencyManager.getCurrency(identifier);
+                    } catch (Exception e) {
+                        // Most likely an item using old save data.
+                    }
                 }
             }
         }
@@ -64,7 +73,7 @@ public class ItemWallet extends AbstractModItem {
         if (currency.getCurrencyWalletInfo().getCreateWalletItem()) {
             ItemStack stack = new ItemStack(ModItems.WALLET, 1, 0);
             NBTTagCompound compound = new NBTTagCompound();
-            compound.setString(TAG_CURRENCY, currency.getName());
+            compound.setString(TAG_CURRENCY, IdentifierSerialize.serializeJson(currency.getIdentifier()).toString());
             stack.setTagCompound(compound);
             return stack;
         }

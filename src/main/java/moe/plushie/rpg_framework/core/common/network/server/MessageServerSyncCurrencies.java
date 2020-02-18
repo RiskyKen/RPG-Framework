@@ -3,7 +3,9 @@ package moe.plushie.rpg_framework.core.common.network.server;
 import com.google.gson.JsonElement;
 
 import io.netty.buffer.ByteBuf;
+import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.core.RPGFramework;
+import moe.plushie.rpg_framework.core.common.utils.ByteBufHelper;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import moe.plushie.rpg_framework.currency.common.Currency;
 import moe.plushie.rpg_framework.currency.common.serialize.CurrencySerializer;
@@ -27,6 +29,7 @@ public class MessageServerSyncCurrencies implements IMessage, IMessageHandler<Me
     public void toBytes(ByteBuf buf) {
         buf.writeInt(currencies.length);
         for (int i = 0; i < currencies.length; i++) {
+            ByteBufHelper.writeIdentifier(buf, currencies[i].getIdentifier());
             JsonElement jsonCurrency = CurrencySerializer.serializeJson(currencies[i], true);
             ByteBufUtils.writeUTF8String(buf, jsonCurrency.toString());
         }
@@ -37,10 +40,11 @@ public class MessageServerSyncCurrencies implements IMessage, IMessageHandler<Me
         int size = buf.readInt();
         currencies = new Currency[size];
         for (int i = 0; i < size; i++) {
+            IIdentifier identifier = ByteBufHelper.readIdentifier(buf);
             String jsonString = ByteBufUtils.readUTF8String(buf);
             JsonElement jsonCurrency = SerializeHelper.stringToJson(jsonString);
             if (jsonCurrency != null) {
-                currencies[i] = CurrencySerializer.deserializeJson(jsonCurrency);
+                currencies[i] = CurrencySerializer.deserializeJson(jsonCurrency, identifier);
             }
         }
     }

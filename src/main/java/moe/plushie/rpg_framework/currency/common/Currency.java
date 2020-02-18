@@ -2,12 +2,13 @@ package moe.plushie.rpg_framework.currency.common;
 
 import java.util.Arrays;
 
+import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.core.IItemMatcher;
 import moe.plushie.rpg_framework.api.currency.ICurrency;
 
 public class Currency implements ICurrency, Comparable<ICurrency> {
 
-    private final String identifier;
+    private final IIdentifier identifier;
 
     /** Name of the currency. (this is used as the currency ID) */
     private final String name;
@@ -19,7 +20,7 @@ public class Currency implements ICurrency, Comparable<ICurrency> {
     /** Different variants of this currency. */
     private final CurrencyVariant[] variants;
 
-    public Currency(String identifier, String name, String displayFormat, CurrencyWalletInfo walletInfo, CurrencyVariant[] variants) {
+    public Currency(IIdentifier identifier, String name, String displayFormat, CurrencyWalletInfo walletInfo, CurrencyVariant[] variants) {
         this.identifier = identifier;
         this.name = name;
         this.displayFormat = displayFormat;
@@ -28,7 +29,7 @@ public class Currency implements ICurrency, Comparable<ICurrency> {
     }
 
     @Override
-    public String getIdentifier() {
+    public IIdentifier getIdentifier() {
         return identifier;
     }
 
