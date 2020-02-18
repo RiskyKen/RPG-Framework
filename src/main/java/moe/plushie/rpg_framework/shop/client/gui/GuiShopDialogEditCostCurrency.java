@@ -54,8 +54,8 @@ public class GuiShopDialogEditCostCurrency extends AbstractGuiDialog implements 
         super.initGui();
         buttonList.clear();
 
-        buttonClose = new GuiButtonExt(-1, x + width - 80 - 10, y + height - 30, 80, 20, I18n.format("inventory.rpg_economy:common.button_close"));
-        buttonEdit = new GuiButtonExt(-1, x + width - 160 - 20, y + height - 30, 80, 20, I18n.format("inventory.rpg_economy:common.button_edit"));
+        buttonClose = new GuiButtonExt(-1, x + width - 80 - 10, y + height - 30, 80, 20, I18n.format(LibGuiResources.Controls.BUTTON_CLOSE));
+        buttonEdit = new GuiButtonExt(-1, x + width - 160 - 20, y + height - 30, 80, 20, I18n.format(LibGuiResources.Controls.BUTTON_EDIT));
         dropDownCurrencyTypes = new GuiDropDownList(-1, x + 10, y + 25, 100, "", this);
 
         dropDownCurrencyTypes.addListItem(I18n.format("inventory.rpg_economy:common.none"), "", true);

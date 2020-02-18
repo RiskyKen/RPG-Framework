@@ -70,8 +70,8 @@ public class GuiShopDialogEditCostItems extends AbstractGuiDialog {
         super.initGui();
         buttonList.clear();
 
-        buttonClose = new GuiButtonExt(-1, x + width - 80 - 10, y + height - 30 - 98, 80, 20, I18n.format("inventory.rpg_economy:common.button_close"));
-        buttonEdit = new GuiButtonExt(-1, x + width - 160 - 20, y + height - 30 - 98, 80, 20, I18n.format("inventory.rpg_economy:common.button_edit"));
+        buttonClose = new GuiButtonExt(-1, x + width - 80 - 10, y + height - 30 - 98, 80, 20, I18n.format(LibGuiResources.Controls.BUTTON_CLOSE));
+        buttonEdit = new GuiButtonExt(-1, x + width - 160 - 20, y + height - 30 - 98, 80, 20, I18n.format(LibGuiResources.Controls.BUTTON_EDIT));
         buttonList.add(buttonClose);
         buttonList.add(buttonEdit);
 

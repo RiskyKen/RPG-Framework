@@ -48,7 +48,7 @@ public class GuiShopDialogShopList extends AbstractGuiDialog {
         super.initGui();
         buttonList.clear();
 
-        buttonClose = new GuiButtonExt(-1, x + width - 80 - 10, y + height - 30, 80, 20, I18n.format("inventory.rpg_economy:common.button_close"));
+        buttonClose = new GuiButtonExt(-1, x + width - 80 - 10, y + height - 30, 80, 20, I18n.format(LibGuiResources.Controls.BUTTON_CLOSE));
         buttonSet = new GuiButtonExt(-1, x + width - 160 - 20, y + height - 30, 80, 20, I18n.format(name + ".button.set"));
         buttonEditTabAdd = new GuiIconButton(parent, 0, x + 6, y + height - 30, 16, 16, TEXTURE_SHOP);
         buttonEditTabRemove = new GuiIconButton(parent, 0, x + 24, y + height - 30, 16, 16, TEXTURE_SHOP);

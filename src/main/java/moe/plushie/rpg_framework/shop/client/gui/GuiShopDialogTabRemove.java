@@ -32,8 +32,8 @@ public class GuiShopDialogTabRemove extends AbstractGuiDialog {
         super.initGui();
         buttonList.clear();
 
-        buttonCancel = new GuiButtonExt(-1, x + width - 80 - 10, y + height - 30, 80, 20, I18n.format("inventory.rpg_economy:common.button_cancel"));
-        buttonOK = new GuiButtonExt(-1, x + width - 160 - 20, y + height - 30, 80, 20, I18n.format("inventory.rpg_economy:common.button_ok"));
+        buttonCancel = new GuiButtonExt(-1, x + width - 80 - 10, y + height - 30, 80, 20, I18n.format(LibGuiResources.Controls.BUTTON_CANCEL));
+        buttonOK = new GuiButtonExt(-1, x + width - 160 - 20, y + height - 30, 80, 20, I18n.format(LibGuiResources.Controls.BUTTON_OK));
 
         buttonList.add(buttonCancel);
         buttonList.add(buttonOK);
