@@ -21,7 +21,7 @@ public class MailNotificationManager {
     }
 
     public void syncToClient(EntityPlayerMP entityPlayer, boolean login, boolean update) {
-        RPGFramework.getLogger().info("Sending mail notifications to player " + entityPlayer.getName() + ".");
+        //RPGFramework.getLogger().info("Sending mail notifications to player " + entityPlayer.getName() + ".");
         for (IMailSystem mailSystem : RPGFramework.getProxy().getMailSystemManager().getMailSystems()) {
             PacketHandler.NETWORK_WRAPPER.sendTo(getSyncMessage(mailSystem, entityPlayer, login, update), entityPlayer);
         }
