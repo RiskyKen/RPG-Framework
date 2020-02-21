@@ -2,7 +2,7 @@ package moe.plushie.rpg_framework.api.mail;
 
 import moe.plushie.rpg_framework.api.core.IGuiIcon;
 import moe.plushie.rpg_framework.api.core.IIdentifier;
-import moe.plushie.rpg_framework.api.currency.ICost;
+import moe.plushie.rpg_framework.api.currency.ICurrency;
 
 public interface IMailSystem {
 
@@ -11,10 +11,12 @@ public interface IMailSystem {
     public String getName();
 
     public int getCharacterLimit();
+    
+    public ICurrency getCurrency();
 
-    public ICost getMessageCost();
+    public int getMessageCost();
 
-    public ICost getAttachmentCost();
+    public int getAttachmentCost();
 
     public int getInboxSize();
 

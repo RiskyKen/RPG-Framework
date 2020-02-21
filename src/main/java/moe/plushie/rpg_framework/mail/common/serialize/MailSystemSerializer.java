@@ -6,14 +6,16 @@ import com.google.gson.JsonObject;
 
 import moe.plushie.rpg_framework.api.core.IGuiIcon;
 import moe.plushie.rpg_framework.api.core.IIdentifier;
+import moe.plushie.rpg_framework.core.RPGFramework;
+import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.serialize.GuiIconSerialize;
-import moe.plushie.rpg_framework.currency.common.serialize.CostSerializer;
 import moe.plushie.rpg_framework.mail.common.MailSystem;
 
 public class MailSystemSerializer {
 
     private static final String PROP_NAME = "name";
     private static final String PROP_CHARACTER_LIMIT = "character_limit";
+    private static final String PROP_CURRENCY = "currency";
     private static final String PROP_MESSAGE_COST = "message_cost";
     private static final String PROP_ATTACHMENT_COST = "attachment_cost";
     private static final String PROP_INBOX_SIZE = "inbox_size";
@@ -44,8 +46,11 @@ public class MailSystemSerializer {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty(PROP_NAME, mailSystem.getName());
         jsonObject.addProperty(PROP_CHARACTER_LIMIT, mailSystem.getCharacterLimit());
-        jsonObject.add(PROP_MESSAGE_COST, CostSerializer.serializeJson(mailSystem.getMessageCost(), false));
-        jsonObject.add(PROP_ATTACHMENT_COST, CostSerializer.serializeJson(mailSystem.getAttachmentCost(), false));
+        if (mailSystem.getCurrency() != null) {
+            jsonObject.addProperty(PROP_CURRENCY, (String) mailSystem.getCurrency().getIdentifier().getValue());
+        }
+        jsonObject.addProperty(PROP_MESSAGE_COST, mailSystem.getMessageCost());
+        jsonObject.addProperty(PROP_ATTACHMENT_COST, mailSystem.getAttachmentCost());
         jsonObject.addProperty(PROP_INBOX_SIZE, mailSystem.getInboxSize());
         jsonObject.addProperty(PROP_MAX_ATTACHMENTS, mailSystem.getMaxAttachments());
         jsonObject.addProperty(PROP_SENDING_ENABLED, mailSystem.isSendingEnabled());
@@ -82,11 +87,15 @@ public class MailSystemSerializer {
             if (jsonObject.has(PROP_CHARACTER_LIMIT)) {
                 mailSystem.setCharacterLimit(jsonObject.get(PROP_CHARACTER_LIMIT).getAsInt());
             }
+            if (jsonObject.has(PROP_CURRENCY)) {
+                IdentifierString identifierString = new IdentifierString(jsonObject.get(PROP_CURRENCY).getAsString());
+                mailSystem.setCurrency(RPGFramework.getProxy().getCurrencyManager().getCurrency(identifierString));
+            }
             if (jsonObject.has(PROP_MESSAGE_COST)) {
-                mailSystem.setMessageCost(CostSerializer.deserializeJson(jsonObject.get(PROP_MESSAGE_COST)));
+                mailSystem.setMessageCost(jsonObject.get(PROP_MESSAGE_COST).getAsInt());
             }
             if (jsonObject.has(PROP_ATTACHMENT_COST)) {
-                mailSystem.setAttachmentCost(CostSerializer.deserializeJson(jsonObject.get(PROP_ATTACHMENT_COST)));
+                mailSystem.setAttachmentCost(jsonObject.get(PROP_ATTACHMENT_COST).getAsInt());
             }
             if (jsonObject.has(PROP_INBOX_SIZE)) {
                 mailSystem.setInboxSize(jsonObject.get(PROP_INBOX_SIZE).getAsInt());
