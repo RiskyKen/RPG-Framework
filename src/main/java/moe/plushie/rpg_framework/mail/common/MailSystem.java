@@ -2,12 +2,11 @@ package moe.plushie.rpg_framework.mail.common;
 
 import moe.plushie.rpg_framework.api.core.IGuiIcon;
 import moe.plushie.rpg_framework.api.core.IIdentifier;
-import moe.plushie.rpg_framework.api.currency.ICost;
+import moe.plushie.rpg_framework.api.currency.ICurrency;
 import moe.plushie.rpg_framework.api.mail.IMailMessage;
 import moe.plushie.rpg_framework.api.mail.IMailSystem;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.database.TableMail;
-import moe.plushie.rpg_framework.currency.common.Cost;
 import net.minecraft.entity.player.EntityPlayerMP;
 
 public class MailSystem implements IMailSystem, Comparable<IMailSystem> {
@@ -15,8 +14,9 @@ public class MailSystem implements IMailSystem, Comparable<IMailSystem> {
     private final IIdentifier identifier;
     private final String name;
     private int characterLimit = 500;
-    private ICost messageCost = Cost.NO_COST;
-    private ICost attachmentCost = Cost.NO_COST;
+    private ICurrency currency;
+    private int messageCost = 0;
+    private int attachmentCost = 0;
     private int inboxSize = 50;
     private int maxAttachments = 9;
     private boolean sendingEnabled = true;
@@ -56,21 +56,31 @@ public class MailSystem implements IMailSystem, Comparable<IMailSystem> {
     }
 
     @Override
-    public ICost getMessageCost() {
+    public ICurrency getCurrency() {
+        return currency;
+    }
+
+    public MailSystem setCurrency(ICurrency currency) {
+        this.currency = currency;
+        return this;
+    }
+
+    @Override
+    public int getMessageCost() {
         return messageCost;
     }
 
-    public MailSystem setMessageCost(ICost messageCost) {
+    public MailSystem setMessageCost(int messageCost) {
         this.messageCost = messageCost;
         return this;
     }
 
     @Override
-    public ICost getAttachmentCost() {
+    public int getAttachmentCost() {
         return attachmentCost;
     }
 
-    public MailSystem setAttachmentCost(ICost attachmentCost) {
+    public MailSystem setAttachmentCost(int attachmentCost) {
         this.attachmentCost = attachmentCost;
         return this;
     }

@@ -71,7 +71,7 @@ public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> implem
         scriptEngine.put("getStackMaxSize", (Function<Double, Integer>) this::getStackMaxSize);
         scriptEngine.put("getStackValue", (Function<Double, Integer>) this::getStackValue);
     }
-    
+
     @Override
     public void onContainerClosed(EntityPlayer playerIn) {
         if (!playerIn.getEntityWorld().isRemote) {
@@ -199,21 +199,24 @@ public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> implem
     public ICost getSendCost() {
         ICost cost = Cost.NO_COST;
 
-        NonNullList<ItemStack> attachments = getAttachments();
+        if (mailSystem.getCurrency() == null) {
+            return cost;
+        }
 
+        NonNullList<ItemStack> attachments = getAttachments();
         String costAlgorithm = mailSystem.getCostAlgorithm();
 
         // costAlgorithm = "var result = function() {var value = 0; var i; for (i = 0; i < getAttachmentCount(); i++){ var j; for (j = 0; j < getStackSize(i); j++) { value += 1; }} return value;};";
 
-        costAlgorithm = costAlgorithm.replace("$messageCost", String.valueOf(mailSystem.getMessageCost().getWalletCost().getAmount()));
-        costAlgorithm = costAlgorithm.replace("$attachmentCost", String.valueOf(mailSystem.getAttachmentCost().getWalletCost().getAmount()));
+        costAlgorithm = costAlgorithm.replace("$messageCost", String.valueOf(mailSystem.getMessageCost()));
+        costAlgorithm = costAlgorithm.replace("$attachmentCost", String.valueOf(mailSystem.getAttachmentCost()));
         costAlgorithm = costAlgorithm.replace("$attachmentCount", String.valueOf(attachments.size()));
 
         try {
             scriptEngine.eval(costAlgorithm);
             Invocable inv = (Invocable) scriptEngine;
             Object result = inv.invokeFunction("result");
-            Wallet walletCost = new Wallet(RPGFramework.getProxy().getCurrencyManager().getDefault());
+            Wallet walletCost = new Wallet(mailSystem.getCurrency());
             if (result instanceof Integer) {
                 walletCost.setAmount((Integer) result);
             }
