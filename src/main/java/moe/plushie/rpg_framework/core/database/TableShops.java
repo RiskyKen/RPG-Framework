@@ -1,6 +1,5 @@
 package moe.plushie.rpg_framework.core.database;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,7 +13,6 @@ import moe.plushie.rpg_framework.api.shop.IShop;
 import moe.plushie.rpg_framework.api.shop.IShop.IShopTab;
 import moe.plushie.rpg_framework.core.common.IdentifierInt;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
-import moe.plushie.rpg_framework.core.database.driver.SQLiteDriver;
 import moe.plushie.rpg_framework.shop.common.Shop;
 import moe.plushie.rpg_framework.shop.common.serialize.ShopSerializer;
 
@@ -23,11 +21,11 @@ public final class TableShops {
     private TableShops() {
     }
 
-    private static void create() {
+    public static void create() {
         String sql = "CREATE TABLE IF NOT EXISTS shops";
         sql += "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,";
         sql += "name VARCHAR(80) NOT NULL,";
-        sql += "tabs TEXT NOT NULL," ;
+        sql += "tabs TEXT NOT NULL,";
         sql += "last_update DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL)";
         DatabaseManager.executeUpdate(DatebaseTable.DATA, sql);
     }
@@ -35,7 +33,6 @@ public final class TableShops {
     private static final String SQL_ADD_SHOP = "INSERT INTO shops (id, name, tabs, last_update) VALUES (NULL, ?, ?, CURRENT_TIMESTAMP)";
 
     public static IShop createNewShop(String name) {
-        create();
         IShop shop = null;
         try (Connection conn = DatabaseManager.getConnection(DatebaseTable.DATA); PreparedStatement ps = conn.prepareStatement(SQL_ADD_SHOP)) {
             ps.setString(1, name);
@@ -62,7 +59,6 @@ public final class TableShops {
     private static final String SQL_DELETE_SHOP = "DELETE FROM shops WHERE id=?";
 
     public static void deleteShop(IIdentifier identifier) {
-        create();
         try (Connection conn = DatabaseManager.getConnection(DatebaseTable.DATA); PreparedStatement ps = conn.prepareStatement(SQL_DELETE_SHOP)) {
             ps.setObject(1, identifier.getValue());
             ps.executeUpdate();
@@ -74,7 +70,6 @@ public final class TableShops {
     private static final String SQL_GET_SHOP = "SELECT name, tabs FROM shops WHERE id=?";
 
     public static IShop getShop(IIdentifier identifier) {
-        create();
         IShop shop = null;
         try (Connection conn = DatabaseManager.getConnection(DatebaseTable.DATA); PreparedStatement ps = conn.prepareStatement(SQL_GET_SHOP)) {
             ps.setObject(1, identifier.getValue());
@@ -93,7 +88,6 @@ public final class TableShops {
     private static final String SQL_GET_SHOP_LIST = "SELECT id, name, last_update FROM shops";
 
     public static void getShopList(ArrayList<IIdentifier> identifiers, ArrayList<String> names, ArrayList<Date> dates) {
-        create();
         try (Connection conn = DatabaseManager.getConnection(DatebaseTable.DATA); PreparedStatement ps = conn.prepareStatement(SQL_GET_SHOP_LIST)) {
             ResultSet resultSet = ps.executeQuery();
             while (resultSet.next()) {
@@ -115,33 +109,11 @@ public final class TableShops {
     private static final String SQL_UPDATE_SHOP = "UPDATE shops SET name=?, tabs=?, last_update=datetime('now') WHERE id=?";
 
     public static void updateShop(IShop shop) {
-        create();
         try (Connection conn = DatabaseManager.getConnection(DatebaseTable.DATA); PreparedStatement ps = conn.prepareStatement(SQL_UPDATE_SHOP)) {
             ps.setString(1, shop.getName());
             ps.setString(2, ShopSerializer.serializeTabs(shop.getTabs(), false).toString());
             ps.setObject(3, shop.getIdentifier().getValue());
             ps.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    
-    public static void exportShopSql() {
-        create();
-        File fileDatabaseOld = SQLiteDriver.getDatabaseFile(DatebaseTable.DATA);
-        
-        String sqlAttach = "ATTACH DATABASE \"" + fileDatabaseOld.getAbsolutePath() + "\" AS 'dbOld'";
-        String sqlCopy = "INSERT INTO shops SELECT * FROM dbOld.shops";
-        String sqlDetach = "DETACH DATABASE 'dbOld'";
-        
-        try (Connection conn = DatabaseManager.getConnection(DatebaseTable.DATA); PreparedStatement psAttach = conn.prepareStatement(sqlAttach); PreparedStatement psDetach = conn.prepareStatement(sqlDetach)) {
-            psAttach.execute();
-            try (PreparedStatement psCopy = conn.prepareStatement(sqlCopy)) {
-                psCopy.execute();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            psDetach.execute();
         } catch (Exception e) {
             e.printStackTrace();
         }

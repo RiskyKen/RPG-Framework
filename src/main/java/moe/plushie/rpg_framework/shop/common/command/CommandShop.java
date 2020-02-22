@@ -26,12 +26,5 @@ public class CommandShop extends ModSubCommands {
                 ModuleShop.getShopManager().exportShopJson();
             }
         }));
-
-        addSubCommand(new CommandExecute(this, "export_sql", new ICommandExecute() {
-            @Override
-            public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-                ModuleShop.getShopManager().exportShopSql();
-            }
-        }));
     }
 }

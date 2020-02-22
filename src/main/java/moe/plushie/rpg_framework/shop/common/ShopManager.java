@@ -32,11 +32,18 @@ public class ShopManager implements IShopManager {
 
     private static final String DIRECTORY_NAME = "shop";
 
-    private final File currencyDirectory;
+    private final File shopsDirectory;
 
     public ShopManager(File modDirectory) {
-        currencyDirectory = new File(modDirectory, DIRECTORY_NAME);
+        shopsDirectory = new File(modDirectory, DIRECTORY_NAME);
         MinecraftForge.EVENT_BUS.register(this);
+        DatabaseManager.EXECUTOR.execute(new Runnable() {
+
+            @Override
+            public void run() {
+                TableShops.create();
+            }
+        });
     }
 
     @Override
@@ -116,18 +123,31 @@ public class ShopManager implements IShopManager {
     // \/ Shop JSON code \/
 
     public void exportShopJson() {
+        if (!shopsDirectory.exists()) {
+            shopsDirectory.mkdirs();
+        }
         RPGFramework.getLogger().info("Exporting Shops");
         ArrayList<IIdentifier> identifiers = new ArrayList<IIdentifier>();
         TableShops.getShopList(identifiers, null, null);
         for (IIdentifier identifier : identifiers) {
             exportShop(TableShops.getShop(identifier));
         }
+        RPGFramework.getLogger().info("Export Finished");
+    }
+
+    private void exportShop(IShop shop) {
+        RPGFramework.getLogger().info("Exporting shop: " + shop.getIdentifier());
+        JsonElement jsonData = ShopSerializer.serializeJson(shop, false);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        SerializeHelper.writeFile(new File(shopsDirectory, String.valueOf(shop.getIdentifier().getValue()) + ".json"), Charsets.UTF_8, gson.toJson(jsonData));
     }
 
     public void importShopJson() {
+        if (!shopsDirectory.exists()) {
+            shopsDirectory.mkdirs();
+        }
         RPGFramework.getLogger().info("Importing Shops");
-        RPGFramework.getLogger().info("Loading Shops");
-        File[] files = currencyDirectory.listFiles(new FilenameFilter() {
+        File[] files = shopsDirectory.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
                 return name.endsWith(".json");
@@ -136,20 +156,10 @@ public class ShopManager implements IShopManager {
         for (File file : files) {
             importShop(file);
         }
+        RPGFramework.getLogger().info("Import Finished");
     }
 
-    public void exportShopSql() {
-        TableShops.exportShopSql();
-    }
-
-    public void exportShop(IShop shop) {
-        RPGFramework.getLogger().info("Exporting shop: " + shop.getIdentifier());
-        JsonElement jsonData = ShopSerializer.serializeJson(shop, false);
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        SerializeHelper.writeFile(new File(currencyDirectory, String.valueOf(shop.getIdentifier().getValue()) + ".json"), Charsets.UTF_8, gson.toJson(jsonData));
-    }
-
-    public void importShop(File shopFile) {
+    private void importShop(File shopFile) {
         RPGFramework.getLogger().info("Importing shop: " + shopFile.getName());
         JsonElement jsonElement = SerializeHelper.readJsonFile(shopFile);
         if (jsonElement != null) {
