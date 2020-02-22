@@ -44,7 +44,7 @@ public class MessageClientRequestSync implements IMessage, IMessageHandler<Messa
                     RPGFramework.getProxy().getCurrencyManager().syncToClient(player);
                     break;
                 case SHOPS_IDENTIFIERS:
-                    ModuleShop.getShopManager().syncToClient(player);
+                    ModuleShop.getShopManager().sendShopListToClient(player);
                     break;
                 case MAIL_SYSTEMS:
                     RPGFramework.getProxy().getMailSystemManager().syncToClient(player);

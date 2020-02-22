@@ -1,80 +1,87 @@
 package moe.plushie.rpg_framework.itemData;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.concurrent.Callable;
 
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFutureTask;
+
+import moe.plushie.rpg_framework.api.core.IItemMatcher;
 import moe.plushie.rpg_framework.api.currency.ICost;
 import moe.plushie.rpg_framework.api.itemData.IItemData;
 import moe.plushie.rpg_framework.api.itemData.IItemDataManager;
 import moe.plushie.rpg_framework.core.common.addons.ModAddonManager;
-import moe.plushie.rpg_framework.currency.common.Cost;
-import net.minecraft.item.ItemStack;
+import moe.plushie.rpg_framework.core.database.DatabaseManager;
+import moe.plushie.rpg_framework.core.database.TableItemData;
 
 public final class ItemDataManager implements IItemDataManager {
 
-    private static final String DIRECTORY_NAME = "item_data";
-
-    private final File itemDataDirectory;
-
     public ItemDataManager(File modDirectory) {
-        itemDataDirectory = new File(modDirectory, DIRECTORY_NAME);
-        if (!itemDataDirectory.exists()) {
-            itemDataDirectory.mkdir();
-        }
+        DatabaseManager.EXECUTOR.execute(new Runnable() {
+            
+            @Override
+            public void run() {
+                TableItemData.create();
+            }
+        });
     }
 
     public void reload() {
     }
 
     @Override
-    public IItemData getItemData(ItemStack itemStack) {
-        if (ModAddonManager.addonFaerunHeroes.isModLoaded()) {
-            return ModAddonManager.addonFaerunHeroes.getItemData(itemStack);
-        }
-        return ItemData.ITEM_DATA_MISSING;
-    }
-
-    @Override
-    public void setItemData(ItemStack itemStack, IItemData itemData) {
+    public IItemData getItemData(IItemMatcher itemMatcher) {
+        IItemData itemData = TableItemData.getItemData(itemMatcher);
         if (itemData == null) {
-            itemData = ItemData.ITEM_DATA_MISSING;
+            itemData = ItemData.createEmpty();
         }
         if (ModAddonManager.addonFaerunHeroes.isModLoaded()) {
-            ModAddonManager.addonFaerunHeroes.setItemData(itemStack, itemData);
+            ICost cost = ModAddonManager.addonFaerunHeroes.getItemValue(itemMatcher.getItemStack());
+            if (!cost.isNoCost() & cost.hasWalletCost()) {
+                itemData = itemData.setValue(cost);
+            }
         }
+        return itemData;
     }
 
     @Override
-    public ArrayList<String> getCategories(ItemStack itemStack) {
-        return getItemData(itemStack).getCategories();
+    public void setItemData(IItemMatcher itemMatcher, IItemData itemData) {
+        TableItemData.setItemData(itemMatcher, itemData);
     }
 
     @Override
-    public void setCategories(ItemStack itemStack, ArrayList<String> categories) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public ArrayList<String> getTags(ItemStack itemStack) {
-        return getItemData(itemStack).getTags();
-    }
-
-    @Override
-    public void setTags(ItemStack itemStack, ArrayList<String> tags) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public ICost getValue(ItemStack itemStack) {
-        return getItemData(itemStack).getValue();
-    }
-
-    @Override
-    public void setValue(ItemStack itemStack, ICost value) {
-        if (value == null) {
-            value = Cost.NO_COST;
+    public ListenableFutureTask<IItemData> getItemDataAsync(IItemMatcher itemMatcher, FutureCallback<IItemData> callback) {
+        ListenableFutureTask task = ListenableFutureTask.<IItemData>create(new Async(itemMatcher));
+        if (callback != null) {
+            Futures.addCallback(task, callback);
         }
-        IItemData itemData = getItemData(itemStack).setValue(value);
-        setItemData(itemStack, itemData);
+        DatabaseManager.EXECUTOR.execute(task);
+        return task;
+    }
+
+    @Override
+    public void setItemDataAsync(IItemMatcher itemMatcher, IItemData itemData) {
+        DatabaseManager.EXECUTOR.execute(new Runnable() {
+
+            @Override
+            public void run() {
+                setItemData(itemMatcher, itemData);
+            }
+        });
+    }
+
+    private class Async implements Callable<IItemData> {
+
+        private final IItemMatcher itemMatcher;
+
+        public Async(IItemMatcher itemMatcher) {
+            this.itemMatcher = itemMatcher;
+        }
+
+        @Override
+        public IItemData call() throws Exception {
+            return getItemData(itemMatcher);
+        }
     }
 }

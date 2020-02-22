@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.gson.JsonElement;
 import com.mojang.authlib.GameProfile;
@@ -34,7 +34,7 @@ public class MailSystemManager implements IMailSystemManager {
     private static final String DIRECTORY_NAME = "mail";
 
     private final File mailDirectory;
-    private final HashMap<IIdentifier, MailSystem> mailSystemMap;
+    private final ConcurrentHashMap<IIdentifier, MailSystem> mailSystemMap;
     private final MailNotificationManager notificationManager;
 
     public MailSystemManager(File modDirectory) {
@@ -42,7 +42,7 @@ public class MailSystemManager implements IMailSystemManager {
         if (!mailDirectory.exists()) {
             mailDirectory.mkdir();
         }
-        mailSystemMap = new HashMap<IIdentifier, MailSystem>();
+        mailSystemMap = new ConcurrentHashMap<IIdentifier, MailSystem>();
         notificationManager = new MailNotificationManager();
         MinecraftForge.EVENT_BUS.register(this);
     }

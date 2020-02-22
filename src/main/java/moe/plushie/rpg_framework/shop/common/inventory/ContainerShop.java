@@ -2,13 +2,14 @@ package moe.plushie.rpg_framework.shop.common.inventory;
 
 import java.util.ArrayList;
 
+import com.google.common.util.concurrent.FutureCallback;
+
 import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.currency.ICost;
 import moe.plushie.rpg_framework.api.shop.IShop;
 import moe.plushie.rpg_framework.api.shop.IShop.IShopItem;
 import moe.plushie.rpg_framework.api.shop.IShop.IShopTab;
 import moe.plushie.rpg_framework.api.shop.IShop.IShopTab.TabType;
-import moe.plushie.rpg_framework.api.shop.IShopManager.IShopLoadCallback;
 import moe.plushie.rpg_framework.core.common.config.ConfigHandler;
 import moe.plushie.rpg_framework.core.common.init.ModSounds;
 import moe.plushie.rpg_framework.core.common.inventory.ModContainer;
@@ -32,10 +33,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ContainerShop extends ModContainer implements IShopLoadCallback {
+public class ContainerShop extends ModContainer {
 
     private final InventoryBasic invShop;
     private final InventoryBasic invPrice;
@@ -96,7 +98,28 @@ public class ContainerShop extends ModContainer implements IShopLoadCallback {
 
     private void loadShop(IIdentifier identifier) {
         loadingShop = true;
-        ModuleShop.getShopManager().getShop(this, identifier);
+        if (identifier == null) {
+            setShop(null);
+            return;
+        }
+        ModuleShop.getShopManager().getShopAsync(identifier, new FutureCallback<IShop>() {
+
+            @Override
+            public void onSuccess(IShop result) {
+                FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                        setShop(result);
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 
     @Override
@@ -273,7 +296,7 @@ public class ContainerShop extends ModContainer implements IShopLoadCallback {
     }
 
     public void saveShop() {
-        ModuleShop.getShopManager().saveShop(shop);
+        ModuleShop.getShopManager().saveShopAsync(shop, null);
     }
 
     public void shopRename(String shopName) {
@@ -294,7 +317,7 @@ public class ContainerShop extends ModContainer implements IShopLoadCallback {
 
     public void setEditMode(boolean editMode) {
         if (editMode) {
-           dirty = true; 
+            dirty = true;
         }
         this.editMode = editMode;
     }
@@ -332,18 +355,34 @@ public class ContainerShop extends ModContainer implements IShopLoadCallback {
 
     public void addShop(String shopName) {
         ShopManager shopManager = ModuleShop.getShopManager();
-        shopManager.addShop(shopName);
-        shopManager.syncToClient((EntityPlayerMP) player);
+        shopManager.createShopAsync(shopName, new FutureCallback<IShop>() {
+
+            @Override
+            public void onSuccess(IShop result) {
+                shopManager.sendShopListToClient((EntityPlayerMP) player);
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 
     public void removeShop(IIdentifier shopIdentifier) {
         ShopManager shopManager = ModuleShop.getShopManager();
-        shopManager.removeShop(shopIdentifier);
-        shopManager.syncToClient((EntityPlayerMP) player);
-    }
+        shopManager.removeShopAsync(shopIdentifier, new FutureCallback<Void>() {
 
-    @Override
-    public void onShopLoad(IShop shop) {
-        setShop(shop);
+            @Override
+            public void onSuccess(Void result) {
+                shopManager.sendShopListToClient((EntityPlayerMP) player);
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                t.printStackTrace();
+            }
+        });
+
     }
 }

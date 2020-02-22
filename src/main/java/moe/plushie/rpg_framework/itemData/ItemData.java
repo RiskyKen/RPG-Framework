@@ -23,6 +23,10 @@ public class ItemData implements IItemData {
     public static ItemData create(ArrayList<String> categories, ArrayList<String> tags, ICost value) {
         return new ItemData(categories, tags, value);
     }
+    
+    public static ItemData createEmpty() {
+        return new ItemData(new ArrayList<String>(), new ArrayList<String>(), Cost.NO_COST);
+    }
 
     @Override
     public ArrayList<String> getCategories() {

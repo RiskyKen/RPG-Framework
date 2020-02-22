@@ -174,4 +174,15 @@ public class Cost implements ICost {
 
         return returnCost;
     }
+
+    @Override
+    public boolean isNoCost() {
+        if (this == NO_COST) {
+            return true;
+        }
+        if (!this.hasWalletCost() & !this.hasItemCost()) {
+            return true;
+        }
+        return false;
+    }
 }

@@ -3,7 +3,7 @@ package moe.plushie.rpg_framework.bank.common;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.gson.JsonElement;
 import com.mojang.authlib.GameProfile;
@@ -36,14 +36,14 @@ public class BankManager implements IBankManager {
     private static final String DIRECTORY_NAME = "bank";
 
     private final File currencyDirectory;
-    private final HashMap<IIdentifier, IBank> bankMap;
+    private final ConcurrentHashMap<IIdentifier, IBank> bankMap;
 
     public BankManager(File modDirectory) {
         currencyDirectory = new File(modDirectory, DIRECTORY_NAME);
         if (!currencyDirectory.exists()) {
             currencyDirectory.mkdir();
         }
-        bankMap = new HashMap<IIdentifier, IBank>();
+        bankMap = new ConcurrentHashMap<IIdentifier, IBank>();
         MinecraftForge.EVENT_BUS.register(this);
         TableBankAccounts.create();
     }
@@ -162,7 +162,6 @@ public class BankManager implements IBankManager {
                         callback.onBackAccountLoad(bankAccount);
                     }
                 });
-                
             }
         });
     }

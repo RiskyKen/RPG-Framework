@@ -11,9 +11,11 @@ import javax.script.ScriptEngineManager;
 import com.mojang.authlib.GameProfile;
 
 import moe.plushie.rpg_framework.api.currency.ICost;
+import moe.plushie.rpg_framework.api.itemData.IItemData;
 import moe.plushie.rpg_framework.api.mail.IMailSystem;
 import moe.plushie.rpg_framework.api.mail.IMailSystemManager.IMailSendCallback;
 import moe.plushie.rpg_framework.core.RPGFramework;
+import moe.plushie.rpg_framework.core.common.ItemMatcherStack;
 import moe.plushie.rpg_framework.core.common.inventory.ModTileContainer;
 import moe.plushie.rpg_framework.core.common.inventory.slot.SlotHidable;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
@@ -254,9 +256,11 @@ public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> implem
 
     public int getStackValue(double index) {
         if (index < getAttachments().size()) {
-            ICost cost = ModuleItemData.getManager().getValue(getAttachments().get((int) index));
-            if (cost.hasWalletCost()) {
-                return cost.getWalletCost().getAmount();
+            ItemStack itemStack = getAttachments().get((int) index);
+            ItemMatcherStack itemMatcherStack = new ItemMatcherStack(itemStack, true, false);
+            IItemData itemData = ModuleItemData.getManager().getItemData(itemMatcherStack);
+            if (itemData.getValue().hasWalletCost()) {
+                return itemData.getValue().getWalletCost().getAmount();
             }
         }
         return 0;

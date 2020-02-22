@@ -7,8 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.sql.PooledConnection;
 
@@ -22,12 +22,12 @@ import moe.plushie.rpg_framework.core.database.DatebaseTable;
 public final class SQLiteDriver implements IDatabaseDriver {
 
     private static final String FILE_EXTENSION = ".sqlite3";
-    private final HashMap<DatebaseTable, PooledConnection> pooledConnections = new HashMap<DatebaseTable, PooledConnection>();
+    private final ConcurrentHashMap<DatebaseTable, PooledConnection> pooledConnections = new ConcurrentHashMap<DatebaseTable, PooledConnection>();
 
     public static File getDatabaseFile(DatebaseTable table) {
         return new File(RPGFramework.getProxy().getModDirectory(), table.name().toLowerCase() + FILE_EXTENSION);
     }
-    
+
     private String getConnectionUrl(DatebaseTable table) {
         return "jdbc:sqlite:" + getDatabaseFile(table).getAbsolutePath();
     }
@@ -41,8 +41,10 @@ public final class SQLiteDriver implements IDatabaseDriver {
     }
 
     private Connection getPoolConnection(DatebaseTable table) throws SQLException {
-        if (!pooledConnections.containsKey(table)) {
-            pooledConnections.put(table, makePool(table));
+        synchronized (pooledConnections) {
+            if (!pooledConnections.containsKey(table)) {
+                pooledConnections.put(table, makePool(table));
+            }
         }
         return pooledConnections.get(table).getConnection();
     }

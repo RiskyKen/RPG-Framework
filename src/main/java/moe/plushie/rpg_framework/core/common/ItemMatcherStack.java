@@ -1,10 +1,14 @@
 package moe.plushie.rpg_framework.core.common;
 
+import java.util.LinkedHashMap;
+
 import moe.plushie.rpg_framework.api.core.IItemMatcher;
 import net.minecraft.item.ItemStack;
 
 public class ItemMatcherStack implements IItemMatcher {
 
+    private LinkedHashMap<String, String> tagsRequired = new LinkedHashMap<>();
+    private LinkedHashMap<String, String> tagsDisallowed = new LinkedHashMap<>();
     private final ItemStack itemStack;
     private final boolean matchMeta;
     private final boolean matchNBT;

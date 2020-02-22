@@ -23,10 +23,13 @@ public final class TableShops {
     private TableShops() {
     }
 
-    private static final String SQL_CREATE_TABLE = "CREATE TABLE IF NOT EXISTS shops" + "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," + "name VARCHAR(80) NOT NULL," + "tabs TEXT NOT NULL," + "last_update DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL)";
-
     private static void create() {
-        DatabaseManager.executeUpdate(DatebaseTable.DATA, SQL_CREATE_TABLE);
+        String sql = "CREATE TABLE IF NOT EXISTS shops";
+        sql += "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,";
+        sql += "name VARCHAR(80) NOT NULL,";
+        sql += "tabs TEXT NOT NULL," ;
+        sql += "last_update DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL)";
+        DatabaseManager.executeUpdate(DatebaseTable.DATA, sql);
     }
 
     private static final String SQL_ADD_SHOP = "INSERT INTO shops (id, name, tabs, last_update) VALUES (NULL, ?, ?, CURRENT_TIMESTAMP)";

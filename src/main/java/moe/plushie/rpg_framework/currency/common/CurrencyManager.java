@@ -3,7 +3,7 @@ package moe.plushie.rpg_framework.currency.common;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.gson.JsonElement;
 
@@ -15,6 +15,8 @@ import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerSyncCurrencies;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
+import moe.plushie.rpg_framework.core.database.DatabaseManager;
+import moe.plushie.rpg_framework.core.database.TableWallets;
 import moe.plushie.rpg_framework.currency.common.serialize.CurrencySerializer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.MinecraftForge;
@@ -27,15 +29,23 @@ public class CurrencyManager implements ICurrencyManager {
     private static final String DIRECTORY_NAME = "currency";
 
     private final File currencyDirectory;
-    private final HashMap<IIdentifier, Currency> currencyMap;
+    private final ConcurrentHashMap<IIdentifier, Currency> currencyMap;
 
     public CurrencyManager(File modDirectory) {
         currencyDirectory = new File(modDirectory, DIRECTORY_NAME);
         if (!currencyDirectory.exists()) {
             currencyDirectory.mkdir();
         }
-        currencyMap = new HashMap<IIdentifier, Currency>();
+        currencyMap = new ConcurrentHashMap<IIdentifier, Currency>();
         MinecraftForge.EVENT_BUS.register(this);
+        DatabaseManager.EXECUTOR.execute(new Runnable() {
+
+            @Override
+            public void run() {
+                TableWallets.create();
+            }
+        });
+
     }
 
     public void reload(boolean syncWithClients) {
@@ -132,6 +142,10 @@ public class CurrencyManager implements ICurrencyManager {
 
     public ICurrency getDefault() {
         ICurrency currency = getCurrency(new IdentifierString("common.json"));
+        if (currency != null) {
+            return currency;
+        }
+        currency = getCurrency(new IdentifierString("Common"));
         if (currency != null) {
             return currency;
         }

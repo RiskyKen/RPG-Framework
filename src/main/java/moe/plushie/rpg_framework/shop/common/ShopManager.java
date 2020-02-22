@@ -3,10 +3,13 @@ package moe.plushie.rpg_framework.shop.common;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.concurrent.Callable;
+
+import javax.annotation.Nullable;
 
 import com.google.common.base.Charsets;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.ListenableFutureTask;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -24,23 +27,93 @@ import moe.plushie.rpg_framework.core.database.TableShops;
 import moe.plushie.rpg_framework.shop.common.serialize.ShopSerializer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class ShopManager implements IShopManager {
 
     private static final String DIRECTORY_NAME = "shop";
 
     private final File currencyDirectory;
-    private final HashMap<IIdentifier, Shop> shopMap;
 
     public ShopManager(File modDirectory) {
         currencyDirectory = new File(modDirectory, DIRECTORY_NAME);
-        if (!currencyDirectory.exists()) {
-            currencyDirectory.mkdir();
-        }
-        shopMap = new HashMap<IIdentifier, Shop>();
         MinecraftForge.EVENT_BUS.register(this);
     }
+
+    @Override
+    public void saveShop(IShop shop) {
+        RPGFramework.getLogger().info("Saving shop: " + shop.getIdentifier());
+        TableShops.updateShop(shop);
+    }
+
+    @Override
+    public ListenableFutureTask<Void> saveShopAsync(IShop shop, FutureCallback<Void> callback) {
+        return DatabaseManager.createTaskAndExecute(new Callable<Void>() {
+
+            @Override
+            public Void call() throws Exception {
+                saveShop(shop);
+                return null;
+            }
+        }, callback);
+    }
+
+    @Override
+    public IShop getShop(IIdentifier identifier) {
+        return TableShops.getShop(identifier);
+    }
+
+    @Override
+    public ListenableFutureTask<IShop> getShopAsync(IIdentifier identifier, @Nullable FutureCallback<IShop> callback) {
+        return DatabaseManager.createTaskAndExecute(new Callable<IShop>() {
+
+            @Override
+            public IShop call() throws Exception {
+                return getShop(identifier);
+            }
+        }, callback);
+    }
+
+    @Override
+    public IShop createShop(String shopName) {
+        return TableShops.createNewShop(shopName);
+    }
+
+    @Override
+    public ListenableFutureTask<IShop> createShopAsync(String shopName, FutureCallback<IShop> callback) {
+        return DatabaseManager.createTaskAndExecute(new Callable<IShop>() {
+
+            @Override
+            public IShop call() throws Exception {
+                return createShop(shopName);
+            }
+        }, callback);
+    }
+
+    @Override
+    public void removeShop(IIdentifier shopIdentifier) {
+        TableShops.deleteShop(shopIdentifier);
+    }
+
+    @Override
+    public ListenableFutureTask<Void> removeShopAsync(IIdentifier identifier, FutureCallback<Void> callback) {
+        return DatabaseManager.createTaskAndExecute(new Callable<Void>() {
+
+            @Override
+            public Void call() throws Exception {
+                removeShop(identifier);
+                return null;
+            }
+        }, callback);
+    }
+
+    public void sendShopListToClient(EntityPlayerMP player) {
+        ArrayList<IIdentifier> identifiers = new ArrayList<IIdentifier>();
+        ArrayList<String> names = new ArrayList<String>();
+        TableShops.getShopList(identifiers, names, null);
+        PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerSyncShops(identifiers.toArray(new IIdentifier[identifiers.size()]), names.toArray(new String[names.size()])), player);
+    }
+
+    // \/ Shop JSON code \/
 
     public void exportShopJson() {
         RPGFramework.getLogger().info("Exporting Shops");
@@ -60,21 +133,13 @@ public class ShopManager implements IShopManager {
                 return name.endsWith(".json");
             }
         });
-        shopMap.clear();
         for (File file : files) {
             importShop(file);
         }
     }
 
-    public void saveShop(IShop shop) {
-        DatabaseManager.EXECUTOR.execute(new Runnable() {
-            
-            @Override
-            public void run() {
-                RPGFramework.getLogger().info("Saving shop: " + shop.getIdentifier());
-                TableShops.updateShop(shop);
-            }
-        });
+    public void exportShopSql() {
+        TableShops.exportShopSql();
     }
 
     public void exportShop(IShop shop) {
@@ -82,10 +147,6 @@ public class ShopManager implements IShopManager {
         JsonElement jsonData = ShopSerializer.serializeJson(shop, false);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         SerializeHelper.writeFile(new File(currencyDirectory, String.valueOf(shop.getIdentifier().getValue()) + ".json"), Charsets.UTF_8, gson.toJson(jsonData));
-    }
-
-    public void exportShopSql() {
-        TableShops.exportShopSql();
     }
 
     public void importShop(File shopFile) {
@@ -97,64 +158,5 @@ public class ShopManager implements IShopManager {
                 TableShops.addNewShop(shop);
             }
         }
-    }
-
-    @Override
-    public void getShop(IShopLoadCallback callback, IIdentifier identifier) {
-        if (identifier == null) {
-            callback.onShopLoad(null);
-            return;
-        }
-        DatabaseManager.EXECUTOR.execute(new Runnable() {
-            
-            @Override
-            public void run() {
-                IShop shop = TableShops.getShop(identifier);
-                FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(new Runnable() {
-                    
-                    @Override
-                    public void run() {
-                        callback.onShopLoad(shop);
-                    }
-                });
-            }
-        });
-    }
-
-    @Override
-    public IShop[] getShops() {
-        IShop[] shops = shopMap.values().toArray(new Shop[shopMap.size()]);
-        Arrays.sort(shops);
-        return shops;
-    }
-
-    @Override
-    public IIdentifier[] getShopIdentifier() {
-        return shopMap.keySet().toArray(new IIdentifier[shopMap.size()]);
-    }
-
-    @Override
-    public String[] getShopNames() {
-        String[] names = new String[shopMap.size()];
-        IShop[] shops = shopMap.values().toArray(new IShop[names.length]);
-        for (int i = 0; i < shops.length; i++) {
-            names[i] = shops[i].getName();
-        }
-        return names;
-    }
-
-    public void syncToClient(EntityPlayerMP player) {
-        ArrayList<IIdentifier> identifiers = new ArrayList<IIdentifier>();
-        ArrayList<String> names = new ArrayList<String>();
-        TableShops.getShopList(identifiers, names, null);
-        PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerSyncShops(identifiers.toArray(new IIdentifier[identifiers.size()]), names.toArray(new String[names.size()])), player);
-    }
-
-    public void addShop(String shopName) {
-        TableShops.createNewShop(shopName);
-    }
-
-    public void removeShop(IIdentifier shopIdentifier) {
-        TableShops.deleteShop(shopIdentifier);
     }
 }

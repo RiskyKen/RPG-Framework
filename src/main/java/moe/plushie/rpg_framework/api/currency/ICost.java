@@ -18,4 +18,6 @@ public interface ICost {
     public void pay(EntityPlayer player);
 
     public ICost add(ICost... costs);
+    
+    public boolean isNoCost();
 }
