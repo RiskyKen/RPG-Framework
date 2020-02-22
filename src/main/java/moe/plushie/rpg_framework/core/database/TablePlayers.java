@@ -23,7 +23,7 @@ public final class TablePlayers {
         sql += "username VARCHAR(80) NOT NULL,";
         sql += "first_seen DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,";
         sql += "last_seen DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL)";
-        DatabaseManager.executeUpdate(sql);
+        DatabaseManager.executeUpdate(DatebaseTable.PLAYER_DATA, sql);
     }
 
     public static boolean isPlayerInDatabase(GameProfile gameProfile) {
@@ -33,13 +33,13 @@ public final class TablePlayers {
     public static void addPlayerToDatabase(GameProfile gameProfile) {
         String sql = "INSERT INTO players (id, uuid, username, first_seen, last_seen) VALUES (NULL, '%s', '%s', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
         sql = String.format(sql, gameProfile.getId().toString(), gameProfile.getName());
-        DatabaseManager.executeUpdate(sql);
+        DatabaseManager.executeUpdate(DatebaseTable.PLAYER_DATA, sql);
     }
 
     public static void updatePlayerLastLogin(GameProfile gameProfile) {
         String sql = "UPDATE players SET username='%s', last_seen=datetime('now') WHERE uuid='%s'";
         sql = String.format(sql, gameProfile.getName(), gameProfile.getId().toString());
-        DatabaseManager.executeUpdate(sql);
+        DatabaseManager.executeUpdate(DatebaseTable.PLAYER_DATA, sql);
     }
 
     public static DBPlayerInfo getPlayerInfo(GameProfile gameProfile) {
@@ -53,7 +53,7 @@ public final class TablePlayers {
             searchValue = gameProfile.getName();
         }
         DBPlayerInfo playerInfo = null;
-        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, searchValue);
             ResultSet resultSet = ps.executeQuery();
             if (resultSet.next()) {
@@ -72,7 +72,7 @@ public final class TablePlayers {
 
     public static DBPlayer getPlayer(GameProfile gameProfile) {
         DBPlayer playerInfo = DBPlayer.MISSING;
-        try (Connection conn = DatabaseManager.getConnection()) {
+        try (Connection conn = DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA)) {
             if (gameProfile.getId() != null) {
                 playerInfo = getPlayer(conn, gameProfile.getId());
             } else {
@@ -88,7 +88,7 @@ public final class TablePlayers {
 
     public static ArrayList<GameProfile> getAllPlayers() {
         ArrayList<GameProfile> gameProfiles = new ArrayList<GameProfile>();
-        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_GET_ALL_PLAYERS)) {
+        try (Connection conn = DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA); PreparedStatement ps = conn.prepareStatement(SQL_GET_ALL_PLAYERS)) {
             ResultSet resultSet = ps.executeQuery();
             while (resultSet.next()) {
                 UUID uuid = UUID.fromString(resultSet.getString("uuid"));
@@ -147,7 +147,7 @@ public final class TablePlayers {
 
     public static DBPlayerInfo getPlayer(int id) {
         DBPlayerInfo playerInfo = DBPlayerInfo.MISSING_INFO;
-        try (Connection conn = DatabaseManager.getConnection()) {
+        try (Connection conn = DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA)) {
             return getPlayer(conn, id);
         } catch (SQLException e) {
             e.printStackTrace();

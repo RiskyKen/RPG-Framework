@@ -21,7 +21,7 @@ public final class TableHeatmaps {
             + "dimension INTEGER NOT NULL,"
             + "date DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL)";
     public static void create() {
-        DatabaseManager.executeUpdate(DatebaseTable.HEATMAPS, SQL_CREATE_TABLE);
+        DatabaseManager.executeUpdate(DatebaseTable.STATS, SQL_CREATE_TABLE);
     }
 
     private static final String SQL_ADD_HEATMAP = "INSERT INTO heatmaps (id, player_id, x, y, z, dimension, date) VALUES (NULL, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
@@ -31,7 +31,7 @@ public final class TableHeatmaps {
     }
 
     public static void addHeatmapData(List<EntityPlayer> players) {
-        try (Connection conn = DatabaseManager.getConnection(DatebaseTable.HEATMAPS); PreparedStatement psHeatmap = createPreStateHeatmapAdd(conn)) {
+        try (Connection conn = DatabaseManager.getConnection(DatebaseTable.STATS); PreparedStatement psHeatmap = createPreStateHeatmapAdd(conn)) {
             conn.setAutoCommit(false);
             for (EntityPlayer player : players) {
                 DBPlayer dbPlayer = TablePlayers.getPlayerInfo(player.getGameProfile());

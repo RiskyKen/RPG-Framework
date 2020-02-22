@@ -11,7 +11,7 @@ import moe.plushie.rpg_framework.core.database.driver.IDatabaseDriver;
 import moe.plushie.rpg_framework.core.database.driver.SQLiteDriver;
 
 public final class DatabaseManager {
-    
+
     public static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(10);
     private static final IDatabaseDriver DATABASE_DRIVER = new SQLiteDriver();
 
@@ -22,11 +22,6 @@ public final class DatabaseManager {
         return DATABASE_DRIVER.getConnection(table);
     }
 
-    @Deprecated
-    public static Connection getConnection() throws SQLException {
-        return DATABASE_DRIVER.getConnection(DatebaseTable.RPG);
-    }
-
     public static PreparedStatement getPreparedStatement(DatebaseTable table, String sql) {
         return DATABASE_DRIVER.getPreparedStatement(table, sql);
     }
@@ -35,27 +30,12 @@ public final class DatabaseManager {
         DATABASE_DRIVER.executeUpdate(table, sql);
     }
 
-    @Deprecated
-    public static void executeUpdate(String sql) {
-        DATABASE_DRIVER.executeUpdate(DatebaseTable.RPG, sql);
-    }
-
     public static void executeUpdate(DatebaseTable table, String... sql) {
         DATABASE_DRIVER.executeUpdate(table, sql);
     }
 
-    @Deprecated
-    public static void executeUpdate(String... sql) {
-        DATABASE_DRIVER.executeUpdate(DatebaseTable.RPG, sql);
-    }
-
     public static ArrayList<String> executeQueryArrayList(DatebaseTable table, String sql) {
         return DATABASE_DRIVER.executeQueryArrayList(table, sql);
-    }
-
-    @Deprecated
-    public static ArrayList<String> executeQueryArrayList(String sql) {
-        return DATABASE_DRIVER.executeQueryArrayList(DatebaseTable.RPG, sql);
     }
 
     public static int getLastInsertRow(Connection conn) throws SQLException {
