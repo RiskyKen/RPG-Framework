@@ -141,7 +141,7 @@ public class MailSystemManager implements IMailSystemManager {
                         if (receiver.getName() != null && receiver.getName().startsWith("@")) {
                             specialNames.add(receiver);
                         } else {
-                            if (mailSystem.onSendMailMessage(mailMessage.updateReceiver(receiver))) {
+                            if (mailSystem.sendMailMessage(mailMessage.updateReceiver(receiver))) {
                                 success.add(receiver);
                             } else {
                                 failed.add(receiver);
@@ -198,7 +198,7 @@ public class MailSystemManager implements IMailSystemManager {
             public void run() {
                 ArrayList<GameProfile> gameProfiles = TablePlayers.getAllPlayers();
                 for (GameProfile profile : gameProfiles) {
-                    if (mailSystem.onSendMailMessage(mailMessage.updateReceiver(profile))) {
+                    if (mailSystem.sendMailMessage(mailMessage.updateReceiver(profile))) {
                         notifyClientMainThread(profile);
                     }
                 }
@@ -218,7 +218,7 @@ public class MailSystemManager implements IMailSystemManager {
             DatabaseManager.EXECUTOR.execute(new Runnable() {
                 @Override
                 public void run() {
-                    if (mailSystem.onSendMailMessage(mailMessage.updateReceiver(profile))) {
+                    if (mailSystem.sendMailMessage(mailMessage.updateReceiver(profile))) {
                         notifyClientMainThread(profile);
                     }
                 }
@@ -239,7 +239,7 @@ public class MailSystemManager implements IMailSystemManager {
             DatabaseManager.EXECUTOR.execute(new Runnable() {
                 @Override
                 public void run() {
-                    if (mailSystem.onSendMailMessage(mailMessage.updateReceiver(profile))) {
+                    if (mailSystem.sendMailMessage(mailMessage.updateReceiver(profile))) {
                         notifyClientMainThread(profile);
                     }
                 }
@@ -247,7 +247,7 @@ public class MailSystemManager implements IMailSystemManager {
         }
     }
 
-    private void notifyClientMainThread(GameProfile clientProfile) {
+    public void notifyClientMainThread(GameProfile clientProfile) {
         FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(new Runnable() {
             @Override
             public void run() {

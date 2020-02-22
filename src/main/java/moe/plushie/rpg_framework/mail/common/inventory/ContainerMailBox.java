@@ -164,12 +164,13 @@ public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> implem
     }
 
     public void onClientSelectMessage(EntityPlayerMP player, int messageId) {
-        ((MailSystem) mailSystem).onClientSelectMessage(player, messageId);
-        // updateOutputSlots(messageId);
+        ((MailSystem) mailSystem).markMessageasRead(messageId);
+        ((MailSystem) mailSystem).notifyClient(player);
     }
 
     public void onClientDeleteMessage(EntityPlayerMP player, int messageId) {
-        ((MailSystem) mailSystem).onClientDeleteMessage(player, messageId);
+        ((MailSystem) mailSystem).deleteMessage(messageId);
+        ((MailSystem) mailSystem).notifyClient(player);
     }
 
     public void onClientWithdrawItems(EntityPlayerMP player, int messageId) {

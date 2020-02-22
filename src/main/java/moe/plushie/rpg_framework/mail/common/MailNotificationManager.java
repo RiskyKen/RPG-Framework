@@ -21,10 +21,13 @@ public class MailNotificationManager {
     }
 
     public void syncToClient(EntityPlayerMP entityPlayer, boolean login, boolean update) {
-        //RPGFramework.getLogger().info("Sending mail notifications to player " + entityPlayer.getName() + ".");
         for (IMailSystem mailSystem : RPGFramework.getProxy().getMailSystemManager().getMailSystems()) {
-            PacketHandler.NETWORK_WRAPPER.sendTo(getSyncMessage(mailSystem, entityPlayer, login, update), entityPlayer);
+            syncToClient(entityPlayer, mailSystem, login, update);
         }
+    }
+    
+    public void syncToClient(EntityPlayerMP entityPlayer, IMailSystem mailSystem, boolean login, boolean update) {
+        PacketHandler.NETWORK_WRAPPER.sendTo(getSyncMessage(mailSystem, entityPlayer, login, update), entityPlayer);
     }
 
     private IMessage getSyncMessage(IMailSystem mailSystem, EntityPlayerMP entityPlayer, boolean login, boolean update) {

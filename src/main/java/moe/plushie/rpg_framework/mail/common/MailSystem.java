@@ -3,6 +3,7 @@ package moe.plushie.rpg_framework.mail.common;
 import moe.plushie.rpg_framework.api.core.IGuiIcon;
 import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.currency.ICost;
+import moe.plushie.rpg_framework.api.mail.IMailMessage;
 import moe.plushie.rpg_framework.api.mail.IMailSystem;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.database.TableMail;
@@ -204,16 +205,20 @@ public class MailSystem implements IMailSystem, Comparable<IMailSystem> {
         return name.compareTo(o.getName());
     }
 
-    public boolean onSendMailMessage(MailMessage mailMessage) {
+    public boolean sendMailMessage(IMailMessage mailMessage) {
         return TableMail.addMessage(mailMessage);
     }
 
-    public void onClientDeleteMessage(EntityPlayerMP entityPlayer, int messageId) {
+    public void deleteMessage(int messageId) {
         TableMail.deleteMessage(messageId);
     }
 
-    public void onClientSelectMessage(EntityPlayerMP entityPlayer, int messageId) {
+    public void markMessageasRead(int messageId) {
         TableMail.markMessageasRead(messageId);
-        RPGFramework.getProxy().getMailSystemManager().getNotificationManager().syncToClient(entityPlayer, false, false);
+
+    }
+
+    public void notifyClient(EntityPlayerMP entityPlayer) {
+        RPGFramework.getProxy().getMailSystemManager().getNotificationManager().syncToClient(entityPlayer, this, false, false);
     }
 }

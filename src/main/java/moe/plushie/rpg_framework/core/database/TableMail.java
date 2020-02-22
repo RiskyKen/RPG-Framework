@@ -9,6 +9,7 @@ import java.util.Date;
 
 import com.google.gson.JsonArray;
 
+import moe.plushie.rpg_framework.api.mail.IMailMessage;
 import moe.plushie.rpg_framework.api.mail.IMailSystem;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.IdentifierString;
@@ -42,7 +43,7 @@ public final class TableMail {
 
     private static final String SQL_MESSAGE_ADD = "INSERT INTO mail (id, mail_system, player_id_sender, player_id_receiver, subject, text, attachments, sent_date, read) VALUES (NULL, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)";
 
-    public static boolean addMessage(MailMessage message) {
+    public static boolean addMessage(IMailMessage message) {
         try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_MESSAGE_ADD)) {
             DBPlayer dbPlayerSender = TablePlayers.getPlayer(message.getSender());
             DBPlayer dbPlayerReceiver = TablePlayers.getPlayer(message.getReceiver());
