@@ -47,7 +47,7 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
     private static final int MESSAGE_TEXT_WIDTH = 200;
     private static final int MESSAGE_TEXT_HEIGHT = 100;
     private static final int MESSAGE_LINES_PRE_PAGE = 11;
-    
+
     private final TileEntityMailBox tileEntity;
     private final EntityPlayer player;
     private final IMailSystem mailSystem;
@@ -72,7 +72,6 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
         this.player = entityPlayer;
         this.mailSystem = mailSystem;
         this.mailMessages = new ArrayList<MailMessage>();
-
         for (Slot slot : getContainer().getSlotsAttachmentsInput()) {
             ((SlotHidable) slot).setVisible(false);
         }
@@ -113,7 +112,7 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
         buttonNewMessage.setHoverText(GuiHelper.getLocalControlName(getName(), "button.new_message"));
         buttonNewMessage.setDisableText(GuiHelper.getLocalControlName(getName(), "button.new_message.disable"));
         buttonMessageReply.setHoverText(GuiHelper.getLocalControlName(getName(), "button.reply"));
-        buttonMessageDelete.setHoverText(GuiHelper.getLocalControlName(getName(), "button.previous_page"));
+        buttonMessageDelete.setHoverText(GuiHelper.getLocalControlName(getName(), "button.delete_message"));
         buttonMessagePre.setHoverText(GuiHelper.getLocalControlName(getName(), "button.previous_page"));
         buttonMessageNext.setHoverText(GuiHelper.getLocalControlName(getName(), "button.next_page"));
         buttonMessageWithdrawItems.setHoverText(GuiHelper.getLocalControlName(getName(), "button.withdraw_items"));
@@ -210,7 +209,7 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
         buttonMessagePre.enabled = false;
         buttonMessageNext.enabled = false;
         buttonMessageWithdrawItems.enabled = false;
-        //RPGFramework.getLogger().info(getMaxMessagePages());
+        // RPGFramework.getLogger().info(getMaxMessagePages());
         if (listMail.getSelectedListEntry() != null && listMail.getSelectedListEntry() instanceof GuiMailListItem) {
             GuiMailListItem mailListItem = (GuiMailListItem) listMail.getSelectedListEntry();
             if (!mailListItem.getMailMessage().getAttachments().isEmpty()) {
@@ -277,17 +276,16 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
         }
 
         List<String> messageLines = fontRenderer.listFormattedStringToWidth(message, MESSAGE_TEXT_WIDTH);
-        
+
         for (int i = 0; i < MESSAGE_LINES_PRE_PAGE; i++) {
             int index = i + (messagePage * MESSAGE_LINES_PRE_PAGE);
             if (index < messageLines.size()) {
                 fontRenderer.drawSplitString(messageLines.get(index), 112, 24 + i * fontRenderer.FONT_HEIGHT, MESSAGE_TEXT_WIDTH, 0x444444);
             }
         }
-        
-        
+
         fontRenderer.drawSplitString(String.valueOf(messagePage + 1) + "/" + String.valueOf(getMaxMessagePages()), 146, 130, MESSAGE_TEXT_WIDTH, 0x444444);
-        
+
         GL11.glPushMatrix();
         GL11.glTranslatef(-guiLeft, -guiTop, 0F);
         for (int i = 0; i < buttonList.size(); i++) {
@@ -298,7 +296,7 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
         }
         GL11.glPopMatrix();
     }
-    
+
     public String getFullMessageText() {
         String message = "";
         IGuiListItem guiListItem = listMail.getSelectedListEntry();
@@ -309,7 +307,7 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
             message += "To: " + mailMessage.getReceiver().getName() + "\n\n";
             message += "Subject: " + mailMessage.getSubject() + "\n\n";
             message += mailMessage.getMessageText();
-            
+
             message = message.replace("@sender", mailMessage.getSender().getName());
             message = message.replace("@receiver", mailMessage.getReceiver().getName());
         } else {
@@ -396,7 +394,7 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
             fontRenderer.drawString(getDisplayName(), x + 17, y, colour);
             GlStateManager.color(1F, 1F, 1F, 1F);
         }
-        
+
         @Override
         public String getDisplayName() {
             String display = super.getDisplayName();

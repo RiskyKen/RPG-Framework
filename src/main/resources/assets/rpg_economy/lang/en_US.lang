@@ -79,6 +79,7 @@ inventory.rpg_economy:mailbox.button.new_message=New Message
 inventory.rpg_economy:mailbox.button.new_message.disable=Sending mail is disabled on this server.
 inventory.rpg_economy:mailbox.button.reply=Reply
 inventory.rpg_economy:mailbox.button.withdraw_items=Withdraw Items
+inventory.rpg_economy:mailbox.button.delete_message=Delete Message
 
 inventory.rpg_economy:mailbox.dialog.send_mail.name=Send Mail
 inventory.rpg_economy:mailbox.dialog.send_mail.textbox.to.empty=To
