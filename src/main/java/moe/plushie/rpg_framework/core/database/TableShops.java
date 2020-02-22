@@ -26,7 +26,7 @@ public final class TableShops {
     private static final String SQL_CREATE_TABLE = "CREATE TABLE IF NOT EXISTS shops" + "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," + "name VARCHAR(80) NOT NULL," + "tabs TEXT NOT NULL," + "last_update DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL)";
 
     private static void create() {
-        DatabaseManager.executeUpdate(DatebaseTable.SHOPS, SQL_CREATE_TABLE);
+        DatabaseManager.executeUpdate(DatebaseTable.DATA, SQL_CREATE_TABLE);
     }
 
     private static final String SQL_ADD_SHOP = "INSERT INTO shops (id, name, tabs, last_update) VALUES (NULL, ?, ?, CURRENT_TIMESTAMP)";
@@ -34,7 +34,7 @@ public final class TableShops {
     public static IShop createNewShop(String name) {
         create();
         IShop shop = null;
-        try (Connection conn = DatabaseManager.getConnection(DatebaseTable.SHOPS); PreparedStatement ps = conn.prepareStatement(SQL_ADD_SHOP)) {
+        try (Connection conn = DatabaseManager.getConnection(DatebaseTable.DATA); PreparedStatement ps = conn.prepareStatement(SQL_ADD_SHOP)) {
             ps.setString(1, name);
             ps.setObject(2, "[]");
             ps.executeUpdate();
@@ -47,7 +47,7 @@ public final class TableShops {
     }
 
     public static void addNewShop(Shop shop) {
-        try (Connection conn = DatabaseManager.getConnection(DatebaseTable.SHOPS); PreparedStatement ps = conn.prepareStatement(SQL_ADD_SHOP)) {
+        try (Connection conn = DatabaseManager.getConnection(DatebaseTable.DATA); PreparedStatement ps = conn.prepareStatement(SQL_ADD_SHOP)) {
             ps.setString(1, shop.getName());
             ps.setString(2, ShopSerializer.serializeTabs(shop.getTabs(), true).toString());
             ps.executeUpdate();
@@ -60,7 +60,7 @@ public final class TableShops {
 
     public static void deleteShop(IIdentifier identifier) {
         create();
-        try (Connection conn = DatabaseManager.getConnection(DatebaseTable.SHOPS); PreparedStatement ps = conn.prepareStatement(SQL_DELETE_SHOP)) {
+        try (Connection conn = DatabaseManager.getConnection(DatebaseTable.DATA); PreparedStatement ps = conn.prepareStatement(SQL_DELETE_SHOP)) {
             ps.setObject(1, identifier.getValue());
             ps.executeUpdate();
         } catch (Exception e) {
@@ -73,7 +73,7 @@ public final class TableShops {
     public static IShop getShop(IIdentifier identifier) {
         create();
         IShop shop = null;
-        try (Connection conn = DatabaseManager.getConnection(DatebaseTable.SHOPS); PreparedStatement ps = conn.prepareStatement(SQL_GET_SHOP)) {
+        try (Connection conn = DatabaseManager.getConnection(DatebaseTable.DATA); PreparedStatement ps = conn.prepareStatement(SQL_GET_SHOP)) {
             ps.setObject(1, identifier.getValue());
             ResultSet resultSet = ps.executeQuery();
             if (resultSet.next()) {
@@ -91,7 +91,7 @@ public final class TableShops {
 
     public static void getShopList(ArrayList<IIdentifier> identifiers, ArrayList<String> names, ArrayList<Date> dates) {
         create();
-        try (Connection conn = DatabaseManager.getConnection(DatebaseTable.SHOPS); PreparedStatement ps = conn.prepareStatement(SQL_GET_SHOP_LIST)) {
+        try (Connection conn = DatabaseManager.getConnection(DatebaseTable.DATA); PreparedStatement ps = conn.prepareStatement(SQL_GET_SHOP_LIST)) {
             ResultSet resultSet = ps.executeQuery();
             while (resultSet.next()) {
                 if (identifiers != null) {
@@ -113,7 +113,7 @@ public final class TableShops {
 
     public static void updateShop(IShop shop) {
         create();
-        try (Connection conn = DatabaseManager.getConnection(DatebaseTable.SHOPS); PreparedStatement ps = conn.prepareStatement(SQL_UPDATE_SHOP)) {
+        try (Connection conn = DatabaseManager.getConnection(DatebaseTable.DATA); PreparedStatement ps = conn.prepareStatement(SQL_UPDATE_SHOP)) {
             ps.setString(1, shop.getName());
             ps.setString(2, ShopSerializer.serializeTabs(shop.getTabs(), false).toString());
             ps.setObject(3, shop.getIdentifier().getValue());
@@ -125,13 +125,13 @@ public final class TableShops {
     
     public static void exportShopSql() {
         create();
-        File fileDatabaseOld = SQLiteDriver.getDatabaseFile(DatebaseTable.RPG);
+        File fileDatabaseOld = SQLiteDriver.getDatabaseFile(DatebaseTable.DATA);
         
         String sqlAttach = "ATTACH DATABASE \"" + fileDatabaseOld.getAbsolutePath() + "\" AS 'dbOld'";
         String sqlCopy = "INSERT INTO shops SELECT * FROM dbOld.shops";
         String sqlDetach = "DETACH DATABASE 'dbOld'";
         
-        try (Connection conn = DatabaseManager.getConnection(DatebaseTable.SHOPS); PreparedStatement psAttach = conn.prepareStatement(sqlAttach); PreparedStatement psDetach = conn.prepareStatement(sqlDetach)) {
+        try (Connection conn = DatabaseManager.getConnection(DatebaseTable.DATA); PreparedStatement psAttach = conn.prepareStatement(sqlAttach); PreparedStatement psDetach = conn.prepareStatement(sqlDetach)) {
             psAttach.execute();
             try (PreparedStatement psCopy = conn.prepareStatement(sqlCopy)) {
                 psCopy.execute();
