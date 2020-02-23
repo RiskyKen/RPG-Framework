@@ -2,7 +2,6 @@ package moe.plushie.rpg_framework.core.common.init;
 
 import java.util.ArrayList;
 
-import moe.plushie.rpg_framework.auction.common.blocks.BlockAuction;
 import moe.plushie.rpg_framework.bank.common.blocks.BlockBank;
 import moe.plushie.rpg_framework.core.common.blocks.ICustomItemBlock;
 import moe.plushie.rpg_framework.mail.common.blocks.BlockMailBox;
@@ -19,7 +18,7 @@ public final class ModBlocks {
     public static final ArrayList<Block> BLOCK_LIST = new ArrayList<Block>();
     
     public static final Block MAIL_BOX = new BlockMailBox();
-    public static final Block AUCTION = new BlockAuction();
+    //public static final Block AUCTION = new BlockAuction();
     public static final Block SHOP = new BlockShop();
     public static final Block BANK = new BlockBank();
     
