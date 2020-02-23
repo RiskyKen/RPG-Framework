@@ -7,7 +7,8 @@ public final class ConfigOptionsShared {
 
     // Currency
     public boolean showPlayerInventoryInWalletGUI = true;
-
+    public boolean giveRarityColoursToCoins = true;
+    
     // Mail
     public boolean showPlayerInventoryInMailGUI = true;
 

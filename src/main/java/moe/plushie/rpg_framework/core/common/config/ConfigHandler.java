@@ -74,8 +74,11 @@ public class ConfigHandler {
     private static void loadCategoryCurrency() {
         config.setCategoryComment(CATEGORY_CURRENCY, "Setting to do with the currency system.");
         
-        optionsShared.showPlayerInventoryInWalletGUI = config.getBoolean("showPlayerInventoryInWalletGUI", CATEGORY_CURRENCY, true, 
+        optionsShared.showPlayerInventoryInWalletGUI = config.getBoolean("showPlayerInventoryInWalletGUI", CATEGORY_CURRENCY, true,
                 "Is the players inventory shown in the wallet GUI.");
+        
+        optionsShared.giveRarityColoursToCoins = config.getBoolean("giveRarityColoursToCoins", CATEGORY_CURRENCY, true,
+                "Should coin items be given a rarity colours colour.");
     }
     
     private static void loadCategoryShop() {

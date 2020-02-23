@@ -1,5 +1,6 @@
 package moe.plushie.rpg_framework.currency.common.items;
 
+import moe.plushie.rpg_framework.core.common.config.ConfigHandler;
 import moe.plushie.rpg_framework.core.common.items.AbstractModItem;
 import moe.plushie.rpg_framework.core.common.lib.LibItemNames;
 import moe.plushie.rpg_framework.core.common.lib.LibModInfo;
@@ -25,14 +26,16 @@ public class ItemCurrency extends AbstractModItem {
     
     @Override
     public EnumRarity getRarity(ItemStack stack) {
-        if (stack.getItemDamage() > 4) {
-            return EnumRarity.EPIC;
-        }
-        if (stack.getItemDamage() > 3) {
-            return EnumRarity.RARE;
-        }
-        if (stack.getItemDamage() > 2) {
-            return EnumRarity.UNCOMMON;
+        if (ConfigHandler.optionsShared.giveRarityColoursToCoins) {
+            if (stack.getItemDamage() > 4) {
+                return EnumRarity.EPIC;
+            }
+            if (stack.getItemDamage() > 3) {
+                return EnumRarity.RARE;
+            }
+            if (stack.getItemDamage() > 2) {
+                return EnumRarity.UNCOMMON;
+            }
         }
         return EnumRarity.COMMON;
     }
