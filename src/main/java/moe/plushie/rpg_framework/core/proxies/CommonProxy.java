@@ -3,10 +3,19 @@ package moe.plushie.rpg_framework.core.proxies;
 import java.io.File;
 
 import moe.plushie.rpg_framework.api.RpgEconomyAPI;
+import moe.plushie.rpg_framework.api.core.IGuiIcon.AnchorHorizontal;
+import moe.plushie.rpg_framework.api.core.IGuiIcon.AnchorVertical;
+import moe.plushie.rpg_framework.api.currency.ICost;
 import moe.plushie.rpg_framework.api.currency.ICurrency;
+import moe.plushie.rpg_framework.api.shop.IShop.IShopTab.TabType;
 import moe.plushie.rpg_framework.auction.ModuleAuction;
 import moe.plushie.rpg_framework.bank.ModuleBank;
+import moe.plushie.rpg_framework.bank.common.Bank;
 import moe.plushie.rpg_framework.core.RPGFramework;
+import moe.plushie.rpg_framework.core.common.GuiIcon;
+import moe.plushie.rpg_framework.core.common.IdentifierInt;
+import moe.plushie.rpg_framework.core.common.IdentifierString;
+import moe.plushie.rpg_framework.core.common.ItemMatcherStack;
 import moe.plushie.rpg_framework.core.common.addons.ModAddonManager;
 import moe.plushie.rpg_framework.core.common.command.CommandRpg;
 import moe.plushie.rpg_framework.core.common.config.ConfigHandler;
@@ -21,17 +30,28 @@ import moe.plushie.rpg_framework.core.common.module.IModModule;
 import moe.plushie.rpg_framework.core.common.module.ModModule;
 import moe.plushie.rpg_framework.core.common.network.GuiHandler;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
+import moe.plushie.rpg_framework.core.database.TableShops;
 import moe.plushie.rpg_framework.currency.ModuleCurrency;
+import moe.plushie.rpg_framework.currency.common.Cost;
 import moe.plushie.rpg_framework.currency.common.Currency;
+import moe.plushie.rpg_framework.currency.common.Currency.CurrencyVariant;
+import moe.plushie.rpg_framework.currency.common.Currency.CurrencyWalletInfo;
 import moe.plushie.rpg_framework.currency.common.CurrencyManager;
+import moe.plushie.rpg_framework.currency.common.Wallet;
 import moe.plushie.rpg_framework.currency.common.capability.CurrencyCapabilityManager;
 import moe.plushie.rpg_framework.itemData.ItemDataManager;
 import moe.plushie.rpg_framework.itemData.ModuleItemData;
 import moe.plushie.rpg_framework.mail.ModuleMail;
+import moe.plushie.rpg_framework.mail.common.MailSystem;
 import moe.plushie.rpg_framework.mail.common.MailSystemManager;
 import moe.plushie.rpg_framework.shop.ModuleShop;
+import moe.plushie.rpg_framework.shop.common.Shop;
+import moe.plushie.rpg_framework.shop.common.Shop.ShopItem;
+import moe.plushie.rpg_framework.shop.common.Shop.ShopTab;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -104,6 +124,47 @@ public class CommonProxy {
         for (IModModule module : ModModule.MOD_MODULES) {
             module.preInit(event);
         }
+    }
+
+    public void createExampleFiles() {
+        CurrencyWalletInfo walletInfo = new CurrencyWalletInfo(true, true, "", true, 0F, 0F);
+        CurrencyVariant[] currencyVariants = new CurrencyVariant[6];
+        currencyVariants[0] = new CurrencyVariant("Copper", 1, new ItemMatcherStack(new ItemStack(ModItems.CURRENCY, 1, 0), true, false));
+        currencyVariants[1] = new CurrencyVariant("Silver", 10, new ItemMatcherStack(new ItemStack(ModItems.CURRENCY, 1, 1), true, false));
+        currencyVariants[2] = new CurrencyVariant("Gold", 100, new ItemMatcherStack(new ItemStack(ModItems.CURRENCY, 1, 2), true, false));
+        currencyVariants[3] = new CurrencyVariant("Platinum", 1000, new ItemMatcherStack(new ItemStack(ModItems.CURRENCY, 1, 3), true, false));
+        currencyVariants[4] = new CurrencyVariant("Emerald", 10000, new ItemMatcherStack(new ItemStack(ModItems.CURRENCY, 1, 4), true, false));
+        currencyVariants[5] = new CurrencyVariant("Diamond", 100000, new ItemMatcherStack(new ItemStack(ModItems.CURRENCY, 1, 5), true, false));
+        Currency currency = new Currency(new IdentifierString("example_currency.json"), "Example Currency", "%d", walletInfo, currencyVariants);
+        currencyManager.saveCurrency(currency);
+
+        Shop shop = new Shop(new IdentifierInt(-1), "Example Shop");
+        ShopTab shopTab = new ShopTab("Example Tab", 0, TabType.BUY);
+        shopTab.getItems().set(0, new ShopItem(new ItemStack(Items.STICK), new Cost(new Wallet(currency, 10), null)));
+        shop.getTabs().add(shopTab);
+        TableShops.addNewShop(shop);
+
+        MailSystem mailSystem = new MailSystem(new IdentifierString("example_mail.json"), "Example Mail System");
+        GuiIcon guiIconMain = new GuiIcon(new String[] { "net.minecraft.client.gui.GuiChat", "" }, AnchorHorizontal.RIGHT, AnchorVertical.TOP, -5, 5, 19, 0.75F);
+        GuiIcon guiIconInventory = new GuiIcon(new String[] { "net.minecraft.client.gui.inventory.GuiInventory" }, AnchorHorizontal.CENTER, AnchorVertical.CENTER, 76, -70, 19, 0.75F);
+        mailSystem.setCurrency(currency);
+        mailSystem.setMessageCost(1);
+        mailSystem.setAttachmentCost(5);
+        mailSystem.setGuiIcons(new GuiIcon[] { guiIconMain, guiIconInventory });
+        mailSystemManager.saveMailSystem(mailSystem);
+
+        Bank bank = new Bank(new IdentifierString("example_bank.json"));
+        bank.setName("Example Bank");
+        ICost[] unlockCosts = new ICost[bank.getTabUnlockableCount()];
+        for (int i = 0; i < unlockCosts.length; i++) {
+            unlockCosts[i] = new Cost(new Wallet(currency, (i + 1) * 100), null);
+        }
+        bank.setTabUnlockCosts(unlockCosts);
+        ModuleBank.getBankManager().saveBank(bank);
+
+        currencyManager.reload(true);
+        mailSystemManager.reload(true);
+        ModuleBank.getBankManager().reload(true);
     }
 
     public void init(FMLInitializationEvent event) {

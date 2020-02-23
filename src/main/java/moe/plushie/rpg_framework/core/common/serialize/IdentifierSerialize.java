@@ -7,6 +7,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
@@ -22,44 +23,44 @@ public class IdentifierSerialize implements JsonSerializer<IIdentifier>, JsonDes
     private static final String PROP_TYPE_STRING = "string";
     private static final String PROP_TYPE_INT = "int";
 
-    public static JsonObject serializeJson(IIdentifier identifier) {
-        JsonObject jsonObject = new JsonObject();
+    public static JsonPrimitive serializeJson(IIdentifier identifier) {
+        JsonPrimitive jsonPrimitive = new JsonPrimitive("");
 
         if (identifier instanceof IdentifierString) {
             IdentifierString identifierString = (IdentifierString) identifier;
-            jsonObject.addProperty(PROP_TYPE, PROP_TYPE_STRING);
-            jsonObject.addProperty(PROP_VALUE, identifierString.getValue());
+            jsonPrimitive = new JsonPrimitive(identifierString.getValue());
         }
 
         if (identifier instanceof IdentifierInt) {
             IdentifierInt identifierInt = (IdentifierInt) identifier;
-            jsonObject.addProperty(PROP_TYPE, PROP_TYPE_INT);
-            jsonObject.addProperty(PROP_VALUE, identifierInt.getValue());
+            jsonPrimitive = new JsonPrimitive(identifierInt.getValue());
         }
 
-        return jsonObject;
+        return jsonPrimitive;
     }
 
     public static IIdentifier deserializeJson(JsonElement jsonElement) {
         try {
-            return deserializeJson(jsonElement.getAsJsonObject());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public static IIdentifier deserializeJson(JsonObject jsonObject) {
-        try {
             IIdentifier identifier = null;
 
-            String type = jsonObject.get(PROP_TYPE).getAsString();
-            JsonElement value = jsonObject.get(PROP_VALUE);
+            if (jsonElement.isJsonObject()) {
+                JsonObject jsonObject = jsonElement.getAsJsonObject();
+                String type = jsonObject.get(PROP_TYPE).getAsString();
+                JsonElement value = jsonObject.get(PROP_VALUE);
 
-            if (type.equals(PROP_TYPE_STRING)) {
-                identifier = new IdentifierString(value.getAsString());
-            } else if (type.equals(PROP_TYPE_INT)) {
-                identifier = new IdentifierInt(value.getAsInt());
+                if (type.equals(PROP_TYPE_STRING)) {
+                    identifier = new IdentifierString(value.getAsString());
+                } else if (type.equals(PROP_TYPE_INT)) {
+                    identifier = new IdentifierInt(value.getAsInt());
+                }
+            }
+            if (jsonElement.isJsonPrimitive()) {
+                JsonPrimitive jsonPrimitive = jsonElement.getAsJsonPrimitive();
+                if (jsonPrimitive.isNumber()) {
+                    identifier = new IdentifierInt(jsonPrimitive.getAsInt());
+                } else if (jsonPrimitive.isString()) {
+                    identifier = new IdentifierString(jsonPrimitive.getAsString());
+                }
             }
 
             return identifier;

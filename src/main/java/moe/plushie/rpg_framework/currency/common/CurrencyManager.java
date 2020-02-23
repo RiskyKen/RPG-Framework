@@ -5,6 +5,9 @@ import java.io.FilenameFilter;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.google.common.base.Charsets;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 
 import moe.plushie.rpg_framework.api.core.IIdentifier;
@@ -153,5 +156,12 @@ public class CurrencyManager implements ICurrencyManager {
             return currencyMap.values().toArray(new ICurrency[currencyMap.size()])[0];
         }
         return null;
+    }
+
+    public void saveCurrency(Currency currency) {
+        RPGFramework.getLogger().info("Saving currency: " + currency.getIdentifier());
+        JsonElement jsonData = CurrencySerializer.serializeJson(currency, false);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        SerializeHelper.writeFile(new File(currencyDirectory, String.valueOf(currency.getIdentifier().getValue())), Charsets.UTF_8, gson.toJson(jsonData));
     }
 }

@@ -49,7 +49,7 @@ public final class TableShops {
     public static void addNewShop(Shop shop) {
         try (Connection conn = DatabaseManager.getConnection(DatebaseTable.DATA); PreparedStatement ps = conn.prepareStatement(SQL_ADD_SHOP)) {
             ps.setString(1, shop.getName());
-            ps.setString(2, ShopSerializer.serializeTabs(shop.getTabs(), true).toString());
+            ps.setString(2, ShopSerializer.serializeTabs(shop.getTabs(), false).toString());
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();

@@ -7,6 +7,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.google.common.base.Charsets;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.mojang.authlib.GameProfile;
 
@@ -273,5 +276,12 @@ public class MailSystemManager implements IMailSystemManager {
                 }
             }
         }
+    }
+
+    public void saveMailSystem(MailSystem mailSystem) {
+        RPGFramework.getLogger().info("Saving mail system: " + mailSystem.getIdentifier());
+        JsonElement jsonData = MailSystemSerializer.serializeJson(mailSystem);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        SerializeHelper.writeFile(new File(mailDirectory, String.valueOf(mailSystem.getIdentifier().getValue())), Charsets.UTF_8, gson.toJson(jsonData));
     }
 }

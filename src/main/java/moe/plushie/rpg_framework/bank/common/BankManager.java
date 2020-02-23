@@ -5,6 +5,9 @@ import java.io.FilenameFilter;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.google.common.base.Charsets;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.mojang.authlib.GameProfile;
 
@@ -35,13 +38,13 @@ public class BankManager implements IBankManager {
 
     private static final String DIRECTORY_NAME = "bank";
 
-    private final File currencyDirectory;
+    private final File bankDirectory;
     private final ConcurrentHashMap<IIdentifier, IBank> bankMap;
 
     public BankManager(File modDirectory) {
-        currencyDirectory = new File(modDirectory, DIRECTORY_NAME);
-        if (!currencyDirectory.exists()) {
-            currencyDirectory.mkdir();
+        bankDirectory = new File(modDirectory, DIRECTORY_NAME);
+        if (!bankDirectory.exists()) {
+            bankDirectory.mkdir();
         }
         bankMap = new ConcurrentHashMap<IIdentifier, IBank>();
         MinecraftForge.EVENT_BUS.register(this);
@@ -50,7 +53,7 @@ public class BankManager implements IBankManager {
 
     public void reload(boolean syncWithClients) {
         RPGFramework.getLogger().info("Loading Banks");
-        File[] files = currencyDirectory.listFiles(new FilenameFilter() {
+        File[] files = bankDirectory.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
                 return name.endsWith(".json");
@@ -130,7 +133,7 @@ public class BankManager implements IBankManager {
     public IBank getBank(IIdentifier identifier) {
         return bankMap.get(identifier);
     }
-    
+
     @Override
     public void getBankAccount(IBankAccountLoadCallback callback, IBank bank, GameProfile sourcePlayer) {
         if (bank == null | sourcePlayer == null) {
@@ -144,19 +147,19 @@ public class BankManager implements IBankManager {
         }
         getBankAccount(callback, bank, dbPlayer);
     }
-    
+
     public void getBankAccount(IBankAccountLoadCallback callback, IBank bank, DBPlayer sourcePlayer) {
         if (bank == null | sourcePlayer == null) {
             callback.onBackAccountLoad(null);
             return;
         }
         DatabaseManager.EXECUTOR.execute(new Runnable() {
-            
+
             @Override
             public void run() {
                 IBankAccount bankAccount = BankAccountSerializer.deserializeDatabase(sourcePlayer, bank);
                 FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(new Runnable() {
-                    
+
                     @Override
                     public void run() {
                         callback.onBackAccountLoad(bankAccount);
@@ -176,5 +179,12 @@ public class BankManager implements IBankManager {
     @Override
     public String[] getBankNames() {
         return bankMap.keySet().toArray(new String[bankMap.size()]);
+    }
+
+    public void saveBank(IBank bank) {
+        RPGFramework.getLogger().info("Saving bank: " + bank.getIdentifier());
+        JsonElement jsonData = BankSerializer.serializeJson(bank, false);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        SerializeHelper.writeFile(new File(bankDirectory, String.valueOf(bank.getIdentifier().getValue())), Charsets.UTF_8, gson.toJson(jsonData));
     }
 }

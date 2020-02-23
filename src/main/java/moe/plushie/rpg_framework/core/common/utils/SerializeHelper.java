@@ -114,18 +114,23 @@ public final class SerializeHelper {
     }
 
     public static JsonObject writeItemToJson(ItemStack itemStack, boolean compact) {
+        JsonObject jsonObject = new JsonObject();
         if (itemStack.isEmpty()) {
-            return new JsonObject();
+            return jsonObject;
         }
         NBTTagCompound compound = new NBTTagCompound();
         itemStack.writeToNBT(compound);
         if (compact) {
-            compound.setString("id", String.valueOf(Item.getIdFromItem(itemStack.getItem())));
+            jsonObject.addProperty("id", String.valueOf(Item.getIdFromItem(itemStack.getItem())));
         } else {
-            compound.setString("id", itemStack.getItem().getRegistryName().toString());
+            jsonObject.addProperty("id", itemStack.getItem().getRegistryName().toString());
         }
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(TAG_COMPOUND, compound.toString());
+        jsonObject.addProperty("count", itemStack.getCount());
+        jsonObject.addProperty("damage", itemStack.getItemDamage());
+        if (itemStack.hasTagCompound()) {
+            jsonObject.addProperty("nbt", itemStack.getTagCompound().toString());
+        }
+        //jsonObject.addProperty(TAG_COMPOUND, compound.toString());
         return jsonObject;
     }
 

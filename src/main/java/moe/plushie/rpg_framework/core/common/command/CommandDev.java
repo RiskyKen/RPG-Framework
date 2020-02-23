@@ -17,10 +17,11 @@ public class CommandDev extends ModSubCommands {
     public CommandDev(ModCommand parent) {
         super(parent, "dev");
         addSubCommand(new CommandExecute(this, "sql", new ICommandExecute() {
+
             @Override
             public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
                 if (args.length > 3) {
-                    DatebaseTable datebaseTable = DatebaseTable.valueOf(args[2].toUpperCase()); 
+                    DatebaseTable datebaseTable = DatebaseTable.valueOf(args[2].toUpperCase());
                     String sql = args[3];
                     for (int i = 4; i < args.length; i++) {
                         sql += " " + args[i];
@@ -34,6 +35,13 @@ public class CommandDev extends ModSubCommands {
                         player.sendMessage(new TextComponentString(s));
                     }
                 }
+            }
+        }));
+        addSubCommand(new CommandExecute(this, "make_example_files", new ICommandExecute() {
+
+            @Override
+            public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+                RPGFramework.getProxy().createExampleFiles();
             }
         }));
     }
