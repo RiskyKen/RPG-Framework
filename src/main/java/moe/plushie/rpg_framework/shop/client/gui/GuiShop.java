@@ -373,7 +373,9 @@ public class GuiShop extends GuiTabbed<ContainerShop> implements IDialogCallback
         // PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.SHOP_SAVE));
         // }
         if (button == buttonEditTabAdd) {
-            openDialog(new GuiShopDialogTabAdd(this, GuiHelper.getLocalControlName(getName(), "dialog.tab_add"), this));
+            if (tabController.getTabCount() < 10) {
+                openDialog(new GuiShopDialogTabAdd(this, GuiHelper.getLocalControlName(getName(), "dialog.tab_add"), this));
+            }
         }
         if (button == buttonEditTabRemove) {
             if (activeTabIndex == -1) {
