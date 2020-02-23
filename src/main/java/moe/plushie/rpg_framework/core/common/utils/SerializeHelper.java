@@ -19,10 +19,10 @@ import moe.plushie.rpg_framework.core.RPGFramework;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
+import net.minecraftforge.common.util.Constants.NBT;
 
 public final class SerializeHelper {
 
@@ -118,8 +118,7 @@ public final class SerializeHelper {
         if (itemStack.isEmpty()) {
             return jsonObject;
         }
-        NBTTagCompound compound = new NBTTagCompound();
-        itemStack.writeToNBT(compound);
+
         if (compact) {
             jsonObject.addProperty("id", String.valueOf(Item.getIdFromItem(itemStack.getItem())));
         } else {
@@ -130,7 +129,12 @@ public final class SerializeHelper {
         if (itemStack.hasTagCompound()) {
             jsonObject.addProperty("nbt", itemStack.getTagCompound().toString());
         }
-        //jsonObject.addProperty(TAG_COMPOUND, compound.toString());
+        
+        NBTTagCompound compound = itemStack.writeToNBT(new NBTTagCompound());
+        if (compound.hasKey("ForgeCaps", NBT.TAG_COMPOUND)) {
+            jsonObject.addProperty("capabilities", compound.getCompoundTag("ForgeCaps").toString());
+        }
+        
         return jsonObject;
     }
 
@@ -149,6 +153,7 @@ public final class SerializeHelper {
         Item item = Item.getByNameOrId(jsonObject.get("id").getAsString());
         int count = 1;
         int damage = 0;
+        NBTTagCompound capabilities = null;
         if (jsonObject.has("count")) {
             count = jsonObject.get("count").getAsInt();
         }
@@ -161,11 +166,14 @@ public final class SerializeHelper {
         if (jsonObject.has("Damage")) {
             damage = jsonObject.get("Damage").getAsInt();
         }
-        ItemStack itemStack = new ItemStack(item, count, damage);
+        if (jsonObject.has("capabilities")) {
+            capabilities = JsonToNBT.getTagFromJson(jsonObject.get("capabilities").getAsString());
+        }
+        ItemStack itemStack = new ItemStack(item, count, damage, capabilities);
         if (jsonObject.has("nbt")) {
             JsonElement elementNbt = jsonObject.get("nbt");
-            NBTBase nbtBase = JsonToNBT.getTagFromJson(elementNbt.getAsString());
-            itemStack.setTagCompound((NBTTagCompound) nbtBase);
+            NBTTagCompound nbtBase = JsonToNBT.getTagFromJson(elementNbt.getAsString());
+            itemStack.setTagCompound(nbtBase);
         }
         return itemStack;
     }
