@@ -5,6 +5,7 @@ import java.io.File;
 import moe.plushie.rpg_framework.api.RpgEconomyAPI;
 import moe.plushie.rpg_framework.api.core.IGuiIcon.AnchorHorizontal;
 import moe.plushie.rpg_framework.api.core.IGuiIcon.AnchorVertical;
+import moe.plushie.rpg_framework.api.core.IItemMatcher;
 import moe.plushie.rpg_framework.api.currency.ICost;
 import moe.plushie.rpg_framework.api.currency.ICurrency;
 import moe.plushie.rpg_framework.api.shop.IShop.IShopTab.TabType;
@@ -50,6 +51,7 @@ import moe.plushie.rpg_framework.shop.common.Shop.ShopItem;
 import moe.plushie.rpg_framework.shop.common.Shop.ShopTab;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Mod;
@@ -124,9 +126,15 @@ public class CommonProxy {
         for (IModModule module : ModModule.MOD_MODULES) {
             module.preInit(event);
         }
+        
+        if (ConfigHandler.optionsLocal.firstRun) {
+            RPGFramework.getLogger().info("First run detected, creating example files.");
+            createExampleFiles();
+        }
     }
 
     public void createExampleFiles() {
+        // Currency
         CurrencyWalletInfo walletInfo = new CurrencyWalletInfo(true, true, "", true, 0F, 0F);
         CurrencyVariant[] currencyVariants = new CurrencyVariant[6];
         currencyVariants[0] = new CurrencyVariant("Copper", 1, new ItemMatcherStack(new ItemStack(ModItems.CURRENCY, 1, 0), true, false));
@@ -138,12 +146,46 @@ public class CommonProxy {
         Currency currency = new Currency(new IdentifierString("example_currency.json"), "Example Currency", "%d", walletInfo, currencyVariants);
         currencyManager.saveCurrency(currency);
 
+        // Shop
         Shop shop = new Shop(new IdentifierInt(-1), "Example Shop");
-        ShopTab shopTab = new ShopTab("Example Tab", 0, TabType.BUY);
-        shopTab.getItems().set(0, new ShopItem(new ItemStack(Items.STICK), new Cost(new Wallet(currency, 10), null)));
-        shop.getTabs().add(shopTab);
+        
+        ShopTab shopTabLeatherArmour= new ShopTab("Example Tab Leather Armour", 1, TabType.BUY);
+        shopTabLeatherArmour.getItems().set(0, new ShopItem(new ItemStack(Items.LEATHER_HELMET), new Cost(new Wallet(currency, 1), null)));
+        shopTabLeatherArmour.getItems().set(1, new ShopItem(new ItemStack(Items.LEATHER_CHESTPLATE), new Cost(new Wallet(currency, 3), null)));
+        shopTabLeatherArmour.getItems().set(2, new ShopItem(new ItemStack(Items.LEATHER_LEGGINGS), new Cost(new Wallet(currency, 2), null)));
+        shopTabLeatherArmour.getItems().set(3, new ShopItem(new ItemStack(Items.LEATHER_BOOTS), new Cost(new Wallet(currency, 1), null)));
+        shop.getTabs().add(shopTabLeatherArmour);
+        
+        ShopTab shopTabIronArmour= new ShopTab("Example Tab Iron Armour", 2, TabType.BUY);
+        shopTabIronArmour.getItems().set(0, new ShopItem(new ItemStack(Items.IRON_HELMET), new Cost(new Wallet(currency, 2), null)));
+        shopTabIronArmour.getItems().set(1, new ShopItem(new ItemStack(Items.IRON_CHESTPLATE), new Cost(new Wallet(currency, 6), null)));
+        shopTabIronArmour.getItems().set(2, new ShopItem(new ItemStack(Items.IRON_LEGGINGS), new Cost(new Wallet(currency, 5), null)));
+        shopTabIronArmour.getItems().set(3, new ShopItem(new ItemStack(Items.IRON_BOOTS), new Cost(new Wallet(currency, 2), null)));
+        shop.getTabs().add(shopTabIronArmour);
+        
+        ShopTab shopTabMelee= new ShopTab("Example Tab Melee", 5, TabType.BUY);
+        shopTabMelee.getItems().set(0, new ShopItem(new ItemStack(Items.WOODEN_SWORD), new Cost(new Wallet(currency, 4), null)));
+        shopTabMelee.getItems().set(1, new ShopItem(new ItemStack(Items.STONE_SWORD), new Cost(new Wallet(currency, 5), null)));
+        shopTabMelee.getItems().set(2, new ShopItem(new ItemStack(Items.IRON_SWORD), new Cost(new Wallet(currency, 6), null)));
+        shopTabMelee.getItems().set(3, new ShopItem(new ItemStack(Items.GOLDEN_SWORD), new Cost(new Wallet(currency, 4), null)));
+        shopTabMelee.getItems().set(4, new ShopItem(new ItemStack(Items.DIAMOND_SWORD), new Cost(new Wallet(currency, 7), null)));
+        shopTabMelee.getItems().set(5, new ShopItem(new ItemStack(Items.SHIELD), new Cost(new Wallet(currency, 5), null)));
+        shop.getTabs().add(shopTabMelee);
+        
+        ShopTab shopTabRanged= new ShopTab("Example Tab Ranged", 12, TabType.BUY);
+        shopTabRanged.getItems().set(0, new ShopItem(new ItemStack(Items.BOW), new Cost(new Wallet(currency, 4), null)));
+        shopTabRanged.getItems().set(1, new ShopItem(new ItemStack(Items.ARROW), new Cost(new Wallet(currency, 1), null)));
+        shopTabRanged.getItems().set(2, new ShopItem(new ItemStack(Items.ARROW, 16), new Cost(new Wallet(currency, 16), null)));
+        shopTabRanged.getItems().set(3, new ShopItem(new ItemStack(Items.ARROW, 32), new Cost(new Wallet(currency, 32), null)));
+        shop.getTabs().add(shopTabRanged);
+        
+        ShopTab shopTabItem= new ShopTab("Example Tab Item Cost", 15, TabType.BUY);
+        shopTabItem.getItems().set(0, new ShopItem(new ItemStack(Blocks.STONE), new Cost(null, new IItemMatcher[] {new ItemMatcherStack(new ItemStack(Blocks.COBBLESTONE), true, false)})));
+        shop.getTabs().add(shopTabItem);
+        
         TableShops.addNewShop(shop);
 
+        // Mail System
         MailSystem mailSystem = new MailSystem(new IdentifierString("example_mail.json"), "Example Mail System");
         GuiIcon guiIconMain = new GuiIcon(new String[] { "net.minecraft.client.gui.GuiChat", "" }, AnchorHorizontal.RIGHT, AnchorVertical.TOP, -5, 5, 19, 0.75F);
         GuiIcon guiIconInventory = new GuiIcon(new String[] { "net.minecraft.client.gui.inventory.GuiInventory" }, AnchorHorizontal.CENTER, AnchorVertical.CENTER, 76, -70, 19, 0.75F);
@@ -153,6 +195,7 @@ public class CommonProxy {
         mailSystem.setGuiIcons(new GuiIcon[] { guiIconMain, guiIconInventory });
         mailSystemManager.saveMailSystem(mailSystem);
 
+        // Bank
         Bank bank = new Bank(new IdentifierString("example_bank.json"));
         bank.setName("Example Bank");
         ICost[] unlockCosts = new ICost[bank.getTabUnlockableCount()];
@@ -162,6 +205,7 @@ public class CommonProxy {
         bank.setTabUnlockCosts(unlockCosts);
         ModuleBank.getBankManager().saveBank(bank);
 
+        // Send changes to clients.
         currencyManager.reload(true);
         mailSystemManager.reload(true);
         ModuleBank.getBankManager().reload(true);
