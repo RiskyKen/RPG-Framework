@@ -33,7 +33,7 @@ public class Cost implements ICost {
 
     public Cost(IWallet[] walletCosts, IItemMatcher[] itemCosts) {
         this.walletCosts = removeDupes(walletCosts);
-        this.itemCosts = itemCosts;
+        this.itemCosts = removeNulls(itemCosts);
     }
 
     @Override
@@ -199,6 +199,19 @@ public class Cost implements ICost {
             return newWalletList.toArray(new IWallet[newWalletList.size()]);
         }
         return walletsIn;
+    }
+    
+    private static IItemMatcher[] removeNulls(IItemMatcher[] inItemMatchers) {
+        if (inItemMatchers != null && inItemMatchers.length > 0) {
+            ArrayList<IItemMatcher> itemMatchers = new ArrayList<IItemMatcher>();
+            for (IItemMatcher matcher : inItemMatchers) {
+                if (matcher != null && !matcher.getItemStack().isEmpty()) {
+                    itemMatchers.add(matcher);
+                }
+            }
+            return itemMatchers.toArray(new IItemMatcher[itemMatchers.size()]);
+        }
+        return inItemMatchers;
     }
 
     @Override

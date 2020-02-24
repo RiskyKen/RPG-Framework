@@ -63,7 +63,7 @@ public final class CostSerializer {
             }
             // Read wallet.
             if (jsonObject.has(PROP_CURRENCY)) {
-                if (jsonObject.get(PROP_CURRENCY).isJsonPrimitive()) {
+                if (jsonObject.get(PROP_CURRENCY).isJsonObject()) {
                     walletCost = new IWallet[] { WalletSerializer.deserializeJson(jsonObject.get(PROP_CURRENCY).getAsJsonObject()) };
                 }
                 if (jsonObject.get(PROP_CURRENCY).isJsonArray()) {
