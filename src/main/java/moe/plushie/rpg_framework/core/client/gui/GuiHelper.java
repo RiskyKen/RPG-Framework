@@ -44,12 +44,12 @@ public final class GuiHelper {
         if (!canAfford) {
             colour = ChatFormatting.RED;
         }
-
+        int renderCount = 0;
         if (cost.hasWalletCost()) {
             for (IWallet wallet : cost.getWalletCosts()) {
                 int amount = wallet.getAmount();
                 boolean used = false;
-                int renderCount = 0;
+                
                 for (int i = 0; i < wallet.getCurrency().getCurrencyVariants().length; i++) {
                     if (amount > 0) {
                         ICurrencyVariant variant = wallet.getCurrency().getCurrencyVariants()[wallet.getCurrency().getCurrencyVariants().length - i - 1];
@@ -96,7 +96,7 @@ public final class GuiHelper {
                 GlStateManager.pushMatrix();
                 GlStateManager.pushAttrib();
                 RenderHelper.enableGUIStandardItemLighting();
-                GlStateManager.translate(22 + slotX + i * 17, 5 + slotY, 0);
+                GlStateManager.translate(22 + slotX + renderCount * 17, 5 + slotY, 0);
                 // GlStateManager.scale(0.5, 0.5, 0.5);
                 ItemStack stack = itemCost[i].getItemStack();
                 // stack.setCount(1);
@@ -105,7 +105,7 @@ public final class GuiHelper {
                 RenderHelper.disableStandardItemLighting();
                 GlStateManager.popAttrib();
                 GlStateManager.popMatrix();
-
+                renderCount++;
             }
         }
     }
