@@ -21,17 +21,21 @@ public final class CostSerializer {
     public static JsonObject serializeJson(ICost cost, boolean compact) {
         JsonObject jsonObject = new JsonObject();
         // Write items
-        JsonArray arrayItems = new JsonArray();
         if (cost.hasItemCost()) {
-            for (int i = 0; i < cost.getItemCost().length; i++) {
-                arrayItems.add(ItemMacherSerializer.serializeJson(cost.getItemCost()[i], compact));
+            JsonArray arrayItems = new JsonArray();
+            for (int i = 0; i < cost.getItemCosts().length; i++) {
+                arrayItems.add(ItemMacherSerializer.serializeJson(cost.getItemCosts()[i], compact));
             }
             jsonObject.add(PROP_ITEMS, arrayItems);
         }
 
         // Write wallet.
         if (cost.hasWalletCost()) {
-            jsonObject.add(PROP_CURRENCY, WalletSerializer.serializeJson(cost.getWalletCost()));
+            JsonArray arrayWallets = new JsonArray();
+            for (int i = 0; i < cost.getWalletCosts().length; i++) {
+                arrayWallets.add(WalletSerializer.serializeJson(cost.getWalletCosts()[i]));
+            }
+            jsonObject.add(PROP_CURRENCY, arrayWallets);
         }
         return jsonObject;
     }
@@ -48,7 +52,7 @@ public final class CostSerializer {
     public static ICost deserializeJson(JsonObject jsonObject) {
         try {
             IItemMatcher[] itemCost = null;
-            IWallet walletCost = null;
+            IWallet[] walletCost = null;
             // Read items.
             if (jsonObject.has(PROP_ITEMS)) {
                 JsonArray arrayItems = jsonObject.get(PROP_ITEMS).getAsJsonArray();
@@ -59,7 +63,16 @@ public final class CostSerializer {
             }
             // Read wallet.
             if (jsonObject.has(PROP_CURRENCY)) {
-                walletCost = WalletSerializer.deserializeJson(jsonObject.get(PROP_CURRENCY).getAsJsonObject());
+                if (jsonObject.get(PROP_CURRENCY).isJsonPrimitive()) {
+                    walletCost = new IWallet[] { WalletSerializer.deserializeJson(jsonObject.get(PROP_CURRENCY).getAsJsonObject()) };
+                }
+                if (jsonObject.get(PROP_CURRENCY).isJsonArray()) {
+                    JsonArray arrayWallets = jsonObject.get(PROP_CURRENCY).getAsJsonArray();
+                    walletCost = new IWallet[arrayWallets.size()];
+                    for (int i = 0; i < arrayWallets.size(); i++) {
+                        walletCost[i] = WalletSerializer.deserializeJson(arrayWallets.get(i));
+                    }
+                }
             }
 
             return new Cost(walletCost, itemCost);

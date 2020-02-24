@@ -279,7 +279,7 @@ public class GuiShop extends GuiTabbed<ContainerShop> implements IDialogCallback
             }
             amount += CurrencyWalletHelper.getAmountInInventory(currency, entityPlayer.inventory);
             if (amount > 0) {
-                GuiHelper.renderCost(fontRenderer, itemRender, new Cost(new Wallet(currency, amount), null), 176, 156 + yCur * 18);
+                GuiHelper.renderCost(fontRenderer, itemRender, new Cost(new Wallet(currency, amount)), 176, 156 + yCur * 18);
                 yCur++;
             }
         }

@@ -29,29 +29,9 @@ public class AddonFaerunHeroes extends ModAddon {
             if (compound.hasKey(TAG_VALUE, NBT.TAG_INT)) {
                 // TODO Make this load from a config or something.
                 ICurrency currency = RPGFramework.getProxy().getCurrencyManager().getDefault();
-                value = new Cost(new Wallet(currency, compound.getInteger(TAG_VALUE)), null);
+                value = new Cost(new Wallet(currency, compound.getInteger(TAG_VALUE)));
             }
         }
         return value;
-    }
-
-    public void setItemValue(ItemStack itemStack, ICost value) {
-        if (value != null && value != Cost.NO_COST && value.hasWalletCost()) {
-            // Create tag compound if needed.
-            if (!itemStack.hasTagCompound()) {
-                itemStack.setTagCompound(new NBTTagCompound());
-            }
-
-            // Create tiamatrpg tag compound if needed.
-            if (!itemStack.getTagCompound().hasKey(TAG_TIAMATRPG, NBT.TAG_COMPOUND)) {
-                itemStack.getTagCompound().setTag(TAG_TIAMATRPG, new NBTTagCompound());
-            }
-
-            // Get the tiamatrpg from the item stack.
-            NBTTagCompound compound = itemStack.getTagCompound().getCompoundTag(TAG_TIAMATRPG);
-
-            // Write value to item NBT.
-            compound.setInteger(TAG_VALUE, value.getWalletCost().getAmount());
-        }
     }
 }

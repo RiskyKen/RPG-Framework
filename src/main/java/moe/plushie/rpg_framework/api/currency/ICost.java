@@ -5,9 +5,9 @@ import net.minecraft.entity.player.EntityPlayer;
 
 public interface ICost {
 
-    public IWallet getWalletCost();
+    public IWallet[] getWalletCosts();
 
-    public IItemMatcher[] getItemCost();
+    public IItemMatcher[] getItemCosts();
 
     public boolean hasWalletCost();
 

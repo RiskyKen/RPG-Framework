@@ -59,6 +59,16 @@ public class Currency implements ICurrency, Comparable<ICurrency> {
     }
 
     @Override
+    public int hashCode() {
+        return identifier.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return identifier.equals(obj);
+    }
+
+    @Override
     public String toString() {
         return "Currency [identifier=" + identifier + ", name=" + name + ", displayFormat=" + displayFormat + ", walletInfo=" + walletInfo + ", variants=" + Arrays.toString(variants) + "]";
     }

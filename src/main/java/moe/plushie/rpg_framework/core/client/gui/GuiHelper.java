@@ -28,67 +28,69 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public final class GuiHelper {
-    
+
     private static final ResourceLocation PLAYER_TEXTURE = new ResourceLocation(LibGuiResources.PLAYER_INVENTORY);
-    
-    private GuiHelper() {}
-    
+
+    private GuiHelper() {
+    }
+
     public static void renderCost(FontRenderer fontRenderer, RenderItem itemRender, ICost cost, int slotX, int slotY) {
         renderCost(fontRenderer, itemRender, cost, slotX, slotY, true);
     }
-    
+
     public static void renderCost(FontRenderer fontRenderer, RenderItem itemRender, ICost cost, int slotX, int slotY, boolean canAfford) {
 
         ChatFormatting colour = ChatFormatting.WHITE;
         if (!canAfford) {
             colour = ChatFormatting.RED;
         }
-        
+
         if (cost.hasWalletCost()) {
-            IWallet wallet = cost.getWalletCost();
-            int amount = wallet.getAmount();
-            boolean used = false;
-            int renderCount = 0;
-            for (int i = 0; i < wallet.getCurrency().getCurrencyVariants().length; i++) {
-                if (amount > 0) {
-                    ICurrencyVariant variant = wallet.getCurrency().getCurrencyVariants()[wallet.getCurrency().getCurrencyVariants().length - i - 1];
-                    // variant = cost.getCurrency().getCurrencyVariants()[i];
+            for (IWallet wallet : cost.getWalletCosts()) {
+                int amount = wallet.getAmount();
+                boolean used = false;
+                int renderCount = 0;
+                for (int i = 0; i < wallet.getCurrency().getCurrencyVariants().length; i++) {
+                    if (amount > 0) {
+                        ICurrencyVariant variant = wallet.getCurrency().getCurrencyVariants()[wallet.getCurrency().getCurrencyVariants().length - i - 1];
+                        // variant = cost.getCurrency().getCurrencyVariants()[i];
 
-                    int count = 0;
-                    for (int j = 0; j < 22000; j++) {
-                        if (variant.getValue() <= amount) {
-                            amount -= variant.getValue();
-                            count++;
-                            used = true;
-                        } else {
-                            continue;
+                        int count = 0;
+                        for (int j = 0; j < 22000; j++) {
+                            if (variant.getValue() <= amount) {
+                                amount -= variant.getValue();
+                                count++;
+                                used = true;
+                            } else {
+                                continue;
+                            }
                         }
-                    }
 
-                    if (used) {
-                        GlStateManager.pushMatrix();
-                        GlStateManager.pushAttrib();
-                        RenderHelper.enableGUIStandardItemLighting();
-                        GlStateManager.translate(22 + slotX + renderCount * 17, 5 + slotY, 0);
-                        // GlStateManager.scale(0.75, 0.75, 0.75);
-                        ItemStack stack = variant.getItem().getItemStack().copy();
-                        stack.setCount(1);
-                        itemRender.renderItemAndEffectIntoGUI(stack, 0, 0);
-                        if (count >= 1000) {
-                            itemRender.renderItemOverlayIntoGUI(fontRenderer, stack, 0, 0, colour + String.valueOf(count / 1000) + "K");
-                        } else {
-                            itemRender.renderItemOverlayIntoGUI(fontRenderer, stack, 0, 0, colour + String.valueOf(count));
+                        if (used) {
+                            GlStateManager.pushMatrix();
+                            GlStateManager.pushAttrib();
+                            RenderHelper.enableGUIStandardItemLighting();
+                            GlStateManager.translate(22 + slotX + renderCount * 17, 5 + slotY, 0);
+                            // GlStateManager.scale(0.75, 0.75, 0.75);
+                            ItemStack stack = variant.getItem().getItemStack().copy();
+                            stack.setCount(1);
+                            itemRender.renderItemAndEffectIntoGUI(stack, 0, 0);
+                            if (count >= 1000) {
+                                itemRender.renderItemOverlayIntoGUI(fontRenderer, stack, 0, 0, colour + String.valueOf(count / 1000) + "K");
+                            } else {
+                                itemRender.renderItemOverlayIntoGUI(fontRenderer, stack, 0, 0, colour + String.valueOf(count));
+                            }
+                            RenderHelper.disableStandardItemLighting();
+                            GlStateManager.popAttrib();
+                            GlStateManager.popMatrix();
+                            renderCount++;
                         }
-                        RenderHelper.disableStandardItemLighting();
-                        GlStateManager.popAttrib();
-                        GlStateManager.popMatrix();
-                        renderCount++;
                     }
                 }
             }
         }
         if (cost.hasItemCost()) {
-            IItemMatcher[] itemCost = cost.getItemCost();
+            IItemMatcher[] itemCost = cost.getItemCosts();
             for (int i = 0; i < itemCost.length; i++) {
 
                 GlStateManager.pushMatrix();
@@ -107,37 +109,37 @@ public final class GuiHelper {
             }
         }
     }
-    
+
     public static void renderPlayerInvTexture(int x, int y) {
         Minecraft.getMinecraft().renderEngine.bindTexture(PLAYER_TEXTURE);
         Gui.drawModalRectWithCustomSizedTexture(x, y, 0, 0, 176, 98, 256, 256);
     }
-    
+
     public static void renderPlayerInvlabel(int x, int y, FontRenderer fontRenderer) {
         renderPlayerInvlabel(x, y, fontRenderer, 0x333333);
     }
-    
+
     public static void renderPlayerInvlabel(int x, int y, FontRenderer fontRenderer, int colour) {
         fontRenderer.drawString(I18n.format("container.inventory", new Object[0]), x + 8, y + 5, colour);
     }
-    
+
     public static void renderLocalizedGuiName(FontRenderer fontRenderer, int xSize, String name) {
         renderLocalizedGuiName(fontRenderer, xSize, name, null, 4210752);
     }
-    
+
     public static void renderLocalizedGuiName(FontRenderer fontRenderer, int xSize, String name, int colour) {
         renderLocalizedGuiName(fontRenderer, xSize, name, null, colour);
     }
-    
+
     public static void renderLocalizedGuiName(FontRenderer fontRenderer, int xSize, String name, String append) {
         renderLocalizedGuiName(fontRenderer, xSize, name, append, 4210752);
     }
-    
+
     public static void renderLocalizedGuiName(FontRenderer fontRenderer, int xSize, String name, String append, int colour) {
         String unlocalizedName = "inventory." + LibModInfo.ID.toLowerCase() + ":" + name + ".name";
         String localizedName = I18n.format(unlocalizedName);
         String renderText = unlocalizedName;
-        if (!unlocalizedName.equals(localizedName)){
+        if (!unlocalizedName.equals(localizedName)) {
             renderText = localizedName;
         }
         if (append != null) {
@@ -146,20 +148,20 @@ public final class GuiHelper {
         int xPos = xSize / 2 - fontRenderer.getStringWidth(renderText) / 2;
         fontRenderer.drawString(renderText, xPos, 6, colour);
     }
-    
+
     public static void renderGuiName(FontRenderer fontRenderer, int xSize, String name) {
         renderGuiName(fontRenderer, xSize, name, 4210752);
     }
-    
+
     public static void renderGuiName(FontRenderer fontRenderer, int xSize, String name, int colour) {
         int xPos = xSize / 2 - fontRenderer.getStringWidth(name) / 2;
         fontRenderer.drawString(name, xPos, 6, colour);
     }
-    
+
     public static String getLocalControlName(String guiName, String controlName, Object... parameters) {
         return I18n.format("inventory." + LibModInfo.ID.toLowerCase() + ":" + guiName + "." + controlName, parameters);
     }
-    
+
     public static void drawHoveringText(List textList, int xPos, int yPos, FontRenderer font, int width, int height, float zLevel) {
         if (!textList.isEmpty()) {
             GlStateManager.pushAttrib();
@@ -171,7 +173,7 @@ public final class GuiHelper {
             Iterator iterator = textList.iterator();
 
             while (iterator.hasNext()) {
-                String line = (String)iterator.next();
+                String line = (String) iterator.next();
                 int sWidth = font.getStringWidth(line);
                 if (sWidth > textWidth) {
                     textWidth = sWidth;
@@ -193,7 +195,7 @@ public final class GuiHelper {
             if (renderY + textHeight + 6 > height) {
                 renderY = height - textHeight - 6;
             }
-            
+
             if (renderY < 5) {
                 renderY = 5;
             }
@@ -213,7 +215,7 @@ public final class GuiHelper {
             drawGradientRect(renderX - 3, renderY + textHeight + 2, renderX + textWidth + 3, renderY + textHeight + 3, l1, l1, zLevel);
 
             for (int i2 = 0; i2 < textList.size(); ++i2) {
-                String line = (String)textList.get(i2);
+                String line = (String) textList.get(i2);
                 font.drawStringWithShadow(line, renderX, renderY, -1);
                 if (i2 == 0) {
                     renderY += 2;
@@ -229,7 +231,7 @@ public final class GuiHelper {
             GlStateManager.popAttrib();
         }
     }
-    
+
     private static void drawGradientRect(int left, int top, int right, int bottom, int startColor, int endColor, float zLevel) {
         float f = (startColor >> 24 & 255) / 255.0F;
         float f1 = (startColor >> 16 & 255) / 255.0F;
@@ -243,7 +245,7 @@ public final class GuiHelper {
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-        //GlStateManager.shadeModel(7425);
+        // GlStateManager.shadeModel(7425);
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
         bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR);
@@ -253,7 +255,7 @@ public final class GuiHelper {
         bufferbuilder.pos(right, bottom, zLevel).color(f5, f6, f7, f4).endVertex();
         tessellator.draw();
         GlStateManager.shadeModel(7424);
-        //GlStateManager.disableBlend();
+        // GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
     }

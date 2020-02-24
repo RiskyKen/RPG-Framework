@@ -82,14 +82,14 @@ public class GuiShopDialogEditCost extends AbstractGuiDialog implements IDropDow
             if (dropDownCostTypes.getListSelectedIndex() == 1) {
                 IWallet wallet = null;
                 if (costNew != null) {
-                    wallet = costNew.getWalletCost();
+                    wallet = costNew.getWalletCosts()[0];
                 }
                 openDialog(new GuiShopDialogEditCostCurrency(parent, name + ".dialog.edit_currency", this, 280, 130, wallet));
             }
             if (dropDownCostTypes.getListSelectedIndex() == 2) {
                 IItemMatcher[] itemCost = null;
                 if (costNew != null) {
-                    itemCost = costNew.getItemCost();
+                    itemCost = costNew.getItemCosts();
                 }
                 openDialog(new GuiShopDialogEditCostItems(parent, name + ".dialog.edit_items", this, 190, 220, slotIndex, itemCost));
             }
@@ -131,12 +131,12 @@ public class GuiShopDialogEditCost extends AbstractGuiDialog implements IDropDow
         if (result == DialogResult.OK) {
             if (dialog instanceof GuiShopDialogEditCostCurrency) {
                 IWallet wallet = ((GuiShopDialogEditCostCurrency) dialog).getWallet();
-                costNew = new Cost(wallet, null);
+                costNew = new Cost(wallet);
                 closeDialog();
             }
             if (dialog instanceof GuiShopDialogEditCostItems) {
                 IItemMatcher[] matchers = ((GuiShopDialogEditCostItems) dialog).getCost();
-                costNew = new Cost(null, matchers);
+                costNew = new Cost(matchers);
                 closeDialog();
             }
         }

@@ -210,9 +210,9 @@ public class ContainerShop extends ModContainer {
                 if (!shopItem.getItem().isEmpty()) {
                     ICost cost = shopItem.getCost();
                     if (cost != null && cost.hasItemCost()) {
-                        for (int i = 0; i < cost.getItemCost().length; i++) {
+                        for (int i = 0; i < cost.getItemCosts().length; i++) {
                             if (i < invPrice.getSizeInventory()) {
-                                invPrice.setInventorySlotContents(i, cost.getItemCost()[i].getItemStack().copy());
+                                invPrice.setInventorySlotContents(i, cost.getItemCosts()[i].getItemStack().copy());
                             }
                         }
                     }

@@ -228,7 +228,7 @@ public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> implem
             if (result instanceof Double) {
                 walletCost.setAmount(MathHelper.ceil((Double) result));
             }
-            cost = new Cost(walletCost, null);
+            cost = new Cost(walletCost);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -260,7 +260,7 @@ public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> implem
             ItemMatcherStack itemMatcherStack = new ItemMatcherStack(itemStack, true, false);
             IItemData itemData = ModuleItemData.getManager().getItemData(itemMatcherStack);
             if (itemData.getValue().hasWalletCost()) {
-                return itemData.getValue().getWalletCost().getAmount();
+                return itemData.getValue().getWalletCosts()[0].getAmount();
             }
         }
         return 0;
