@@ -88,14 +88,14 @@ public class CommonProxy {
     private IModModule moduleAuction;
 
     public void preInit(FMLPreInitializationEvent event) {
-        modConfigDirectory = new File(event.getSuggestedConfigurationFile().getParentFile(), LibModInfo.ID);
+        modConfigDirectory = new File(event.getSuggestedConfigurationFile().getParentFile(), "rpg_framework");
         if (!modConfigDirectory.exists()) {
             modConfigDirectory.mkdir();
         }
         ConfigHandler.init(new File(modConfigDirectory, "common.cfg"));
         configDirectory = event.getSuggestedConfigurationFile().getParentFile();
         instanceDirectory = configDirectory.getParentFile();
-        modDirectory = new File(instanceDirectory, LibModInfo.ID);
+        modDirectory = new File(instanceDirectory, "rpg_framework");
         if (!modDirectory.exists()) {
             modDirectory.mkdir();
         }
