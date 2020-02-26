@@ -8,6 +8,7 @@ import moe.plushie.rpg_framework.core.common.network.client.MessageClientGuiShop
 import moe.plushie.rpg_framework.core.common.network.client.MessageClientKeyPress;
 import moe.plushie.rpg_framework.core.common.network.client.MessageClientLootEditorUpdate;
 import moe.plushie.rpg_framework.core.common.network.client.MessageClientRequestSync;
+import moe.plushie.rpg_framework.core.common.network.server.MessageServerCommand;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerMailList;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerMailResult;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerMailUnreadCount;
@@ -56,6 +57,7 @@ public class PacketHandler {
         registerMessage(MessageServerMailList.Handler.class, MessageServerMailList.class, Side.CLIENT);
         registerMessage(MessageServerMailResult.Handler.class, MessageServerMailResult.class, Side.CLIENT);
         registerMessage(MessageServerMailUnreadCount.Handler.class, MessageServerMailUnreadCount.class, Side.CLIENT);
+        registerMessage(MessageServerCommand.Handler.class, MessageServerCommand.class, Side.CLIENT);
     }
 
     private <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Class<? extends IMessageHandler<REQ, REPLY>> messageHandler, Class<REQ> requestMessageType, Side side) {
