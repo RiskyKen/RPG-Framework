@@ -2,6 +2,7 @@ package moe.plushie.rpg_framework.core.client.gui;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -20,6 +21,7 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
@@ -205,7 +207,32 @@ public abstract class AbstractGuiDialog extends Gui implements IDialogCallback {
             // GL11.glTranslatef(x, y, 0);
             dialog.drawFull(oldMouseX, oldMouseY, 0);
             // GL11.glTranslatef(-x, -y, 0);
+        } else {
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+            GlStateManager.disableLighting();
+            GlStateManager.disableDepth();
+            GlStateManager.disableBlend();
+            renderHoveredToolTip(mouseX, mouseY);
         }
+    }
+
+    protected void renderHoveredToolTip(int mouseX, int mouseY) {
+        if (slotHandler != null) {
+            if (this.mc.player.inventory.getItemStack().isEmpty() && slotHandler.hoveredSlot != null && slotHandler.hoveredSlot.getHasStack()) {
+                this.renderToolTip(slotHandler.hoveredSlot.getStack(), mouseX, mouseY);
+            }
+        }
+    }
+
+    protected void renderToolTip(ItemStack stack, int x, int y) {
+        FontRenderer font = stack.getItem().getFontRenderer(stack);
+        net.minecraftforge.fml.client.config.GuiUtils.preItemToolTip(stack);
+        drawHoveringText(parent.getItemToolTip(stack), x, y, (font == null ? fontRenderer : font));
+        net.minecraftforge.fml.client.config.GuiUtils.postItemToolTip();
+    }
+
+    private void drawHoveringText(List<String> itemToolTip, int x, int y, FontRenderer fontRenderer) {
+        GuiHelper.drawHoveringText(itemToolTip, x, y, fontRenderer, parent.width, parent.height, zLevel);
     }
 
     protected void updateSlots(boolean restore) {
