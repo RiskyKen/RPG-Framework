@@ -22,11 +22,13 @@ public class CommandRpg extends ModSubCommands {
 
     public CommandRpg() {
         super(null, LibModInfo.ID);
-        /*
-         * addSubCommand(new CommandExecute(this, "manager", new ICommandExecute() {
-         * 
-         * @Override public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException { EntityPlayerMP player = getCommandSenderAsPlayer(sender); FMLNetworkHandler.openGui(player, RpgEconomy.getInstance(), EnumGuiId.MANAGER.ordinal(), server.getEntityWorld(), 0, 0, 0); } }));
-         */
+        /*addSubCommand(new CommandExecute(this, "manager", new ICommandExecute() {
+            @Override
+            public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+                EntityPlayerMP player = getCommandSenderAsPlayer(sender);
+                FMLNetworkHandler.openGui(player, RpgEconomy.getInstance(), EnumGuiId.MANAGER.ordinal(), server.getEntityWorld(), 0, 0, 0);
+            }
+        }));*/
         addSubCommand(new CommandCurrency(this));
         addSubCommand(new CommandMail(this));
         addSubCommand(new CommandShop(this));
@@ -42,13 +44,6 @@ public class CommandRpg extends ModSubCommands {
                 PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerCommand(ServerCommandType.OPEN_PACK_FOLDER), player);
             }
         }));
-        /*
-         * addSubCommand(new CommandExecute(this, "generate_default_files", new ICommandExecute() {
-         * 
-         * @Override public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-         * 
-         * } }));
-         */
     }
 
     @Override

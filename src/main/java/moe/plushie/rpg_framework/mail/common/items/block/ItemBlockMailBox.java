@@ -99,7 +99,7 @@ public class ItemBlockMailBox extends ModItemBlock {
         }
         TileEntity tileEntity = world.getTileEntity(pos);
         if (tileEntity != null && tileEntity instanceof TileEntityMailBox) {
-            ((TileEntityMailBox) tileEntity).setMailSystem(mailSystem);
+            ((TileEntityMailBox) tileEntity).setMailSystem(mailSystem.getIdentifier());
             ((TileEntityMailBox) tileEntity).setMailboxTexture(texture);
         }
         return flag;

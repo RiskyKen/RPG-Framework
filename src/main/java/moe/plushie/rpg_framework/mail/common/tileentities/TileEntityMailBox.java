@@ -1,6 +1,7 @@
 package moe.plushie.rpg_framework.mail.common.tileentities;
 
 import moe.plushie.rpg_framework.api.core.IIdentifier;
+import moe.plushie.rpg_framework.api.mail.IMailSystem;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.inventory.IGuiFactory;
@@ -26,25 +27,25 @@ public class TileEntityMailBox extends ModAutoSyncTileEntity implements IGuiFact
     private static final String TAG_MAIL_TEXTURE = "texture";
 
     private MailboxTexture mailboxTexture;
-    private MailSystem mailSystem;
+    private IIdentifier mailSystemIdentifier;
 
     public TileEntityMailBox() {
     }
 
-    public TileEntityMailBox(MailSystem mailSystem, MailboxTexture mailboxTexture) {
-        this.mailSystem = mailSystem;
+    public TileEntityMailBox(IIdentifier identifier, MailboxTexture mailboxTexture) {
+        this.mailSystemIdentifier = identifier;
         this.mailboxTexture = mailboxTexture;
     }
 
     public MailSystem getMailSystem() {
-        if (mailSystem == null) {
-            return null;
+        if (mailSystemIdentifier != null) {
+            return RPGFramework.getProxy().getMailSystemManager().getMailSystem(mailSystemIdentifier);
         }
-        return mailSystem;
+        return null;
     }
 
-    public void setMailSystem(MailSystem mailSystem) {
-        this.mailSystem = mailSystem;
+    public void setMailSystem(IIdentifier identifier) {
+        this.mailSystemIdentifier = identifier;
         dirtySync();
     }
 
@@ -61,8 +62,7 @@ public class TileEntityMailBox extends ModAutoSyncTileEntity implements IGuiFact
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         if (compound.hasKey(TAG_MAIL_SYSTEM, NBT.TAG_STRING)) {
-            IIdentifier mailSystemName = new IdentifierString(compound.getString(TAG_MAIL_SYSTEM));
-            mailSystem = RPGFramework.getProxy().getMailSystemManager().getMailSystem(mailSystemName);
+            mailSystemIdentifier = new IdentifierString(compound.getString(TAG_MAIL_SYSTEM));
         }
         if (compound.hasKey(TAG_MAIL_TEXTURE, NBT.TAG_STRING)) {
             mailboxTexture = MailboxTexture.valueOf(compound.getString(TAG_MAIL_TEXTURE).toUpperCase());
@@ -72,8 +72,8 @@ public class TileEntityMailBox extends ModAutoSyncTileEntity implements IGuiFact
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound = super.writeToNBT(compound);
-        if (mailSystem != null) {
-            compound.setString(TAG_MAIL_SYSTEM, (String) mailSystem.getIdentifier().getValue());
+        if (mailSystemIdentifier != null) {
+            compound.setString(TAG_MAIL_SYSTEM, (String) mailSystemIdentifier.getValue());
         }
         if (mailboxTexture != null) {
             compound.setString(TAG_MAIL_TEXTURE, mailboxTexture.toString());
@@ -102,5 +102,18 @@ public class TileEntityMailBox extends ModAutoSyncTileEntity implements IGuiFact
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
         return INFINITE_EXTENT_AABB;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public double getMaxRenderDistanceSquared() {
+        IMailSystem mailSystem = getMailSystem();
+        if (mailSystem != null) {
+            if (!mailSystem.isMailboxFlagRender()) {
+                return 0;
+            }
+            return getMailSystem().getMailboxFlagRenderDistance() * getMailSystem().getMailboxFlagRenderDistance();
+        }
+        return super.getMaxRenderDistanceSquared();
     }
 }

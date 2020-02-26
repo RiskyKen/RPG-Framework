@@ -31,7 +31,9 @@ public class RenderBlockMailBox extends TileEntitySpecialRenderer<TileEntityMail
         if (mailSystem == null) {
             return;
         }
-        
+        if (!mailSystem.isMailboxFlagRender()) {
+            return;
+        }
         
         bindTexture(TEXTURE_FLAG);
         float scale = 0.0625F;
