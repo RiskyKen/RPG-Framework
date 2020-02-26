@@ -67,7 +67,7 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
     private GuiIconButton buttonMessageWithdrawItems;
 
     public GuiMailBox(TileEntityMailBox tileEntity, EntityPlayer entityPlayer, IMailSystem mailSystem) {
-        super(new ContainerMailBox(tileEntity, entityPlayer, mailSystem));
+        super(new ContainerMailBox(tileEntity, entityPlayer, null, mailSystem));
         this.tileEntity = tileEntity;
         this.player = entityPlayer;
         this.mailSystem = mailSystem;

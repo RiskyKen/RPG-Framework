@@ -30,4 +30,14 @@ public class DBPlayerInfo extends DBPlayer {
     public Date getLastLogin() {
         return lastLogin;
     }
+    
+    @Override
+    public boolean isMissing() {
+        if (!super.isMissing()) {
+            if (this == MISSING_INFO) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

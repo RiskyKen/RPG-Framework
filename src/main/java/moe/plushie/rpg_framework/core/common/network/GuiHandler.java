@@ -13,7 +13,6 @@ import moe.plushie.rpg_framework.core.common.inventory.ContainerManager;
 import moe.plushie.rpg_framework.core.common.inventory.IGuiFactory;
 import moe.plushie.rpg_framework.core.common.lib.EnumGuiId;
 import moe.plushie.rpg_framework.core.database.DBPlayer;
-import moe.plushie.rpg_framework.core.database.DBPlayerInfo;
 import moe.plushie.rpg_framework.currency.client.gui.GuiWallet;
 import moe.plushie.rpg_framework.currency.common.Currency;
 import moe.plushie.rpg_framework.currency.common.CurrencyWalletHelper;
@@ -71,7 +70,7 @@ public class GuiHandler implements IGuiHandler {
         case BANK_COMMAND:
             IBank bank = ModuleBank.getBankManager().getBank(x);
             DBPlayer dbPlayer = new DBPlayer(y);
-            if (bank == null | dbPlayer.getId() < 0 | dbPlayer == DBPlayerInfo.MISSING_INFO) {
+            if (bank == null | dbPlayer.isMissing()) {
                 return null;
             }
             return new ContainerBank(player, bank, dbPlayer);

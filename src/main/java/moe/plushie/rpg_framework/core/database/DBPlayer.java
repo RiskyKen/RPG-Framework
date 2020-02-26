@@ -13,4 +13,14 @@ public class DBPlayer {
     public int getId() {
         return id;
     }
+    
+    public boolean isMissing() {
+        if (id < 0) {
+            return true;
+        }
+        if (this == MISSING) {
+            return true;
+        }
+        return false;
+    }
 }

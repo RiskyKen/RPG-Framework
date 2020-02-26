@@ -82,11 +82,15 @@ public final class TableMail {
     private static final String SQL_MESSAGES_GET = "SELECT * FROM mail WHERE mail_system=? AND player_id_receiver=?";
 
     public static ArrayList<MailMessage> getMessages(EntityPlayer player, IMailSystem mailSystem) {
+        DBPlayerInfo dbPlayer = TablePlayers.getPlayerInfo(player.getGameProfile());
+        return getMessages(dbPlayer, mailSystem);
+    }
+    
+    public static ArrayList<MailMessage> getMessages(DBPlayerInfo player, IMailSystem mailSystem) {
         ArrayList<MailMessage> mailMessages = new ArrayList<MailMessage>();
         try (Connection conn = DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA); PreparedStatement ps = conn.prepareStatement(SQL_MESSAGES_GET)) {
-            DBPlayerInfo dbPlayerReceiver = TablePlayers.getPlayerInfo(player.getGameProfile());
             ps.setObject(1, mailSystem.getIdentifier().getValue());
-            ps.setInt(2, dbPlayerReceiver.getId());
+            ps.setInt(2, player.getId());
             ResultSet resultSet = ps.executeQuery();
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
@@ -97,7 +101,7 @@ public final class TableMail {
                 JsonArray jsonArray = SerializeHelper.stringToJson(resultSet.getString("attachments")).getAsJsonArray();
                 NonNullList<ItemStack> attachments = SerializeHelper.readItemsFromJson(jsonArray);
                 boolean read = resultSet.getBoolean("read");
-                mailMessages.add(new MailMessage(id, mailSystem, dbPlayerSender.getGameProfile(), dbPlayerReceiver.getGameProfile(), sendDateTime, subject, messageText, attachments, read));
+                mailMessages.add(new MailMessage(id, mailSystem, dbPlayerSender.getGameProfile(), player.getGameProfile(), sendDateTime, subject, messageText, attachments, read));
             }
         } catch (SQLException e) {
             e.printStackTrace();

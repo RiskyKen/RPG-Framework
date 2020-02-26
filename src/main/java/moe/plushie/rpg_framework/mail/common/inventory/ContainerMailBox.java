@@ -16,13 +16,14 @@ import moe.plushie.rpg_framework.api.mail.IMailSystem;
 import moe.plushie.rpg_framework.api.mail.IMailSystemManager.IMailSendCallback;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.ItemMatcherStack;
-import moe.plushie.rpg_framework.core.common.inventory.ModTileContainer;
+import moe.plushie.rpg_framework.core.common.inventory.ModContainer;
 import moe.plushie.rpg_framework.core.common.inventory.slot.SlotHidable;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerMailList;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerMailResult;
 import moe.plushie.rpg_framework.core.common.utils.PlayerUtils;
 import moe.plushie.rpg_framework.core.common.utils.UtilItems;
+import moe.plushie.rpg_framework.core.database.DBPlayerInfo;
 import moe.plushie.rpg_framework.core.database.TableMail;
 import moe.plushie.rpg_framework.currency.common.Cost;
 import moe.plushie.rpg_framework.currency.common.Wallet;
@@ -32,16 +33,17 @@ import moe.plushie.rpg_framework.mail.common.MailSystem;
 import moe.plushie.rpg_framework.mail.common.tileentities.TileEntityMailBox;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
 
-public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> implements IMailSendCallback {
+public class ContainerMailBox extends ModContainer implements IMailSendCallback {
 
     private final ScriptEngine scriptEngine = new ScriptEngineManager(null).getEngineByName("nashorn");
+    private final EntityPlayer targetPlayer;
+    private final DBPlayerInfo sourcePlayer;
     private final IMailSystem mailSystem;
     private boolean synced = false;
 
@@ -49,8 +51,10 @@ public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> implem
 
     private final ArrayList<Slot> slotsAttachmentsInput;
 
-    public ContainerMailBox(TileEntityMailBox tileEntity, EntityPlayer entityPlayer, IMailSystem mailSystem) {
-        super(entityPlayer, tileEntity);
+    public ContainerMailBox(TileEntityMailBox tileEntity, EntityPlayer targetPlayer, DBPlayerInfo sourcePlayer, IMailSystem mailSystem) {
+        super(targetPlayer.inventory);
+        this.targetPlayer = targetPlayer;
+        this.sourcePlayer = sourcePlayer;
         this.mailSystem = mailSystem;
 
         invAttachmentsInput = new InventoryBasic("attachmentsInput", false, mailSystem.getMaxAttachments());
@@ -86,6 +90,10 @@ public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> implem
         super.onContainerClosed(playerIn);
     }
 
+    private EntityPlayer getEntityPlayer() {
+        return targetPlayer;
+    }
+
     public ArrayList<Slot> getSlotsAttachmentsInput() {
         return slotsAttachmentsInput;
     }
@@ -103,14 +111,10 @@ public class ContainerMailBox extends ModTileContainer<TileEntityMailBox> implem
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
         if (!synced) {
-            for (IContainerListener listener : listeners) {
-                if (listener instanceof EntityPlayerMP) {
-                    EntityPlayerMP player = (EntityPlayerMP) listener;
-                    ArrayList<MailMessage> mailMessages = TableMail.getMessages(player, mailSystem);
-                    MessageServerMailList message = new MessageServerMailList(mailMessages);
-                    PacketHandler.NETWORK_WRAPPER.sendTo(message, player);
-                }
-            }
+            EntityPlayerMP player = (EntityPlayerMP) getEntityPlayer();
+            ArrayList<MailMessage> mailMessages = TableMail.getMessages(sourcePlayer, mailSystem);
+            MessageServerMailList message = new MessageServerMailList(mailMessages);
+            PacketHandler.NETWORK_WRAPPER.sendTo(message, player);
             synced = true;
         }
     }
