@@ -64,6 +64,9 @@ public final class TablePlayers {
                 Timestamp lastLogin = resultSet.getTimestamp("last_seen");
                 playerInfo = new DBPlayerInfo(id, new GameProfile(uuid, username), firstSeen, lastLogin);
             }
+            resultSet.close();
+            ps.close();
+            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -73,13 +76,19 @@ public final class TablePlayers {
     public static DBPlayer getPlayer(GameProfile gameProfile) {
         DBPlayer playerInfo = DBPlayer.MISSING;
         try (Connection conn = DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA)) {
-            if (gameProfile.getId() != null) {
-                playerInfo = getPlayer(conn, gameProfile.getId());
-            } else {
-                playerInfo = getPlayer(conn, gameProfile.getName());
-            }
+            playerInfo = getPlayer(conn, gameProfile);
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        return playerInfo;
+    }
+
+    public static DBPlayer getPlayer(Connection conn, GameProfile gameProfile) throws SQLException {
+        DBPlayer playerInfo = DBPlayer.MISSING;
+        if (gameProfile.getId() != null) {
+            playerInfo = getPlayerUUID(conn, gameProfile.getId());
+        } else {
+            playerInfo = getPlayerName(conn, gameProfile.getName());
         }
         return playerInfo;
     }
@@ -89,11 +98,12 @@ public final class TablePlayers {
     public static ArrayList<GameProfile> getAllPlayers() {
         ArrayList<GameProfile> gameProfiles = new ArrayList<GameProfile>();
         try (Connection conn = DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA); PreparedStatement ps = conn.prepareStatement(SQL_GET_ALL_PLAYERS)) {
-            ResultSet resultSet = ps.executeQuery();
-            while (resultSet.next()) {
-                UUID uuid = UUID.fromString(resultSet.getString("uuid"));
-                String username = resultSet.getString("username");
-                gameProfiles.add(new GameProfile(uuid, username));
+            try (ResultSet resultSet = ps.executeQuery()) {
+                while (resultSet.next()) {
+                    UUID uuid = UUID.fromString(resultSet.getString("uuid"));
+                    String username = resultSet.getString("username");
+                    gameProfiles.add(new GameProfile(uuid, username));
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -103,42 +113,30 @@ public final class TablePlayers {
 
     private static final String SQL_GET_PLAYER_USERNAME = "SELECT id FROM players WHERE username=? COLLATE NOCASE";
 
-    public static DBPlayer getPlayer(Connection conn, String username) {
+    public static DBPlayer getPlayerName(Connection conn, String username) throws SQLException {
         DBPlayer playerInfo = DBPlayer.MISSING;
         try (PreparedStatement ps = conn.prepareStatement(SQL_GET_PLAYER_USERNAME)) {
             ps.setString(1, username);
-            ResultSet resultSet = ps.executeQuery();
-            if (resultSet.next()) {
-                playerInfo = new DBPlayer(resultSet.getInt("id"));
+            try (ResultSet resultSet = ps.executeQuery()) {
+                if (resultSet.next()) {
+                    playerInfo = new DBPlayer(resultSet.getInt("id"));
+                }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return playerInfo;
     }
 
     private static final String SQL_GET_PLAYER_UUID = "SELECT id FROM players WHERE uuid=?";
 
-    public static PreparedStatement createPreStatementPlayerUUID(Connection conn) throws SQLException {
-        return conn.prepareStatement(SQL_GET_PLAYER_UUID);
-    }
-
-    public static DBPlayer getPlayer(Connection conn, UUID uuid) {
+    public static DBPlayer getPlayerUUID(Connection conn, UUID uuid) throws SQLException {
         DBPlayer playerInfo = DBPlayer.MISSING;
-        try (PreparedStatement ps = createPreStatementPlayerUUID(conn)) {
-            playerInfo = getPlayerUUID(conn, ps, uuid);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return playerInfo;
-    }
-
-    public static DBPlayer getPlayerUUID(Connection conn, PreparedStatement ps, UUID uuid) throws SQLException {
-        DBPlayer playerInfo = DBPlayer.MISSING;
-        ps.setString(1, uuid.toString());
-        ResultSet resultSet = ps.executeQuery();
-        if (resultSet.next()) {
-            playerInfo = new DBPlayer(resultSet.getInt("id"));
+        try (PreparedStatement ps = conn.prepareStatement(SQL_GET_PLAYER_UUID)) {
+            ps.setString(1, uuid.toString());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    playerInfo = new DBPlayer(rs.getInt("id"));
+                }
+            }
         }
         return playerInfo;
     }
@@ -159,13 +157,14 @@ public final class TablePlayers {
         DBPlayerInfo playerInfo = DBPlayerInfo.MISSING_INFO;
         try (PreparedStatement ps = conn.prepareStatement(SQL_GET_PLAYER_ID)) {
             ps.setInt(1, id);
-            ResultSet resultSet = ps.executeQuery();
-            if (resultSet.next()) {
-                UUID uuid = UUID.fromString(resultSet.getString("uuid"));
-                String username = resultSet.getString("username");
-                Date firstSeen = resultSet.getDate("first_seen");
-                Date lastLogin = resultSet.getDate("last_seen");
-                playerInfo = new DBPlayerInfo(id, new GameProfile(uuid, username), firstSeen, lastLogin);
+            try (ResultSet resultSet = ps.executeQuery()) {
+                if (resultSet.next()) {
+                    UUID uuid = UUID.fromString(resultSet.getString("uuid"));
+                    String username = resultSet.getString("username");
+                    Date firstSeen = resultSet.getDate("first_seen");
+                    Date lastLogin = resultSet.getDate("last_seen");
+                    playerInfo = new DBPlayerInfo(id, new GameProfile(uuid, username), firstSeen, lastLogin);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();

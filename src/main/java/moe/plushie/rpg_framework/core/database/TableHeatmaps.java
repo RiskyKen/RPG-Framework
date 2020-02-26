@@ -44,6 +44,7 @@ public final class TableHeatmaps {
             }
             psHeatmap.executeBatch();
             conn.commit();
+            psHeatmap.close();
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace();

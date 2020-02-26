@@ -9,6 +9,7 @@ import com.mojang.authlib.GameProfile;
 
 import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.currency.IWallet;
+import moe.plushie.rpg_framework.core.RPGFramework;
 
 public final class TableWallets {
 
@@ -29,57 +30,59 @@ public final class TableWallets {
     }
 
     public static void saveWallet(GameProfile gameProfile, IWallet wallet) {
-        DBPlayer dbPlayer = TablePlayers.getPlayer(gameProfile);
+
         try (Connection conn = DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA)) {
-            if (isWalletInDatabase(dbPlayer, wallet.getCurrency().getIdentifier())) {
-                updateWallet(dbPlayer, wallet.getCurrency().getIdentifier(), wallet.getAmount());
-            } else {
-                setWallet(dbPlayer, wallet.getCurrency().getIdentifier(), wallet.getAmount());
+            DBPlayer dbPlayer = TablePlayers.getPlayer(conn, gameProfile);
+            if (dbPlayer.isMissing()) {
+                RPGFramework.getLogger().info("Tried to add missing players wallet to the DB. " + gameProfile.toString());
+                return;
             }
-            conn.close();
+            if (isWalletInDatabase(conn, dbPlayer, wallet.getCurrency().getIdentifier())) {
+                updateWallet(conn, dbPlayer, wallet.getCurrency().getIdentifier(), wallet.getAmount());
+                
+            } else {
+                setWallet(conn, dbPlayer, wallet.getCurrency().getIdentifier(), wallet.getAmount());
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public static int setWallet(DBPlayer dbPlayer, IIdentifier identifier, int value) throws SQLException {
+    private static int setWallet(Connection conn, DBPlayer dbPlayer, IIdentifier identifier, int value) throws SQLException {
         int id = -1;
         String sql = "INSERT INTO wallets (id, player_id, currency_identifier, amount, times_opened, last_change) VALUES (NULL, ?, ?, ?, 0, CURRENT_TIMESTAMP)";
-        try (Connection conn = DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, dbPlayer.getId());
             ps.setObject(2, identifier.getValue());
             ps.setInt(3, value);
             id = ps.executeUpdate();
             ps.close();
-            conn.close();
         }
         return id;
     }
 
-    public static void updateWallet(DBPlayer dbPlayer, IIdentifier identifier, int value) throws SQLException {
+    private static void updateWallet(Connection conn, DBPlayer dbPlayer, IIdentifier identifier, int value) throws SQLException {
         String sql = "UPDATE wallets SET amount=?, last_access=datetime('now') WHERE player_id=? AND currency_identifier=?";
-        try (Connection conn = DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, value);
             ps.setInt(2, dbPlayer.getId());
             ps.setObject(3, identifier.getValue());
             ps.executeUpdate();
             ps.close();
-            conn.close();
         }
     }
 
-    public static boolean isWalletInDatabase(DBPlayer dbPlayer, IIdentifier identifier) throws SQLException {
+    private static boolean isWalletInDatabase(Connection conn, DBPlayer dbPlayer, IIdentifier identifier) throws SQLException {
         boolean foundAccount = false;
         String sql = "SELECT * FROM wallets WHERE currency_identifier=? AND player_id=?";
-        try (Connection conn = DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setObject(1, identifier.getValue());
             ps.setInt(2, dbPlayer.getId());
-            ResultSet resultSet = ps.executeQuery();
-            if (resultSet.next()) {
-                foundAccount = true;
+            try (ResultSet resultSet = ps.executeQuery()) {
+                if (resultSet.next()) {
+                    foundAccount = true;
+                }
             }
-            ps.close();
-            conn.close();
         }
         return foundAccount;
     }

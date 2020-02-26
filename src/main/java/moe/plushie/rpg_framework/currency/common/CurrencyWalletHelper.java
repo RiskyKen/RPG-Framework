@@ -134,6 +134,7 @@ public final class CurrencyWalletHelper {
             if (simulate) {
                 return true;
             } else {
+                // TODO Should try and add it to the wallet if we can.
                 if (addAmountToInventory(currency, inventoryPlayer.player, -amount, simulate)) {
                     return true;
                 }

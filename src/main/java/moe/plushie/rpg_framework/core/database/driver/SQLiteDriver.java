@@ -2,18 +2,21 @@ package moe.plushie.rpg_framework.core.database.driver;
 
 import java.io.File;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.sql.PooledConnection;
 
 import org.sqlite.SQLiteConfig;
+import org.sqlite.SQLiteConfig.JournalMode;
+import org.sqlite.SQLiteConfig.LockingMode;
 import org.sqlite.SQLiteConfig.Pragma;
+import org.sqlite.SQLiteConfig.SynchronousMode;
 import org.sqlite.javax.SQLiteConnectionPoolDataSource;
 
 import moe.plushie.rpg_framework.core.RPGFramework;
@@ -23,7 +26,9 @@ public final class SQLiteDriver implements IDatabaseDriver {
 
     private static final String FILE_EXTENSION = ".sqlite3";
     private final ConcurrentHashMap<DatebaseTable, PooledConnection> pooledConnections = new ConcurrentHashMap<DatebaseTable, PooledConnection>();
-
+    private final ReentrantLock lock = new ReentrantLock();
+    
+    
     public static File getDatabaseFile(DatebaseTable table) {
         return new File(RPGFramework.getProxy().getModDirectory(), table.name().toLowerCase() + FILE_EXTENSION);
     }
@@ -34,7 +39,7 @@ public final class SQLiteDriver implements IDatabaseDriver {
 
     private PooledConnection makePool(DatebaseTable table) throws SQLException {
         SQLiteConfig config = makeConfig();
-        SQLiteConnectionPoolDataSource ds = new SQLiteConnectionPoolDataSource();
+        SQLiteConnectionPoolDataSource ds = new SQLiteConnectionPoolDataSource(config);
         ds.setUrl(getConnectionUrl(table));
         ds.setConfig(config);
         return ds.getPooledConnection();
@@ -51,33 +56,29 @@ public final class SQLiteDriver implements IDatabaseDriver {
 
     @Override
     public Connection getConnection(DatebaseTable table) throws SQLException {
-        return getPoolConnection(table);
-        // return DriverManager.getConnection(getConnectionUrl(), makeConfig().toProperties());
-    }
-
-    @Override
-    public PreparedStatement getPreparedStatement(DatebaseTable table, String sql) {
-        try (Connection conn = getConnection(table); PreparedStatement ps = conn.prepareStatement(sql)) {
-            return ps;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+        Connection connection = null;
+        
+        connection = getPoolConnection(table);
+        //connection = DriverManager.getConnection(getConnectionUrl(table), makeConfig().toProperties());
+        
+        return connection;
     }
 
     private SQLiteConfig makeConfig() {
         SQLiteConfig config = new SQLiteConfig(makeProperties());
+        config.setJournalMode(JournalMode.WAL);
+        config.setSynchronous(SynchronousMode.NORMAL);
+        config.setDateStringFormat("yyyy-MM-dd HH:mm:ss");
         config.setPragma(Pragma.DATE_STRING_FORMAT, "yyyy-MM-dd HH:mm:ss");
-        config.setPragma(Pragma.JOURNAL_MODE, "WAL");
-        config.setPragma(Pragma.SYNCHRONOUS, "NORMAL");
+        config.setLockingMode(LockingMode.NORMAL);
         return config;
     }
 
     private Properties makeProperties() {
         Properties properties = new SQLiteConfig().toProperties();
         properties.setProperty(Pragma.DATE_STRING_FORMAT.pragmaName, "yyyy-MM-dd HH:mm:ss");
-        properties.setProperty(Pragma.JOURNAL_MODE.pragmaName, "WAL");
-        properties.setProperty(Pragma.SYNCHRONOUS.pragmaName, "NORMAL");
+        properties.setProperty(Pragma.JOURNAL_MODE.pragmaName, JournalMode.WAL.toString());
+        properties.setProperty(Pragma.SYNCHRONOUS.pragmaName, SynchronousMode.NORMAL.toString());
         return properties;
     }
 
@@ -86,6 +87,7 @@ public final class SQLiteDriver implements IDatabaseDriver {
         try (Connection conn = getConnection(table); Statement statement = conn.createStatement()) {
             statement.setQueryTimeout(10);
             statement.executeUpdate(sql);
+            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -98,6 +100,7 @@ public final class SQLiteDriver implements IDatabaseDriver {
             for (String s : sql) {
                 statement.executeUpdate(s);
             }
+            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -117,6 +120,7 @@ public final class SQLiteDriver implements IDatabaseDriver {
                     results.add(line);
                 }
             }
+            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }

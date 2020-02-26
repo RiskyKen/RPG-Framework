@@ -18,7 +18,7 @@ import moe.plushie.rpg_framework.core.database.driver.SQLiteDriver;
 
 public final class DatabaseManager {
 
-    public static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(10);
+    public static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(1);
     private static final IDatabaseDriver DATABASE_DRIVER = new SQLiteDriver();
 
     private DatabaseManager() {
