@@ -41,7 +41,7 @@ public final class CurrencyCapabilityManager {
     public static void onPlayerLoggedIn(PlayerLoggedInEvent event) {
         ICurrencyCapability currencyCap = CurrencyCapability.get(event.player);
         if (currencyCap != null) {
-            currencyCap.syncToOwner((EntityPlayerMP) event.player);
+            currencyCap.syncToOwner((EntityPlayerMP) event.player, false);
         }
     }
 
@@ -64,7 +64,7 @@ public final class CurrencyCapabilityManager {
         if (!event.isEndConquered()) {
             ICurrencyCapability currencyCap = CurrencyCapability.get(event.player);
             if (currencyCap != null) {
-                currencyCap.syncToOwner((EntityPlayerMP) event.player);
+                currencyCap.syncToOwner((EntityPlayerMP) event.player, false);
             }
         }
     }
@@ -73,7 +73,7 @@ public final class CurrencyCapabilityManager {
     public static void onChangedDimension(PlayerChangedDimensionEvent event) {
         ICurrencyCapability currencyCap = CurrencyCapability.get(event.player);
         if (currencyCap != null) {
-            currencyCap.syncToOwner((EntityPlayerMP) event.player);
+            currencyCap.syncToOwner((EntityPlayerMP) event.player, false);
         }
     }
 }

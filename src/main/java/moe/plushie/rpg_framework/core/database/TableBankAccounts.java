@@ -45,6 +45,7 @@ public final class TableBankAccounts {
                     tabs = resultSet.getString("tabs");
                 }
             }
+            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -59,6 +60,7 @@ public final class TableBankAccounts {
             ps.setObject(2, bankIdentifier.getValue());
             ps.setString(3, tabs);
             id = ps.executeUpdate();
+            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -73,6 +75,7 @@ public final class TableBankAccounts {
             ps.setInt(2, dbPlayer.getId());
             ps.setObject(3, bankIdentifier.getValue());
             ps.executeUpdate();
+            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -88,6 +91,7 @@ public final class TableBankAccounts {
             while (resultSet.next()) {
                 foundAccount = true;
             }
+            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }

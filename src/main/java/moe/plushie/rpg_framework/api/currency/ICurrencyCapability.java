@@ -11,5 +11,5 @@ public interface ICurrencyCapability {
      * 
      * @param entityPlayer Player to sync to.
      */
-    public void syncToOwner(EntityPlayerMP entityPlayer);
+    public void syncToOwner(EntityPlayerMP entityPlayer, boolean dirty);
 }

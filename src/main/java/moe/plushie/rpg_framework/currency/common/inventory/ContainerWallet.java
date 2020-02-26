@@ -53,7 +53,7 @@ public class ContainerWallet extends ModContainer implements IButtonPress {
         }
         player.playSound(ModSounds.WALLET_OPEN, 0.3F, 0.8F + (player.getRNG().nextFloat() * 0.4F));
     }
-    
+
     @Override
     public void onContainerClosed(EntityPlayer playerIn) {
         player.playSound(ModSounds.WALLET_CLOSE, 0.3F, 0.8F + (player.getRNG().nextFloat() * 0.4F));
@@ -65,9 +65,9 @@ public class ContainerWallet extends ModContainer implements IButtonPress {
         boolean withdraw = false;
         if (buttonID < 0) {
             int amount = CurrencyWalletHelper.consumeAllFromInventory(currency, player.inventory);
-            player.getEntityWorld().playSound((EntityPlayer)null, player.posX, player.posY, player.posZ, ModSounds.COIN_DEPOSIT, SoundCategory.PLAYERS, 0.5F, 0.8F + (player.getRNG().nextFloat() * 0.4F));
+            player.getEntityWorld().playSound((EntityPlayer) null, player.posX, player.posY, player.posZ, ModSounds.COIN_DEPOSIT, SoundCategory.PLAYERS, 0.5F, 0.8F + (player.getRNG().nextFloat() * 0.4F));
             wallet.addAmount(amount);
-            currencyCap.syncToOwner((EntityPlayerMP) player);
+            currencyCap.syncToOwner((EntityPlayerMP) player, true);
             return;
         }
         if (buttonID >= currency.getCurrencyVariants().length) {
@@ -79,16 +79,16 @@ public class ContainerWallet extends ModContainer implements IButtonPress {
             if (wallet.getAmount() >= variant.getValue()) {
                 if (player.addItemStackToInventory(variant.getItem().getItemStack().copy())) {
                     wallet.setAmount(wallet.getAmount() - variant.getValue());
-                    player.getEntityWorld().playSound((EntityPlayer)null, player.posX, player.posY, player.posZ, ModSounds.COIN_WITHDRAW, SoundCategory.PLAYERS, 0.3F, 0.8F + (player.getRNG().nextFloat() * 0.4F));
-                    currencyCap.syncToOwner((EntityPlayerMP) player);
+                    player.getEntityWorld().playSound((EntityPlayer) null, player.posX, player.posY, player.posZ, ModSounds.COIN_WITHDRAW, SoundCategory.PLAYERS, 0.3F, 0.8F + (player.getRNG().nextFloat() * 0.4F));
+                    currencyCap.syncToOwner((EntityPlayerMP) player, true);
                 }
             }
         } else {
             if (CurrencyWalletHelper.consumeAmountFromInventory(currency, player.inventory, variant.getValue(), true)) {
                 CurrencyWalletHelper.consumeAmountFromInventory(currency, player.inventory, variant.getValue(), false);
-                player.getEntityWorld().playSound((EntityPlayer)null, player.posX, player.posY, player.posZ, ModSounds.COIN_DEPOSIT, SoundCategory.PLAYERS, 0.3F, 0.8F + (player.getRNG().nextFloat() * 0.4F));
+                player.getEntityWorld().playSound((EntityPlayer) null, player.posX, player.posY, player.posZ, ModSounds.COIN_DEPOSIT, SoundCategory.PLAYERS, 0.3F, 0.8F + (player.getRNG().nextFloat() * 0.4F));
                 wallet.setAmount(wallet.getAmount() + variant.getValue());
-                currencyCap.syncToOwner((EntityPlayerMP) player);
+                currencyCap.syncToOwner((EntityPlayerMP) player, true);
             }
         }
     }

@@ -40,6 +40,7 @@ public final class TableShops {
             ps.executeUpdate();
             int row = DatabaseManager.getLastInsertRow(conn);
             shop = new Shop(new IdentifierInt(row), name);
+            conn.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -51,6 +52,7 @@ public final class TableShops {
             ps.setString(1, shop.getName());
             ps.setString(2, ShopSerializer.serializeTabs(shop.getTabs(), false).toString());
             ps.executeUpdate();
+            conn.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -62,6 +64,7 @@ public final class TableShops {
         try (Connection conn = DatabaseManager.getConnection(DatebaseTable.DATA); PreparedStatement ps = conn.prepareStatement(SQL_DELETE_SHOP)) {
             ps.setObject(1, identifier.getValue());
             ps.executeUpdate();
+            conn.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -79,6 +82,7 @@ public final class TableShops {
                 ArrayList<IShopTab> shopTabs = ShopSerializer.deserializeTabs(tabsJson);
                 shop = new Shop(identifier, resultSet.getString("name"), shopTabs);
             }
+            conn.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -101,6 +105,7 @@ public final class TableShops {
                     dates.add(resultSet.getDate("last_update"));
                 }
             }
+            conn.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -114,6 +119,7 @@ public final class TableShops {
             ps.setString(2, ShopSerializer.serializeTabs(shop.getTabs(), false).toString());
             ps.setObject(3, shop.getIdentifier().getValue());
             ps.executeUpdate();
+            conn.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

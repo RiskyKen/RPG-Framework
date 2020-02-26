@@ -50,6 +50,7 @@ public final class TableLootPools {
             ps.executeUpdate();
             int row = DatabaseManager.getLastInsertRow(conn);
             tablePool = new LootTablePool(new IdentifierInt(row), name, category);
+            conn.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -63,6 +64,7 @@ public final class TableLootPools {
         try (Connection conn = DatabaseManager.getConnection(DatebaseTable.DATA); PreparedStatement ps = conn.prepareStatement(SQL_DELETE_LOOT_POOL)) {
             ps.setObject(1, identifier.getValue());
             ps.executeUpdate();
+            conn.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -85,6 +87,7 @@ public final class TableLootPools {
                 }
                 tablePool = new LootTablePool(identifier, resultSet.getString("name"), resultSet.getString("category"), items);
             }
+            conn.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -106,6 +109,7 @@ public final class TableLootPools {
             ps.setString(3, itemsJson.toString());
             ps.setObject(4, tablePool.getIdentifier().getValue());
             ps.executeUpdate();
+            conn.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -131,6 +135,7 @@ public final class TableLootPools {
                     dates.add(resultSet.getDate("last_update"));
                 }
             }
+            conn.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -145,6 +150,7 @@ public final class TableLootPools {
             ps.setString(2, category);
             ps.setObject(3, identifier.getValue());
             ps.executeUpdate();
+            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }

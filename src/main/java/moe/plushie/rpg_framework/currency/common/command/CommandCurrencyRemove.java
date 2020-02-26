@@ -54,6 +54,6 @@ public class CommandCurrencyRemove extends ModCommand {
         
         IWallet wallet = currencyCap.getWallet(currency);
         wallet.removeAmount(amount);
-        currencyCap.syncToOwner(entityPlayer);
+        currencyCap.syncToOwner(entityPlayer, true);
     }
 }

@@ -3,15 +3,20 @@ package moe.plushie.rpg_framework.currency.common.capability;
 import java.util.HashMap;
 import java.util.concurrent.Callable;
 
+import com.google.common.util.concurrent.FutureCallback;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.mojang.authlib.GameProfile;
 
+import moe.plushie.rpg_framework.api.core.IStorageDatabase;
 import moe.plushie.rpg_framework.api.currency.ICurrency;
 import moe.plushie.rpg_framework.api.currency.ICurrencyCapability;
 import moe.plushie.rpg_framework.api.currency.IWallet;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerSyncWalletCap;
+import moe.plushie.rpg_framework.core.database.DatabaseManager;
+import moe.plushie.rpg_framework.core.database.TableWallets;
 import moe.plushie.rpg_framework.currency.common.Currency;
 import moe.plushie.rpg_framework.currency.common.CurrencyManager;
 import moe.plushie.rpg_framework.currency.common.Wallet;
@@ -29,12 +34,12 @@ import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public class CurrencyCapability implements ICurrencyCapability {
-    
+
     @CapabilityInject(ICurrencyCapability.class)
     public static final Capability<ICurrencyCapability> WALLET_CAP = null;
-    
+
     private final HashMap<String, Wallet> walletMap;
-    
+
     public CurrencyCapability() {
         CurrencyManager currencyManager = RPGFramework.getProxy().getCurrencyManager();
         walletMap = new HashMap<String, Wallet>();
@@ -43,7 +48,7 @@ public class CurrencyCapability implements ICurrencyCapability {
             walletMap.put(currency.getName(), new Wallet(currency));
         }
     }
-    
+
     @Override
     public IWallet getWallet(ICurrency currency) {
         if (!walletMap.containsKey(currency.getName())) {
@@ -51,26 +56,33 @@ public class CurrencyCapability implements ICurrencyCapability {
         }
         return walletMap.get(currency.getName());
     }
-    
+
     protected IMessage getUpdateMessage(EntityPlayerMP entityPlayer) {
-        NBTTagCompound compound = (NBTTagCompound)WALLET_CAP.getStorage().writeNBT(WALLET_CAP, this, null);
+        NBTTagCompound compound = (NBTTagCompound) WALLET_CAP.getStorage().writeNBT(WALLET_CAP, this, null);
         return new MessageServerSyncWalletCap(entityPlayer.getEntityId(), compound);
     }
-    
+
     @Override
-    public void syncToOwner(EntityPlayerMP entityPlayer) {
+    public void syncToOwner(EntityPlayerMP entityPlayer, boolean dirty) {
         IMessage message = getUpdateMessage(entityPlayer);
         PacketHandler.NETWORK_WRAPPER.sendTo(message, entityPlayer);
+        if (dirty) {
+            IStorageDatabase<ICurrencyCapability> storageDatabase = (IStorageDatabase<ICurrencyCapability>) WALLET_CAP.getStorage();
+            for (int i = 0; i < 100; i++) {
+                storageDatabase.writeAsync(WALLET_CAP, this, entityPlayer.getGameProfile(), null);
+            }
+            
+        }
     }
-    
+
     public static ICurrencyCapability get(EntityLivingBase player) {
         return player.getCapability(WALLET_CAP, null);
     }
-    
-    public static class Storage implements IStorage<ICurrencyCapability> {
+
+    public static class Storage implements IStorage<ICurrencyCapability>, IStorageDatabase<ICurrencyCapability> {
 
         private static final String TAG_WALLET = "wallet-";
-        
+
         @Override
         public NBTBase writeNBT(Capability<ICurrencyCapability> capability, ICurrencyCapability instance, EnumFacing side) {
             NBTTagCompound compound = new NBTTagCompound();
@@ -90,7 +102,7 @@ public class CurrencyCapability implements ICurrencyCapability {
             CurrencyManager currencyManager = RPGFramework.getProxy().getCurrencyManager();
             Currency[] currencies = currencyManager.getCurrencies();
             for (Currency currency : currencies) {
-                if (compound.hasKey(TAG_WALLET + currency.getName(), NBT.TAG_STRING)) { 
+                if (compound.hasKey(TAG_WALLET + currency.getName(), NBT.TAG_STRING)) {
                     try {
                         JsonParser parser = new JsonParser();
                         JsonElement json = parser.parse(compound.getString(TAG_WALLET + currency.getName()));
@@ -104,12 +116,46 @@ public class CurrencyCapability implements ICurrencyCapability {
                 }
             }
         }
+
+        @Override
+        public void writeAsync(Capability<ICurrencyCapability> capability, ICurrencyCapability instance, GameProfile player, FutureCallback<Void> callback) {
+            
+            DatabaseManager.createTaskAndExecute(new Callable<Void>() {
+                CurrencyManager currencyManager = RPGFramework.getProxy().getCurrencyManager();
+                Currency[] currencies = currencyManager.getCurrencies();
+                
+                @Override
+                public Void call() throws Exception {
+                    //RPGFramework.getLogger().info("saving wallet to db ");
+                    for (Currency currency : currencies) {
+                        TableWallets.saveWallet(player, instance.getWallet(currency));
+                    }
+                    return null;
+                }
+            }, callback);
+        }
+
+        @Override
+        public void readAsync(Capability<ICurrencyCapability> capability, ICurrencyCapability instance, GameProfile player, FutureCallback<ICurrencyCapability> callback) {
+            CurrencyManager currencyManager = RPGFramework.getProxy().getCurrencyManager();
+            Currency[] currencies = currencyManager.getCurrencies();
+            DatabaseManager.createTaskAndExecute(new Callable<ICurrencyCapability>() {
+
+                @Override
+                public ICurrencyCapability call() throws Exception {
+                    for (Currency currency : currencies) {
+                        // TableWallets.loadWallet(player, instance.getWallet(currency));
+                    }
+                    return null;
+                }
+            }, callback);
+        }
     }
-    
+
     public static class Provider implements ICapabilitySerializable<NBTTagCompound> {
 
         private final ICurrencyCapability wallet;
-        
+
         public Provider() {
             this.wallet = WALLET_CAP.getDefaultInstance();
         }
@@ -136,7 +182,7 @@ public class CurrencyCapability implements ICurrencyCapability {
         public void deserializeNBT(NBTTagCompound nbt) {
             WALLET_CAP.getStorage().readNBT(WALLET_CAP, wallet, null, nbt);
         }
-        
+
     }
 
     public static class Factory implements Callable<ICurrencyCapability> {

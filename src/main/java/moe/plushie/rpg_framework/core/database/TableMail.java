@@ -55,6 +55,7 @@ public final class TableMail {
                 ps.setString(6, SerializeHelper.writeItemsToJson(message.getAttachments(), false).toString());
                 ps.setBoolean(7, false);
                 ps.executeUpdate();
+                conn.close();
                 return true;
             }
         } catch (SQLException e) {
@@ -73,6 +74,7 @@ public final class TableMail {
             while (resultSet.next()) {
                 listItems.add(new MailListItem(resultSet.getInt("id"), resultSet.getString("subject"), resultSet.getString("attachments").length() > 2, resultSet.getBoolean("read")));
             }
+            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -103,6 +105,7 @@ public final class TableMail {
                 boolean read = resultSet.getBoolean("read");
                 mailMessages.add(new MailMessage(id, mailSystem, dbPlayerSender.getGameProfile(), player.getGameProfile(), sendDateTime, subject, messageText, attachments, read));
             }
+            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -122,6 +125,7 @@ public final class TableMail {
             if (resultSet.next()) {
                 count = resultSet.getInt(1);
             }
+            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -131,6 +135,7 @@ public final class TableMail {
     private static final String SQL_MESSAGE_GET = "SELECT * FROM mail WHERE id=?";
 
     public static MailMessage getMessage(int id) {
+        
         MailMessage message = null;
         try (Connection conn = DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA); PreparedStatement ps = conn.prepareStatement(SQL_MESSAGE_GET)) {
             ps.setInt(1, id);
@@ -147,6 +152,7 @@ public final class TableMail {
                 boolean read = resultSet.getBoolean("read");
                 message = new MailMessage(id, mailSystem, dbPlayerSender.getGameProfile(), dbPlayerReceiver.getGameProfile(), sendDateTime, subject, messageText, attachments, read);
             }
+            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -160,6 +166,7 @@ public final class TableMail {
         try (Connection conn = DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA); PreparedStatement ps = conn.prepareStatement(SQL_DELETE_MESSAGE)) {
             ps.setInt(1, messageId);
             ps.executeUpdate();
+            conn.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -172,6 +179,7 @@ public final class TableMail {
             ps.setBoolean(1, true);
             ps.setInt(2, messageId);
             ps.executeUpdate();
+            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -184,6 +192,7 @@ public final class TableMail {
             ps.setString(1, "[]");
             ps.setInt(2, messageId);
             ps.executeUpdate();
+            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }

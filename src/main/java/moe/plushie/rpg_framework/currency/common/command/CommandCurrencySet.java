@@ -54,6 +54,6 @@ public class CommandCurrencySet extends ModCommand {
         
         IWallet wallet = currencyCap.getWallet(currency);
         wallet.setAmount(amount);
-        currencyCap.syncToOwner(entityPlayer);
+        currencyCap.syncToOwner(entityPlayer, true);
     }
 }

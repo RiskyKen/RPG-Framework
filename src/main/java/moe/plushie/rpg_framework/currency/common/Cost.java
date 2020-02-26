@@ -132,7 +132,7 @@ public class Cost implements ICost {
                     if (playerWallet != null) {
                         playerWallet.removeAmount(wallet.getAmount());
                         if (player instanceof EntityPlayerMP) {
-                            capability.syncToOwner((EntityPlayerMP) player);
+                            capability.syncToOwner((EntityPlayerMP) player, true);
                         }
                     }
                 }

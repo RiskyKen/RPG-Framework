@@ -49,7 +49,7 @@ public class CurrencyPickupHelper {
                         if (wallet != null) {
                             wallet.addAmount(variant.getValue() * stack.getCount());
                             if (player instanceof EntityPlayerMP) {
-                                currencyCap.syncToOwner((EntityPlayerMP) player);
+                                currencyCap.syncToOwner((EntityPlayerMP) player, true);
                             }
                             event.setCanceled(true);
                             int combo = 0;
@@ -67,7 +67,7 @@ public class CurrencyPickupHelper {
                             
                             combo = MathHelper.clamp(combo, 0, 20);
                             
-                            player.getEntityWorld().playSound((EntityPlayer)null, player.posX, player.posY, player.posZ, ModSounds.COIN_DEPOSIT, SoundCategory.PLAYERS, 0.3F + (float)combo * 0.01F, 0.6F + (float)combo * 0.025F);
+                            player.getEntityWorld().playSound((EntityPlayer)null, player.posX, player.posY, player.posZ, ModSounds.COIN_DEPOSIT, SoundCategory.PLAYERS, 0.3F + combo * 0.01F, 0.6F + combo * 0.025F);
                             event.getItem().setDead();
                         }
                     }

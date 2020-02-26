@@ -1,7 +1,6 @@
 package moe.plushie.rpg_framework.core.database;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
@@ -36,10 +35,6 @@ public final class DatabaseManager {
 
     public static Connection getConnection(DatebaseTable table) throws SQLException {
         return DATABASE_DRIVER.getConnection(table);
-    }
-
-    public static PreparedStatement getPreparedStatement(DatebaseTable table, String sql) {
-        return DATABASE_DRIVER.getPreparedStatement(table, sql);
     }
 
     public static void executeUpdate(DatebaseTable table, String sql) {
