@@ -82,7 +82,9 @@ public class GuiShopDialogEditCost extends AbstractGuiDialog implements IDropDow
             if (dropDownCostTypes.getListSelectedIndex() == 1) {
                 IWallet wallet = null;
                 if (costNew != null) {
-                    wallet = costNew.getWalletCosts()[0];
+                    if (costNew.hasWalletCost()) {
+                        wallet = costNew.getWalletCosts()[0];
+                    }
                 }
                 openDialog(new GuiShopDialogEditCostCurrency(parent, name + ".dialog.edit_currency", this, 280, 130, wallet));
             }
