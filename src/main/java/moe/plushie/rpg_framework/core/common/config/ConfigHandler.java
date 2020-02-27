@@ -4,6 +4,7 @@ import java.io.File;
 
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.lib.LibModInfo;
+import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 
 public class ConfigHandler {
@@ -13,6 +14,7 @@ public class ConfigHandler {
     public static final String CATEGORY_MAIL = "Mail";
     public static final String CATEGORY_SHOP = "Shop ";
     public static final String CATEGORY_VALUE = "Value";
+    public static final String CATEGORY_STATS = "stats";
     
     public static Configuration config;
     
@@ -22,8 +24,13 @@ public class ConfigHandler {
     
     public static void init(File file) {
         if (config == null) {
-            config = new Configuration(file, "1");
+            config = new Configuration(file, "2");
             loadConfigFile();
+            if (config.getLoadedConfigVersion().equals("1")) {
+                ConfigCategory category = config.getCategory(CATEGORY_GENERAL);
+                config.removeCategory(category);
+                config.save();
+            }
         }
     }
 
@@ -31,6 +38,7 @@ public class ConfigHandler {
         loadCategoryGeneral();
         loadCategoryCurrency();
         loadCategoryShop();
+        loadCategoryStats();
         checkIfUpdated();
         if (config.hasChanged()) {
             config.save();
@@ -66,9 +74,6 @@ public class ConfigHandler {
             optionsLocal.lastVersion = config.getString("lastVersion", CATEGORY_GENERAL, "0.0",
                     "Used by the mod to check if it has been updated.");
         }
-        
-        optionsShared.heatmapTrackingRate = config.getInt("heatmapTrackingRate", CATEGORY_GENERAL, 5, 0, 300,
-                "How often in seconds a players location is added to the heatmap. 0 = Disabled.");
     }
     
     private static void loadCategoryCurrency() {
@@ -86,6 +91,20 @@ public class ConfigHandler {
         
         optionsShared.showPlayerInventoryInShopGUI = config.getBoolean("showPlayerInventoryInShopGUI", CATEGORY_SHOP, true,
                 "Is the players inventory shown in the shop GUI.");
+    }
+    
+    private static void loadCategoryStats() {
+        config.setCategoryComment(CATEGORY_STATS, "Setting to do with the stats system.");
+        
+        
+        optionsLocal.trackHeatmaps = config.getBoolean("trackHeatmaps", CATEGORY_STATS, true,
+                "Save player heatmap stats in the database.");
+        
+        optionsLocal.trackServerStats = config.getBoolean("trackServerStats", CATEGORY_STATS, true,
+                "Save long term stats about the server in the database.");
+        
+        optionsLocal.trackWorldStats = config.getBoolean("trackWorldStats", CATEGORY_STATS, true,
+                "Save long term stats about the worlds in the database.");
     }
 
     private static int versionCompare(String str1, String str2) {

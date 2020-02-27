@@ -1,5 +1,6 @@
 package moe.plushie.rpg_framework.stats.common.handler;
 
+import moe.plushie.rpg_framework.core.common.config.ConfigHandler;
 import moe.plushie.rpg_framework.core.database.DatabaseManager;
 import moe.plushie.rpg_framework.core.database.stats.TableStatsServer;
 import moe.plushie.rpg_framework.stats.common.StatsTimer;
@@ -14,17 +15,19 @@ public final class ServerStatsHandler implements IStatsResetCallback {
     public final StatsTimer TIMER_SERVER = new StatsTimer(20, this);
 
     private int playersOnline = 0;
-    
+
     public ServerStatsHandler() {
         DatabaseManager.createTaskAndExecute(new Runnable() {
 
             @Override
             public void run() {
-                TableStatsServer.create();
+                if (ConfigHandler.optionsLocal.trackServerStats) {
+                    TableStatsServer.create();
+                }
             }
         });
     }
-    
+
     @SubscribeEvent
     public void onServerTickEvent(ServerTickEvent event) {
         if (event.phase == Phase.START) {
@@ -39,16 +42,19 @@ public final class ServerStatsHandler implements IStatsResetCallback {
 
     @Override
     public void statsReset(StatsTimer statsTimer) {
+        if (!ConfigHandler.optionsLocal.trackServerStats) {
+            return;
+        }
         float average = statsTimer.getAverage();
         DatabaseManager.createTaskAndExecute(new Runnable() {
-            
+
             @Override
             public void run() {
                 TableStatsServer.addRecords(playersOnline, average, getMemUseMB());
             }
         });
     }
-    
+
     private int getMemUseMB() {
         Runtime rt = Runtime.getRuntime();
         return (int) (((rt.totalMemory() - rt.freeMemory()) / 1024L) / 1024L);

@@ -13,6 +13,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
+import net.minecraftforge.fml.relauncher.Side;
 
 public class ModuleStats extends ModModule {
 
@@ -26,13 +27,20 @@ public class ModuleStats extends ModModule {
 
     @Override
     public void preInit(FMLPreInitializationEvent event) {
+        if (event.getSide() == Side.SERVER) {
+            playerStatsHandler = new PlayerStatsHandler();
+            serverStatsHandler = new ServerStatsHandler();
+            worldStatsHandler = new WorldStatsHandler();
+        }
     }
 
     @Override
     public void init(FMLInitializationEvent event) {
-        MinecraftForge.EVENT_BUS.register(playerStatsHandler);
-        MinecraftForge.EVENT_BUS.register(serverStatsHandler);
-        MinecraftForge.EVENT_BUS.register(worldStatsHandler);
+        if (event.getSide() == Side.SERVER) {
+            MinecraftForge.EVENT_BUS.register(playerStatsHandler);
+            MinecraftForge.EVENT_BUS.register(serverStatsHandler);
+            MinecraftForge.EVENT_BUS.register(worldStatsHandler);
+        }
     }
 
     @Override

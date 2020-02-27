@@ -9,7 +9,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
+import net.minecraftforge.fml.relauncher.Side;
 
 public final class PlayerStatsHandler {
 
@@ -19,7 +21,7 @@ public final class PlayerStatsHandler {
             @Override
             public void run() {
                 TablePlayers.create();
-                if (ConfigHandler.optionsShared.heatmapTrackingRate > 0) {
+                if (ConfigHandler.optionsLocal.trackHeatmaps) {
                     TableHeatmaps.create();
                 }
             }
@@ -40,10 +42,13 @@ public final class PlayerStatsHandler {
 
     @SubscribeEvent
     public void onWorldTickEvent(WorldTickEvent event) {
+        if (event.phase != Phase.START & event.side != Side.SERVER) {
+            return;
+        }
         World world = event.world;
-        if (ConfigHandler.optionsShared.heatmapTrackingRate != 0) {
+        if (ConfigHandler.optionsLocal.trackHeatmaps) {
             world.profiler.startSection(LibModInfo.ID + "heatmapUpdates");
-            if ((world.getTotalWorldTime() % (20L * (ConfigHandler.optionsShared.heatmapTrackingRate))) != 0) {
+            if ((world.getTotalWorldTime() % 20L) != 0) {
                 return;
             }
             world.profiler.startSection("createTable");

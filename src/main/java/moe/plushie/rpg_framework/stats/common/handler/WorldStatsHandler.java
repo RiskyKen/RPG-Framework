@@ -1,5 +1,6 @@
 package moe.plushie.rpg_framework.stats.common.handler;
 
+import moe.plushie.rpg_framework.core.common.config.ConfigHandler;
 import moe.plushie.rpg_framework.core.database.DatabaseManager;
 import moe.plushie.rpg_framework.core.database.stats.TableStatsWorld;
 import moe.plushie.rpg_framework.stats.common.StatsTimer;
@@ -17,18 +18,20 @@ public final class WorldStatsHandler implements IStatsResetCallback {
 
             @Override
             public void run() {
-                TableStatsWorld.create();
+                if (ConfigHandler.optionsLocal.trackWorldStats) {
+                    TableStatsWorld.create();
+                }
             }
         });
     }
 
-    public  StatsTimer TIMER_WORLD = new StatsTimer(20, this);
-    
+    public StatsTimer TIMER_WORLD = new StatsTimer(20, this);
+
     private int playersCount = 0;
     private int entityCount = 0;
     private int tileCount = 0;
     private int tickingTileCount = 0;
-    
+
     @SubscribeEvent
     public void onWorldTickEvent(WorldTickEvent event) {
         if (event.side == Side.CLIENT) {
@@ -53,9 +56,12 @@ public final class WorldStatsHandler implements IStatsResetCallback {
 
     @Override
     public void statsReset(StatsTimer statsTimer) {
+        if (!ConfigHandler.optionsLocal.trackWorldStats) {
+            return;
+        }
         float tickTime = statsTimer.getAverage();
         DatabaseManager.createTaskAndExecute(new Runnable() {
-            
+
             @Override
             public void run() {
                 TableStatsWorld.addRecords(0, playersCount, tickTime, entityCount, tileCount, tickingTileCount);
