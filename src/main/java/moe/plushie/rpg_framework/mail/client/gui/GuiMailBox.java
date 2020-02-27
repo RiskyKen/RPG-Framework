@@ -44,7 +44,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDialogCallback {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation(LibGuiResources.MAIL_BOX);
-    private static final int MESSAGE_TEXT_WIDTH = 200;
+    private static final int MESSAGE_TEXT_WIDTH = 180;
     private static final int MESSAGE_TEXT_HEIGHT = 100;
     private static final int MESSAGE_LINES_PRE_PAGE = 11;
 
@@ -92,11 +92,11 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
         buttonListPre = addButton(new GuiIconButton(this, 0, guiLeft + 5, guiTop + 130, 16, 16, TEXTURE_BUTTONS));
         buttonListNext = addButton(new GuiIconButton(this, 0, guiLeft + 23, guiTop + 130, 16, 16, TEXTURE_BUTTONS));
         buttonNewMessage = addButton(new GuiIconButton(this, 0, guiLeft + 88, guiTop + 130, 16, 16, TEXTURE_BUTTONS));
-        buttonMessageReply = addButton(new GuiIconButton(this, 0, guiLeft + 240, guiTop + 125, 16, 16, TEXTURE_BUTTONS));
-        buttonMessageDelete = addButton(new GuiIconButton(this, 0, guiLeft + 294, guiTop + 125, 16, 16, TEXTURE_BUTTONS));
+        buttonMessageReply = addButton(new GuiIconButton(this, 0, guiLeft + 294, guiTop + 40, 16, 16, TEXTURE_BUTTONS));
+        buttonMessageDelete = addButton(new GuiIconButton(this, 0, guiLeft + 294, guiTop + 22, 16, 16, TEXTURE_BUTTONS));
         buttonMessagePre = addButton(new GuiIconButton(this, 0, guiLeft + 110, guiTop + 125, 16, 16, TEXTURE_BUTTONS));
         buttonMessageNext = addButton(new GuiIconButton(this, 0, guiLeft + 128, guiTop + 125, 16, 16, TEXTURE_BUTTONS));
-        buttonMessageWithdrawItems = addButton(new GuiIconButton(this, 0, guiLeft + 258, guiTop + 125, 16, 16, TEXTURE_BUTTONS));
+        buttonMessageWithdrawItems = addButton(new GuiIconButton(this, 0, guiLeft + 294, guiTop + 108, 16, 16, TEXTURE_BUTTONS));
 
         buttonListPre.setDrawButtonBackground(false).setIconLocation(208, 128, 16, 16);
         buttonListNext.setDrawButtonBackground(false).setIconLocation(208, 112, 16, 16);
@@ -264,8 +264,8 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
                 int itemCount = 0;
                 for (ItemStack stack : mailListItem.getMailMessage().getAttachments()) {
                     if (!stack.isEmpty()) {
-                        itemRender.renderItemAndEffectIntoGUI(stack, 277 - itemCount * 17, 125);
-                        itemRender.renderItemOverlays(fontRenderer, stack, 277 - itemCount * 17, 125);
+                        itemRender.renderItemAndEffectIntoGUI(stack, 294 - itemCount * 16, 125);
+                        itemRender.renderItemOverlays(fontRenderer, stack, 294 - itemCount * 16, 125);
                         itemCount++;
                     }
                 }

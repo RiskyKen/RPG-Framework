@@ -38,7 +38,7 @@ public class CommandDev extends ModSubCommands {
                     
                     final String sqla = sql;
                     final ArrayList<String> resultLines = new ArrayList<String>();
-                    int updateCount;
+                    //int updateCount;
 
                     DatabaseManager.createTaskAndExecute(new Runnable() {
                         @Override
@@ -90,8 +90,7 @@ public class CommandDev extends ModSubCommands {
 
                                 @Override
                                 public void run() {
-                                    // TODO Auto-generated method stub
-
+                                    player.sendMessage(new TextComponentString("Query failed"));
                                 }
                             });
                         }
