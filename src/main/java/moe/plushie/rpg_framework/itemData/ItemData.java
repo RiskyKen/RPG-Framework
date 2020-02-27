@@ -18,6 +18,9 @@ public class ItemData implements IItemData {
     }
 
     private ItemData(ArrayList<String> categories, ArrayList<String> tags, ICost value) {
+        this.categories = categories;
+        this.tags = tags;
+        this.value = value;
     }
 
     public static ItemData create(ArrayList<String> categories, ArrayList<String> tags, ICost value) {
@@ -56,5 +59,16 @@ public class ItemData implements IItemData {
     @Override
     public IItemData setValue(ICost value) {
         return new ItemData(this.categories, this.tags, value);
+    }
+    
+    @Override
+    public boolean isDataMissing() {
+        if (this == ITEM_DATA_MISSING) {
+            return true;
+        }
+        if (this.categories.isEmpty() & this.tags.isEmpty() & this.value.isNoCost()) {
+            return true;
+        }
+        return false;
     }
 }

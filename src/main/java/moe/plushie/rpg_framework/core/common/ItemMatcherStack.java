@@ -53,6 +53,7 @@ public class ItemMatcherStack implements IItemMatcher {
         return itemStack;
     }
 
+    @Override
     public boolean isMatchMeta() {
         return matchMeta;
     }

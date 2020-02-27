@@ -31,7 +31,7 @@ public final class ItemDataManager implements IItemDataManager {
 
     @Override
     public IItemData getItemData(IItemMatcher itemMatcher) {
-        IItemData itemData = TableItemData.getItemData(itemMatcher);
+        IItemData itemData = TableItemData.getItemData(itemMatcher.getItemStack());
         if (itemData == null) {
             itemData = ItemData.createEmpty();
         }
@@ -47,7 +47,7 @@ public final class ItemDataManager implements IItemDataManager {
 
     @Override
     public void setItemData(IItemMatcher itemMatcher, IItemData itemData) {
-        TableItemData.setItemData(itemMatcher, itemData);
+        TableItemData.setItemData(itemMatcher.getItemStack(), itemMatcher.isMatchMeta(), itemData);
     }
 
     @Override
@@ -70,19 +70,5 @@ public final class ItemDataManager implements IItemDataManager {
                 setItemData(itemMatcher, itemData);
             }
         });
-    }
-
-    private class Async implements Callable<IItemData> {
-
-        private final IItemMatcher itemMatcher;
-
-        public Async(IItemMatcher itemMatcher) {
-            this.itemMatcher = itemMatcher;
-        }
-
-        @Override
-        public IItemData call() throws Exception {
-            return getItemData(itemMatcher);
-        }
     }
 }

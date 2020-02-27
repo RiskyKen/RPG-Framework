@@ -17,4 +17,6 @@ public interface IItemData {
     public IItemData setTags(ArrayList<String> tags);
     
     public IItemData setValue(ICost value);
+    
+    public boolean isDataMissing();
 }

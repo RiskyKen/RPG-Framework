@@ -10,6 +10,7 @@ import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerCommand;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerCommand.ServerCommandType;
 import moe.plushie.rpg_framework.currency.common.command.CommandCurrency;
+import moe.plushie.rpg_framework.itemData.CommandItemData;
 import moe.plushie.rpg_framework.loot.common.command.CommandLoot;
 import moe.plushie.rpg_framework.mail.common.command.CommandMail;
 import moe.plushie.rpg_framework.shop.common.command.CommandShop;
@@ -36,6 +37,7 @@ public class CommandRpg extends ModSubCommands {
         addSubCommand(new CommandBank(this));
         addSubCommand(new CommandIntegration(this));
         addSubCommand(new CommandLoot(this));
+        addSubCommand(new CommandItemData(this));
         addSubCommand(new CommandExecute(this, "open_folder", new ICommandExecute() {
 
             @Override
