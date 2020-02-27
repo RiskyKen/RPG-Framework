@@ -40,20 +40,22 @@ public class GuiIconRenderer extends GuiScreen {
         ScaledResolution scaledResolution = new ScaledResolution(mc);
         width = scaledResolution.getScaledWidth();
         height = scaledResolution.getScaledHeight();
-        
+
+        // fontRenderer.drawString("Database Queue Size: " + DatabaseManager.getQueueSize(), 1, 1, 0xFFFFFF);
+
         for (IMailSystem mailSystem : RPGFramework.getProxy().getMailSystemManager().getMailSystems()) {
             int messageCount = MailCounter.getUnreadMailCount(mailSystem);
             if (messageCount < 1) {
                 return;
             }
-            
+
             for (IGuiIcon guiIcon : mailSystem.getGuiIcons()) {
                 RenderHelper.disableStandardItemLighting();
                 GlStateManager.enableBlend();
                 GlStateManager.resetColor();
                 GlStateManager.color(1F, 1F, 1F, guiIcon.getIconAlpha());
                 mc.renderEngine.bindTexture(ICONS);
-                
+
                 boolean foundClass = false;
                 if (mc.currentScreen != null) {
                     String curClass = mc.currentScreen.getClass().getName();
@@ -69,13 +71,13 @@ public class GuiIconRenderer extends GuiScreen {
                             foundClass = true;
                             break;
                         }
-                    } 
+                    }
                 }
-                
+
                 if (!foundClass) {
                     continue;
                 }
-                
+
                 int iconIndex = guiIcon.getIconIndex();
                 int x = 0;
                 int y = 0;
@@ -103,11 +105,11 @@ public class GuiIconRenderer extends GuiScreen {
                 }
                 x += guiIcon.getOffsetHorizontal();
                 y += guiIcon.getOffsetVertical();
-                
+
                 int iconY = MathHelper.floor(iconIndex / 16);
                 int iconX = iconIndex - (x * 16);
                 drawTexturedModalRect(x, y, 16 * iconX, 16 * iconY, 16, 16);
-                //fontRenderer.drawStringWithShadow(String.valueOf(messageCount), x + 2, y + 6, 0xFFFFFF);
+                // fontRenderer.drawStringWithShadow(String.valueOf(messageCount), x + 2, y + 6, 0xFFFFFF);
             }
         }
     }

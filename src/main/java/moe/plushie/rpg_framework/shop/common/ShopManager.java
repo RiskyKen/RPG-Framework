@@ -37,7 +37,7 @@ public class ShopManager implements IShopManager {
     public ShopManager(File modDirectory) {
         shopsDirectory = new File(modDirectory, DIRECTORY_NAME);
         MinecraftForge.EVENT_BUS.register(this);
-        DatabaseManager.EXECUTOR.execute(new Runnable() {
+        DatabaseManager.createTaskAndExecute(new Runnable() {
 
             @Override
             public void run() {

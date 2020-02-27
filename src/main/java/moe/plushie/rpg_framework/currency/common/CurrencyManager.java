@@ -41,14 +41,13 @@ public class CurrencyManager implements ICurrencyManager {
         }
         currencyMap = new ConcurrentHashMap<IIdentifier, Currency>();
         MinecraftForge.EVENT_BUS.register(this);
-        DatabaseManager.EXECUTOR.execute(new Runnable() {
+        DatabaseManager.createTaskAndExecute(new Runnable() {
 
             @Override
             public void run() {
                 TableWallets.create();
             }
         });
-
     }
 
     public void reload(boolean syncWithClients) {

@@ -131,7 +131,7 @@ public class MailSystemManager implements IMailSystemManager {
 
     @Override
     public void onSendMailMessages(IMailSendCallback callback, GameProfile[] receivers, MailMessage mailMessage) {
-        DatabaseManager.EXECUTOR.execute(new Runnable() {
+        DatabaseManager.createTaskAndExecute(new Runnable() {
             MailSystem mailSystem = getMailSystem(mailMessage.getMailSystem().getIdentifier());
 
             @Override
@@ -153,6 +153,7 @@ public class MailSystemManager implements IMailSystemManager {
                     }
                 }
                 FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(new Runnable() {
+
                     @Override
                     public void run() {
                         for (GameProfile special : specialNames) {
@@ -196,7 +197,8 @@ public class MailSystemManager implements IMailSystemManager {
         if (mailSystem == null) {
             return;
         }
-        DatabaseManager.EXECUTOR.execute(new Runnable() {
+        DatabaseManager.createTaskAndExecute(new Runnable() {
+
             @Override
             public void run() {
                 ArrayList<GameProfile> gameProfiles = TablePlayers.getAllPlayers();
@@ -218,7 +220,7 @@ public class MailSystemManager implements IMailSystemManager {
         for (int i = 0; i < playerEntityList.size(); i++) {
             EntityPlayerMP entityPlayerMP = playerEntityList.get(i);
             GameProfile profile = new GameProfile(entityPlayerMP.getGameProfile().getId(), entityPlayerMP.getGameProfile().getName());
-            DatabaseManager.EXECUTOR.execute(new Runnable() {
+            DatabaseManager.createTaskAndExecute(new Runnable() {
                 @Override
                 public void run() {
                     if (mailSystem.sendMailMessage(mailMessage.updateReceiver(profile))) {
@@ -239,7 +241,7 @@ public class MailSystemManager implements IMailSystemManager {
         for (String key : whiteList.getKeys()) {
             GameProfile gameProfile = whiteList.getByName(key);
             GameProfile profile = new GameProfile(gameProfile.getId(), gameProfile.getName());
-            DatabaseManager.EXECUTOR.execute(new Runnable() {
+            DatabaseManager.createTaskAndExecute(new Runnable() {
                 @Override
                 public void run() {
                     if (mailSystem.sendMailMessage(mailMessage.updateReceiver(profile))) {

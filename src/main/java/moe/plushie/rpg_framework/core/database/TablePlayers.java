@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -16,6 +17,14 @@ public final class TablePlayers {
     private TablePlayers() {
     }
 
+    private static DatebaseTable getDatebaseTable() {
+        return DatebaseTable.PLAYER_DATA;
+    }
+
+    private static Connection getConnection() throws SQLException {
+        return DatabaseManager.getConnection(getDatebaseTable());
+    }
+
     public static void create() {
         String sql = "CREATE TABLE IF NOT EXISTS players ";
         sql += "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,";
@@ -23,23 +32,68 @@ public final class TablePlayers {
         sql += "username VARCHAR(80) NOT NULL,";
         sql += "first_seen DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,";
         sql += "last_seen DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL)";
-        DatabaseManager.executeUpdate(DatebaseTable.PLAYER_DATA, sql);
+        try (Connection conn = getConnection(); Statement statement = conn.createStatement()) {
+            statement.executeUpdate(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateOrAddPlayer(GameProfile gameProfile) {
+        try (Connection conn = getConnection()) {
+            DBPlayer dbPlayer = getPlayer(conn, gameProfile);
+            if (dbPlayer.isMissing()) {
+                addPlayerToDatabase(conn, gameProfile);
+            } else {
+                updatePlayerLastLogin(conn, gameProfile);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public static boolean isPlayerInDatabase(GameProfile gameProfile) {
-        return getPlayer(gameProfile) != DBPlayer.MISSING;
+        return !getPlayer(gameProfile).isMissing();
     }
 
     public static void addPlayerToDatabase(GameProfile gameProfile) {
-        String sql = "INSERT INTO players (id, uuid, username, first_seen, last_seen) VALUES (NULL, '%s', '%s', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
+        try (Connection conn = getConnection()) {
+            addPlayerToDatabase(conn, gameProfile);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void addPlayerToDatabase(Connection conn, GameProfile gameProfile) {
+        String sql = "INSERT INTO players (id, uuid, username, first_seen, last_seen) VALUES (NULL, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
         sql = String.format(sql, gameProfile.getId().toString(), gameProfile.getName());
-        DatabaseManager.executeUpdate(DatebaseTable.PLAYER_DATA, sql);
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, gameProfile.getId().toString());
+            ps.setString(2, gameProfile.getName());
+            ps.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void updatePlayerLastLogin(GameProfile gameProfile) {
-        String sql = "UPDATE players SET username='%s', last_seen=datetime('now') WHERE uuid='%s'";
+        try (Connection conn = getConnection()) {
+            updatePlayerLastLogin(conn, gameProfile);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updatePlayerLastLogin(Connection conn, GameProfile gameProfile) {
+        String sql = "UPDATE players SET username=?, last_seen=datetime('now') WHERE uuid=?";
         sql = String.format(sql, gameProfile.getName(), gameProfile.getId().toString());
-        DatabaseManager.executeUpdate(DatebaseTable.PLAYER_DATA, sql);
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, gameProfile.getName());
+            ps.setString(2, gameProfile.getId().toString());
+            ps.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public static DBPlayerInfo getPlayerInfo(GameProfile gameProfile) {

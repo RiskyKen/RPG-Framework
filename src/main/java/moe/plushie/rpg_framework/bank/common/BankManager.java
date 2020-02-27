@@ -3,9 +3,11 @@ package moe.plushie.rpg_framework.bank.common;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Arrays;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.common.base.Charsets;
+import com.google.common.util.concurrent.FutureCallback;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -153,18 +155,29 @@ public class BankManager implements IBankManager {
             callback.onBackAccountLoad(null);
             return;
         }
-        DatabaseManager.EXECUTOR.execute(new Runnable() {
+
+        DatabaseManager.createTaskAndExecute(new Callable<IBankAccount>() {
 
             @Override
-            public void run() {
-                IBankAccount bankAccount = BankAccountSerializer.deserializeDatabase(sourcePlayer, bank);
+            public IBankAccount call() throws Exception {
+                return BankAccountSerializer.deserializeDatabase(sourcePlayer, bank);
+            }
+        }, new FutureCallback<IBankAccount>() {
+
+            @Override
+            public void onSuccess(IBankAccount result) {
                 FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(new Runnable() {
 
                     @Override
                     public void run() {
-                        callback.onBackAccountLoad(bankAccount);
+                        callback.onBackAccountLoad(result);
                     }
                 });
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                t.printStackTrace();
             }
         });
     }

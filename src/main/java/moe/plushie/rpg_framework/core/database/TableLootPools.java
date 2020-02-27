@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -26,6 +27,14 @@ public final class TableLootPools {
 
     private TableLootPools() {
     }
+    
+    private static DatebaseTable getDatebaseTable() {
+        return DatebaseTable.DATA;
+    }
+    
+    private static Connection getConnection() throws SQLException {
+        return DatabaseManager.getConnection(getDatebaseTable());
+    }
 
     private static final String SQL_CREATE_TABLE = "CREATE TABLE IF NOT EXISTS loot_pools"
             + "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
@@ -35,7 +44,11 @@ public final class TableLootPools {
             + "last_update DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL)";
     
     public static void createTable() {
-        DatabaseManager.executeUpdate(DatebaseTable.DATA, SQL_CREATE_TABLE);
+        try (Connection conn = getConnection(); Statement statement = conn.createStatement()) {
+            statement.executeUpdate(SQL_CREATE_TABLE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private static final String SQL_ADD_LOOT_POOL = "INSERT INTO loot_pools (id, name, category, items, last_update) VALUES (NULL, ?, ?, ?, CURRENT_TIMESTAMP)";

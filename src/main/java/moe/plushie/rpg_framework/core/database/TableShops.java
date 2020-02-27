@@ -3,6 +3,8 @@ package moe.plushie.rpg_framework.core.database;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -20,6 +22,14 @@ public final class TableShops {
 
     private TableShops() {
     }
+    
+    private static DatebaseTable getDatebaseTable() {
+        return DatebaseTable.DATA;
+    }
+    
+    private static Connection getConnection() throws SQLException {
+        return DatabaseManager.getConnection(getDatebaseTable());
+    }
 
     public static void create() {
         String sql = "CREATE TABLE IF NOT EXISTS shops";
@@ -27,7 +37,11 @@ public final class TableShops {
         sql += "name VARCHAR(80) NOT NULL,";
         sql += "tabs TEXT NOT NULL,";
         sql += "last_update DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL)";
-        DatabaseManager.executeUpdate(DatebaseTable.DATA, sql);
+        try (Connection conn = getConnection(); Statement statement = conn.createStatement()) {
+            statement.executeUpdate(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private static final String SQL_ADD_SHOP = "INSERT INTO shops (id, name, tabs, last_update) VALUES (NULL, ?, ?, CURRENT_TIMESTAMP)";

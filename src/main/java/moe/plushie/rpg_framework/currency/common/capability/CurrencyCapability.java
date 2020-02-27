@@ -68,10 +68,7 @@ public class CurrencyCapability implements ICurrencyCapability {
         PacketHandler.NETWORK_WRAPPER.sendTo(message, entityPlayer);
         if (dirty) {
             IStorageDatabase<ICurrencyCapability> storageDatabase = (IStorageDatabase<ICurrencyCapability>) WALLET_CAP.getStorage();
-            for (int i = 0; i < 100; i++) {
-                storageDatabase.writeAsync(WALLET_CAP, this, entityPlayer.getGameProfile(), null);
-            }
-            
+            storageDatabase.writeAsync(WALLET_CAP, this, entityPlayer.getGameProfile(), null);
         }
     }
 
@@ -143,9 +140,9 @@ public class CurrencyCapability implements ICurrencyCapability {
 
                 @Override
                 public ICurrencyCapability call() throws Exception {
-                    for (Currency currency : currencies) {
+                    //for (Currency currency : currencies) {
                         // TableWallets.loadWallet(player, instance.getWallet(currency));
-                    }
+                    //}
                     return null;
                 }
             }, callback);

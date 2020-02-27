@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.concurrent.Callable;
 
 import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFutureTask;
 
 import moe.plushie.rpg_framework.api.core.IItemMatcher;
@@ -18,8 +17,8 @@ import moe.plushie.rpg_framework.core.database.TableItemData;
 public final class ItemDataManager implements IItemDataManager {
 
     public ItemDataManager(File modDirectory) {
-        DatabaseManager.EXECUTOR.execute(new Runnable() {
-            
+        DatabaseManager.createTaskAndExecute(new Runnable() {
+
             @Override
             public void run() {
                 TableItemData.create();
@@ -36,6 +35,7 @@ public final class ItemDataManager implements IItemDataManager {
         if (itemData == null) {
             itemData = ItemData.createEmpty();
         }
+        // TODO fix cross thread crap below!
         if (ModAddonManager.addonFaerunHeroes.isModLoaded()) {
             ICost cost = ModAddonManager.addonFaerunHeroes.getItemValue(itemMatcher.getItemStack());
             if (!cost.isNoCost() & cost.hasWalletCost()) {
@@ -52,17 +52,18 @@ public final class ItemDataManager implements IItemDataManager {
 
     @Override
     public ListenableFutureTask<IItemData> getItemDataAsync(IItemMatcher itemMatcher, FutureCallback<IItemData> callback) {
-        ListenableFutureTask task = ListenableFutureTask.<IItemData>create(new Async(itemMatcher));
-        if (callback != null) {
-            Futures.addCallback(task, callback);
-        }
-        DatabaseManager.EXECUTOR.execute(task);
-        return task;
+        return DatabaseManager.createTaskAndExecute(new Callable<IItemData>() {
+
+            @Override
+            public IItemData call() throws Exception {
+                return getItemData(itemMatcher);
+            }
+        }, callback);
     }
 
     @Override
     public void setItemDataAsync(IItemMatcher itemMatcher, IItemData itemData) {
-        DatabaseManager.EXECUTOR.execute(new Runnable() {
+        DatabaseManager.createTaskAndExecute(new Runnable() {
 
             @Override
             public void run() {

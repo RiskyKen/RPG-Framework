@@ -8,7 +8,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.ReentrantLock;
 
 import javax.sql.PooledConnection;
 
@@ -26,8 +25,6 @@ public final class SQLiteDriver implements IDatabaseDriver {
 
     private static final String FILE_EXTENSION = ".sqlite3";
     private final ConcurrentHashMap<DatebaseTable, PooledConnection> pooledConnections = new ConcurrentHashMap<DatebaseTable, PooledConnection>();
-    private final ReentrantLock lock = new ReentrantLock();
-    
     
     public static File getDatabaseFile(DatebaseTable table) {
         return new File(RPGFramework.getProxy().getModDirectory(), table.name().toLowerCase() + FILE_EXTENSION);

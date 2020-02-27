@@ -3,6 +3,7 @@ package moe.plushie.rpg_framework.core.database;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,6 +13,14 @@ public final class TableHeatmaps {
     private TableHeatmaps() {
     }
 
+    private static DatebaseTable getDatebaseTable() {
+        return DatebaseTable.STATS;
+    }
+    
+    private static Connection getConnection() throws SQLException {
+        return DatabaseManager.getConnection(getDatebaseTable());
+    }
+    
     private static final String SQL_CREATE_TABLE = "CREATE TABLE IF NOT EXISTS heatmaps"
             + "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
             + "player_id INTEGER NOT NULL,"
@@ -21,7 +30,11 @@ public final class TableHeatmaps {
             + "dimension INTEGER NOT NULL,"
             + "date DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL)";
     public static void create() {
-        DatabaseManager.executeUpdate(DatebaseTable.STATS, SQL_CREATE_TABLE);
+        try (Connection conn = getConnection(); Statement statement = conn.createStatement()) {
+            statement.executeUpdate(SQL_CREATE_TABLE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private static final String SQL_ADD_HEATMAP = "INSERT INTO heatmaps (id, player_id, x, y, z, dimension, date) VALUES (NULL, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";

@@ -1,5 +1,9 @@
 package moe.plushie.rpg_framework.core.database;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import moe.plushie.rpg_framework.api.core.IItemMatcher;
 import moe.plushie.rpg_framework.api.itemData.IItemData;
 import moe.plushie.rpg_framework.itemData.ItemData;
@@ -9,6 +13,14 @@ public final class TableItemData {
     private final static String TABLE_NAME = "item_data";
     
     private TableItemData() {
+    }
+    
+    private static DatebaseTable getDatebaseTable() {
+        return DatebaseTable.DATA;
+    }
+    
+    private static Connection getConnection() throws SQLException {
+        return DatabaseManager.getConnection(getDatebaseTable());
     }
 
     public static void create() {
@@ -20,7 +32,12 @@ public final class TableItemData {
         sql += "times_opened INTEGER NOT NULL,";
         sql += "last_access DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,";
         sql += "last_change DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL)";
-        DatabaseManager.executeUpdate(DatebaseTable.STATS, sql);
+        
+        try (Connection conn = getConnection(); Statement statement = conn.createStatement()) {
+            statement.executeUpdate(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public static IItemData getItemData(IItemMatcher itemMatcher) {

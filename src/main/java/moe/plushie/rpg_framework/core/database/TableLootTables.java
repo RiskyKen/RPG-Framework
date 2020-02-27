@@ -3,6 +3,8 @@ package moe.plushie.rpg_framework.core.database;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -20,6 +22,14 @@ public final class TableLootTables {
 
     private TableLootTables() {
     }
+    
+    private static DatebaseTable getDatebaseTable() {
+        return DatebaseTable.DATA;
+    }
+    
+    private static Connection getConnection() throws SQLException {
+        return DatabaseManager.getConnection(getDatebaseTable());
+    }
 
     private static final String SQL_CREATE_TABLE = "CREATE TABLE IF NOT EXISTS loot_tables"
             + "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
@@ -29,7 +39,11 @@ public final class TableLootTables {
             + "last_update DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL)";
 
     public static void createTable() {
-        DatabaseManager.executeUpdate(DatebaseTable.DATA, SQL_CREATE_TABLE);
+        try (Connection conn = getConnection(); Statement statement = conn.createStatement()) {
+            statement.executeUpdate(SQL_CREATE_TABLE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private static final String SQL_ADD_LOOT_TABLE = "INSERT INTO loot_tables (id, name, category, pools, last_update) VALUES (NULL, ?, ?, ?, CURRENT_TIMESTAMP)";

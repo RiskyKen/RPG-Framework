@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -24,6 +25,14 @@ public final class TableMail {
 
     private TableMail() {
     }
+    
+    private static DatebaseTable getDatebaseTable() {
+        return DatebaseTable.PLAYER_DATA;
+    }
+    
+    private static Connection getConnection() throws SQLException {
+        return DatabaseManager.getConnection(getDatebaseTable());
+    }
 
     private static final String SQL_CREATE_TABLE = "CREATE TABLE IF NOT EXISTS mail"
             + "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
@@ -37,7 +46,11 @@ public final class TableMail {
             + "read BOOLEAN NOT NULL)";
 
     public static void create() {
-        DatabaseManager.executeUpdate(DatebaseTable.PLAYER_DATA, SQL_CREATE_TABLE);
+        try (Connection conn = getConnection(); Statement statement = conn.createStatement()) {
+            statement.executeUpdate(SQL_CREATE_TABLE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private static final String SQL_MESSAGE_ADD = "INSERT INTO mail (id, mail_system, player_id_sender, player_id_receiver, subject, text, attachments, sent_date, read) VALUES (NULL, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)";

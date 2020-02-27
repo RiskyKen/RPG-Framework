@@ -4,18 +4,27 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import moe.plushie.rpg_framework.api.core.IIdentifier;
 
 public final class TableBankAccounts {
 
     private final static String TABLE_NAME = "bank_accounts";
-    
+
     private TableBankAccounts() {
+    }
+    
+    private static DatebaseTable getDatebaseTable() {
+        return DatebaseTable.PLAYER_DATA;
+    }
+    
+    private static Connection getConnection() throws SQLException {
+        return DatabaseManager.getConnection(getDatebaseTable());
     }
 
     public static void create() {
-        String sql = "CREATE TABLE IF NOT EXISTS "+ TABLE_NAME;
+        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME;
         sql += "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,";
         sql += "player_id INTEGER NOT NULL,";
         sql += "bank_identifier TEXT NOT NULL,";
@@ -23,7 +32,12 @@ public final class TableBankAccounts {
         sql += "times_opened INTEGER NOT NULL,";
         sql += "last_access DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,";
         sql += "last_change DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL)";
-        DatabaseManager.executeUpdate(DatebaseTable.PLAYER_DATA, sql);
+
+        try (Connection conn = getConnection(); Statement statement = conn.createStatement()) {
+            statement.executeUpdate(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public static String getAccountTabs(DBPlayer dbPlayer, IIdentifier bankIdentifier) {
