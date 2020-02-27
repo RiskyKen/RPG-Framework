@@ -47,7 +47,7 @@ public final class TableStatsWorld {
     }
 
     public static void addRecords(int dimension, int playerCount, float tickTime, int entityCount, int tileCount, int tickingTileCount) {
-        String sql = "INSERT INTO world_stats (id, dimension, player_count, tick_time, entity_count, tile_count, tile_count, date)";
+        String sql = "INSERT INTO world_stats (id, dimension, player_count, tick_time, entity_count, tile_count, ticking_tile_count, date)";
         sql += " VALUES (NULL, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, dimension);
