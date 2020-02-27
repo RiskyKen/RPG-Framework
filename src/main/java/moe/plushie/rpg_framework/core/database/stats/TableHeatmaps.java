@@ -1,4 +1,4 @@
-package moe.plushie.rpg_framework.core.database;
+package moe.plushie.rpg_framework.core.database.stats;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,6 +6,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
+import moe.plushie.rpg_framework.core.database.DBPlayer;
+import moe.plushie.rpg_framework.core.database.DatabaseManager;
+import moe.plushie.rpg_framework.core.database.DatebaseTable;
+import moe.plushie.rpg_framework.core.database.TablePlayers;
 import net.minecraft.entity.player.EntityPlayer;
 
 public final class TableHeatmaps {

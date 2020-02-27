@@ -24,6 +24,7 @@ import moe.plushie.rpg_framework.core.common.network.server.MessageServerSyncSho
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import moe.plushie.rpg_framework.core.database.DatabaseManager;
 import moe.plushie.rpg_framework.core.database.TableShops;
+import moe.plushie.rpg_framework.core.database.stats.TableStatsShopSales;
 import moe.plushie.rpg_framework.shop.common.serialize.ShopSerializer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.MinecraftForge;
@@ -42,6 +43,7 @@ public class ShopManager implements IShopManager {
             @Override
             public void run() {
                 TableShops.create();
+                TableStatsShopSales.create();
             }
         });
     }

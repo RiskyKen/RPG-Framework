@@ -17,6 +17,8 @@ import moe.plushie.rpg_framework.core.common.inventory.slot.SlotHidable;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerShop;
 import moe.plushie.rpg_framework.core.common.utils.UtilItems;
+import moe.plushie.rpg_framework.core.database.DatabaseManager;
+import moe.plushie.rpg_framework.core.database.stats.TableStatsShopSales;
 import moe.plushie.rpg_framework.shop.ModuleShop;
 import moe.plushie.rpg_framework.shop.common.Shop.ShopItem;
 import moe.plushie.rpg_framework.shop.common.Shop.ShopTab;
@@ -107,7 +109,7 @@ public class ContainerShop extends ModContainer {
             @Override
             public void onSuccess(IShop result) {
                 FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(new Runnable() {
-                    
+
                     @Override
                     public void run() {
                         setShop(result);
@@ -131,6 +133,13 @@ public class ContainerShop extends ModContainer {
                 IShopItem shopItem = shop.getTabs().get(activeTabIndex).getItems().get(slotId);
                 ICost cost = shopItem.getCost();
                 if (cost.canAfford(player)) {
+                    DatabaseManager.createTaskAndExecute(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            TableStatsShopSales.updateSoldItemCount(shop.getIdentifier(), itemStack);
+                        }
+                    });
                     cost.pay(player);
                     world.playSound(null, player.posX, player.posY, player.posZ, ModSounds.COIN_WITHDRAW, SoundCategory.PLAYERS, 0.3F, 0.8F + (player.getRNG().nextFloat() * 0.4F));
                     if (!player.inventory.addItemStackToInventory(shopItem.getItem().copy())) {

@@ -42,6 +42,8 @@ public class GuiIconRenderer extends GuiScreen {
         height = scaledResolution.getScaledHeight();
 
         // fontRenderer.drawString("Database Queue Size: " + DatabaseManager.getQueueSize(), 1, 1, 0xFFFFFF);
+        // fontRenderer.drawString("Server Time: " + PlayerStatsHandler.TIMER_SERVER.getAverage(), 1, 11, 0xFFFFFF);
+        // fontRenderer.drawString("World Time: " + PlayerStatsHandler.TIMER_WORLD.getAverage(), 1, 21, 0xFFFFFF);
 
         for (IMailSystem mailSystem : RPGFramework.getProxy().getMailSystemManager().getMailSystems()) {
             int messageCount = MailCounter.getUnreadMailCount(mailSystem);

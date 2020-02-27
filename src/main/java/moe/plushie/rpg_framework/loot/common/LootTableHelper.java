@@ -16,8 +16,8 @@ import moe.plushie.rpg_framework.core.common.network.server.MessageServerSyncLoo
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerSyncLootTables.SyncType;
 import moe.plushie.rpg_framework.core.common.serialize.IdentifierSerialize;
 import moe.plushie.rpg_framework.core.common.serialize.ItemStackSerialize;
-import moe.plushie.rpg_framework.core.database.TableLootPools;
-import moe.plushie.rpg_framework.core.database.TableLootTables;
+import moe.plushie.rpg_framework.core.database.loot.TableLootPools;
+import moe.plushie.rpg_framework.core.database.loot.TableLootTables;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 
