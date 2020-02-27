@@ -49,6 +49,7 @@ import moe.plushie.rpg_framework.shop.ModuleShop;
 import moe.plushie.rpg_framework.shop.common.Shop;
 import moe.plushie.rpg_framework.shop.common.Shop.ShopItem;
 import moe.plushie.rpg_framework.shop.common.Shop.ShopTab;
+import moe.plushie.rpg_framework.stats.ModuleStats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -86,6 +87,7 @@ public class CommonProxy {
     private IModModule moduleShop;
     private IModModule moduleBank;
     private IModModule moduleAuction;
+    private IModModule moduleStats;
 
     public void preInit(FMLPreInitializationEvent event) {
         modConfigDirectory = new File(event.getSuggestedConfigurationFile().getParentFile(), "rpg_framework");
@@ -108,6 +110,7 @@ public class CommonProxy {
         moduleShop = new ModuleShop(getModDirectory());
         moduleBank = new ModuleBank(getModDirectory());
         moduleAuction = new ModuleAuction();
+        moduleStats = new ModuleStats(getModDirectory());
 
         currencyManager = new CurrencyManager(modDirectory);
         mailSystemManager = new MailSystemManager(modDirectory);
