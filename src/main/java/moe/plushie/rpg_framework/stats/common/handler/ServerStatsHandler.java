@@ -1,10 +1,12 @@
 package moe.plushie.rpg_framework.stats.common.handler;
 
 import moe.plushie.rpg_framework.core.common.config.ConfigHandler;
+import moe.plushie.rpg_framework.core.common.lib.LibModInfo;
 import moe.plushie.rpg_framework.core.database.DatabaseManager;
 import moe.plushie.rpg_framework.core.database.stats.TableStatsServer;
 import moe.plushie.rpg_framework.stats.common.StatsTimer;
 import moe.plushie.rpg_framework.stats.common.StatsTimer.IStatsResetCallback;
+import net.minecraft.profiler.Profiler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -27,17 +29,26 @@ public final class ServerStatsHandler implements IStatsResetCallback {
             }
         });
     }
+    
+    private Profiler getProfiler() {
+        return FMLCommonHandler.instance().getMinecraftServerInstance().profiler;
+    }
 
     @SubscribeEvent
     public void onServerTickEvent(ServerTickEvent event) {
+        getProfiler().startSection("root");
+        getProfiler().startSection(LibModInfo.ID);
+        getProfiler().startSection("serverStats");
         if (event.phase == Phase.START) {
             TIMER_SERVER.begin();
         }
-        if (event.phase != Phase.END) {
-            return;
+        if (event.phase == Phase.END) {
+            playersOnline = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers().size();
+            TIMER_SERVER.end();
         }
-        playersOnline = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers().size();
-        TIMER_SERVER.end();
+        getProfiler().endSection();
+        getProfiler().endSection();
+        getProfiler().endSection();
     }
 
     @Override

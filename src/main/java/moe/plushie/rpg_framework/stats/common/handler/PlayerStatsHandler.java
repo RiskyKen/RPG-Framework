@@ -47,12 +47,11 @@ public final class PlayerStatsHandler {
         }
         World world = event.world;
         if (ConfigHandler.optionsLocal.trackHeatmaps) {
-            world.profiler.startSection(LibModInfo.ID + "heatmapUpdates");
             if ((world.getTotalWorldTime() % 20L) != 0) {
                 return;
             }
-            world.profiler.startSection("createTable");
-            world.profiler.endStartSection("updateTable");
+            world.profiler.startSection(LibModInfo.ID);
+            world.profiler.startSection("heatmapUpdates");
             DatabaseManager.createTaskAndExecute(new Runnable() {
 
                 @Override

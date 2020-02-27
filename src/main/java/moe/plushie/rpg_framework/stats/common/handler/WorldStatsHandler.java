@@ -1,11 +1,14 @@
 package moe.plushie.rpg_framework.stats.common.handler;
 
 import moe.plushie.rpg_framework.core.common.config.ConfigHandler;
+import moe.plushie.rpg_framework.core.common.lib.LibModInfo;
 import moe.plushie.rpg_framework.core.database.DatabaseManager;
 import moe.plushie.rpg_framework.core.database.stats.TableStatsWorld;
 import moe.plushie.rpg_framework.stats.common.StatsTimer;
 import moe.plushie.rpg_framework.stats.common.StatsTimer.IStatsResetCallback;
+import net.minecraft.profiler.Profiler;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
@@ -25,6 +28,10 @@ public final class WorldStatsHandler implements IStatsResetCallback {
         });
     }
 
+    private Profiler getProfiler() {
+        return FMLCommonHandler.instance().getMinecraftServerInstance().profiler;
+    }
+
     public StatsTimer TIMER_WORLD = new StatsTimer(20, this);
 
     private int playersCount = 0;
@@ -40,18 +47,21 @@ public final class WorldStatsHandler implements IStatsResetCallback {
         if (event.world.provider.getDimension() != 0) {
             return;
         }
+        World world = event.world;
+        world.profiler.startSection(LibModInfo.ID);
+        world.profiler.startSection("worldStats");
         if (event.phase == Phase.START) {
             TIMER_WORLD.begin();
         }
-        if (event.phase != Phase.END) {
-            return;
+        if (event.phase == Phase.END) {
+            playersCount = world.playerEntities.size();
+            entityCount = world.loadedEntityList.size();
+            tileCount = world.loadedTileEntityList.size();
+            tickingTileCount = world.tickableTileEntities.size();
+            TIMER_WORLD.end();
         }
-        World world = event.world;
-        playersCount = world.playerEntities.size();
-        entityCount = world.loadedEntityList.size();
-        tileCount = world.loadedTileEntityList.size();
-        tickingTileCount = world.tickableTileEntities.size();
-        TIMER_WORLD.end();
+        world.profiler.endSection();
+        world.profiler.endSection();
     }
 
     @Override
