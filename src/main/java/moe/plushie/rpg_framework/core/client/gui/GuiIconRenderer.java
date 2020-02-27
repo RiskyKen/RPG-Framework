@@ -4,7 +4,9 @@ import moe.plushie.rpg_framework.api.core.IGuiIcon;
 import moe.plushie.rpg_framework.api.mail.IMailSystem;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.client.lib.LibGuiResources;
+import moe.plushie.rpg_framework.core.database.DatabaseManager;
 import moe.plushie.rpg_framework.mail.client.MailCounter;
+import moe.plushie.rpg_framework.stats.ModuleStats;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
@@ -41,9 +43,11 @@ public class GuiIconRenderer extends GuiScreen {
         width = scaledResolution.getScaledWidth();
         height = scaledResolution.getScaledHeight();
 
-        // fontRenderer.drawString("Database Queue Size: " + DatabaseManager.getQueueSize(), 1, 1, 0xFFFFFF);
-        // fontRenderer.drawString("Server Time: " + ModuleStats.getServerStatsHandler().TIMER_SERVER.getAverage(), 1, 11, 0xFFFFFF);
-        // fontRenderer.drawString("World Time: " + ModuleStats.getWorldStatsHandler().TIMER_WORLD.getAverage(), 1, 21, 0xFFFFFF);
+        if (RPGFramework.isDebugging()) {
+            fontRenderer.drawString("Database Queue Size: " + DatabaseManager.getQueueSize(), 1, 1, 0xFFFFFF);
+            fontRenderer.drawString("Server Time: " + ModuleStats.getServerStatsHandler().TIMER_SERVER.getAverage(), 1, 11, 0xFFFFFF);
+            fontRenderer.drawString("World Time: " + ModuleStats.getWorldStatsHandler().TIMER_WORLD.getAverage(), 1, 21, 0xFFFFFF);
+        }
 
         for (IMailSystem mailSystem : RPGFramework.getProxy().getMailSystemManager().getMailSystems()) {
             int messageCount = MailCounter.getUnreadMailCount(mailSystem);

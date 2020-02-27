@@ -77,4 +77,8 @@ public class RPGFramework {
     public static CreativeTabRPGEconomy getCreativeTabRPGEconomy() {
         return CREATIVE_TAB_RPG_ECONOMY;
     }
+
+    public static boolean isDebugging() {
+        return LibModInfo.VERSION.equals("@VERSION@");
+    }
 }
