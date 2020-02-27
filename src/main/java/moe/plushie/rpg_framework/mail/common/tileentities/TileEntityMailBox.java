@@ -6,8 +6,7 @@ import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.inventory.IGuiFactory;
 import moe.plushie.rpg_framework.core.common.tileentities.ModAutoSyncTileEntity;
-import moe.plushie.rpg_framework.core.database.DBPlayerInfo;
-import moe.plushie.rpg_framework.core.database.TablePlayers;
+import moe.plushie.rpg_framework.core.database.DatabaseManager;
 import moe.plushie.rpg_framework.mail.client.gui.GuiMailBox;
 import moe.plushie.rpg_framework.mail.common.MailSystem;
 import moe.plushie.rpg_framework.mail.common.blocks.BlockMailBox.MailboxTexture;
@@ -86,8 +85,7 @@ public class TileEntityMailBox extends ModAutoSyncTileEntity implements IGuiFact
     @Override
     public Container getServerGuiElement(EntityPlayer player, World world, BlockPos pos) {
         if (getMailSystem() != null) {
-            DBPlayerInfo dbPlayer = TablePlayers.getPlayerInfo(player.getGameProfile());
-            return new ContainerMailBox(this, player, dbPlayer, getMailSystem());
+            return new ContainerMailBox(this, player, DatabaseManager.getPlayerInfoWait(player.getGameProfile()), getMailSystem());
         }
         return null;
     }
