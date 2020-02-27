@@ -20,6 +20,7 @@ import moe.plushie.rpg_framework.core.database.driver.SQLiteDriver;
 
 public final class DatabaseManager {
 
+    private static final ExecutorService RETURN_EXECUTOR = Executors.newFixedThreadPool(10);
     private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(1);
     private static final IDatabaseDriver DATABASE_DRIVER = new SQLiteDriver();
 
@@ -68,7 +69,7 @@ public final class DatabaseManager {
     public static <V> ListenableFutureTask<V> createTaskAndExecute(Callable<V> callable, @Nullable FutureCallback<V> callback) {
         ListenableFutureTask futureTask = ListenableFutureTask.<V>create(callable);
         if (callback != null) {
-            Futures.addCallback(futureTask, callback);
+            Futures.addCallback(futureTask, callback, RETURN_EXECUTOR);
         }
         DatabaseManager.EXECUTOR.execute(futureTask);
         return futureTask;
@@ -81,7 +82,7 @@ public final class DatabaseManager {
     public static void createTaskAndExecute(Runnable runnable, @Nullable FutureCallback<Void> callback) {
         ListenableFutureTask futureTask = ListenableFutureTask.<Void>create(runnable, null);
         if (callback != null) {
-            Futures.addCallback(futureTask, callback);
+            Futures.addCallback(futureTask, callback,  RETURN_EXECUTOR);
         }
         DatabaseManager.EXECUTOR.execute(futureTask);
     }
