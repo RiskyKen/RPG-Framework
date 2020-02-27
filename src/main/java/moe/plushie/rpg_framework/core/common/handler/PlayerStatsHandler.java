@@ -52,7 +52,7 @@ public final class PlayerStatsHandler {
         World world = event.world;
         world.profiler.startSection(LibModInfo.ID + "heatmapUpdates");
         if ((world.getTotalWorldTime() % (20L * (ConfigHandler.optionsShared.heatmapTrackingRate))) != 0) {
-            // return;
+            return;
         }
         world.profiler.startSection("createTable");
         world.profiler.endStartSection("updateTable");
@@ -60,7 +60,6 @@ public final class PlayerStatsHandler {
 
             @Override
             public void run() {
-                // RPGFramework.getLogger().info("boop");
                 TableHeatmaps.addHeatmapData(world.playerEntities);
             }
         });
