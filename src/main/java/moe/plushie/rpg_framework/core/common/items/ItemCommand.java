@@ -3,20 +3,15 @@ package moe.plushie.rpg_framework.core.common.items;
 import moe.plushie.rpg_framework.core.common.init.ModBlocks;
 import moe.plushie.rpg_framework.core.common.init.ModItems;
 import moe.plushie.rpg_framework.core.common.lib.LibItemNames;
-import net.minecraft.client.Minecraft;
+import moe.plushie.rpg_framework.core.common.utils.RenderUtils;
 import net.minecraft.client.renderer.ItemMeshDefinition;
-import net.minecraft.client.renderer.ItemModelMesher;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelBakery;
-import net.minecraft.client.renderer.block.model.ModelManager;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.registry.IRegistry;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -69,24 +64,7 @@ public class ItemCommand extends AbstractModItem {
             public ModelResourceLocation getModelLocation(ItemStack stack) {
                 ModelResourceLocation mrl = null;
                 if (haveRenderTarget(stack)) {
-                    ItemStack renderStack = getRenderTarget(stack);
-                    try {
-                        ItemModelMesher mesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
-                        IBakedModel model = mesher.getItemModel(renderStack);
-
-                        ModelManager modelManager = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), "field_175617_aL", "modelManager");
-                        IRegistry<ModelResourceLocation, IBakedModel> modelRegistry = ReflectionHelper.getPrivateValue(ModelManager.class, modelManager, "field_174958_a", "modelRegistry");
-                        ModelResourceLocation[] keys = modelRegistry.getKeys().toArray(new ModelResourceLocation[modelRegistry.getKeys().size()]);
-
-                        for (int i = 0; i < keys.length; i++) {
-                            if (modelRegistry.getObject(keys[i]) == model) {
-                                mrl = keys[i];
-                                break;
-                            }
-                        }
-                    } catch (Exception e) {
-                        // TODO: handle exception
-                    }
+                    mrl = RenderUtils.getModelResourceLocation(getRenderTarget(stack));
                 }
                 if (mrl == null) {
                     mrl = modelResourceLocation;
