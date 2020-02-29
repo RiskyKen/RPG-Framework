@@ -23,14 +23,17 @@
 #
 # A new line can be inserted with %n. Please add/remove new lines to fit the localisations you are writing.
 
+
 # Block names
 tile.rpg_economy:mailbox.name=Mail Box
 tile.rpg_economy:auction.name=Auction House
 tile.rpg_economy:shop.name=Shop
 tile.rpg_economy:bank.name=Bank
 
+
 # Block tooltips
 #tile.rpg_economy:mailbox.tooltip=It's a mail box!
+
 
 # Item names
 item.rpg_economy:currency.0.name=Copper Coin
@@ -42,9 +45,12 @@ item.rpg_economy:currency.5.name=Diamond Coin
 item.rpg_economy:wallet.name=Wallet
 item.rpg_economy:loot_bag.name=Loot Bag
 item.rpg_economy:basic_loot_bag.name=Basic Loot Bag
+item.rpg_economy:command.name=Command
+
 
 # Item tooltips
 #item.rpg_economy:currency.0.tooltip=Test
+
 
 # Creative tab
 itemGroup.rpg_economy=RPG Framework

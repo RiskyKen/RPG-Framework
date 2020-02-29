@@ -32,7 +32,7 @@ public class ModuleItemData extends ModModule {
     @SideOnly(Side.CLIENT)
     @Override
     public void initRenderers() {
-        //MinecraftForge.EVENT_BUS.register(new ItemDataTooltipHandler());
+        // MinecraftForge.EVENT_BUS.register(new ItemDataTooltipHandler());
     }
 
     @Override

@@ -2,6 +2,7 @@ package moe.plushie.rpg_framework.core.common.init;
 
 import java.util.ArrayList;
 
+import moe.plushie.rpg_framework.core.common.items.ItemCommand;
 import moe.plushie.rpg_framework.currency.common.items.ItemCurrency;
 import moe.plushie.rpg_framework.currency.common.items.ItemWallet;
 import moe.plushie.rpg_framework.loot.common.items.ItemBasicLootBag;
@@ -20,6 +21,7 @@ public final class ModItems {
     public static final Item WALLET = new ItemWallet();
     public static final Item LOOT_BAG = new ItemLootBag();
     public static final Item BASIC_LOOT_BAG = new ItemBasicLootBag();
+    public static final Item COMMAND = new ItemCommand();
     
     public ModItems() {
         MinecraftForge.EVENT_BUS.register(this);
