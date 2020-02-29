@@ -10,6 +10,7 @@ import moe.plushie.rpg_framework.core.common.init.ModItems;
 import moe.plushie.rpg_framework.core.common.lib.LibModInfo;
 import moe.plushie.rpg_framework.core.common.module.IModModule;
 import moe.plushie.rpg_framework.core.common.module.ModModule;
+import moe.plushie.rpg_framework.core.common.utils.RenderUtils;
 import moe.plushie.rpg_framework.mail.client.RenderBlockMailBox;
 import moe.plushie.rpg_framework.mail.common.tileentities.TileEntityMailBox;
 import net.minecraft.block.Block;
@@ -32,7 +33,6 @@ public class ClientProxy extends CommonProxy {
     public void preInit(FMLPreInitializationEvent event) {
         super.preInit(event);
         new GuiResourceManager();
-        // File file = new File(event.getSuggestedConfigurationFile().getParentFile(), "sql.db");
     }
 
     @Override
@@ -60,6 +60,7 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public static void onModelBake(ModelBakeEvent event) {
+        RenderUtils.clearItemStackModelCache();
     }
 
     @Override

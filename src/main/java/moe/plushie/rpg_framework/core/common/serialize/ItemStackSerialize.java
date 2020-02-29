@@ -11,18 +11,12 @@ import com.google.gson.JsonSerializer;
 
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTException;
 
 public class ItemStackSerialize implements JsonSerializer<ItemStack>, JsonDeserializer<ItemStack> {
 
     @Override
     public ItemStack deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        try {
-            return SerializeHelper.readItemFromJson(json);
-        } catch (NBTException e) {
-            e.printStackTrace();
-        }
-        return ItemStack.EMPTY;
+        return SerializeHelper.readItemFromJson(json);
     }
 
     @Override

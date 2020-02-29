@@ -134,8 +134,8 @@ public class CurrencyCapability implements ICurrencyCapability {
 
         @Override
         public void readAsync(Capability<ICurrencyCapability> capability, ICurrencyCapability instance, GameProfile player, FutureCallback<ICurrencyCapability> callback) {
-            CurrencyManager currencyManager = RPGFramework.getProxy().getCurrencyManager();
-            Currency[] currencies = currencyManager.getCurrencies();
+            // CurrencyManager currencyManager = RPGFramework.getProxy().getCurrencyManager();
+            // Currency[] currencies = currencyManager.getCurrencies();
             DatabaseManager.createTaskAndExecute(new Callable<ICurrencyCapability>() {
 
                 @Override

@@ -5,7 +5,7 @@ import com.mojang.authlib.GameProfile;
 public final class PlayerUtils {
 
     private PlayerUtils() {
-        throw new IllegalAccessError();
+        throw new IllegalAccessError("Utility class.");
     }
 
     public static boolean gameProfilesMatch(GameProfile profile1, GameProfile profile2) {

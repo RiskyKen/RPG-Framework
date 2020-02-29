@@ -19,7 +19,6 @@ import moe.plushie.rpg_framework.core.RPGFramework;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -28,7 +27,7 @@ public final class SerializeHelper {
 
     private static final String TAG_COMPOUND = "compound";
     private static final String TAG_SLOT = "slot";
-    
+
     private SerializeHelper() {
     }
 
@@ -102,13 +101,9 @@ public final class SerializeHelper {
         NonNullList<ItemStack> items = NonNullList.<ItemStack>withSize(jsonArray.size(), ItemStack.EMPTY);
         for (int i = 0; i < jsonArray.size(); i++) {
             JsonObject jsonObject = jsonArray.get(i).getAsJsonObject();
-            try {
-                ItemStack itemStack = readItemFromJson(jsonObject);
-                int slot = jsonObject.get(TAG_SLOT).getAsInt();
-                items.set(slot, itemStack);
-            } catch (NBTException e) {
-                e.printStackTrace();
-            }
+            ItemStack itemStack = readItemFromJson(jsonObject);
+            int slot = jsonObject.get(TAG_SLOT).getAsInt();
+            items.set(slot, itemStack);
         }
         return items;
     }
@@ -129,51 +124,56 @@ public final class SerializeHelper {
         if (itemStack.hasTagCompound()) {
             jsonObject.addProperty("nbt", itemStack.getTagCompound().toString());
         }
-        
+
         NBTTagCompound compound = itemStack.writeToNBT(new NBTTagCompound());
         if (compound.hasKey("ForgeCaps", NBT.TAG_COMPOUND)) {
             jsonObject.addProperty("capabilities", compound.getCompoundTag("ForgeCaps").toString());
         }
-        
+
         return jsonObject;
     }
 
-    public static ItemStack readItemFromJson(JsonElement jsonElement) throws NBTException {
+    public static ItemStack readItemFromJson(JsonElement jsonElement) {
         return readItemFromJson(jsonElement.getAsJsonObject());
     }
 
-    public static ItemStack readItemFromJson(JsonObject jsonObject) throws NBTException {
-        if (jsonObject.has(TAG_COMPOUND)) {
-            NBTTagCompound compound = JsonToNBT.getTagFromJson(jsonObject.get(TAG_COMPOUND).getAsString());
-            return new ItemStack(compound);
-        }
-        if (!jsonObject.has("id")) {
-            return ItemStack.EMPTY;
-        }
-        Item item = Item.getByNameOrId(jsonObject.get("id").getAsString());
-        int count = 1;
-        int damage = 0;
-        NBTTagCompound capabilities = null;
-        if (jsonObject.has("count")) {
-            count = jsonObject.get("count").getAsInt();
-        }
-        if (jsonObject.has("Count")) {
-            count = jsonObject.get("Count").getAsInt();
-        }
-        if (jsonObject.has("damage")) {
-            damage = jsonObject.get("damage").getAsInt();
-        }
-        if (jsonObject.has("Damage")) {
-            damage = jsonObject.get("Damage").getAsInt();
-        }
-        if (jsonObject.has("capabilities")) {
-            capabilities = JsonToNBT.getTagFromJson(jsonObject.get("capabilities").getAsString());
-        }
-        ItemStack itemStack = new ItemStack(item, count, damage, capabilities);
-        if (jsonObject.has("nbt")) {
-            JsonElement elementNbt = jsonObject.get("nbt");
-            NBTTagCompound nbtBase = JsonToNBT.getTagFromJson(elementNbt.getAsString());
-            itemStack.setTagCompound(nbtBase);
+    public static ItemStack readItemFromJson(JsonObject jsonObject) {
+        ItemStack itemStack = ItemStack.EMPTY;
+        try {
+            if (jsonObject.has(TAG_COMPOUND)) {
+                NBTTagCompound compound = JsonToNBT.getTagFromJson(jsonObject.get(TAG_COMPOUND).getAsString());
+                return new ItemStack(compound);
+            }
+            if (!jsonObject.has("id")) {
+                return ItemStack.EMPTY;
+            }
+            Item item = Item.getByNameOrId(jsonObject.get("id").getAsString());
+            int count = 1;
+            int damage = 0;
+            NBTTagCompound capabilities = null;
+            if (jsonObject.has("count")) {
+                count = jsonObject.get("count").getAsInt();
+            }
+            if (jsonObject.has("Count")) {
+                count = jsonObject.get("Count").getAsInt();
+            }
+            if (jsonObject.has("damage")) {
+                damage = jsonObject.get("damage").getAsInt();
+            }
+            if (jsonObject.has("Damage")) {
+                damage = jsonObject.get("Damage").getAsInt();
+            }
+            if (jsonObject.has("capabilities")) {
+                capabilities = JsonToNBT.getTagFromJson(jsonObject.get("capabilities").getAsString());
+            }
+            itemStack = new ItemStack(item, count, damage, capabilities);
+            if (jsonObject.has("nbt")) {
+                JsonElement elementNbt = jsonObject.get("nbt");
+                NBTTagCompound nbtBase = JsonToNBT.getTagFromJson(elementNbt.getAsString());
+                itemStack.setTagCompound(nbtBase);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return itemStack;
     }
