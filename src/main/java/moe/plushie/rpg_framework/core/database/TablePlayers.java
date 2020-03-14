@@ -106,7 +106,7 @@ public final class TablePlayers {
             sql += "username=?";
             searchValue = gameProfile.getName();
         }
-        DBPlayerInfo playerInfo = null;
+        DBPlayerInfo playerInfo = DBPlayerInfo.MISSING_INFO;
         try (Connection conn = DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, searchValue);
             ResultSet resultSet = ps.executeQuery();
