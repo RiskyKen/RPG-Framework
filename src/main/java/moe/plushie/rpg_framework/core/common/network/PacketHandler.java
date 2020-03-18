@@ -35,29 +35,29 @@ public class PacketHandler {
 
     public PacketHandler() {
         // Client packets.
-        registerMessage(MessageClientGuiMailBox.class, MessageClientGuiMailBox.class, Side.SERVER);
-        registerMessage(MessageClientGuiButton.class, MessageClientGuiButton.class, Side.SERVER);
-        registerMessage(MessageClientKeyPress.class, MessageClientKeyPress.class, Side.SERVER);
-        registerMessage(MessageClientGuiShopUpdate.class, MessageClientGuiShopUpdate.class, Side.SERVER);
-        registerMessage(MessageClientRequestSync.class, MessageClientRequestSync.class, Side.SERVER);
-        registerMessage(MessageClientLootEditorUpdate.Handler.class, MessageClientLootEditorUpdate.class, Side.SERVER);
         registerMessage(MessageClientBasicLootUpdate.Handler.class, MessageClientBasicLootUpdate.class, Side.SERVER);
+        registerMessage(MessageClientGuiButton.class, MessageClientGuiButton.class, Side.SERVER);
+        registerMessage(MessageClientGuiMailBox.class, MessageClientGuiMailBox.class, Side.SERVER);
+        registerMessage(MessageClientGuiShopUpdate.class, MessageClientGuiShopUpdate.class, Side.SERVER);
+        registerMessage(MessageClientKeyPress.class, MessageClientKeyPress.class, Side.SERVER);
+        registerMessage(MessageClientLootEditorUpdate.Handler.class, MessageClientLootEditorUpdate.class, Side.SERVER);
+        registerMessage(MessageClientRequestSync.class, MessageClientRequestSync.class, Side.SERVER);
 
         // Server packets.
-        registerMessage(MessageServerSyncWalletCap.class, MessageServerSyncWalletCap.class, Side.CLIENT);
-        registerMessage(MessageServerSyncCurrencies.class, MessageServerSyncCurrencies.class, Side.CLIENT);
-        registerMessage(MessageServerSyncMailSystems.class, MessageServerSyncMailSystems.class, Side.CLIENT);
-        registerMessage(MessageServerShop.class, MessageServerShop.class, Side.CLIENT);
-        registerMessage(MessageServerSyncShops.class, MessageServerSyncShops.class, Side.CLIENT);
-        registerMessage(MessageServerSyncBanks.class, MessageServerSyncBanks.class, Side.CLIENT);
-        registerMessage(MessageServerSyncBankAccount.class, MessageServerSyncBankAccount.class, Side.CLIENT);
-        registerMessage(MessageServerSyncConfig.Handler.class, MessageServerSyncConfig.class, Side.CLIENT);
-        registerMessage(MessageServerSyncLootTables.Handler.class, MessageServerSyncLootTables.class, Side.CLIENT);
-        registerMessage(MessageServerSyncLoot.Handler.class, MessageServerSyncLoot.class, Side.CLIENT);
+        registerMessage(MessageServerCommand.Handler.class, MessageServerCommand.class, Side.CLIENT);
         registerMessage(MessageServerMailList.Handler.class, MessageServerMailList.class, Side.CLIENT);
         registerMessage(MessageServerMailResult.Handler.class, MessageServerMailResult.class, Side.CLIENT);
         registerMessage(MessageServerMailUnreadCount.Handler.class, MessageServerMailUnreadCount.class, Side.CLIENT);
-        registerMessage(MessageServerCommand.Handler.class, MessageServerCommand.class, Side.CLIENT);
+        registerMessage(MessageServerShop.class, MessageServerShop.class, Side.CLIENT);
+        registerMessage(MessageServerSyncBankAccount.class, MessageServerSyncBankAccount.class, Side.CLIENT);
+        registerMessage(MessageServerSyncBanks.class, MessageServerSyncBanks.class, Side.CLIENT);
+        registerMessage(MessageServerSyncConfig.Handler.class, MessageServerSyncConfig.class, Side.CLIENT);
+        registerMessage(MessageServerSyncCurrencies.class, MessageServerSyncCurrencies.class, Side.CLIENT);
+        registerMessage(MessageServerSyncLoot.Handler.class, MessageServerSyncLoot.class, Side.CLIENT);
+        registerMessage(MessageServerSyncLootTables.Handler.class, MessageServerSyncLootTables.class, Side.CLIENT);
+        registerMessage(MessageServerSyncMailSystems.class, MessageServerSyncMailSystems.class, Side.CLIENT);
+        registerMessage(MessageServerSyncShops.class, MessageServerSyncShops.class, Side.CLIENT);
+        registerMessage(MessageServerSyncWalletCap.class, MessageServerSyncWalletCap.class, Side.CLIENT);
     }
 
     private <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Class<? extends IMessageHandler<REQ, REPLY>> messageHandler, Class<REQ> requestMessageType, Side side) {
