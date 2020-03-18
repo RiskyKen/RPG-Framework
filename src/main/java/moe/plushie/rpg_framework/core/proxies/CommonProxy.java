@@ -146,7 +146,7 @@ public class CommonProxy {
         currencyVariants[3] = new CurrencyVariant("Platinum", 1000, new ItemMatcherStack(new ItemStack(ModItems.CURRENCY, 1, 3), true, false));
         currencyVariants[4] = new CurrencyVariant("Emerald", 10000, new ItemMatcherStack(new ItemStack(ModItems.CURRENCY, 1, 4), true, false));
         currencyVariants[5] = new CurrencyVariant("Diamond", 100000, new ItemMatcherStack(new ItemStack(ModItems.CURRENCY, 1, 5), true, false));
-        Currency currency = new Currency(new IdentifierString("example_currency.json"), "Example Currency", "%d", walletInfo, currencyVariants);
+        Currency currency = new Currency(new IdentifierString("money.json"), "Money", "%d", walletInfo, currencyVariants);
         currencyManager.saveCurrency(currency);
 
         // Shop
@@ -189,7 +189,7 @@ public class CommonProxy {
         TableShops.addNewShop(shop);
 
         // Mail System
-        MailSystem mailSystem = new MailSystem(new IdentifierString("example_mail.json"), "Example Mail System");
+        MailSystem mailSystem = new MailSystem(new IdentifierString("mail.json"), "Mail System");
         GuiIcon guiIconMain = new GuiIcon(new String[] { "net.minecraft.client.gui.GuiChat", "" }, AnchorHorizontal.RIGHT, AnchorVertical.TOP, -5, 5, 19, 0.75F);
         GuiIcon guiIconInventory = new GuiIcon(new String[] { "net.minecraft.client.gui.inventory.GuiInventory" }, AnchorHorizontal.CENTER, AnchorVertical.CENTER, 76, -70, 19, 0.75F);
         mailSystem.setCurrency(currency);
@@ -199,8 +199,8 @@ public class CommonProxy {
         mailSystemManager.saveMailSystem(mailSystem);
 
         // Bank
-        Bank bank = new Bank(new IdentifierString("example_bank.json"));
-        bank.setName("Example Bank");
+        Bank bank = new Bank(new IdentifierString("bank.json"));
+        bank.setName("Bank");
         ICost[] unlockCosts = new ICost[bank.getTabUnlockableCount()];
         for (int i = 0; i < unlockCosts.length; i++) {
             unlockCosts[i] = new Cost(new Wallet(currency, (i + 1) * 100));
