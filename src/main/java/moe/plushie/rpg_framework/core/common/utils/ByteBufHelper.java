@@ -45,4 +45,20 @@ public final class ByteBufHelper {
         
         return new String(utf8Bytes, StandardCharsets.UTF_8);
     }
+
+    public static void writeIntArray(ByteBuf buf, int[] array) {
+        buf.writeInt(array.length);
+        for (int i = 0; i < array.length; i++) {
+            buf.writeInt(array[i]);
+        }
+    }
+    
+    public static int[] readIntArray(ByteBuf buf) {
+        int size = buf.readInt();
+        int[] array = new int[size];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = buf.readInt();
+        }
+        return array;
+    }
 }

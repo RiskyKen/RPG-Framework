@@ -2,8 +2,8 @@ package moe.plushie.rpg_framework.stats.client.gui;
 
 import moe.plushie.rpg_framework.core.client.gui.GuiHelper;
 import moe.plushie.rpg_framework.core.client.gui.ModGuiContainer;
-import moe.plushie.rpg_framework.core.database.DatabaseManager;
 import moe.plushie.rpg_framework.stats.ModuleStats;
+import moe.plushie.rpg_framework.stats.common.StatsServer;
 import moe.plushie.rpg_framework.stats.common.StatsWorld;
 import moe.plushie.rpg_framework.stats.common.inventory.ContainerStats;
 import net.minecraft.client.Minecraft;
@@ -40,27 +40,38 @@ public class GuiStats extends ModGuiContainer<ContainerStats> {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         GuiHelper.renderLocalizedGuiName(fontRenderer, xSize, getName());
+        StatsServer statsServer = null;
+        if (Minecraft.getMinecraft().isIntegratedServerRunning()) {
+            statsServer = ModuleStats.getServerStatsHandler().getStatsServer();
+        } else {
+            statsServer = getContainer().getStatsServer();
+        }
 
-        fontRenderer.drawString("Database Queue Size: " + DatabaseManager.getQueueSize(), 8, 20 + 11 * 0, 0x000000);
-        fontRenderer.drawString("Server Time: " + ModuleStats.getServerStatsHandler().TIMER_SERVER.getAverageShort() + "ms", 8, 20 + 11 * 1, 0x000000);
-
-        int[] historyServer = ModuleStats.getServerStatsHandler().TIMER_SERVER.getFullHistory();
-        drawChart(8, ySize - 8, 1, historyServer, xSize - 16, 0x88DD0000, true);
+        fontRenderer.drawString("Server Time: " + statsServer.getHistoryTickTime().getAverageShort() + "ms", 8, 20 + 11 * 1, 0x000000);
+        fontRenderer.drawString("Loaded Chunks: " + statsServer.getLoadedChunks(), 8, 20 + 11 * 2, 0x000000);
+        fontRenderer.drawString("Players Online: " + statsServer.getPlayersOnline(), 8, 20 + 11 * 3, 0x000000);
+        fontRenderer.drawString("Mem Use: " + statsServer.getMemUseMB() + "MB", 8, 20 + 11 * 4, 0x000000);
+        drawChart(8, ySize - 8, 1, statsServer.getHistoryTickTime().getFullHistory(), xSize - 16, 0x88DD0000, true);
 
         World world = Minecraft.getMinecraft().world;
         if (world != null) {
-            StatsWorld statsWorld = ModuleStats.getWorldStatsHandler().getWorldStats(world.provider.getDimension());
+            StatsWorld statsWorld = null;
+            if (Minecraft.getMinecraft().isIntegratedServerRunning()) {
+                statsWorld = ModuleStats.getWorldStatsHandler().getWorldStats(world.provider.getDimension());
+            } else {
+                statsWorld = getContainer().getWorldStats(world.provider.getDimension());
+            }
             drawWorldStats(statsWorld);
         }
     }
 
     private void drawWorldStats(StatsWorld statsWorld) {
         if (statsWorld != null) {
-            fontRenderer.drawString(String.format("World Time (%d): ", statsWorld.getDimensionID()) + statsWorld.getHistoryTickTime().getAverageShort() + "ms", 8, 20 + 11 * 2, 0x000000);
-            fontRenderer.drawString("  Player Count: " + statsWorld.getPlayersCount() , 8, 20 + 11 * 3, 0x000000);
-            fontRenderer.drawString("  Entity Count: " + statsWorld.getEntityCount() , 8, 20 + 11 * 4, 0x000000);
-            fontRenderer.drawString("  Tile Count: " + statsWorld.getTileCount() , 8, 20 + 11 * 5, 0x000000);
-            fontRenderer.drawString("  Ticking Tile Count: " + statsWorld.getTickingTileCount() , 8, 20 + 11 * 6, 0x000000);
+            fontRenderer.drawString(String.format("World Time (%d): ", statsWorld.getDimensionID()) + statsWorld.getHistoryTickTime().getAverageShort() + "ms", 8, 20 + 11 * 5, 0x000000);
+            fontRenderer.drawString("  Player Count: " + statsWorld.getPlayersCount(), 8, 20 + 11 * 6, 0x000000);
+            fontRenderer.drawString("  Entity Count: " + statsWorld.getEntityCount(), 8, 20 + 11 * 7, 0x000000);
+            fontRenderer.drawString("  Tile Count: " + statsWorld.getTileCount(), 8, 20 + 11 * 8, 0x000000);
+            fontRenderer.drawString("  Ticking Tile Count: " + statsWorld.getTickingTileCount(), 8, 20 + 11 * 9, 0x000000);
             int[] historyWorld = statsWorld.getHistoryTickTime().getFullHistory();
             drawChart(8, ySize - 8, 1, historyWorld, xSize - 16, 0x8800DD00, true);
         }

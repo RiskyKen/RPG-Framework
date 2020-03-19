@@ -4,19 +4,15 @@ import moe.plushie.rpg_framework.core.common.config.ConfigHandler;
 import moe.plushie.rpg_framework.core.common.lib.LibModInfo;
 import moe.plushie.rpg_framework.core.database.DatabaseManager;
 import moe.plushie.rpg_framework.core.database.stats.TableStatsServer;
-import moe.plushie.rpg_framework.stats.common.StatsHistory;
-import moe.plushie.rpg_framework.stats.common.StatsHistory.IStatsResetCallback;
+import moe.plushie.rpg_framework.stats.common.StatsServer;
 import net.minecraft.profiler.Profiler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
 
-public final class ServerStatsHandler implements IStatsResetCallback {
+public final class ServerStatsHandler {
 
-    public final StatsHistory TIMER_SERVER = new StatsHistory(20, 60, this);
-
-    private int playersOnline = 0;
+    private StatsServer statsServer = new StatsServer();
 
     public ServerStatsHandler() {
         DatabaseManager.createTaskAndExecute(new Runnable() {
@@ -29,7 +25,11 @@ public final class ServerStatsHandler implements IStatsResetCallback {
             }
         });
     }
-    
+
+    public StatsServer getStatsServer() {
+        return statsServer;
+    }
+
     private Profiler getProfiler() {
         return FMLCommonHandler.instance().getMinecraftServerInstance().profiler;
     }
@@ -39,35 +39,9 @@ public final class ServerStatsHandler implements IStatsResetCallback {
         getProfiler().startSection("root");
         getProfiler().startSection(LibModInfo.ID);
         getProfiler().startSection("serverStats");
-        if (event.phase == Phase.START) {
-            TIMER_SERVER.begin();
-        }
-        if (event.phase == Phase.END) {
-            playersOnline = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers().size();
-            TIMER_SERVER.end();
-        }
+        statsServer.onServerTickEvent(event);
         getProfiler().endSection();
         getProfiler().endSection();
         getProfiler().endSection();
-    }
-
-    @Override
-    public void statsReset(StatsHistory statsTimer) {
-        if (!ConfigHandler.optionsLocal.trackServerStats) {
-            return;
-        }
-        float average = statsTimer.getAverageShort();
-        DatabaseManager.createTaskAndExecute(new Runnable() {
-
-            @Override
-            public void run() {
-                TableStatsServer.addRecords(playersOnline, average, getMemUseMB());
-            }
-        });
-    }
-
-    private int getMemUseMB() {
-        Runtime rt = Runtime.getRuntime();
-        return (int) (((rt.totalMemory() - rt.freeMemory()) / 1024L) / 1024L);
     }
 }

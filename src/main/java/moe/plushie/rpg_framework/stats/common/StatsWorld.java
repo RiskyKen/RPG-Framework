@@ -16,7 +16,7 @@ public class StatsWorld implements IStatsResetCallback {
 
     private final int dimensionID;
 
-    private StatsHistory historyTickTime = new StatsHistory(TICKS_IN_SECOND, HISTORY_MULTIPLIER, this);
+    private final StatsHistory historyTickTime;
     // private StatsHistory historyPlayerCount = new StatsHistory(TICKS_IN_SECOND, HISTORY_MULTIPLIER);
     // private StatsHistory historyEntityCount = new StatsHistory(TICKS_IN_SECOND, HISTORY_MULTIPLIER);
     // private StatsHistory historyTileCount = new StatsHistory(TICKS_IN_SECOND, HISTORY_MULTIPLIER);
@@ -28,7 +28,12 @@ public class StatsWorld implements IStatsResetCallback {
     private int tickingTileCount = 0;
 
     public StatsWorld(int dimensionID) {
+        this(dimensionID, HISTORY_MULTIPLIER);
+    }
+
+    public StatsWorld(int dimensionID, int longAmountMultiplier) {
         this.dimensionID = dimensionID;
+        historyTickTime = new StatsHistory(TICKS_IN_SECOND, longAmountMultiplier, this);
     }
 
     public int getDimensionID() {
@@ -71,6 +76,14 @@ public class StatsWorld implements IStatsResetCallback {
     // return historyTickingTileCount;
     // }
 
+    public void updateStats(int[] historyTickTime, int playersCount, int entityCount, int tileCount, int tickingTileCount) {
+        this.historyTickTime.add(historyTickTime);
+        this.playersCount = playersCount;
+        this.entityCount = entityCount;
+        this.tileCount = tileCount;
+        this.tickingTileCount = tickingTileCount;
+    }
+    
     public void onWorldTickEvent(WorldTickEvent event) {
         World world = event.world;
         world.profiler.startSection(LibModInfo.ID);

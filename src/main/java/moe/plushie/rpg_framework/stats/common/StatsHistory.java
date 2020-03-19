@@ -36,7 +36,13 @@ public class StatsHistory {
             count = 0;
         }
     }
-    
+
+    public void add(int[] values) {
+        for (int i = 0; i < values.length; i++) {
+            add(values[i]);
+        }
+    }
+
     public void add(int value) {
         history[count] = value;
         count++;

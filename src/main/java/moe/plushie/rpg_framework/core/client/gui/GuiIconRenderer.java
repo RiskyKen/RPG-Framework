@@ -52,7 +52,7 @@ public class GuiIconRenderer extends GuiScreen {
             if (world != null) {
                 StatsWorld statsWorld = ModuleStats.getWorldStatsHandler().getWorldStats(world.provider.getDimension());
                 fontRenderer.drawString("Database Queue Size: " + DatabaseManager.getQueueSize(), 1, 1, 0xFFFFFF);
-                fontRenderer.drawString("Server Time: " + ModuleStats.getServerStatsHandler().TIMER_SERVER.getAverageShort() + "ms", 1, 11, 0xFFFFFF);
+                fontRenderer.drawString("Server Time: " + ModuleStats.getServerStatsHandler().getStatsServer().getHistoryTickTime().getAverageShort() + "ms", 1, 11, 0xFFFFFF);
                 if (statsWorld != null) {
                     fontRenderer.drawString(String.format("World Time (%d): ", statsWorld.getDimensionID()) + statsWorld.getHistoryTickTime().getAverageShort() + "ms", 1, 21, 0xFFFFFF);
                 }

@@ -13,6 +13,7 @@ import moe.plushie.rpg_framework.core.common.network.server.MessageServerMailLis
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerMailResult;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerMailUnreadCount;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerShop;
+import moe.plushie.rpg_framework.core.common.network.server.MessageServerStatsUpdate;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerSyncBankAccount;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerSyncBanks;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerSyncConfig;
@@ -49,6 +50,7 @@ public class PacketHandler {
         registerMessage(MessageServerMailResult.Handler.class, MessageServerMailResult.class, Side.CLIENT);
         registerMessage(MessageServerMailUnreadCount.Handler.class, MessageServerMailUnreadCount.class, Side.CLIENT);
         registerMessage(MessageServerShop.class, MessageServerShop.class, Side.CLIENT);
+        registerMessage(MessageServerStatsUpdate.Handler.class, MessageServerStatsUpdate.class, Side.CLIENT);
         registerMessage(MessageServerSyncBankAccount.class, MessageServerSyncBankAccount.class, Side.CLIENT);
         registerMessage(MessageServerSyncBanks.class, MessageServerSyncBanks.class, Side.CLIENT);
         registerMessage(MessageServerSyncConfig.Handler.class, MessageServerSyncConfig.class, Side.CLIENT);

@@ -81,4 +81,8 @@ public class RPGFramework {
     public static boolean isDebugging() {
         return LibModInfo.VERSION.equals("@VERSION@");
     }
+    
+    public static boolean isDedicated() {
+        return proxy.getClass() == CommonProxy.class;
+    }
 }
