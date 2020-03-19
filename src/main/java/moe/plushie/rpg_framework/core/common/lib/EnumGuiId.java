@@ -10,7 +10,8 @@ public enum EnumGuiId {
     BANK_TILE(true),
     BANK_COMMAND(false),
     LOOT_EDITOR_COMMAND(false),
-    BASIC_LOOT_BAG(false);
+    BASIC_LOOT_BAG(false),
+    STATS(false);
     
     private final boolean tile;
     

@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import moe.plushie.rpg_framework.bank.common.command.CommandBank;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.command.CommandExecute.ICommandExecute;
+import moe.plushie.rpg_framework.core.common.lib.EnumGuiId;
 import moe.plushie.rpg_framework.core.common.lib.LibModInfo;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerCommand;
@@ -18,6 +20,7 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 
 public class CommandRpg extends ModSubCommands {
 
@@ -44,6 +47,14 @@ public class CommandRpg extends ModSubCommands {
             public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
                 EntityPlayerMP player = getCommandSenderAsPlayer(sender);
                 PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerCommand(ServerCommandType.OPEN_PACK_FOLDER), player);
+            }
+        }));
+        addSubCommand(new CommandExecute(this, "stats", new ICommandExecute() {
+
+            @Override
+            public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+                EntityPlayerMP player = getCommandSenderAsPlayer(sender);
+                FMLNetworkHandler.openGui(player, RPGFramework.getInstance(), EnumGuiId.STATS.ordinal(), server.getEntityWorld(), 0, 0, 0);
             }
         }));
     }

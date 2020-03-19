@@ -23,15 +23,25 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public final class GuiHelper {
-
+    
+    private static final ResourceLocation TEXTURE_BACKGROUND = new ResourceLocation(LibGuiResources.BACKGROUND);
     private static final ResourceLocation PLAYER_TEXTURE = new ResourceLocation(LibGuiResources.PLAYER_INVENTORY);
 
     private GuiHelper() {
+    }
+    
+    public static void bindTexture(ResourceLocation texture) {
+        Minecraft.getMinecraft().renderEngine.bindTexture(texture);
+    }
+    
+    public static void renderBackgroundTexture(int x, int y, int width, int height, float zLevel) {
+        GuiUtils.drawContinuousTexturedBox(TEXTURE_BACKGROUND, x, y, 0, 0, width, height, 64, 64, 5, zLevel);
     }
 
     public static void renderCost(FontRenderer fontRenderer, RenderItem itemRender, ICost cost, int slotX, int slotY) {

@@ -7,6 +7,8 @@ import moe.plushie.rpg_framework.core.client.lib.LibGuiResources;
 import moe.plushie.rpg_framework.core.database.DatabaseManager;
 import moe.plushie.rpg_framework.mail.client.MailCounter;
 import moe.plushie.rpg_framework.stats.ModuleStats;
+import moe.plushie.rpg_framework.stats.client.gui.GuiStats;
+import moe.plushie.rpg_framework.stats.common.StatsWorld;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
@@ -14,6 +16,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -43,10 +46,17 @@ public class GuiIconRenderer extends GuiScreen {
         width = scaledResolution.getScaledWidth();
         height = scaledResolution.getScaledHeight();
 
-        if (RPGFramework.isDebugging()) {
-            fontRenderer.drawString("Database Queue Size: " + DatabaseManager.getQueueSize(), 1, 1, 0xFFFFFF);
-            fontRenderer.drawString("Server Time: " + ModuleStats.getServerStatsHandler().TIMER_SERVER.getAverage(), 1, 11, 0xFFFFFF);
-            fontRenderer.drawString("World Time: " + ModuleStats.getWorldStatsHandler().TIMER_WORLD.getAverage(), 1, 21, 0xFFFFFF);
+        if (RPGFramework.isDebugging() & !(mc.currentScreen instanceof GuiStats)) {
+
+            World world = Minecraft.getMinecraft().world;
+            if (world != null) {
+                StatsWorld statsWorld = ModuleStats.getWorldStatsHandler().getWorldStats(world.provider.getDimension());
+                fontRenderer.drawString("Database Queue Size: " + DatabaseManager.getQueueSize(), 1, 1, 0xFFFFFF);
+                fontRenderer.drawString("Server Time: " + ModuleStats.getServerStatsHandler().TIMER_SERVER.getAverageShort() + "ms", 1, 11, 0xFFFFFF);
+                if (statsWorld != null) {
+                    fontRenderer.drawString(String.format("World Time (%d): ", statsWorld.getDimensionID()) + statsWorld.getHistoryTickTime().getAverageShort() + "ms", 1, 21, 0xFFFFFF);
+                }
+            }
         }
 
         for (IMailSystem mailSystem : RPGFramework.getProxy().getMailSystemManager().getMailSystems()) {

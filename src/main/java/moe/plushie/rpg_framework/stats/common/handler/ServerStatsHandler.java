@@ -4,8 +4,8 @@ import moe.plushie.rpg_framework.core.common.config.ConfigHandler;
 import moe.plushie.rpg_framework.core.common.lib.LibModInfo;
 import moe.plushie.rpg_framework.core.database.DatabaseManager;
 import moe.plushie.rpg_framework.core.database.stats.TableStatsServer;
-import moe.plushie.rpg_framework.stats.common.StatsTimer;
-import moe.plushie.rpg_framework.stats.common.StatsTimer.IStatsResetCallback;
+import moe.plushie.rpg_framework.stats.common.StatsHistory;
+import moe.plushie.rpg_framework.stats.common.StatsHistory.IStatsResetCallback;
 import net.minecraft.profiler.Profiler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -14,7 +14,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
 
 public final class ServerStatsHandler implements IStatsResetCallback {
 
-    public final StatsTimer TIMER_SERVER = new StatsTimer(20, this);
+    public final StatsHistory TIMER_SERVER = new StatsHistory(20, 60, this);
 
     private int playersOnline = 0;
 
@@ -52,11 +52,11 @@ public final class ServerStatsHandler implements IStatsResetCallback {
     }
 
     @Override
-    public void statsReset(StatsTimer statsTimer) {
+    public void statsReset(StatsHistory statsTimer) {
         if (!ConfigHandler.optionsLocal.trackServerStats) {
             return;
         }
-        float average = statsTimer.getAverage();
+        float average = statsTimer.getAverageShort();
         DatabaseManager.createTaskAndExecute(new Runnable() {
 
             @Override

@@ -156,6 +156,10 @@ inventory.rpg_economy:shop.dialog.cost_edit.dialog.edit_items.button.nbt.yes=Mat
 inventory.rpg_economy:shop.dialog.cost_edit.dialog.edit_items.button.nbt.no=Don't Match NBT
 
 
+# Inventory - Stats
+inventory.rpg_economy:stats.name=Stats
+
+
 # Inventory - Wallet
 inventory.rpg_economy:wallet.name=Wallet
 

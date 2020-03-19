@@ -23,6 +23,8 @@ import moe.plushie.rpg_framework.loot.common.inventory.ContainerBasicLootBag;
 import moe.plushie.rpg_framework.loot.common.inventory.ContainerLootEditor;
 import moe.plushie.rpg_framework.shop.client.gui.GuiShop;
 import moe.plushie.rpg_framework.shop.common.inventory.ContainerShop;
+import moe.plushie.rpg_framework.stats.client.gui.GuiStats;
+import moe.plushie.rpg_framework.stats.common.inventory.ContainerStats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -85,6 +87,8 @@ public class GuiHandler implements IGuiHandler {
                 return new ContainerBasicLootBag(player, stack);
             }
             break;
+        case STATS:
+            return new ContainerStats(player);
         default:
             break;
         }
@@ -137,6 +141,8 @@ public class GuiHandler implements IGuiHandler {
                 return new GuiBasicLootBag(player, stack);
             }
             break;
+        case STATS:
+            return new GuiStats(player);
         default:
             break;
         }

@@ -1,20 +1,18 @@
 package moe.plushie.rpg_framework.stats.common.handler;
 
+import java.util.HashMap;
+
 import moe.plushie.rpg_framework.core.common.config.ConfigHandler;
-import moe.plushie.rpg_framework.core.common.lib.LibModInfo;
 import moe.plushie.rpg_framework.core.database.DatabaseManager;
 import moe.plushie.rpg_framework.core.database.stats.TableStatsWorld;
-import moe.plushie.rpg_framework.stats.common.StatsTimer;
-import moe.plushie.rpg_framework.stats.common.StatsTimer.IStatsResetCallback;
+import moe.plushie.rpg_framework.stats.common.StatsWorld;
 import net.minecraft.profiler.Profiler;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
-public final class WorldStatsHandler implements IStatsResetCallback {
+public final class WorldStatsHandler {
 
     public WorldStatsHandler() {
         DatabaseManager.createTaskAndExecute(new Runnable() {
@@ -32,50 +30,21 @@ public final class WorldStatsHandler implements IStatsResetCallback {
         return FMLCommonHandler.instance().getMinecraftServerInstance().profiler;
     }
 
-    public StatsTimer TIMER_WORLD = new StatsTimer(20, this);
-
-    private int playersCount = 0;
-    private int entityCount = 0;
-    private int tileCount = 0;
-    private int tickingTileCount = 0;
-
+    private HashMap<Integer, StatsWorld> worldStatsMap = new HashMap<Integer, StatsWorld>();
+    
+    public StatsWorld getWorldStats(int dimensionID) {
+        return worldStatsMap.get(Integer.valueOf(dimensionID));
+    }
+    
     @SubscribeEvent
     public void onWorldTickEvent(WorldTickEvent event) {
         if (event.side == Side.CLIENT) {
             return;
         }
-        if (event.world.provider.getDimension() != 0) {
-            return;
+        Integer id = Integer.valueOf(event.world.provider.getDimension());
+        if (!worldStatsMap.containsKey(id)) {
+            worldStatsMap.put(id, new StatsWorld(id.intValue()));
         }
-        World world = event.world;
-        world.profiler.startSection(LibModInfo.ID);
-        world.profiler.startSection("worldStats");
-        if (event.phase == Phase.START) {
-            TIMER_WORLD.begin();
-        }
-        if (event.phase == Phase.END) {
-            playersCount = world.playerEntities.size();
-            entityCount = world.loadedEntityList.size();
-            tileCount = world.loadedTileEntityList.size();
-            tickingTileCount = world.tickableTileEntities.size();
-            TIMER_WORLD.end();
-        }
-        world.profiler.endSection();
-        world.profiler.endSection();
-    }
-
-    @Override
-    public void statsReset(StatsTimer statsTimer) {
-        if (!ConfigHandler.optionsLocal.trackWorldStats) {
-            return;
-        }
-        float tickTime = statsTimer.getAverage();
-        DatabaseManager.createTaskAndExecute(new Runnable() {
-
-            @Override
-            public void run() {
-                TableStatsWorld.addRecords(0, playersCount, tickTime, entityCount, tileCount, tickingTileCount);
-            }
-        });
+        worldStatsMap.get(id).onWorldTickEvent(event);
     }
 }
