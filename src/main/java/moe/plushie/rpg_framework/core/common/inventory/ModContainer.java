@@ -16,20 +16,20 @@ public class ModContainer extends Container {
 
     protected final InventoryPlayer invPlayer;
     private final ArrayList<Slot> slotsPlayer;
-    
+
     private int playerInvStartIndex;
     private int playerInvEndIndex;
-    
+
     public ModContainer(InventoryPlayer invPlayer) {
         this.invPlayer = invPlayer;
         this.slotsPlayer = new ArrayList<Slot>();
     }
-    
+
     protected void addSlotToContainerAndList(Slot slot, List<Slot> list) {
         addSlotToContainer(slot);
         list.add(slot);
     }
-    
+
     protected void addPlayerSlots(int posX, int posY) {
         playerInvStartIndex = inventorySlots.size();
         int playerInvY = posY;
@@ -42,34 +42,38 @@ public class ModContainer extends Container {
                 addSlotToContainerAndList(new SlotHidable(invPlayer, x + y * 9 + 9, posX + 18 * x, playerInvY + y * 18), slotsPlayer);
             }
         }
-        playerInvEndIndex  = inventorySlots.size();
+        playerInvEndIndex = inventorySlots.size();
     }
-    
+
+    public boolean isRemote() {
+        return invPlayer.player.getEntityWorld().isRemote;
+    }
+
     public int getPlayerInvStartIndex() {
         return playerInvStartIndex;
     }
-    
+
     public int getPlayerInvEndIndex() {
         return playerInvEndIndex;
     }
-    
+
     public ArrayList<Slot> getSlotsPlayer() {
         return slotsPlayer;
     }
-    
+
     public boolean isSlotPlayerInv(int index) {
         return index >= playerInvStartIndex & index < playerInvEndIndex;
     }
-    
+
     protected boolean canSlotHoldItem(int slotIndex, ItemStack itemStack) {
         Slot slot = getSlot(slotIndex);
         return canSlotHoldItem(slot, itemStack);
     }
-    
+
     protected boolean canSlotHoldItem(Slot slot, ItemStack itemStack) {
         return slot.isEnabled() & slot.isItemValid(itemStack);
     }
-    
+
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
         if (!isSlotPlayerInv(index)) {
@@ -96,12 +100,12 @@ public class ModContainer extends Container {
             return transferStackFromPlayer(playerIn, index);
         }
     }
-    
+
     @Nonnull
     protected ItemStack transferStackFromPlayer(EntityPlayer playerIn, int index) {
         return ItemStack.EMPTY;
     }
-    
+
     @Override
     public boolean canInteractWith(EntityPlayer playerIn) {
         return !playerIn.isDead;

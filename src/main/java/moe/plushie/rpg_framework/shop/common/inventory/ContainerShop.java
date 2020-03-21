@@ -99,6 +99,9 @@ public class ContainerShop extends ModContainer {
     }
 
     private void loadShop(IIdentifier identifier) {
+        if (isRemote()) {
+            return;
+        }
         loadingShop = true;
         if (identifier == null) {
             setShop(null);
