@@ -1,4 +1,4 @@
-package moe.plushie.rpg_framework.core.common.database.stats;
+package moe.plushie.rpg_framework.stats.common.database;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

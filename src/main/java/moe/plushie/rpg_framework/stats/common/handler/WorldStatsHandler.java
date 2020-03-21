@@ -4,8 +4,8 @@ import java.util.HashMap;
 
 import moe.plushie.rpg_framework.core.common.config.ConfigHandler;
 import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
-import moe.plushie.rpg_framework.core.common.database.stats.TableStatsWorld;
 import moe.plushie.rpg_framework.stats.common.StatsWorld;
+import moe.plushie.rpg_framework.stats.common.database.TableStatsWorld;
 import net.minecraft.profiler.Profiler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;

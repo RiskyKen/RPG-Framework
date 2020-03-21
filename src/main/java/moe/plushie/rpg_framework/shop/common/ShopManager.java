@@ -20,11 +20,11 @@ import moe.plushie.rpg_framework.api.shop.IShopManager;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
-import moe.plushie.rpg_framework.core.common.database.stats.TableStatsShopSales;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerSyncShops;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import moe.plushie.rpg_framework.shop.common.serialize.ShopSerializer;
+import moe.plushie.rpg_framework.stats.common.database.TableStatsShopSales;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.MinecraftForge;
 

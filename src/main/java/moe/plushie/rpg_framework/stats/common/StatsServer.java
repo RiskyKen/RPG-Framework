@@ -2,8 +2,8 @@ package moe.plushie.rpg_framework.stats.common;
 
 import moe.plushie.rpg_framework.core.common.config.ConfigHandler;
 import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
-import moe.plushie.rpg_framework.core.common.database.stats.TableStatsServer;
 import moe.plushie.rpg_framework.stats.common.StatsHistory.IStatsResetCallback;
+import moe.plushie.rpg_framework.stats.common.database.TableStatsServer;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;

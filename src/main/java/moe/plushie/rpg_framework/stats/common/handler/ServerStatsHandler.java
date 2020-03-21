@@ -2,9 +2,9 @@ package moe.plushie.rpg_framework.stats.common.handler;
 
 import moe.plushie.rpg_framework.core.common.config.ConfigHandler;
 import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
-import moe.plushie.rpg_framework.core.common.database.stats.TableStatsServer;
 import moe.plushie.rpg_framework.core.common.lib.LibModInfo;
 import moe.plushie.rpg_framework.stats.common.StatsServer;
+import moe.plushie.rpg_framework.stats.common.database.TableStatsServer;
 import net.minecraft.profiler.Profiler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
