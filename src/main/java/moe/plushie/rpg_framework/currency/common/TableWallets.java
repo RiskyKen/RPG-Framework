@@ -1,4 +1,4 @@
-package moe.plushie.rpg_framework.core.database;
+package moe.plushie.rpg_framework.currency.common;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,6 +11,10 @@ import com.mojang.authlib.GameProfile;
 import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.currency.IWallet;
 import moe.plushie.rpg_framework.core.RPGFramework;
+import moe.plushie.rpg_framework.core.common.database.DBPlayer;
+import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
+import moe.plushie.rpg_framework.core.common.database.DatebaseTable;
+import moe.plushie.rpg_framework.core.common.database.TablePlayers;
 
 public final class TableWallets {
 

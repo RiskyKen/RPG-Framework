@@ -6,7 +6,7 @@ import java.util.Random;
 import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.loot.ILootTable;
 import moe.plushie.rpg_framework.api.loot.ILootTablePool;
-import moe.plushie.rpg_framework.core.database.loot.TableLootPools;
+import moe.plushie.rpg_framework.core.common.database.loot.TableLootPools;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 

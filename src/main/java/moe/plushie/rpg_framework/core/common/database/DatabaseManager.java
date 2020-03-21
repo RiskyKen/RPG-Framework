@@ -1,4 +1,4 @@
-package moe.plushie.rpg_framework.core.database;
+package moe.plushie.rpg_framework.core.common.database;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -15,8 +15,8 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFutureTask;
 import com.mojang.authlib.GameProfile;
 
-import moe.plushie.rpg_framework.core.database.driver.IDatabaseDriver;
-import moe.plushie.rpg_framework.core.database.driver.SQLiteDriver;
+import moe.plushie.rpg_framework.core.common.database.driver.IDatabaseDriver;
+import moe.plushie.rpg_framework.core.common.database.driver.SQLiteDriver;
 
 public final class DatabaseManager {
 

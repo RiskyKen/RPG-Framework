@@ -1,10 +1,10 @@
-package moe.plushie.rpg_framework.core.database.driver;
+package moe.plushie.rpg_framework.core.common.database.driver;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import moe.plushie.rpg_framework.core.database.DatebaseTable;
+import moe.plushie.rpg_framework.core.common.database.DatebaseTable;
 
 public interface IDatabaseDriver {
 

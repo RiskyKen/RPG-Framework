@@ -3,8 +3,8 @@ package moe.plushie.rpg_framework.stats.common.handler;
 import java.util.HashMap;
 
 import moe.plushie.rpg_framework.core.common.config.ConfigHandler;
-import moe.plushie.rpg_framework.core.database.DatabaseManager;
-import moe.plushie.rpg_framework.core.database.stats.TableStatsWorld;
+import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
+import moe.plushie.rpg_framework.core.common.database.stats.TableStatsWorld;
 import moe.plushie.rpg_framework.stats.common.StatsWorld;
 import net.minecraft.profiler.Profiler;
 import net.minecraftforge.fml.common.FMLCommonHandler;

@@ -6,7 +6,6 @@ import moe.plushie.rpg_framework.api.currency.ICurrency;
 import moe.plushie.rpg_framework.api.mail.IMailMessage;
 import moe.plushie.rpg_framework.api.mail.IMailSystem;
 import moe.plushie.rpg_framework.core.RPGFramework;
-import moe.plushie.rpg_framework.core.database.TableMail;
 import net.minecraft.entity.player.EntityPlayerMP;
 
 public class MailSystem implements IMailSystem, Comparable<IMailSystem> {

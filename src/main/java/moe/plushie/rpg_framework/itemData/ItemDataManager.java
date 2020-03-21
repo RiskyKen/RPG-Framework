@@ -11,8 +11,7 @@ import moe.plushie.rpg_framework.api.currency.ICost;
 import moe.plushie.rpg_framework.api.itemData.IItemData;
 import moe.plushie.rpg_framework.api.itemData.IItemDataManager;
 import moe.plushie.rpg_framework.core.common.addons.ModAddonManager;
-import moe.plushie.rpg_framework.core.database.DatabaseManager;
-import moe.plushie.rpg_framework.core.database.TableItemData;
+import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
 
 public final class ItemDataManager implements IItemDataManager {
 

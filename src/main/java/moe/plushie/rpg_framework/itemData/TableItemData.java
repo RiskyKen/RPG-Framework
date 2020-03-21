@@ -1,4 +1,4 @@
-package moe.plushie.rpg_framework.core.database;
+package moe.plushie.rpg_framework.itemData;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,10 +8,11 @@ import java.sql.Statement;
 
 import moe.plushie.rpg_framework.api.currency.ICost;
 import moe.plushie.rpg_framework.api.itemData.IItemData;
+import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
+import moe.plushie.rpg_framework.core.common.database.DatebaseTable;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import moe.plushie.rpg_framework.currency.common.Cost;
 import moe.plushie.rpg_framework.currency.common.serialize.CostSerializer;
-import moe.plushie.rpg_framework.itemData.ItemData;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;

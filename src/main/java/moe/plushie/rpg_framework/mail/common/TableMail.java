@@ -1,4 +1,4 @@
-package moe.plushie.rpg_framework.core.database;
+package moe.plushie.rpg_framework.mail.common;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,9 +14,12 @@ import moe.plushie.rpg_framework.api.mail.IMailMessage;
 import moe.plushie.rpg_framework.api.mail.IMailSystem;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.IdentifierString;
+import moe.plushie.rpg_framework.core.common.database.DBPlayer;
+import moe.plushie.rpg_framework.core.common.database.DBPlayerInfo;
+import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
+import moe.plushie.rpg_framework.core.common.database.DatebaseTable;
+import moe.plushie.rpg_framework.core.common.database.TablePlayers;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
-import moe.plushie.rpg_framework.mail.common.MailListItem;
-import moe.plushie.rpg_framework.mail.common.MailMessage;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;

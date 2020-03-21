@@ -7,7 +7,7 @@ import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.command.ModCommand;
 import moe.plushie.rpg_framework.core.common.lib.EnumGuiId;
-import moe.plushie.rpg_framework.core.database.TableShops;
+import moe.plushie.rpg_framework.shop.common.TableShops;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;

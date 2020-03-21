@@ -1,4 +1,4 @@
-package moe.plushie.rpg_framework.core.database.stats;
+package moe.plushie.rpg_framework.core.common.database.stats;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,9 +7,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import moe.plushie.rpg_framework.api.core.IIdentifier;
+import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
+import moe.plushie.rpg_framework.core.common.database.DatebaseTable;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
-import moe.plushie.rpg_framework.core.database.DatabaseManager;
-import moe.plushie.rpg_framework.core.database.DatebaseTable;
 import net.minecraft.item.ItemStack;
 
 public final class TableStatsShopSales {

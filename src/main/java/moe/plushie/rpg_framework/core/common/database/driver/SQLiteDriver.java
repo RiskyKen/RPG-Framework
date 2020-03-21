@@ -1,4 +1,4 @@
-package moe.plushie.rpg_framework.core.database.driver;
+package moe.plushie.rpg_framework.core.common.database.driver;
 
 import java.io.File;
 import java.sql.Connection;
@@ -19,7 +19,7 @@ import org.sqlite.SQLiteConfig.SynchronousMode;
 import org.sqlite.javax.SQLiteConnectionPoolDataSource;
 
 import moe.plushie.rpg_framework.core.RPGFramework;
-import moe.plushie.rpg_framework.core.database.DatebaseTable;
+import moe.plushie.rpg_framework.core.common.database.DatebaseTable;
 
 public final class SQLiteDriver implements IDatabaseDriver {
 

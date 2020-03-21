@@ -1,4 +1,4 @@
-package moe.plushie.rpg_framework.core.database.loot;
+package moe.plushie.rpg_framework.core.common.database.loot;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,10 +17,10 @@ import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.loot.ILootTableItem;
 import moe.plushie.rpg_framework.api.loot.ILootTablePool;
 import moe.plushie.rpg_framework.core.common.IdentifierInt;
+import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
+import moe.plushie.rpg_framework.core.common.database.DatebaseTable;
 import moe.plushie.rpg_framework.core.common.serialize.ItemStackSerialize;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
-import moe.plushie.rpg_framework.core.database.DatabaseManager;
-import moe.plushie.rpg_framework.core.database.DatebaseTable;
 import moe.plushie.rpg_framework.loot.common.LootTableItem;
 import moe.plushie.rpg_framework.loot.common.LootTablePool;
 import net.minecraft.item.ItemStack;

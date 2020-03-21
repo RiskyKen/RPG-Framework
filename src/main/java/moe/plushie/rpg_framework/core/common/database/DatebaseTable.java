@@ -1,4 +1,4 @@
-package moe.plushie.rpg_framework.core.database;
+package moe.plushie.rpg_framework.core.common.database;
 
 public enum DatebaseTable {
     PLAYER_DATA,

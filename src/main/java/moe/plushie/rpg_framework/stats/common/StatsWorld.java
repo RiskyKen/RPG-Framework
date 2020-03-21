@@ -1,9 +1,9 @@
 package moe.plushie.rpg_framework.stats.common;
 
 import moe.plushie.rpg_framework.core.common.config.ConfigHandler;
+import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
+import moe.plushie.rpg_framework.core.common.database.stats.TableStatsWorld;
 import moe.plushie.rpg_framework.core.common.lib.LibModInfo;
-import moe.plushie.rpg_framework.core.database.DatabaseManager;
-import moe.plushie.rpg_framework.core.database.stats.TableStatsWorld;
 import moe.plushie.rpg_framework.stats.common.StatsHistory.IStatsResetCallback;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;

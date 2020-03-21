@@ -4,7 +4,7 @@ import moe.plushie.rpg_framework.api.core.IGuiIcon;
 import moe.plushie.rpg_framework.api.mail.IMailSystem;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.client.lib.LibGuiResources;
-import moe.plushie.rpg_framework.core.database.DatabaseManager;
+import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
 import moe.plushie.rpg_framework.mail.client.MailCounter;
 import moe.plushie.rpg_framework.stats.ModuleStats;
 import moe.plushie.rpg_framework.stats.client.gui.GuiStats;

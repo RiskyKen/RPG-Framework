@@ -1,4 +1,4 @@
-package moe.plushie.rpg_framework.core.database;
+package moe.plushie.rpg_framework.shop.common;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,8 +14,9 @@ import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.shop.IShop;
 import moe.plushie.rpg_framework.api.shop.IShop.IShopTab;
 import moe.plushie.rpg_framework.core.common.IdentifierInt;
+import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
+import moe.plushie.rpg_framework.core.common.database.DatebaseTable;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
-import moe.plushie.rpg_framework.shop.common.Shop;
 import moe.plushie.rpg_framework.shop.common.serialize.ShopSerializer;
 
 public final class TableShops {

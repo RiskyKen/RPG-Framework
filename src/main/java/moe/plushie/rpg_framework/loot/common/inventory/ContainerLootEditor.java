@@ -2,8 +2,8 @@ package moe.plushie.rpg_framework.loot.common.inventory;
 
 import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.loot.ILootTablePool;
+import moe.plushie.rpg_framework.core.common.database.loot.TableLootPools;
 import moe.plushie.rpg_framework.core.common.inventory.ModContainer;
-import moe.plushie.rpg_framework.core.database.loot.TableLootPools;
 import moe.plushie.rpg_framework.loot.common.LootTableHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;

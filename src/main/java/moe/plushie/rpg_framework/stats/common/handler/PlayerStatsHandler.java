@@ -1,10 +1,10 @@
 package moe.plushie.rpg_framework.stats.common.handler;
 
 import moe.plushie.rpg_framework.core.common.config.ConfigHandler;
+import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
+import moe.plushie.rpg_framework.core.common.database.TablePlayers;
+import moe.plushie.rpg_framework.core.common.database.stats.TableHeatmaps;
 import moe.plushie.rpg_framework.core.common.lib.LibModInfo;
-import moe.plushie.rpg_framework.core.database.DatabaseManager;
-import moe.plushie.rpg_framework.core.database.TablePlayers;
-import moe.plushie.rpg_framework.core.database.stats.TableHeatmaps;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;

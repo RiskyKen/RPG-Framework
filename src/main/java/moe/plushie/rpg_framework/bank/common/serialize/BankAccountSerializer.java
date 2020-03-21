@@ -6,9 +6,9 @@ import com.google.gson.JsonElement;
 import moe.plushie.rpg_framework.api.bank.IBank;
 import moe.plushie.rpg_framework.api.bank.IBankAccount;
 import moe.plushie.rpg_framework.bank.common.BankAccount;
+import moe.plushie.rpg_framework.bank.common.TableBankAccounts;
+import moe.plushie.rpg_framework.core.common.database.DBPlayer;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
-import moe.plushie.rpg_framework.core.database.DBPlayer;
-import moe.plushie.rpg_framework.core.database.TableBankAccounts;
 import net.minecraft.inventory.IInventory;
 
 public final class BankAccountSerializer {
