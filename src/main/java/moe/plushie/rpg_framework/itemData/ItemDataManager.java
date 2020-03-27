@@ -15,12 +15,16 @@ import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
 
 public final class ItemDataManager implements IItemDataManager {
 
+    private final TableItemData tableItemData = new TableItemData();
+    private final TableTagValues tableTagValues = new TableTagValues();
+
     public ItemDataManager(File modDirectory) {
         DatabaseManager.createTaskAndExecute(new Runnable() {
 
             @Override
             public void run() {
-                TableItemData.create();
+                tableItemData.create();
+                tableTagValues.create();
             }
         });
     }
@@ -30,7 +34,7 @@ public final class ItemDataManager implements IItemDataManager {
 
     @Override
     public IItemData getItemData(IItemMatcher itemMatcher) {
-        IItemData itemData = TableItemData.getItemData(itemMatcher.getItemStack());
+        IItemData itemData = tableItemData.getItemData(itemMatcher.getItemStack());
         if (itemData == null) {
             itemData = ItemData.createEmpty();
         }
@@ -46,7 +50,7 @@ public final class ItemDataManager implements IItemDataManager {
 
     @Override
     public void setItemData(IItemMatcher itemMatcher, IItemData itemData) {
-        TableItemData.setItemData(itemMatcher.getItemStack(), itemMatcher.isMatchMeta(), itemData);
+        tableItemData.setItemData(itemMatcher.getItemStack(), itemMatcher.isMatchMeta(), itemData);
     }
 
     @Override

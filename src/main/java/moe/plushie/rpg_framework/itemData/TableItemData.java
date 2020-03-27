@@ -20,23 +20,18 @@ import net.minecraftforge.oredict.OreDictionary;
 public final class TableItemData {
 
     private final static String TABLE_ITEMS_NAME = "value_items";
-    private final static String TABLE_TAGS_NAME = "value_tags";
 
-    private TableItemData() {
-    }
-
-    private static DatebaseTable getDatebaseTable() {
+    private DatebaseTable getDatebaseTable() {
         return DatebaseTable.DATA;
     }
 
-    private static Connection getConnection() throws SQLException {
+    private Connection getConnection() throws SQLException {
         return DatabaseManager.getConnection(getDatebaseTable());
     }
 
-    public static void create() {
+    public void create() {
         try (Connection conn = getConnection()) {
             createTableItems(conn);
-            createTableTags(conn);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -48,7 +43,13 @@ public final class TableItemData {
         sql += "item_reg_name INTEGER NOT NULL,";
         sql += "item_meta INTEGER NOT NULL,";
         sql += "cost TEXT NOT NULL)";
+        try (Statement statement = conn.createStatement()) {
+            statement.executeUpdate(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
+        sql = "CREATE INDEX IF NOT EXISTS idx_item_reg_name ON " + TABLE_ITEMS_NAME + " (item_reg_name)";
         try (Statement statement = conn.createStatement()) {
             statement.executeUpdate(sql);
         } catch (SQLException e) {
@@ -56,19 +57,7 @@ public final class TableItemData {
         }
     }
 
-    private static void createTableTags(Connection conn) {
-        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_TAGS_NAME;
-        sql += "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,";
-        sql += "tags TEXT NOT NULL)";
-
-        try (Statement statement = conn.createStatement()) {
-            statement.executeUpdate(sql);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static IItemData getItemData(ItemStack itemStack) {
+    public IItemData getItemData(ItemStack itemStack) {
         IItemData itemData = ItemData.createEmpty();
         try (Connection conn = getConnection()) {
             if (isValueInDatabase(conn, itemStack.getItem(), (short) itemStack.getMetadata())) {
@@ -82,7 +71,7 @@ public final class TableItemData {
         return itemData;
     }
 
-    public static void setItemData(ItemStack itemStack, boolean matchMeta, IItemData itemData) {
+    public void setItemData(ItemStack itemStack, boolean matchMeta, IItemData itemData) {
         short meta = OreDictionary.WILDCARD_VALUE;
         if (matchMeta) {
             meta = (short) itemStack.getMetadata();
@@ -90,7 +79,7 @@ public final class TableItemData {
         setItemValue(itemStack.getItem(), meta, itemData.getValue());
     }
 
-    public static ICost getItemValue(Connection conn, Item item, short meta) throws SQLException {
+    public ICost getItemValue(Connection conn, Item item, short meta) throws SQLException {
         ICost cost = Cost.NO_COST;
         String sql = "SELECT cost FROM " + TABLE_ITEMS_NAME + " WHERE item_reg_name=? AND item_meta=?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -106,8 +95,8 @@ public final class TableItemData {
         return cost;
     }
 
-    public static void setItemValue(Item item, short meta, ICost cost) {
-        
+    public void setItemValue(Item item, short meta, ICost cost) {
+
         try (Connection conn = getConnection()) {
             if (isValueInDatabase(conn, item, meta)) {
                 updateItemValue(conn, item, meta, cost);
@@ -119,7 +108,7 @@ public final class TableItemData {
         }
     }
 
-    private static void setItemValue(Connection conn, Item item, short meta, ICost cost) throws SQLException {
+    private void setItemValue(Connection conn, Item item, short meta, ICost cost) throws SQLException {
         String sql = "INSERT INTO " + TABLE_ITEMS_NAME + " (id, item_reg_name, item_meta, cost) VALUES (NULL, ?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, item.getRegistryName().toString());
@@ -129,7 +118,7 @@ public final class TableItemData {
         }
     }
 
-    private static void updateItemValue(Connection conn, Item item, short meta, ICost cost) throws SQLException {
+    private void updateItemValue(Connection conn, Item item, short meta, ICost cost) throws SQLException {
         String sql = "UPDATE " + TABLE_ITEMS_NAME + " SET cost=? WHERE item_reg_name=? AND item_meta=?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, CostSerializer.serializeJson(cost, false).toString());
@@ -139,7 +128,7 @@ public final class TableItemData {
         }
     }
 
-    private static boolean isValueInDatabase(Connection conn, Item item, short meta) throws SQLException {
+    private boolean isValueInDatabase(Connection conn, Item item, short meta) throws SQLException {
         boolean found = false;
         String sql = "SELECT id FROM " + TABLE_ITEMS_NAME + " WHERE item_reg_name=? AND item_meta=?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
