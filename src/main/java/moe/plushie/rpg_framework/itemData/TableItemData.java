@@ -51,11 +51,11 @@ public final class TableItemData {
 
         addColumn(conn, "item_reg_name INTEGER NOT NULL");
         addColumn(conn, "item_meta INTEGER NOT NULL");
-        addColumn(conn, "categories TEXT NOT NULL");
-        addColumn(conn, "tags TEXT NOT NULL");
-        addColumn(conn, "cost TEXT NOT NULL");
+        addColumn(conn, "categories TEXT DEFAULT '[]' NOT NULL");
+        addColumn(conn, "tags TEXT DEFAULT '[]' NOT NULL");
+        addColumn(conn, "cost TEXT DEFAULT '{}' NOT NULL");
 
-        sql = "CREATE INDEX IF NOT EXISTS idx_item_reg ON " + TABLE_ITEMS_NAME + " (item_reg_name, item_meta)";
+        sql = "CREATE INDEX IF NOT EXISTS idx_item_reg ON " + TABLE_ITEMS_NAME + " (value_items.item_reg_name, value_items.item_meta)";
         try (Statement statement = conn.createStatement()) {
             statement.executeUpdate(sql);
         } catch (SQLException e) {
@@ -65,7 +65,7 @@ public final class TableItemData {
 
     private void addColumn(Connection conn, String data) {
         try (Statement s = conn.createStatement()) {
-            s.execute("ALTER TABLE server_stats ADD COLUMN " + data);
+            s.execute("ALTER TABLE " + TABLE_ITEMS_NAME + " ADD COLUMN " + data);
         } catch (SQLException e) {
             // Column already exists.
         }
