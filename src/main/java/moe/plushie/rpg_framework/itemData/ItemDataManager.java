@@ -16,6 +16,7 @@ import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
 public final class ItemDataManager implements IItemDataManager {
 
     private final TableItemData tableItemData = new TableItemData();
+    private final TableItemValues tableItemValues = new TableItemValues();
     private final TableTagValues tableTagValues = new TableTagValues();
 
     public ItemDataManager(File modDirectory) {
@@ -24,6 +25,7 @@ public final class ItemDataManager implements IItemDataManager {
             @Override
             public void run() {
                 tableItemData.create();
+                tableItemValues.create();
                 tableTagValues.create();
             }
         });
@@ -34,23 +36,25 @@ public final class ItemDataManager implements IItemDataManager {
 
     @Override
     public IItemData getItemData(IItemMatcher itemMatcher) {
-        IItemData itemData = tableItemData.getItemData(itemMatcher.getItemStack());
-        if (itemData == null) {
-            itemData = ItemData.createEmpty();
-        }
-        // TODO fix cross thread crap below!
-        if (ModAddonManager.addonFaerunHeroes.isModLoaded()) {
-            ICost cost = ModAddonManager.addonFaerunHeroes.getItemValue(itemMatcher.getItemStack());
-            if (!cost.isNoCost() & cost.hasWalletCost()) {
-                itemData = itemData.setValue(cost);
-            }
+        ListenableFutureTask<IItemData> task = getItemDataAsync(itemMatcher, null);
+        IItemData itemData = null;
+        try {
+            itemData = task.get();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return itemData;
     }
 
     @Override
     public void setItemData(IItemMatcher itemMatcher, IItemData itemData) {
-        tableItemData.setItemData(itemMatcher.getItemStack(), itemMatcher.isMatchMeta(), itemData);
+        DatabaseManager.executeAndWait(new Runnable() {
+
+            @Override
+            public void run() {
+                tableItemData.setItemData(itemMatcher.getItemStack(), itemMatcher.isMatchMeta(), itemData);
+            }
+        });
     }
 
     @Override
@@ -59,7 +63,18 @@ public final class ItemDataManager implements IItemDataManager {
 
             @Override
             public IItemData call() throws Exception {
-                return getItemData(itemMatcher);
+                IItemData itemData = tableItemData.getItemData(itemMatcher.getItemStack());
+                if (itemData == null) {
+                    itemData = ItemData.createEmpty();
+                }
+                // TODO fix cross thread crap below!
+                if (ModAddonManager.addonFaerunHeroes.isModLoaded()) {
+                    ICost cost = ModAddonManager.addonFaerunHeroes.getItemValue(itemMatcher.getItemStack());
+                    if (!cost.isNoCost() & cost.hasWalletCost()) {
+                        itemData = itemData.setValue(cost);
+                    }
+                }
+                return itemData;
             }
         }, callback);
     }
@@ -70,7 +85,7 @@ public final class ItemDataManager implements IItemDataManager {
 
             @Override
             public void run() {
-                setItemData(itemMatcher, itemData);
+                tableItemData.setItemData(itemMatcher.getItemStack(), itemMatcher.isMatchMeta(), itemData);
             }
         });
     }

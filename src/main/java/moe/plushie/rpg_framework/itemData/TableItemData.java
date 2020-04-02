@@ -55,7 +55,7 @@ public final class TableItemData {
         addColumn(conn, "tags TEXT DEFAULT '[]' NOT NULL");
         addColumn(conn, "cost TEXT DEFAULT '{}' NOT NULL");
 
-        sql = "CREATE INDEX IF NOT EXISTS idx_item_reg ON " + TABLE_ITEMS_NAME + " (value_items.item_reg_name, value_items.item_meta)";
+        sql = "CREATE INDEX IF NOT EXISTS idx_item_reg ON " + TABLE_ITEMS_NAME + " (item_reg_name, item_meta)";
         try (Statement statement = conn.createStatement()) {
             statement.executeUpdate(sql);
         } catch (SQLException e) {
@@ -166,7 +166,7 @@ public final class TableItemData {
         }
         return found;
     }
-    
+
     private ArrayList<String> jsonArrayToArrayList(JsonArray jsonArray) {
         ArrayList<String> arrayList = new ArrayList<String>();
         for (int i = 0; i < jsonArray.size(); i++) {
@@ -174,10 +174,12 @@ public final class TableItemData {
         }
         return arrayList;
     }
-    
+
     private JsonArray arrayListToJsonArray(ArrayList<String> arrayList) {
         JsonArray jsonArray = new JsonArray();
-        
+        for (int i = 0; i < arrayList.size(); i++) {
+            jsonArray.add(arrayList.get(i));
+        }
         return jsonArray;
     }
 }

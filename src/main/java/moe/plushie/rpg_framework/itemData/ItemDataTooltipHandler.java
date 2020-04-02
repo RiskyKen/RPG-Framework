@@ -22,7 +22,7 @@ public class ItemDataTooltipHandler {
             .maximumSize(10)
             .expireAfterAccess(30, TimeUnit.SECONDS)
             .<ItemStack, IItemData>build();
-    
+
     public static HashSet<ItemStack> loadingSet = new HashSet<ItemStack>();
 
     @SubscribeEvent
