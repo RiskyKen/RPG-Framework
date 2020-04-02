@@ -22,7 +22,7 @@ import net.minecraftforge.oredict.OreDictionary;
 
 public final class TableItemData {
 
-    private final static String TABLE_ITEMS_NAME = "value_items";
+    private final static String TABLE_ITEMS_NAME = "item_data";
 
     private DatebaseTable getDatebaseTable() {
         return DatebaseTable.DATA;
@@ -49,13 +49,13 @@ public final class TableItemData {
             e.printStackTrace();
         }
 
-        addColumn(conn, "item_reg_name INTEGER NOT NULL");
-        addColumn(conn, "item_meta INTEGER NOT NULL");
+        addColumn(conn, "item_reg_name TEXT DEFAULT '' NOT NULL");
+        addColumn(conn, "item_meta INTEGER DEFAULT 0 NOT NULL");
         addColumn(conn, "categories TEXT DEFAULT '[]' NOT NULL");
         addColumn(conn, "tags TEXT DEFAULT '[]' NOT NULL");
         addColumn(conn, "cost TEXT DEFAULT '{}' NOT NULL");
 
-        sql = "CREATE INDEX IF NOT EXISTS idx_item_reg ON " + TABLE_ITEMS_NAME + " (item_reg_name, item_meta)";
+        sql = "CREATE INDEX IF NOT EXISTS idx_data_item_reg ON " + TABLE_ITEMS_NAME + " (item_reg_name, item_meta)";
         try (Statement statement = conn.createStatement()) {
             statement.executeUpdate(sql);
         } catch (SQLException e) {

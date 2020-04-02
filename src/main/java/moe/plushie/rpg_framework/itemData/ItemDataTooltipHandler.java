@@ -13,6 +13,7 @@ import moe.plushie.rpg_framework.core.common.ItemMatcherStack;
 import moe.plushie.rpg_framework.shop.client.gui.GuiShop;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -20,11 +21,15 @@ public class ItemDataTooltipHandler {
 
     public static Cache<ItemStack, IItemData> cache = CacheBuilder.newBuilder()
             .maximumSize(10)
-            .expireAfterAccess(30, TimeUnit.SECONDS)
+            .expireAfterAccess(5, TimeUnit.SECONDS)
             .<ItemStack, IItemData>build();
 
     public static HashSet<ItemStack> loadingSet = new HashSet<ItemStack>();
 
+    public ItemDataTooltipHandler() {
+        MinecraftForge.EVENT_BUS.register(this);
+    }
+    
     @SubscribeEvent
     public void onTooltip(ItemTooltipEvent event) {
         if (Minecraft.getMinecraft().currentScreen instanceof GuiShop) {
@@ -32,6 +37,9 @@ public class ItemDataTooltipHandler {
         }
         ItemStack itemStack = event.getItemStack();
         if (itemStack.isEmpty()) {
+            return;
+        }
+        if (Minecraft.getMinecraft().world == null) {
             return;
         }
         IItemData itemData = cache.getIfPresent(event.getItemStack());

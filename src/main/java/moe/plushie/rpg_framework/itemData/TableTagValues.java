@@ -9,7 +9,7 @@ import moe.plushie.rpg_framework.core.common.database.DatebaseTable;
 
 public final class TableTagValues {
 
-    private final static String TABLE_NAME = "value_tags";
+    private final static String TABLE_NAME = "tag_values";
 
     private DatebaseTable getDatebaseTable() {
         return DatebaseTable.DATA;
