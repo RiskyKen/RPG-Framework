@@ -6,6 +6,7 @@ import com.google.common.util.concurrent.FutureCallback;
 
 import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.currency.ICost;
+import moe.plushie.rpg_framework.api.itemData.IItemData;
 import moe.plushie.rpg_framework.api.shop.IShop;
 import moe.plushie.rpg_framework.api.shop.IShop.IShopItem;
 import moe.plushie.rpg_framework.api.shop.IShop.IShopTab;
@@ -17,7 +18,9 @@ import moe.plushie.rpg_framework.core.common.inventory.ModContainer;
 import moe.plushie.rpg_framework.core.common.inventory.slot.SlotHidable;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerShop;
-import moe.plushie.rpg_framework.core.common.utils.UtilItems;
+import moe.plushie.rpg_framework.core.common.utils.PlayerUtils;
+import moe.plushie.rpg_framework.currency.common.Cost;
+import moe.plushie.rpg_framework.itemData.ItemDataProvider;
 import moe.plushie.rpg_framework.shop.ModuleShop;
 import moe.plushie.rpg_framework.shop.common.Shop.ShopItem;
 import moe.plushie.rpg_framework.shop.common.Shop.ShopTab;
@@ -130,29 +133,85 @@ public class ContainerShop extends ModContainer {
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
         World world = player.getEntityWorld();
-        if (!editMode & clickTypeIn == ClickType.PICKUP & !world.isRemote & shop != null & slotId >= 0 & slotId < 8) {
-            ItemStack itemStack = inventorySlots.get(slotId).getStack();
-            if (!itemStack.isEmpty()) {
-                IShopItem shopItem = shop.getTabs().get(activeTabIndex).getItems().get(slotId);
-                ICost cost = shopItem.getCost();
-                if (cost.canAfford(player)) {
-                    DatabaseManager.createTaskAndExecute(new Runnable() {
 
-                        @Override
-                        public void run() {
-                            TableStatsShopSales.updateSoldItemCount(shop.getIdentifier(), itemStack);
-                        }
-                    });
-                    cost.pay(player);
-                    world.playSound(null, player.posX, player.posY, player.posZ, ModSounds.COIN_WITHDRAW, SoundCategory.PLAYERS, 0.3F, 0.8F + (player.getRNG().nextFloat() * 0.4F));
-                    if (!player.inventory.addItemStackToInventory(shopItem.getItem().copy())) {
-                        UtilItems.spawnItemAtEntity(player, shopItem.getItem().copy(), true);
-                    }
-                    detectAndSendChanges();
+        if (!editMode & clickTypeIn == ClickType.PICKUP & !world.isRemote & shop != null) {
+            IShopTab activeTab = shop.getTabs().get(getActiveTabIndex());
+
+            // Buying item.
+            if (activeTab.getTabType() == TabType.BUY & slotId >= 0 & slotId < 8) {
+                itemBuy(world, player, activeTab, slotId);
+                return ItemStack.EMPTY;
+            }
+
+            if (activeTab.getTabType() == TabType.SELL) {
+                // Selling item.
+                if (slotId >= getPlayerInvStartIndex() & slotId < getPlayerInvEndIndex()) {
+                    itemSell(world, player, activeTab, slotId);
+                    return ItemStack.EMPTY;
+                }
+
+                // Buyback item.
+                if (slotId >= 0 & slotId < 8) {
+                    itemBuyback(world, player, activeTab, slotId);
+                    return ItemStack.EMPTY;
                 }
             }
         }
         return super.slotClick(slotId, dragType, clickTypeIn, player);
+    }
+
+    private void itemBuy(World world, EntityPlayer player, IShopTab activeTab, int slotId) {
+        ItemStack itemStack = inventorySlots.get(slotId).getStack();
+        if (!itemStack.isEmpty()) {
+            IShopItem shopItem = activeTab.getItems().get(slotId);
+            ICost cost = shopItem.getCost();
+            if (cost.canAfford(player)) {
+                DatabaseManager.createTaskAndExecute(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        TableStatsShopSales.updateSoldItemCount(shop.getIdentifier(), itemStack);
+                    }
+                });
+                cost.pay(player);
+                world.playSound(null, player.posX, player.posY, player.posZ, ModSounds.COIN_WITHDRAW, SoundCategory.PLAYERS, 0.3F, 0.8F + (player.getRNG().nextFloat() * 0.4F));
+                PlayerUtils.giveItemToPlayer(player, shopItem.getItem());
+                detectAndSendChanges();
+            }
+        }
+    }
+
+    private void itemSell(World world, EntityPlayer player, IShopTab activeTab, int slotId) {
+        ItemStack itemStack = inventorySlots.get(slotId).getStack();
+        if (!itemStack.isEmpty()) {
+            IItemData itemData = ItemDataProvider.getItemData(itemStack);
+            // RPGFramework.getLogger().info("Selling item, slot id: " + activeTab.getItems().size());
+            if (itemData.getValue().hasWalletCost()) {
+
+                activeTab.getItems().add(0, new ShopItem(itemStack, itemData.getValue()));
+                activeTab.getItems().remove(activeTab.getItems().size() - 1);
+                PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerShop(shop, true), (EntityPlayerMP) player);
+                // sendShopToListeners(true);
+                // detectAndSendChanges();
+            }
+        }
+    }
+
+    private void itemBuyback(World world, EntityPlayer player, IShopTab activeTab, int slotId) {
+        ItemStack itemStack = inventorySlots.get(slotId).getStack();
+        // RPGFramework.getLogger().info("Buyback item, slot id: " + slotId);
+        if (!itemStack.isEmpty()) {
+            IItemData itemData = ItemDataProvider.getItemData(itemStack);
+            ICost cost = itemData.getValue();
+            if (cost.canAfford(player)) {
+                activeTab.getItems().remove(slotId);
+                activeTab.getItems().add(new ShopItem(ItemStack.EMPTY, Cost.NO_COST));
+                cost.pay(player);
+                world.playSound(null, player.posX, player.posY, player.posZ, ModSounds.COIN_WITHDRAW, SoundCategory.PLAYERS, 0.3F, 0.8F + (player.getRNG().nextFloat() * 0.4F));
+                PlayerUtils.giveItemToPlayer(player, itemStack);
+                PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerShop(shop, true), (EntityPlayerMP) player);
+            }
+        }
     }
 
     @Override
@@ -268,14 +327,14 @@ public class ContainerShop extends ModContainer {
         }
     }
 
-    public void tabAdd(int iconIndex, String tabName, TabType tabType) {
-        shop.getTabs().add(new ShopTab(tabName, iconIndex, tabType));
+    public void tabAdd(int iconIndex, String tabName, TabType tabType, float valuePercentage) {
+        shop.getTabs().add(new ShopTab(tabName, iconIndex, tabType, valuePercentage));
         sendShopToListeners(true);
     }
 
-    public void tabEdit(int iconIndex, String tabName, TabType tabType) {
+    public void tabEdit(int iconIndex, String tabName, TabType tabType, float valuePercentage) {
         IShopTab tabOld = shop.getTabs().get(activeTabIndex);
-        shop.getTabs().set(activeTabIndex, new ShopTab(tabName, iconIndex, tabType, tabOld.getItems()));
+        shop.getTabs().set(activeTabIndex, new ShopTab(tabName, iconIndex, tabType, tabOld.getItems(), valuePercentage));
         sendShopToListeners(true);
     }
 

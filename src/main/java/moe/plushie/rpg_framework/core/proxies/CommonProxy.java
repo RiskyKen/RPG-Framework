@@ -32,7 +32,7 @@ import moe.plushie.rpg_framework.core.common.module.ModModule;
 import moe.plushie.rpg_framework.core.common.network.GuiHandler;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.currency.ModuleCurrency;
-import moe.plushie.rpg_framework.currency.common.Cost;
+import moe.plushie.rpg_framework.currency.common.Cost.CostFactory;
 import moe.plushie.rpg_framework.currency.common.Currency;
 import moe.plushie.rpg_framework.currency.common.Currency.CurrencyVariant;
 import moe.plushie.rpg_framework.currency.common.Currency.CurrencyWalletInfo;
@@ -46,9 +46,9 @@ import moe.plushie.rpg_framework.mail.common.MailSystem;
 import moe.plushie.rpg_framework.mail.common.MailSystemManager;
 import moe.plushie.rpg_framework.shop.ModuleShop;
 import moe.plushie.rpg_framework.shop.common.Shop;
-import moe.plushie.rpg_framework.shop.common.TableShops;
 import moe.plushie.rpg_framework.shop.common.Shop.ShopItem;
 import moe.plushie.rpg_framework.shop.common.Shop.ShopTab;
+import moe.plushie.rpg_framework.shop.common.TableShops;
 import moe.plushie.rpg_framework.stats.ModuleStats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -140,6 +140,7 @@ public class CommonProxy {
         // Currency
         CurrencyWalletInfo walletInfo = new CurrencyWalletInfo(true, true, "", true, 0F, 0F);
         CurrencyVariant[] currencyVariants = new CurrencyVariant[6];
+
         currencyVariants[0] = new CurrencyVariant("Copper", 1, new ItemMatcherStack(new ItemStack(ModItems.CURRENCY, 1, 0), true, false));
         currencyVariants[1] = new CurrencyVariant("Silver", 10, new ItemMatcherStack(new ItemStack(ModItems.CURRENCY, 1, 1), true, false));
         currencyVariants[2] = new CurrencyVariant("Gold", 100, new ItemMatcherStack(new ItemStack(ModItems.CURRENCY, 1, 2), true, false));
@@ -152,38 +153,39 @@ public class CommonProxy {
         // Shop
         Shop shop = new Shop(new IdentifierInt(-1), "Example Shop");
 
-        ShopTab shopTabLeatherArmour = new ShopTab("Example Tab Leather Armour", 1, TabType.BUY);
-        shopTabLeatherArmour.getItems().set(0, new ShopItem(new ItemStack(Items.LEATHER_HELMET), new Cost(new Wallet(currency, 1))));
-        shopTabLeatherArmour.getItems().set(1, new ShopItem(new ItemStack(Items.LEATHER_CHESTPLATE), new Cost(new Wallet(currency, 3))));
-        shopTabLeatherArmour.getItems().set(2, new ShopItem(new ItemStack(Items.LEATHER_LEGGINGS), new Cost(new Wallet(currency, 2))));
-        shopTabLeatherArmour.getItems().set(3, new ShopItem(new ItemStack(Items.LEATHER_BOOTS), new Cost(new Wallet(currency, 1))));
+        ShopTab shopTabLeatherArmour = new ShopTab("Example Tab Leather Armour", 1, TabType.BUY, 1F);
+        shopTabLeatherArmour.getItems().set(0, new ShopItem(new ItemStack(Items.LEATHER_HELMET), CostFactory.newCost().addWalletCosts(new Wallet(currency, 1)).build()));
+        shopTabLeatherArmour.getItems().set(1, new ShopItem(new ItemStack(Items.LEATHER_CHESTPLATE), CostFactory.newCost().addWalletCosts(new Wallet(currency, 3)).build()));
+        shopTabLeatherArmour.getItems().set(2, new ShopItem(new ItemStack(Items.LEATHER_LEGGINGS), CostFactory.newCost().addWalletCosts(new Wallet(currency, 2)).build()));
+        shopTabLeatherArmour.getItems().set(3, new ShopItem(new ItemStack(Items.LEATHER_BOOTS), CostFactory.newCost().addWalletCosts(new Wallet(currency, 1)).build()));
         shop.getTabs().add(shopTabLeatherArmour);
 
-        ShopTab shopTabIronArmour = new ShopTab("Example Tab Iron Armour", 2, TabType.BUY);
-        shopTabIronArmour.getItems().set(0, new ShopItem(new ItemStack(Items.IRON_HELMET), new Cost(new Wallet(currency, 2))));
-        shopTabIronArmour.getItems().set(1, new ShopItem(new ItemStack(Items.IRON_CHESTPLATE), new Cost(new Wallet(currency, 6))));
-        shopTabIronArmour.getItems().set(2, new ShopItem(new ItemStack(Items.IRON_LEGGINGS), new Cost(new Wallet(currency, 5))));
-        shopTabIronArmour.getItems().set(3, new ShopItem(new ItemStack(Items.IRON_BOOTS), new Cost(new Wallet(currency, 2))));
+        ShopTab shopTabIronArmour = new ShopTab("Example Tab Iron Armour", 2, TabType.BUY, 1F);
+        shopTabIronArmour.getItems().set(0, new ShopItem(new ItemStack(Items.IRON_HELMET), CostFactory.newCost().addWalletCosts(new Wallet(currency, 2)).build()));
+        shopTabIronArmour.getItems().set(1, new ShopItem(new ItemStack(Items.IRON_CHESTPLATE), CostFactory.newCost().addWalletCosts(new Wallet(currency, 6)).build()));
+        shopTabIronArmour.getItems().set(2, new ShopItem(new ItemStack(Items.IRON_LEGGINGS), CostFactory.newCost().addWalletCosts(new Wallet(currency, 5)).build()));
+        shopTabIronArmour.getItems().set(3, new ShopItem(new ItemStack(Items.IRON_BOOTS), CostFactory.newCost().addWalletCosts(new Wallet(currency, 2)).build()));
         shop.getTabs().add(shopTabIronArmour);
 
-        ShopTab shopTabMelee = new ShopTab("Example Tab Melee", 5, TabType.BUY);
-        shopTabMelee.getItems().set(0, new ShopItem(new ItemStack(Items.WOODEN_SWORD), new Cost(new Wallet(currency, 4))));
-        shopTabMelee.getItems().set(1, new ShopItem(new ItemStack(Items.STONE_SWORD), new Cost(new Wallet(currency, 5))));
-        shopTabMelee.getItems().set(2, new ShopItem(new ItemStack(Items.IRON_SWORD), new Cost(new Wallet(currency, 6))));
-        shopTabMelee.getItems().set(3, new ShopItem(new ItemStack(Items.GOLDEN_SWORD), new Cost(new Wallet(currency, 4))));
-        shopTabMelee.getItems().set(4, new ShopItem(new ItemStack(Items.DIAMOND_SWORD), new Cost(new Wallet(currency, 7))));
-        shopTabMelee.getItems().set(5, new ShopItem(new ItemStack(Items.SHIELD), new Cost(new Wallet(currency, 5))));
+        ShopTab shopTabMelee = new ShopTab("Example Tab Melee", 5, TabType.BUY, 1F);
+        shopTabMelee.getItems().set(0, new ShopItem(new ItemStack(Items.WOODEN_SWORD), CostFactory.newCost().addWalletCosts(new Wallet(currency, 4)).build()));
+        shopTabMelee.getItems().set(1, new ShopItem(new ItemStack(Items.STONE_SWORD), CostFactory.newCost().addWalletCosts(new Wallet(currency, 5)).build()));
+        shopTabMelee.getItems().set(2, new ShopItem(new ItemStack(Items.IRON_SWORD), CostFactory.newCost().addWalletCosts(new Wallet(currency, 6)).build()));
+        shopTabMelee.getItems().set(3, new ShopItem(new ItemStack(Items.GOLDEN_SWORD), CostFactory.newCost().addWalletCosts(new Wallet(currency, 4)).build()));
+        shopTabMelee.getItems().set(4, new ShopItem(new ItemStack(Items.DIAMOND_SWORD), CostFactory.newCost().addWalletCosts(new Wallet(currency, 7)).build()));
+        shopTabMelee.getItems().set(5, new ShopItem(new ItemStack(Items.SHIELD), CostFactory.newCost().addWalletCosts(new Wallet(currency, 5)).build()));
         shop.getTabs().add(shopTabMelee);
 
-        ShopTab shopTabRanged = new ShopTab("Example Tab Ranged", 12, TabType.BUY);
-        shopTabRanged.getItems().set(0, new ShopItem(new ItemStack(Items.BOW), new Cost(new Wallet(currency, 4))));
-        shopTabRanged.getItems().set(1, new ShopItem(new ItemStack(Items.ARROW), new Cost(new Wallet(currency, 1))));
-        shopTabRanged.getItems().set(2, new ShopItem(new ItemStack(Items.ARROW, 16), new Cost(new Wallet(currency, 16))));
-        shopTabRanged.getItems().set(3, new ShopItem(new ItemStack(Items.ARROW, 32), new Cost(new Wallet(currency, 32))));
+        ShopTab shopTabRanged = new ShopTab("Example Tab Ranged", 12, TabType.BUY, 1F);
+        shopTabRanged.getItems().set(0, new ShopItem(new ItemStack(Items.BOW), CostFactory.newCost().addWalletCosts(new Wallet(currency, 4)).build()));
+        shopTabRanged.getItems().set(1, new ShopItem(new ItemStack(Items.ARROW), CostFactory.newCost().addWalletCosts(new Wallet(currency, 1)).build()));
+        shopTabRanged.getItems().set(2, new ShopItem(new ItemStack(Items.ARROW, 16), CostFactory.newCost().addWalletCosts(new Wallet(currency, 16)).build()));
+        shopTabRanged.getItems().set(3, new ShopItem(new ItemStack(Items.ARROW, 32), CostFactory.newCost().addWalletCosts(new Wallet(currency, 32)).build()));
         shop.getTabs().add(shopTabRanged);
 
-        ShopTab shopTabItem = new ShopTab("Example Tab Item Cost", 15, TabType.BUY);
-        shopTabItem.getItems().set(0, new ShopItem(new ItemStack(Blocks.STONE), new Cost(new IItemMatcher[] { new ItemMatcherStack(new ItemStack(Blocks.COBBLESTONE), true, false) })));
+        ShopTab shopTabItem = new ShopTab("Example Tab Item Cost", 15, TabType.BUY, 1F);
+        IItemMatcher itemMatcherCobble = new ItemMatcherStack(new ItemStack(Blocks.COBBLESTONE), true, false);
+        shopTabItem.getItems().set(0, new ShopItem(new ItemStack(Blocks.STONE), CostFactory.newCost().addItemCosts(itemMatcherCobble).build()));
         shop.getTabs().add(shopTabItem);
 
         TableShops.addNewShop(shop);
@@ -203,7 +205,7 @@ public class CommonProxy {
         bank.setName("Bank");
         ICost[] unlockCosts = new ICost[bank.getTabUnlockableCount()];
         for (int i = 0; i < unlockCosts.length; i++) {
-            unlockCosts[i] = new Cost(new Wallet(currency, (i + 1) * 100));
+            unlockCosts[i] = CostFactory.newCost().addWalletCosts(new Wallet(currency, (i + 1) * 100)).build();
         }
         bank.setTabUnlockCosts(unlockCosts);
         ModuleBank.getBankManager().saveBank(bank);

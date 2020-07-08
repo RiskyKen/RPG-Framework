@@ -15,7 +15,6 @@ import moe.plushie.rpg_framework.api.itemData.IItemData;
 import moe.plushie.rpg_framework.api.mail.IMailSystem;
 import moe.plushie.rpg_framework.api.mail.IMailSystemManager.IMailSendCallback;
 import moe.plushie.rpg_framework.core.RPGFramework;
-import moe.plushie.rpg_framework.core.common.ItemMatcherStack;
 import moe.plushie.rpg_framework.core.common.database.DBPlayerInfo;
 import moe.plushie.rpg_framework.core.common.inventory.ModContainer;
 import moe.plushie.rpg_framework.core.common.inventory.slot.SlotHidable;
@@ -25,6 +24,7 @@ import moe.plushie.rpg_framework.core.common.network.server.MessageServerMailRes
 import moe.plushie.rpg_framework.core.common.utils.PlayerUtils;
 import moe.plushie.rpg_framework.core.common.utils.UtilItems;
 import moe.plushie.rpg_framework.currency.common.Cost;
+import moe.plushie.rpg_framework.currency.common.Cost.CostFactory;
 import moe.plushie.rpg_framework.currency.common.Wallet;
 import moe.plushie.rpg_framework.itemData.ModuleItemData;
 import moe.plushie.rpg_framework.mail.common.MailMessage;
@@ -232,7 +232,7 @@ public class ContainerMailBox extends ModContainer implements IMailSendCallback 
             if (result instanceof Double) {
                 walletCost.setAmount(MathHelper.ceil((Double) result));
             }
-            cost = new Cost(walletCost);
+            cost = CostFactory.newCost().addWalletCosts(walletCost).build();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -261,8 +261,7 @@ public class ContainerMailBox extends ModContainer implements IMailSendCallback 
     public int getStackValue(double index) {
         if (index < getAttachments().size()) {
             ItemStack itemStack = getAttachments().get((int) index);
-            ItemMatcherStack itemMatcherStack = new ItemMatcherStack(itemStack, true, false);
-            IItemData itemData = ModuleItemData.getManager().getItemData(itemMatcherStack);
+            IItemData itemData = ModuleItemData.getManager().getItemData(itemStack);
             if (itemData.getValue().hasWalletCost()) {
                 return itemData.getValue().getWalletCosts()[0].getAmount();
             }

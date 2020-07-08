@@ -52,7 +52,7 @@ public class GuiShopDialogTabEdit extends AbstractGuiDialog implements IDropDown
         buttonIconNext = new GuiButtonExt(-1, x + width - 30, y + 35, 20, 20, ">");
         dropDownTabTye = new GuiDropDownList(-1, x + 10, y + 72, width - 20, "", this);
         for (int i = 0; i < TabType.values().length; i++) {
-            dropDownTabTye.addListItem(I18n.format("inventory.rpg_economy:common.tab_type." + TabType.values()[i].toString().toLowerCase()), TabType.values()[i].toString(), TabType.values()[i] == TabType.BUY);
+            dropDownTabTye.addListItem(I18n.format("inventory.rpg_economy:common.tab_type." + TabType.values()[i].toString().toLowerCase()), TabType.values()[i].toString(), true);
             if (TabType.values()[i] == shopTab.getTabType()) {
                 dropDownTabTye.setListSelectedIndex(i);
             }

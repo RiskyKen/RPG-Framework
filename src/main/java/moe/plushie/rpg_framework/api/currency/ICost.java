@@ -8,10 +8,18 @@ public interface ICost {
     public IWallet[] getWalletCosts();
 
     public IItemMatcher[] getItemCosts();
+    
+    public IItemMatcher[] getOreDictionaryCosts();
+    
+    public IItemMatcher[] getItemValueCosts();
 
     public boolean hasWalletCost();
 
     public boolean hasItemCost();
+    
+    public boolean hasOreDictionaryCost();
+    
+    public boolean hasItemValueCosts();
 
     public boolean canAfford(EntityPlayer player);
 

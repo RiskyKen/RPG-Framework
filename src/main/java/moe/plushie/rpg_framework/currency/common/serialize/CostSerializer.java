@@ -9,6 +9,7 @@ import moe.plushie.rpg_framework.api.currency.ICost;
 import moe.plushie.rpg_framework.api.currency.IWallet;
 import moe.plushie.rpg_framework.core.common.serialize.ItemMacherSerializer;
 import moe.plushie.rpg_framework.currency.common.Cost;
+import moe.plushie.rpg_framework.currency.common.Cost.CostFactory;
 
 public final class CostSerializer {
 
@@ -37,6 +38,7 @@ public final class CostSerializer {
             }
             jsonObject.add(PROP_CURRENCY, arrayWallets);
         }
+
         return jsonObject;
     }
 
@@ -74,8 +76,15 @@ public final class CostSerializer {
                     }
                 }
             }
-
-            return new Cost(walletCost, itemCost);
+            
+            CostFactory costFactory = CostFactory.newCost();
+            if (walletCost != null) {
+                costFactory.addWalletCosts(walletCost);
+            }
+            if (itemCost != null) {
+                costFactory.addItemCosts(itemCost);
+            }
+            return costFactory.build();
         } catch (Exception e) {
             e.printStackTrace();
         }

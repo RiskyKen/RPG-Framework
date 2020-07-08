@@ -4,6 +4,7 @@ import moe.plushie.rpg_framework.api.currency.ICost;
 import moe.plushie.rpg_framework.api.currency.ICurrency;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.currency.common.Cost;
+import moe.plushie.rpg_framework.currency.common.Cost.CostFactory;
 import moe.plushie.rpg_framework.currency.common.Wallet;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -29,7 +30,8 @@ public class AddonFaerunHeroes extends ModAddon {
             if (compound.hasKey(TAG_VALUE, NBT.TAG_INT)) {
                 // TODO Make this load from a config or something.
                 ICurrency currency = RPGFramework.getProxy().getCurrencyManager().getDefault();
-                value = new Cost(new Wallet(currency, compound.getInteger(TAG_VALUE)));
+                Wallet itemValue = new Wallet(currency, compound.getInteger(TAG_VALUE));
+                value = CostFactory.newCost().addWalletCosts(itemValue).build();
             }
         }
         return value;

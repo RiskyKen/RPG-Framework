@@ -25,7 +25,7 @@ public class Shop implements IShop, Comparable<IShop> {
         this.name = name;
         this.shopTabs = shopTabs;
     }
-    
+
     public Shop(IIdentifier identifier, String name) {
         this.identifier = identifier;
         this.name = name;
@@ -56,7 +56,7 @@ public class Shop implements IShop, Comparable<IShop> {
     public int getTabCount() {
         return shopTabs.size();
     }
-    
+
     @Override
     public int compareTo(IShop o) {
         return name.compareTo(o.getName());
@@ -68,22 +68,21 @@ public class Shop implements IShop, Comparable<IShop> {
         private final int iconIndex;
         private final TabType tabType;
         private final ArrayList<IShopItem> shopItems;
+        private final float valuePercentage;
 
-        public ShopTab(String name, int iconIndex, TabType tabType) {
-            this.name = name;
-            this.iconIndex = iconIndex;
-            this.tabType = tabType;
-            this.shopItems = new ArrayList<IShop.IShopItem>();
+        public ShopTab(String name, int iconIndex, TabType tabType, float valuePercentage) {
+            this(name, iconIndex, tabType, new ArrayList<IShop.IShopItem>(), valuePercentage);
             for (int i = 0; i < 8; i++) {
                 shopItems.add(new ShopItem(ItemStack.EMPTY, Cost.NO_COST));
             }
         }
 
-        public ShopTab(String name, int iconIndex, TabType tabType, ArrayList<IShopItem> shopItems) {
+        public ShopTab(String name, int iconIndex, TabType tabType, ArrayList<IShopItem> shopItems, float valuePercentage) {
             this.name = name;
             this.iconIndex = iconIndex;
             this.tabType = tabType;
             this.shopItems = shopItems;
+            this.valuePercentage = valuePercentage;
         }
 
         @Override
@@ -95,7 +94,7 @@ public class Shop implements IShop, Comparable<IShop> {
         public int getIconIndex() {
             return iconIndex;
         }
-        
+
         @Override
         public TabType getTabType() {
             return tabType;
@@ -119,6 +118,11 @@ public class Shop implements IShop, Comparable<IShop> {
         @Override
         public int getPageCount() {
             return MathHelper.ceil((double) getItemCount() / (double) ITEMS_PER_PAGE);
+        }
+
+        @Override
+        public float getValuePercentage() {
+            return valuePercentage;
         }
     }
 

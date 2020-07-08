@@ -50,10 +50,20 @@ item.rpg_economy:command.name=Command
 
 # Item tooltips
 #item.rpg_economy:currency.0.tooltip=Test
+tooltip.rpg_economy:value_loading=Loading...
+tooltip.rpg_economy:value_none=No value
 
 
 # Creative tab
 itemGroup.rpg_economy=RPG Framework
+
+
+# Cost Type
+cost_type.rpg_economy:free=Free
+cost_type.rpg_economy:currency=Currency
+cost_type.rpg_economy:items=Items
+cost_type.rpg_economy:ore_dictionary=Ore Dictionary
+cost_type.rpg_economy:item_value=Item Value
 
 
 # Inventory - Common
@@ -142,10 +152,6 @@ inventory.rpg_economy:shop.dialog.tab_edit.button.edit=Edit
 inventory.rpg_economy:shop.dialog.cost_edit.name=Edit Cost
 inventory.rpg_economy:shop.dialog.cost_edit.button.edit=Edit
 inventory.rpg_economy:shop.dialog.cost_edit.button.cost_edit=Edit Cost
-inventory.rpg_economy:shop.dialog.cost_edit.cost_type.free=Free
-inventory.rpg_economy:shop.dialog.cost_edit.cost_type.currency=Currency
-inventory.rpg_economy:shop.dialog.cost_edit.cost_type.items=Items
-inventory.rpg_economy:shop.dialog.cost_edit.cost_type.ore_dictionary=Ore Dictionary
 
 inventory.rpg_economy:shop.dialog.cost_edit.dialog.edit_currency.name=Edit Currency Cost
 

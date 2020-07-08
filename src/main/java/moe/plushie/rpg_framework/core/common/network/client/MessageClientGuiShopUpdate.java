@@ -28,6 +28,7 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
     private ICost cost;
     private int slotIndex;
     private TabType tabType;
+    private float valuePercentage;
 
     public MessageClientGuiShopUpdate() {
     }
@@ -77,6 +78,11 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
         return this;
     }
 
+    public MessageClientGuiShopUpdate setValuePercentage(float valuePercentage) {
+        this.valuePercentage = valuePercentage;
+        return this;
+    }
+
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(type.ordinal());
@@ -85,11 +91,13 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
             buf.writeInt(tabIconIndex);
             ByteBufUtils.writeUTF8String(buf, tabName);
             ByteBufUtils.writeUTF8String(buf, tabType.toString());
+            buf.writeFloat(valuePercentage);
             break;
         case TAB_EDIT:
             buf.writeInt(tabIconIndex);
             ByteBufUtils.writeUTF8String(buf, tabName);
             ByteBufUtils.writeUTF8String(buf, tabType.toString());
+            buf.writeFloat(valuePercentage);
             break;
         case TAB_REMOVE:
             buf.writeInt(tabIndex);
@@ -142,11 +150,13 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
             tabIconIndex = buf.readInt();
             tabName = ByteBufUtils.readUTF8String(buf);
             tabType = TabType.valueOf(ByteBufUtils.readUTF8String(buf));
+            valuePercentage = buf.readFloat();
             break;
         case TAB_EDIT:
             tabIconIndex = buf.readInt();
             tabName = ByteBufUtils.readUTF8String(buf);
             tabType = TabType.valueOf(ByteBufUtils.readUTF8String(buf));
+            valuePercentage = buf.readFloat();
             break;
         case TAB_REMOVE:
             tabIndex = buf.readInt();
@@ -204,10 +214,10 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
             ContainerShop containerShop = (ContainerShop) player.openContainer;
             switch (message.type) {
             case TAB_ADD:
-                containerShop.tabAdd(message.tabIconIndex, message.tabName, message.tabType);
+                containerShop.tabAdd(message.tabIconIndex, message.tabName, message.tabType, message.valuePercentage);
                 break;
             case TAB_EDIT:
-                containerShop.tabEdit(message.tabIconIndex, message.tabName, message.tabType);
+                containerShop.tabEdit(message.tabIconIndex, message.tabName, message.tabType, message.valuePercentage);
                 break;
             case TAB_REMOVE:
                 containerShop.tabRemove(message.tabIndex);
@@ -262,22 +272,14 @@ public class MessageClientGuiShopUpdate implements IMessage, IMessageHandler<Mes
         EDIT_MODE_OFF(true),
         /** Adds a new shop. */
         SHOP_ADD(true),
-        //* Removes a shop. */
+        // * Removes a shop. */
         SHOP_REMOVE(true),
         /** Shop renamed. */
         SHOP_RENAME(true),
         /** Change linked shop. */
         SHOP_CHANGE(true),
         /** Force shop save. */
-        SHOP_SAVE(true),
-        ITEM_UPDATE(true),
-        ITEM_COST_REQUEST(true),
-        TAB_ADD(true),
-        TAB_REMOVE(true),
-        TAB_EDIT(true),
-        TAB_CHANGED(false),
-        TAB_MOVE_UP(true),
-        TAB_MOVE_DOWN(true);
+        SHOP_SAVE(true), ITEM_UPDATE(true), ITEM_COST_REQUEST(true), TAB_ADD(true), TAB_REMOVE(true), TAB_EDIT(true), TAB_CHANGED(false), TAB_MOVE_UP(true), TAB_MOVE_DOWN(true);
 
         private final boolean needsCreative;
 

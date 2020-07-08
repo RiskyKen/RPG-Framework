@@ -9,9 +9,10 @@ import com.google.common.util.concurrent.FutureCallback;
 
 import moe.plushie.rpg_framework.api.currency.IWallet;
 import moe.plushie.rpg_framework.api.itemData.IItemData;
-import moe.plushie.rpg_framework.core.common.ItemMatcherStack;
+import moe.plushie.rpg_framework.core.common.lib.LibModInfo;
 import moe.plushie.rpg_framework.shop.client.gui.GuiShop;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -21,7 +22,7 @@ public class ItemDataTooltipHandler {
 
     public static Cache<ItemStack, IItemData> cache = CacheBuilder.newBuilder()
             .maximumSize(10)
-            .expireAfterAccess(5, TimeUnit.SECONDS)
+            .expireAfterAccess(2, TimeUnit.SECONDS)
             .<ItemStack, IItemData>build();
 
     public static HashSet<ItemStack> loadingSet = new HashSet<ItemStack>();
@@ -47,10 +48,10 @@ public class ItemDataTooltipHandler {
             synchronized (loadingSet) {
                 if (!loadingSet.contains(itemStack)) {
                     loadingSet.add(itemStack);
-                    ModuleItemData.getManager().getItemDataAsync(new ItemMatcherStack(itemStack, false, false), new Loader(itemStack));
+                    ModuleItemData.getManager().getItemDataAsync(itemStack, new Loader(itemStack));
                 }
             }
-            event.getToolTip().add("Loading...");
+            event.getToolTip().add(I18n.format("tooltip." + LibModInfo.ID.toLowerCase() + ":value_loading"));
             return;
         }
 
@@ -61,7 +62,7 @@ public class ItemDataTooltipHandler {
                 event.getToolTip().add(value);
             }
         } else {
-            event.getToolTip().add("No value");
+            event.getToolTip().add(I18n.format("tooltip." + LibModInfo.ID.toLowerCase() + ":value_none"));
         }
     }
 

@@ -27,7 +27,7 @@ import moe.plushie.rpg_framework.core.common.lib.LibBlockNames;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.client.MessageClientGuiShopUpdate;
 import moe.plushie.rpg_framework.core.common.network.client.MessageClientGuiShopUpdate.ShopMessageType;
-import moe.plushie.rpg_framework.currency.common.Cost;
+import moe.plushie.rpg_framework.currency.common.Cost.CostFactory;
 import moe.plushie.rpg_framework.currency.common.CurrencyManager;
 import moe.plushie.rpg_framework.currency.common.CurrencyWalletHelper;
 import moe.plushie.rpg_framework.currency.common.Wallet;
@@ -279,7 +279,7 @@ public class GuiShop extends GuiTabbed<ContainerShop> implements IDialogCallback
             }
             amount += CurrencyWalletHelper.getAmountInInventory(currency, entityPlayer.inventory);
             if (amount > 0) {
-                GuiHelper.renderCost(fontRenderer, itemRender, new Cost(new Wallet(currency, amount)), 176, 156 + yCur * 18);
+                GuiHelper.renderCost(fontRenderer, itemRender, CostFactory.newCost().addWalletCosts(new Wallet(currency, amount)).build(), 176, 156 + yCur * 18);
                 yCur++;
             }
         }
@@ -431,7 +431,8 @@ public class GuiShop extends GuiTabbed<ContainerShop> implements IDialogCallback
                 String name = ((GuiShopDialogTabAdd) dialog).getTabName();
                 int iconIndex = ((GuiShopDialogTabAdd) dialog).getTabIconIndex();
                 TabType tabType = ((GuiShopDialogTabAdd) dialog).getTabType();
-                PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.TAB_ADD).setTabName(name).setTabIconIndex(iconIndex).setTabType(tabType));
+                float valuePercentage = ((GuiShopDialogTabAdd) dialog).getValuePercentage();
+                PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.TAB_ADD).setTabName(name).setTabIconIndex(iconIndex).setTabType(tabType).setValuePercentage(valuePercentage));
             }
             if (dialog instanceof GuiShopDialogTabRemove) {
                 PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.TAB_REMOVE).setTabIndex(activeTabIndex));
@@ -442,7 +443,8 @@ public class GuiShop extends GuiTabbed<ContainerShop> implements IDialogCallback
                 String name = ((GuiShopDialogTabEdit) dialog).getTabName();
                 int iconIndex = ((GuiShopDialogTabEdit) dialog).getTabIconIndex();
                 TabType tabType = ((GuiShopDialogTabEdit) dialog).getTabType();
-                PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.TAB_EDIT).setTabName(name).setTabIconIndex(iconIndex).setTabType(tabType));
+                float valuePercentage = ((GuiShopDialogTabAdd) dialog).getValuePercentage();
+                PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.TAB_EDIT).setTabName(name).setTabIconIndex(iconIndex).setTabType(tabType).setValuePercentage(valuePercentage));
             }
             if (dialog instanceof GuiShopDialogEditCost) {
                 ICost cost = ((GuiShopDialogEditCost) dialog).getCost();

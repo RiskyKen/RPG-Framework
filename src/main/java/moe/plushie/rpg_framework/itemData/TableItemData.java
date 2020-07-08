@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
+import moe.plushie.rpg_framework.api.core.IItemMatcher;
 import moe.plushie.rpg_framework.api.currency.ICost;
 import moe.plushie.rpg_framework.api.itemData.IItemData;
 import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
@@ -23,6 +24,15 @@ import net.minecraftforge.oredict.OreDictionary;
 public final class TableItemData {
 
     private final static String TABLE_ITEMS_NAME = "item_data";
+
+    private final static String COLUMN_ID = "id";
+    private final static String COLUMN_REG_NAME = "reg_name";
+    private final static String COLUMN_META = "meta";
+    private final static String COLUMN_COUNT = "count";
+    private final static String COLUMN_CATEGORIES = "categories";
+    private final static String COLUMN_COST = "cost";
+    private final static String COLUMN_TAGS = "tags";
+    private final static String COLUMN_NBT_WHITELIST = "nbt_whitelist";
 
     private DatebaseTable getDatebaseTable() {
         return DatebaseTable.DATA;
@@ -49,13 +59,15 @@ public final class TableItemData {
             e.printStackTrace();
         }
 
-        addColumn(conn, "item_reg_name TEXT DEFAULT '' NOT NULL");
-        addColumn(conn, "item_meta INTEGER DEFAULT 0 NOT NULL");
-        addColumn(conn, "categories TEXT DEFAULT '[]' NOT NULL");
-        addColumn(conn, "tags TEXT DEFAULT '[]' NOT NULL");
-        addColumn(conn, "cost TEXT DEFAULT '{}' NOT NULL");
+        addColumn(conn, COLUMN_REG_NAME + " TEXT DEFAULT '' NOT NULL");
+        addColumn(conn, COLUMN_META + " INTEGER DEFAULT 0 NOT NULL");
+        addColumn(conn, COLUMN_COUNT + " INTEGER DEFAULT 0 NOT NULL");
+        addColumn(conn, COLUMN_CATEGORIES + " TEXT DEFAULT '[]' NOT NULL");
+        addColumn(conn, COLUMN_COST + " TEXT DEFAULT '{}' NOT NULL");
+        addColumn(conn, COLUMN_TAGS + " TEXT DEFAULT '[]' NOT NULL");
+        addColumn(conn, COLUMN_NBT_WHITELIST + " TEXT DEFAULT '' NOT NULL");
 
-        sql = "CREATE INDEX IF NOT EXISTS idx_data_item_reg ON " + TABLE_ITEMS_NAME + " (item_reg_name, item_meta)";
+        sql = "CREATE INDEX IF NOT EXISTS idx_item_reg ON " + TABLE_ITEMS_NAME + " (reg_name, meta, count, nbt_whitelist)";
         try (Statement statement = conn.createStatement()) {
             statement.executeUpdate(sql);
         } catch (SQLException e) {
@@ -71,13 +83,83 @@ public final class TableItemData {
         }
     }
 
+    public void setItemData(IItemMatcher itemMatcher, IItemData itemData) {
+        Item item = itemMatcher.getItemStack().getItem();
+        short meta = OreDictionary.WILDCARD_VALUE;
+        short count = 0;
+        String nbtWhiteList = "";
+
+        if (itemMatcher.isMatchMeta()) {
+            meta = (short) itemMatcher.getItemStack().getMetadata();
+        }
+        if (itemMatcher.isMatchCount()) {
+            count = (short) itemMatcher.getItemStack().getCount();
+        }
+        if (itemMatcher.getItemStack().hasTagCompound()) {
+            nbtWhiteList = itemMatcher.getItemStack().getTagCompound().toString();
+        }
+
+        try (Connection conn = getConnection()) {
+            if (isValueInDatabase(conn, item, meta, count, nbtWhiteList)) {
+                updateItemData(conn, item, meta, count, nbtWhiteList, itemData);
+            } else {
+                setItemData(conn, item, meta, count, nbtWhiteList, itemData);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setItemData(Connection conn, Item item, short meta, short count, String nbtWhiteList, IItemData itemData) throws SQLException {
+        String sql = "INSERT INTO " + TABLE_ITEMS_NAME + " (id, reg_name, meta, count, nbt_whitelist, categories, tags, cost) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, item.getRegistryName().toString());
+            ps.setShort(2, meta);
+            ps.setShort(3, count);
+            ps.setString(4, nbtWhiteList);
+            ps.setString(5, arrayListToJsonArray(itemData.getCategories()).toString());
+            ps.setString(6, arrayListToJsonArray(itemData.getTags()).toString());
+            ps.setString(7, CostSerializer.serializeJson(itemData.getValue(), false).toString());
+            ps.execute();
+        }
+    }
+
+    private void updateItemData(Connection conn, Item item, short meta, short count, String nbtWhiteList, IItemData itemData) throws SQLException {
+        String sql = "UPDATE " + TABLE_ITEMS_NAME + " SET categories=?, tags=?, cost=? WHERE reg_name=? AND meta=? AND count=? AND nbt_whitelist=?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, arrayListToJsonArray(itemData.getCategories()).toString());
+            ps.setString(2, arrayListToJsonArray(itemData.getTags()).toString());
+            ps.setString(3, CostSerializer.serializeJson(itemData.getValue(), false).toString());
+            ps.setString(4, item.getRegistryName().toString());
+            ps.setShort(5, meta);
+            ps.setShort(6, count);
+            ps.setString(7, nbtWhiteList);
+            ps.execute();
+        }
+    }
+
     public IItemData getItemData(ItemStack itemStack) {
         IItemData itemData = ItemData.createEmpty();
+        Item item = itemStack.getItem();
+        short meta = (short) itemStack.getMetadata();
+        short count = 0;
+        String nbt = "";
+
+//        if (itemMatcher.isMatchMeta()) {
+//            meta = (short) itemStack.getMetadata();
+//        }
+//        if (itemMatcher.isMatchCount()) {
+//            count = (short) itemStack.getCount();
+//        }
+//        if (itemMatcher.getItemStack().hasTagCompound()) {
+//            nbt = itemMatcher.getItemStack().getTagCompound().toString();
+//        }
+
         try (Connection conn = getConnection()) {
-            if (isValueInDatabase(conn, itemStack.getItem(), (short) itemStack.getMetadata())) {
-                itemData = getItemData(conn, itemStack.getItem(), (short) itemStack.getMetadata());
-            } else if (isValueInDatabase(conn, itemStack.getItem(), (short) OreDictionary.WILDCARD_VALUE)) {
-                itemData = getItemData(conn, itemStack.getItem(), (short) OreDictionary.WILDCARD_VALUE);
+            if (isValueInDatabase(conn, item, meta, count, nbt)) {
+                itemData = getItemData(conn, item, meta, count, nbt);
+            } else if (isValueInDatabase(conn, item, (short) OreDictionary.WILDCARD_VALUE, count, nbt)) {
+                itemData = getItemData(conn, item, (short) OreDictionary.WILDCARD_VALUE, count, nbt);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -85,20 +167,14 @@ public final class TableItemData {
         return itemData;
     }
 
-    public void setItemData(ItemStack itemStack, boolean matchMeta, IItemData itemData) {
-        short meta = OreDictionary.WILDCARD_VALUE;
-        if (matchMeta) {
-            meta = (short) itemStack.getMetadata();
-        }
-        setItemData(itemStack.getItem(), meta, itemData);
-    }
-
-    private IItemData getItemData(Connection conn, Item item, short meta) throws SQLException {
+    private IItemData getItemData(Connection conn, Item item, short meta, short count, String nbtWhiteList) throws SQLException {
         IItemData itemData = ItemData.createEmpty();
-        String sql = "SELECT categories, tags, cost FROM " + TABLE_ITEMS_NAME + " WHERE item_reg_name=? AND item_meta=?";
+        String sql = "SELECT categories, cost, tags FROM " + TABLE_ITEMS_NAME + " WHERE reg_name=? AND meta=? AND count=? AND nbt_whitelist=?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, item.getRegistryName().toString());
             ps.setShort(2, meta);
+            ps.setShort(3, count);
+            ps.setString(4, nbtWhiteList);
             try (ResultSet resultSet = ps.executeQuery()) {
                 if (resultSet.next()) {
                     JsonElement categoriesJson = SerializeHelper.stringToJson(resultSet.getString("categories"));
@@ -116,48 +192,14 @@ public final class TableItemData {
         return itemData;
     }
 
-    private void setItemData(Item item, short meta, IItemData itemData) {
-        try (Connection conn = getConnection()) {
-            if (isValueInDatabase(conn, item, meta)) {
-                updateItemData(conn, item, meta, itemData);
-            } else {
-                setItemData(conn, item, meta, itemData);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void setItemData(Connection conn, Item item, short meta, IItemData itemData) throws SQLException {
-        String sql = "INSERT INTO " + TABLE_ITEMS_NAME + " (id, item_reg_name, item_meta, categories, tags, cost) VALUES (NULL, ?, ?, ?, ?, ?)";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, item.getRegistryName().toString());
-            ps.setShort(2, meta);
-            ps.setString(3, arrayListToJsonArray(itemData.getCategories()).toString());
-            ps.setString(4, arrayListToJsonArray(itemData.getTags()).toString());
-            ps.setString(5, CostSerializer.serializeJson(itemData.getValue(), false).toString());
-            ps.execute();
-        }
-    }
-
-    private void updateItemData(Connection conn, Item item, short meta, IItemData itemData) throws SQLException {
-        String sql = "UPDATE " + TABLE_ITEMS_NAME + " SET categories=? tags=? cost=? WHERE item_reg_name=? AND item_meta=?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, arrayListToJsonArray(itemData.getCategories()).toString());
-            ps.setString(2, arrayListToJsonArray(itemData.getTags()).toString());
-            ps.setString(3, CostSerializer.serializeJson(itemData.getValue(), false).toString());
-            ps.setString(4, item.getRegistryName().toString());
-            ps.setShort(5, meta);
-            ps.execute();
-        }
-    }
-
-    private boolean isValueInDatabase(Connection conn, Item item, short meta) throws SQLException {
+    private boolean isValueInDatabase(Connection conn, Item item, short meta, short count, String nbtWhiteList) throws SQLException {
         boolean found = false;
-        String sql = "SELECT id FROM " + TABLE_ITEMS_NAME + " WHERE item_reg_name=? AND item_meta=?";
+        String sql = "SELECT id FROM " + TABLE_ITEMS_NAME + " WHERE reg_name=? AND meta=? AND count=? AND nbt_whitelist=?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, item.getRegistryName().toString());
             ps.setShort(2, meta);
+            ps.setShort(3, count);
+            ps.setString(4, nbtWhiteList);
             try (ResultSet resultSet = ps.executeQuery()) {
                 if (resultSet.next()) {
                     found = true;

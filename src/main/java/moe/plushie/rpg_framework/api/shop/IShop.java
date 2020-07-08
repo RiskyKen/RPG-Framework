@@ -35,9 +35,10 @@ public interface IShop {
 
         public int getPageCount();
 
+        public float getValuePercentage();
+
         public static enum TabType {
-            BUY,
-            SELL
+            BUY, SELL
         }
     }
 

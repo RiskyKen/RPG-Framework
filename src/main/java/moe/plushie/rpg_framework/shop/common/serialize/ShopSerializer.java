@@ -30,6 +30,7 @@ public class ShopSerializer {
     private static final String PROP_TAB_ICON_INDEX = "iconIndex";
     private static final String PROP_TAB_TYPE = "tabType";
     private static final String PROP_TAB_ITEMS = "items";
+    private static final String PROP_TAB_VALUE_PERCENTAGE = "valuePercentage";
 
     private static final String PROP_TAB_ITEM = "item";
     private static final String PROP_TAB_ITEM_COST = "cost";
@@ -71,6 +72,7 @@ public class ShopSerializer {
             }
         }
         jsonObject.add(PROP_TAB_ITEMS, jsonArrayItems);
+        jsonObject.addProperty(PROP_TAB_VALUE_PERCENTAGE, tab.getValuePercentage());
         return jsonObject;
     }
 
@@ -110,6 +112,7 @@ public class ShopSerializer {
         int iconIndex = 0;
         TabType tabType = TabType.BUY;
         ArrayList<IShopItem> tabItems = new ArrayList<IShopItem>();
+        float valuePercentage = 0F;
         for (int i = 0; i < 8; i++) {
             tabItems.add(new ShopItem(ItemStack.EMPTY, Cost.NO_COST));
         }
@@ -139,7 +142,11 @@ public class ShopSerializer {
             }
         }
 
-        return new ShopTab(name, iconIndex, tabType, tabItems);
+        if (jsonObject.has(PROP_TAB_VALUE_PERCENTAGE)) {
+            valuePercentage = jsonObject.get(PROP_TAB_VALUE_PERCENTAGE).getAsFloat();
+        }
+
+        return new ShopTab(name, iconIndex, tabType, tabItems, valuePercentage);
     }
 
     private static IShopItem deserializeItem(JsonObject jsonObject) throws NBTException {

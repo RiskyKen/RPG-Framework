@@ -2,9 +2,8 @@ package moe.plushie.rpg_framework.currency.common;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
-import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.NotImplementedException;
 
 import moe.plushie.rpg_framework.api.core.IItemMatcher;
 import moe.plushie.rpg_framework.api.currency.ICost;
@@ -18,22 +17,18 @@ import net.minecraft.entity.player.EntityPlayerMP;
 
 public class Cost implements ICost {
 
-    public static final ICost NO_COST = new Cost(null, null);
+    public static final ICost NO_COST = CostFactory.newCost().build();
 
     private final IWallet[] walletCosts;
     private final IItemMatcher[] itemCosts;
+    private final IItemMatcher[] oreDictionaryCosts;
+    private final IItemMatcher[] itemValueCosts;
 
-    public Cost(IWallet... walletCosts) {
-        this(walletCosts, null);
-    }
-
-    public Cost(IItemMatcher... itemCosts) {
-        this(null, itemCosts);
-    }
-
-    public Cost(IWallet[] walletCosts, IItemMatcher[] itemCosts) {
+    public Cost(IWallet[] walletCosts, IItemMatcher[] itemCosts, IItemMatcher[] oreDictionaryCosts, IItemMatcher[] itemValueCosts) {
         this.walletCosts = removeDupes(walletCosts);
         this.itemCosts = removeNulls(itemCosts);
+        this.oreDictionaryCosts = removeNulls(oreDictionaryCosts);
+        this.itemValueCosts = removeNulls(itemValueCosts);
     }
 
     @Override
@@ -47,21 +42,43 @@ public class Cost implements ICost {
     }
 
     @Override
+    public IItemMatcher[] getOreDictionaryCosts() {
+        return oreDictionaryCosts;
+    }
+
+    @Override
+    public IItemMatcher[] getItemValueCosts() {
+        return itemValueCosts;
+    }
+
+    @Override
     public boolean hasWalletCost() {
-        if (walletCosts != null) {
-            if (walletCosts.length > 0) {
-                return true;
-            }
+        if (walletCosts != null && walletCosts.length > 0) {
+            return true;
         }
         return walletCosts != null;
     }
 
     @Override
     public boolean hasItemCost() {
-        if (itemCosts != null) {
-            if (itemCosts.length > 0) {
-                return true;
-            }
+        if (itemCosts != null && itemCosts.length > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean hasOreDictionaryCost() {
+        if (oreDictionaryCosts != null && oreDictionaryCosts.length > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean hasItemValueCosts() {
+        if (itemValueCosts != null && itemValueCosts.length > 0) {
+            return true;
         }
         return false;
     }
@@ -96,10 +113,19 @@ public class Cost implements ICost {
                 }
             }
         }
+
         if (hasItemCost()) {
             if (!CurrencyWalletHelper.payWithItems(player.inventory, itemCosts, true)) {
                 return false;
             }
+        }
+
+        if (hasOreDictionaryCost()) {
+            throw new NotImplementedException("Paying with OreDictionaryCosts is not implemented yet.");
+        }
+
+        if (hasItemValueCosts()) {
+            throw new NotImplementedException("Paying with ItemValueCosts is not implemented yet.");
         }
 
         return true;
@@ -142,35 +168,24 @@ public class Cost implements ICost {
         if (hasItemCost()) {
             CurrencyWalletHelper.payWithItems(player.inventory, itemCosts, false);
         }
+
+        if (hasOreDictionaryCost()) {
+            throw new NotImplementedException("Paying with OreDictionaryCosts is not implemented yet.");
+        }
+
+        if (hasItemValueCosts()) {
+            throw new NotImplementedException("Paying with ItemValueCosts is not implemented yet.");
+        }
     }
 
     @Override
     public String toString() {
-        return "Cost [walletCosts=" + Arrays.toString(walletCosts) + ", itemCosts=" + Arrays.toString(itemCosts) + "]";
+        return "Cost [walletCosts=" + Arrays.toString(walletCosts) + ", itemCosts=" + Arrays.toString(itemCosts) + ", oreDictionaryCosts=" + Arrays.toString(oreDictionaryCosts) + ", itemValueCosts=" + Arrays.toString(itemValueCosts) + "]";
     }
 
     @Override
     public ICost add(ICost... costs) {
-        costs = ArrayUtils.addAll(costs, this);
-        ArrayList<IItemMatcher> costItems = new ArrayList<IItemMatcher>();
-        ArrayList<IWallet> costWallets = new ArrayList<IWallet>();
-        for (ICost cost : costs) {
-            if (cost.hasItemCost()) {
-                Collections.addAll(costItems, cost.getItemCosts());
-            }
-            if (cost.hasWalletCost()) {
-                Collections.addAll(costWallets, cost.getWalletCosts());
-            }
-        }
-
-        if (costWallets.isEmpty() & costItems.isEmpty()) {
-            return NO_COST;
-        }
-
-        IWallet[] wallets = costWallets.toArray(new IWallet[costWallets.size()]);
-        IItemMatcher[] itemMatchers = costItems.toArray(new IItemMatcher[costItems.size()]);
-
-        return new Cost(wallets, itemMatchers);
+        return CostFactory.newCost().addCost(costs).addCost(this).build();
     }
 
     private static IWallet[] removeDupes(IWallet[] walletsIn) {
@@ -200,7 +215,7 @@ public class Cost implements ICost {
         }
         return walletsIn;
     }
-    
+
     private static IItemMatcher[] removeNulls(IItemMatcher[] inItemMatchers) {
         if (inItemMatchers != null && inItemMatchers.length > 0) {
             ArrayList<IItemMatcher> itemMatchers = new ArrayList<IItemMatcher>();
@@ -219,9 +234,84 @@ public class Cost implements ICost {
         if (this == NO_COST) {
             return true;
         }
-        if (!this.hasWalletCost() & !this.hasItemCost()) {
+        if (!this.hasWalletCost() & !this.hasItemCost() & !this.hasOreDictionaryCost() & !this.hasItemValueCosts()) {
             return true;
         }
         return false;
+    }
+
+    public static final class CostFactory {
+
+        private final ArrayList<IWallet> walletCosts = new ArrayList<IWallet>();
+        private final ArrayList<IItemMatcher> itemCosts = new ArrayList<IItemMatcher>();
+        private final ArrayList<IItemMatcher> oreDictionaryCosts = new ArrayList<IItemMatcher>();
+        private final ArrayList<IItemMatcher> itemValueCosts = new ArrayList<IItemMatcher>();
+
+        private CostFactory() {
+        }
+
+        public static CostFactory newCost() {
+            return new CostFactory();
+        }
+
+        public CostFactory addWalletCosts(IWallet... walletCosts) {
+            this.walletCosts.addAll(Arrays.asList(walletCosts));
+            return this;
+        }
+
+        public CostFactory addItemCosts(IItemMatcher... itemCosts) {
+            this.itemCosts.addAll(Arrays.asList(itemCosts));
+            return this;
+        }
+
+        public CostFactory addOreDictionaryCosts(IItemMatcher... oreDictionaryCosts) {
+            this.oreDictionaryCosts.addAll(Arrays.asList(oreDictionaryCosts));
+            return this;
+        }
+
+        public CostFactory addItemValueCosts(IItemMatcher... itemValueCosts) {
+            this.itemValueCosts.addAll(Arrays.asList(itemValueCosts));
+            return this;
+        }
+
+        public CostFactory addCost(ICost... costs) {
+            for (ICost cost : costs) {
+                if (cost.hasWalletCost()) {
+                    addWalletCosts(cost.getWalletCosts());
+                }
+                if (cost.hasItemCost()) {
+                    addItemCosts(cost.getItemCosts());
+                }
+                if (cost.hasOreDictionaryCost()) {
+                    addOreDictionaryCosts(cost.getOreDictionaryCosts());
+                }
+                if (cost.hasItemValueCosts()) {
+                    addItemValueCosts(cost.getItemValueCosts());
+                }
+            }
+            return this;
+        }
+
+        public ICost build() {
+            IWallet[] walletCosts = null;
+            IItemMatcher[] itemCosts = null;
+            IItemMatcher[] oreDictionaryCosts = null;
+            IItemMatcher[] itemValueCosts = null;
+
+            if (!this.walletCosts.isEmpty()) {
+                walletCosts = this.walletCosts.toArray(new IWallet[this.walletCosts.size()]);
+            }
+            if (!this.itemCosts.isEmpty()) {
+                itemCosts = this.itemCosts.toArray(new IItemMatcher[this.itemCosts.size()]);
+            }
+            if (!this.oreDictionaryCosts.isEmpty()) {
+                oreDictionaryCosts = this.oreDictionaryCosts.toArray(new IItemMatcher[this.oreDictionaryCosts.size()]);
+            }
+            if (!this.itemValueCosts.isEmpty()) {
+                itemValueCosts = this.itemValueCosts.toArray(new IItemMatcher[this.itemValueCosts.size()]);
+            }
+
+            return new Cost(walletCosts, itemCosts, oreDictionaryCosts, itemValueCosts);
+        }
     }
 }

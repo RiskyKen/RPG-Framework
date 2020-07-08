@@ -8,7 +8,9 @@ import moe.plushie.rpg_framework.core.client.gui.IDialogCallback;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiDropDownList;
 import moe.plushie.rpg_framework.core.client.gui.controls.GuiDropDownList.IDropDownListCallback;
 import moe.plushie.rpg_framework.core.client.lib.LibGuiResources;
+import moe.plushie.rpg_framework.core.common.CostType;
 import moe.plushie.rpg_framework.currency.common.Cost;
+import moe.plushie.rpg_framework.currency.common.Cost.CostFactory;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
@@ -48,18 +50,25 @@ public class GuiShopDialogEditCost extends AbstractGuiDialog implements IDropDow
         dropDownCostTypes = new GuiDropDownList(0, x + 10, y + 25, 100, "", this);
         buttonEditType = new GuiButtonExt(-1, x + 120, y + 25, 80, 20, I18n.format(name + ".button.cost_edit"));
 
-        String[] costTypes = new String[] { "free", "currency", "items", "ore_dictionary" };
-        for (String type : costTypes) {
-            dropDownCostTypes.addListItem(I18n.format(name + ".cost_type." + type), "", !type.equals("ore_dictionary"));
+        for (CostType costType : CostType.values()) {
+            dropDownCostTypes.addListItem(costType.getLocalizedName(), "", !(costType == CostType.ORE_DICTIONARY | costType == CostType.ITEM_VALUE));
         }
 
         dropDownCostTypes.setListSelectedIndex(0);
-        if (cost != null && cost.hasWalletCost()) {
-            dropDownCostTypes.setListSelectedIndex(1);
-        }
 
-        if (cost != null && cost.hasItemCost()) {
-            dropDownCostTypes.setListSelectedIndex(2);
+        if (cost != null) {
+            if (cost.hasWalletCost()) {
+                dropDownCostTypes.setListSelectedIndex(1);
+            }
+            if (cost.hasItemCost()) {
+                dropDownCostTypes.setListSelectedIndex(2);
+            }
+            if (cost.hasOreDictionaryCost()) {
+                dropDownCostTypes.setListSelectedIndex(3);
+            }
+            if (cost.hasItemValueCosts()) {
+                dropDownCostTypes.setListSelectedIndex(4);
+            }
         }
 
         buttonEditType.enabled = dropDownCostTypes.getListSelectedIndex() > 0;
@@ -133,12 +142,12 @@ public class GuiShopDialogEditCost extends AbstractGuiDialog implements IDropDow
         if (result == DialogResult.OK) {
             if (dialog instanceof GuiShopDialogEditCostCurrency) {
                 IWallet wallet = ((GuiShopDialogEditCostCurrency) dialog).getWallet();
-                costNew = new Cost(wallet);
+                costNew = CostFactory.newCost().addWalletCosts(wallet).build();
                 closeDialog();
             }
             if (dialog instanceof GuiShopDialogEditCostItems) {
                 IItemMatcher[] matchers = ((GuiShopDialogEditCostItems) dialog).getCost();
-                costNew = new Cost(matchers);
+                costNew = CostFactory.newCost().addItemCosts(matchers).build();
                 closeDialog();
             }
         }

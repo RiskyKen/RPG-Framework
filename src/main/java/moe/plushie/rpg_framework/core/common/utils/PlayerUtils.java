@@ -2,6 +2,9 @@ package moe.plushie.rpg_framework.core.common.utils;
 
 import com.mojang.authlib.GameProfile;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+
 public final class PlayerUtils {
 
     private PlayerUtils() {
@@ -29,5 +32,11 @@ public final class PlayerUtils {
         }
 
         return false;
+    }
+
+    public static void giveItemToPlayer(EntityPlayer player, ItemStack itemStack) {
+        if (!player.inventory.addItemStackToInventory(itemStack.copy())) {
+            UtilItems.spawnItemAtEntity(player, itemStack.copy(), true);
+        }
     }
 }

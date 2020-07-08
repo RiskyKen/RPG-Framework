@@ -46,7 +46,7 @@ public class GuiShopDialogTabAdd extends AbstractGuiDialog implements IDropDownL
         buttonIconNext = new GuiButtonExt(-1, x + width - 30, y + 35, 20, 20, ">");
         dropDownTabTye = new GuiDropDownList(-1, x + 10, y + 72, width - 20, "", this);
         for (TabType tabType : TabType.values()) {
-            dropDownTabTye.addListItem(I18n.format("inventory.rpg_economy:common.tab_type." + tabType.toString().toLowerCase()), tabType.toString(), tabType == TabType.BUY);
+            dropDownTabTye.addListItem(I18n.format("inventory.rpg_economy:common.tab_type." + tabType.toString().toLowerCase()), tabType.toString(), true);
         }
         dropDownTabTye.setListSelectedIndex(0);
 
@@ -121,6 +121,10 @@ public class GuiShopDialogTabAdd extends AbstractGuiDialog implements IDropDownL
 
     public TabType getTabType() {
         return tabType;
+    }
+
+    public float getValuePercentage() {
+        return 0F;
     }
 
     @Override
