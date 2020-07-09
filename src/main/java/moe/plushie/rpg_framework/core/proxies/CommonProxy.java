@@ -268,6 +268,10 @@ public class CommonProxy {
     public File getModDirectory() {
         return modDirectory;
     }
+    
+    public File getModConfigDirectory() {
+        return modConfigDirectory;
+    }
 
     public CurrencyManager getCurrencyManager() {
         return currencyManager;
