@@ -90,7 +90,7 @@ public final class ItemDataManager implements IItemDataManager {
                 if (ModAddonManager.addonFaerunHeroes.isModLoaded()) {
                     ICost cost = ModAddonManager.addonFaerunHeroes.getItemValue(itemStack);
                     if (!cost.isNoCost() & cost.hasWalletCost()) {
-                        //itemData = itemData.setValue(cost);
+                        itemData = itemData.setValue(cost);
                     }
                 }
                 return itemData;
