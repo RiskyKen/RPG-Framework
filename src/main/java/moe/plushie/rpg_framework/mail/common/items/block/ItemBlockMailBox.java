@@ -43,14 +43,14 @@ public class ItemBlockMailBox extends ModItemBlock {
                 for (int i = 0; i < MailboxTexture.values().length; i++) {
                     ItemStack stack = new ItemStack(this, 1, i);
                     if (!stack.isEmpty()) {
-                        setMailSystemOnStack(stack,  mailSystem);
+                        setMailSystemOnStack(stack, mailSystem);
                         items.add(stack);
                     }
                 }
             }
         }
     }
-    
+
     @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
@@ -92,15 +92,17 @@ public class ItemBlockMailBox extends ModItemBlock {
     @Override
     public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, IBlockState newState) {
         boolean flag = super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState);
-        MailSystem mailSystem = getMailSystemFromStack(stack);
-        MailboxTexture texture = MailboxTexture.BLUE;
-        if (stack.getMetadata() >= 0 & stack.getMetadata() < MailboxTexture.values().length) {
-            texture = MailboxTexture.values()[stack.getMetadata()];
-        }
-        TileEntity tileEntity = world.getTileEntity(pos);
-        if (tileEntity != null && tileEntity instanceof TileEntityMailBox) {
-            ((TileEntityMailBox) tileEntity).setMailSystem(mailSystem.getIdentifier());
-            ((TileEntityMailBox) tileEntity).setMailboxTexture(texture);
+        if (!world.isRemote) {
+            MailSystem mailSystem = getMailSystemFromStack(stack);
+            MailboxTexture texture = MailboxTexture.BLUE;
+            if (stack.getMetadata() >= 0 & stack.getMetadata() < MailboxTexture.values().length) {
+                texture = MailboxTexture.values()[stack.getMetadata()];
+            }
+            TileEntity tileEntity = world.getTileEntity(pos);
+            if (tileEntity != null && tileEntity instanceof TileEntityMailBox) {
+                ((TileEntityMailBox) tileEntity).setMailSystem(mailSystem.getIdentifier());
+                ((TileEntityMailBox) tileEntity).setMailboxTexture(texture);
+            }
         }
         return flag;
     }
