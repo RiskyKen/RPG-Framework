@@ -443,7 +443,7 @@ public class GuiShop extends GuiTabbed<ContainerShop> implements IDialogCallback
                 String name = ((GuiShopDialogTabEdit) dialog).getTabName();
                 int iconIndex = ((GuiShopDialogTabEdit) dialog).getTabIconIndex();
                 TabType tabType = ((GuiShopDialogTabEdit) dialog).getTabType();
-                float valuePercentage = ((GuiShopDialogTabAdd) dialog).getValuePercentage();
+                float valuePercentage = ((GuiShopDialogTabEdit) dialog).getValuePercentage();
                 PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.TAB_EDIT).setTabName(name).setTabIconIndex(iconIndex).setTabType(tabType).setValuePercentage(valuePercentage));
             }
             if (dialog instanceof GuiShopDialogEditCost) {

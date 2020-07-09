@@ -124,7 +124,7 @@ public class GuiShopDialogTabAdd extends AbstractGuiDialog implements IDropDownL
     }
 
     public float getValuePercentage() {
-        return 0F;
+        return 1F;
     }
 
     @Override

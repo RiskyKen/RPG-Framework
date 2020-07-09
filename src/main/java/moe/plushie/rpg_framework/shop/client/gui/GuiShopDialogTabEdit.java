@@ -139,4 +139,8 @@ public class GuiShopDialogTabEdit extends AbstractGuiDialog implements IDropDown
     public void onDropDownListChanged(GuiDropDownList dropDownList) {
         tabType = TabType.valueOf(dropDownList.getListSelectedItem().tag);
     }
+
+    public float getValuePercentage() {
+        return 1F;
+    }
 }
