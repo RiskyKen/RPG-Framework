@@ -70,6 +70,9 @@ public class ItemMatcherStack implements IItemMatcher {
     }
 
     private boolean isCountMatch(ItemStack itemStack) {
+        if (!matchCount) {
+            return true;
+        }
         return this.itemStack.getCount() == itemStack.getCount();
     }
 
