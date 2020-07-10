@@ -20,6 +20,7 @@ import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerShop;
 import moe.plushie.rpg_framework.core.common.utils.PlayerUtils;
 import moe.plushie.rpg_framework.currency.common.Cost;
+import moe.plushie.rpg_framework.currency.common.Cost.CostFactory;
 import moe.plushie.rpg_framework.itemData.ItemDataProvider;
 import moe.plushie.rpg_framework.shop.ModuleShop;
 import moe.plushie.rpg_framework.shop.common.Shop.ShopItem;
@@ -187,10 +188,18 @@ public class ContainerShop extends ModContainer {
             IItemData itemData = ItemDataProvider.getItemData(itemStack);
             // RPGFramework.getLogger().info("Selling item, slot id: " + activeTab.getItems().size());
             if (itemData.getValue().hasWalletCost()) {
-
-                activeTab.getItems().add(0, new ShopItem(itemStack, itemData.getValue()));
+                
+                CostFactory costFactory = CostFactory.newCost();
+                for (int i = 0; i < itemStack.getCount(); i++) {
+                    costFactory.addCost(itemData.getValue());
+                }
+                ICost cost = costFactory.build();
+                cost.refund(player);
+                //player.getEntityWorld().playSound((EntityPlayer) null, player.posX, player.posY, player.posZ, ModSounds.COIN_DEPOSIT, SoundCategory.PLAYERS, 0.5F, 0.8F + (player.getRNG().nextFloat() * 0.4F));
+                activeTab.getItems().add(0, new ShopItem(itemStack.copy(), cost));
                 activeTab.getItems().remove(activeTab.getItems().size() - 1);
                 PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerShop(shop, true), (EntityPlayerMP) player);
+                itemStack.setCount(0);
                 // sendShopToListeners(true);
                 // detectAndSendChanges();
             }
@@ -198,11 +207,11 @@ public class ContainerShop extends ModContainer {
     }
 
     private void itemBuyback(World world, EntityPlayer player, IShopTab activeTab, int slotId) {
-        ItemStack itemStack = inventorySlots.get(slotId).getStack();
+        IShopItem shopItem = activeTab.getItems().get(slotId);
+        ICost cost = shopItem.getCost();
+        ItemStack itemStack = shopItem.getItem();
         // RPGFramework.getLogger().info("Buyback item, slot id: " + slotId);
         if (!itemStack.isEmpty()) {
-            IItemData itemData = ItemDataProvider.getItemData(itemStack);
-            ICost cost = itemData.getValue();
             if (cost.canAfford(player)) {
                 activeTab.getItems().remove(slotId);
                 activeTab.getItems().add(new ShopItem(ItemStack.EMPTY, Cost.NO_COST));

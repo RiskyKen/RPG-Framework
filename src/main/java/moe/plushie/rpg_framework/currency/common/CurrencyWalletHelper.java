@@ -3,7 +3,10 @@ package moe.plushie.rpg_framework.currency.common;
 import moe.plushie.rpg_framework.api.core.IItemMatcher;
 import moe.plushie.rpg_framework.api.currency.ICurrency;
 import moe.plushie.rpg_framework.api.currency.ICurrency.ICurrencyVariant;
+import moe.plushie.rpg_framework.api.currency.ICurrencyCapability;
+import moe.plushie.rpg_framework.api.currency.IWallet;
 import moe.plushie.rpg_framework.core.common.utils.UtilItems;
+import moe.plushie.rpg_framework.currency.common.capability.CurrencyCapability;
 import moe.plushie.rpg_framework.currency.common.items.ItemWallet;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -34,8 +37,10 @@ public final class CurrencyWalletHelper {
             for (ICurrencyVariant variant : currency.getCurrencyVariants()) {
                 if (variant.getItem().matches(stack)) {
                     return variant.getValue() * stack.getCount();
+                    
                 }
             }
+            
         }
         return 0;
     }
@@ -51,6 +56,21 @@ public final class CurrencyWalletHelper {
             }
         }
         return value;
+    }
+    
+    public static int addAmountToWallet(ICurrency currency, EntityPlayer player, int amount) {
+        if (currency.getCurrencyWalletInfo().getNeedItemToAccess() & !haveWalletForCurrency(player, currency)) {
+            return amount;
+        }
+        ICurrencyCapability currencyCap = CurrencyCapability.get(player);
+        if (currencyCap != null) {
+            IWallet wallet = currencyCap.getWallet(currency);
+            if (wallet != null) {
+                wallet.addAmount(amount);
+                return 0;
+            }
+        }
+        return amount;
     }
 
     public static boolean addAmountToInventory(ICurrency currency, EntityPlayer player, int amount, boolean simulate) {
