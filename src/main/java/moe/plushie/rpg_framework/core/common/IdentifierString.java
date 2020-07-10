@@ -9,7 +9,7 @@ public class IdentifierString implements IIdentifier<String> {
     public IdentifierString(String id) {
         this.id = id;
     }
-    
+
     @Override
     public String getValue() {
         return id;
@@ -22,16 +22,18 @@ public class IdentifierString implements IIdentifier<String> {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (!(obj instanceof IdentifierString)) {
+        if (obj == null)
             return false;
-        }
+        if (getClass() != obj.getClass())
+            return false;
         IdentifierString other = (IdentifierString) obj;
-        if (!id.equals(other.id)) {
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
             return false;
-        }
         return true;
     }
 

@@ -65,7 +65,19 @@ public class Currency implements ICurrency, Comparable<ICurrency> {
 
     @Override
     public boolean equals(Object obj) {
-        return identifier.equals(obj);
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Currency other = (Currency) obj;
+        if (identifier == null) {
+            if (other.identifier != null)
+                return false;
+        } else if (!identifier.equals(other.identifier))
+            return false;
+        return true;
     }
 
     @Override
