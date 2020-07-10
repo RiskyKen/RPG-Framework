@@ -86,20 +86,22 @@ public class StatsHistory {
 
     public int[] getFullHistory() {
         int[] sorted = new int[history.length];
+        int[] historyCopy = history.clone();
+        
         int index = 0;
-        for (int i = count; i < history.length; i++) {
-            sorted[index] = history[i];
+        for (int i = count; i < historyCopy.length; i++) {
+            sorted[index] = historyCopy[i];
             index++;
         }
         for (int i = 0; i < count; i++) {
-            sorted[index] = history[i];
+            sorted[index] = historyCopy[i];
             index++;
         }
         return sorted;
     }
 
     public int[] getHistory() {
-        return history;
+        return history.clone();
     }
 
     public void setHistory(int[] history) {
