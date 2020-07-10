@@ -179,6 +179,33 @@ public class Cost implements ICost {
     }
 
     @Override
+    public void refund(EntityPlayer player) {
+        if (player.capabilities.isCreativeMode) {
+            return;
+        }
+        if (hasWalletCost()) {
+            for (IWallet wallet : walletCosts) {
+                ICurrency currency = wallet.getCurrency();
+                int amount = CurrencyWalletHelper.addAmountToWallet(currency, player, wallet.getAmount());
+                if (amount > 0) {
+                    CurrencyWalletHelper.addAmountToInventory(currency, player, wallet.getAmount(), false);
+                }
+            }
+        }
+        if (hasItemCost()) {
+            throw new NotImplementedException("Refunding with Items is not implemented yet.");
+            // CurrencyWalletHelper.refundItems(player.inventory, itemCosts, false);
+        }
+        if (hasOreDictionaryCost()) {
+            throw new NotImplementedException("Refunding with OreDictionaryCosts is not implemented yet.");
+        }
+
+        if (hasItemValueCosts()) {
+            throw new NotImplementedException("Refunding with ItemValueCosts is not implemented yet.");
+        }
+    }
+
+    @Override
     public String toString() {
         return "Cost [walletCosts=" + Arrays.toString(walletCosts) + ", itemCosts=" + Arrays.toString(itemCosts) + ", oreDictionaryCosts=" + Arrays.toString(oreDictionaryCosts) + ", itemValueCosts=" + Arrays.toString(itemValueCosts) + "]";
     }
@@ -211,6 +238,7 @@ public class Cost implements ICost {
                 }
                 newWalletList.add(newWallet);
             }
+
             return newWalletList.toArray(new IWallet[newWalletList.size()]);
         }
         return walletsIn;

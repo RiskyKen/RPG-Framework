@@ -24,6 +24,8 @@ public interface ICost {
     public boolean canAfford(EntityPlayer player);
 
     public void pay(EntityPlayer player);
+    
+    public void refund(EntityPlayer player);
 
     public ICost add(ICost... costs);
     
