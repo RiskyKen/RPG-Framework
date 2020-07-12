@@ -26,7 +26,7 @@ public class AddonFaerunHeroes extends ModAddon {
     private IdentifierString faerunCurrencyIdentifier = null;
 
     public AddonFaerunHeroes() {
-        super("tiamatrpg", "Faerun Heroes");
+        super("faeruncharacters", "Faerun Heroes");
     }
 
     @Override
