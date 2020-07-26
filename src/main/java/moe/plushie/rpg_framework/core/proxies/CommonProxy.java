@@ -9,7 +9,6 @@ import moe.plushie.rpg_framework.api.core.IItemMatcher;
 import moe.plushie.rpg_framework.api.currency.ICost;
 import moe.plushie.rpg_framework.api.currency.ICurrency;
 import moe.plushie.rpg_framework.api.shop.IShop.IShopTab.TabType;
-import moe.plushie.rpg_framework.auction.ModuleAuction;
 import moe.plushie.rpg_framework.bank.ModuleBank;
 import moe.plushie.rpg_framework.bank.common.Bank;
 import moe.plushie.rpg_framework.core.RPGFramework;
@@ -44,6 +43,7 @@ import moe.plushie.rpg_framework.itemData.ModuleItemData;
 import moe.plushie.rpg_framework.mail.ModuleMail;
 import moe.plushie.rpg_framework.mail.common.MailSystem;
 import moe.plushie.rpg_framework.mail.common.MailSystemManager;
+import moe.plushie.rpg_framework.market.ModuleMarket;
 import moe.plushie.rpg_framework.shop.ModuleShop;
 import moe.plushie.rpg_framework.shop.common.Shop;
 import moe.plushie.rpg_framework.shop.common.Shop.ShopItem;
@@ -86,7 +86,7 @@ public class CommonProxy {
     private IModModule moduleMail;
     private IModModule moduleShop;
     private IModModule moduleBank;
-    private IModModule moduleAuction;
+    private IModModule moduleMarket;
     private IModModule moduleStats;
 
     public void preInit(FMLPreInitializationEvent event) {
@@ -109,7 +109,7 @@ public class CommonProxy {
         moduleMail = new ModuleMail();
         moduleShop = new ModuleShop(getModDirectory());
         moduleBank = new ModuleBank(getModDirectory());
-        moduleAuction = new ModuleAuction();
+        moduleMarket = new ModuleMarket(getModDirectory());
         moduleStats = new ModuleStats(getModDirectory());
 
         currencyManager = new CurrencyManager(modDirectory);
@@ -268,7 +268,7 @@ public class CommonProxy {
     public File getModDirectory() {
         return modDirectory;
     }
-    
+
     public File getModConfigDirectory() {
         return modConfigDirectory;
     }

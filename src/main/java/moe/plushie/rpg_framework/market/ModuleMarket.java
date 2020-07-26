@@ -1,6 +1,9 @@
-package moe.plushie.rpg_framework.auction;
+package moe.plushie.rpg_framework.market;
+
+import java.io.File;
 
 import moe.plushie.rpg_framework.core.common.module.ModModule;
+import moe.plushie.rpg_framework.market.common.MarketManager;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -10,10 +13,13 @@ import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ModuleAuction extends ModModule {
+public class ModuleMarket extends ModModule {
 
-    public ModuleAuction() {
-        super("auction");
+    private static MarketManager marketManager;
+
+    public ModuleMarket(File modDirectory) {
+        super("market");
+        marketManager = new MarketManager(modDirectory);
     }
 
     @Override

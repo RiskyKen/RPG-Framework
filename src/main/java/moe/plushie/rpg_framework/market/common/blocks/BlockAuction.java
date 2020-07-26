@@ -1,4 +1,4 @@
-package moe.plushie.rpg_framework.auction.common.blocks;
+package moe.plushie.rpg_framework.market.common.blocks;
 
 import moe.plushie.rpg_framework.core.common.blocks.AbstractModBlock;
 import moe.plushie.rpg_framework.core.common.lib.LibBlockNames;
