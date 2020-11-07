@@ -16,6 +16,8 @@ public interface ICurrency {
 
     /** Different variants of this currency. */
     public ICurrencyVariant[] getCurrencyVariants();
+    
+    public ICurrencyVariant[] getCurrencyVariants(boolean smallestFirst);
 
     public static interface ICurrencyVariant {
 

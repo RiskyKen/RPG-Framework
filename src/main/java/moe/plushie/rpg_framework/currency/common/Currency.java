@@ -2,6 +2,8 @@ package moe.plushie.rpg_framework.currency.common;
 
 import java.util.Arrays;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.core.IItemMatcher;
 import moe.plushie.rpg_framework.api.currency.ICurrency;
@@ -50,9 +52,20 @@ public class Currency implements ICurrency, Comparable<ICurrency> {
 
     @Override
     public CurrencyVariant[] getCurrencyVariants() {
-        return variants;
+        return getCurrencyVariants(true);
     }
-
+    
+    @Override
+    public CurrencyVariant[] getCurrencyVariants(boolean smallestFirst) {
+        if (smallestFirst) {
+            return variants;
+        } else {
+            CurrencyVariant[] variantsClone = variants.clone();
+            ArrayUtils.reverse(variantsClone);
+            return variantsClone;
+        }
+    }
+    
     @Override
     public int compareTo(ICurrency o) {
         return name.compareTo(o.getName());
