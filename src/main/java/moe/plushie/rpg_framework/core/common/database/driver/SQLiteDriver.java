@@ -20,12 +20,20 @@ import org.sqlite.javax.SQLiteConnectionPoolDataSource;
 
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.database.DatebaseTable;
+import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder;
 
 public final class SQLiteDriver implements IDatabaseDriver {
 
     private static final String FILE_EXTENSION = ".sqlite3";
-    private final ConcurrentHashMap<DatebaseTable, PooledConnection> pooledConnections = new ConcurrentHashMap<DatebaseTable, PooledConnection>();
-    
+
+    private final ConcurrentHashMap<DatebaseTable, PooledConnection> pooledConnections;
+    private final ISqlBulder sqlBulder;
+
+    public SQLiteDriver() {
+        pooledConnections = new ConcurrentHashMap<DatebaseTable, PooledConnection>();
+        sqlBulder = new SQLiteBuilder();
+    }
+
     public static File getDatabaseFile(DatebaseTable table) {
         return new File(RPGFramework.getProxy().getModDirectory(), table.name().toLowerCase() + FILE_EXTENSION);
     }
@@ -54,10 +62,10 @@ public final class SQLiteDriver implements IDatabaseDriver {
     @Override
     public Connection getConnection(DatebaseTable table) throws SQLException {
         Connection connection = null;
-        
+
         connection = getPoolConnection(table);
-        //connection = DriverManager.getConnection(getConnectionUrl(table), makeConfig().toProperties());
-        
+        // connection = DriverManager.getConnection(getConnectionUrl(table), makeConfig().toProperties());
+
         return connection;
     }
 
@@ -137,5 +145,10 @@ public final class SQLiteDriver implements IDatabaseDriver {
             }
         }
         return row;
+    }
+
+    @Override
+    public ISqlBulder getSqlBulder() {
+        return sqlBulder;
     }
 }

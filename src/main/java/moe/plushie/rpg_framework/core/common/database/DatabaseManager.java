@@ -17,6 +17,7 @@ import com.mojang.authlib.GameProfile;
 
 import moe.plushie.rpg_framework.core.common.database.driver.IDatabaseDriver;
 import moe.plushie.rpg_framework.core.common.database.driver.SQLiteDriver;
+import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder;
 
 public final class DatabaseManager {
 
@@ -82,7 +83,7 @@ public final class DatabaseManager {
     public static void createTaskAndExecute(Runnable runnable, @Nullable FutureCallback<Void> callback) {
         ListenableFutureTask futureTask = ListenableFutureTask.<Void>create(runnable, null);
         if (callback != null) {
-            Futures.addCallback(futureTask, callback,  RETURN_EXECUTOR);
+            Futures.addCallback(futureTask, callback, RETURN_EXECUTOR);
         }
         DatabaseManager.EXECUTOR.execute(futureTask);
     }
@@ -97,5 +98,9 @@ public final class DatabaseManager {
 
     public static int getLastInsertRow(Connection conn) throws SQLException {
         return DATABASE_DRIVER.getLastInsertRow(conn);
+    }
+
+    public static ISqlBulder getSqlBulder() {
+        return DATABASE_DRIVER.getSqlBulder();
     }
 }
