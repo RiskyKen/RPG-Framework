@@ -12,7 +12,12 @@ import java.util.UUID;
 
 import com.mojang.authlib.GameProfile;
 
+import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder;
+import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder.ISqlBulderCreateTable;
+
 public final class TablePlayers {
+
+    private final static String TABLE_NAME = "players";
 
     private TablePlayers() {
     }
@@ -26,14 +31,14 @@ public final class TablePlayers {
     }
 
     public static void create() {
-        String sql = "CREATE TABLE IF NOT EXISTS players ";
-        sql += "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,";
-        sql += "uuid VARCHAR(36) NOT NULL,";
-        sql += "username VARCHAR(80) NOT NULL,";
-        sql += "first_seen DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,";
-        sql += "last_seen DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL)";
+        ISqlBulderCreateTable table = DatabaseManager.getSqlBulder().createTable(TABLE_NAME);
+        table.addColumn("id", ISqlBulder.DataType.INT).setUnsigned(true).setNotNull(true).setAutoIncrement(true);
+        table.addColumn("uuid", ISqlBulder.DataType.VARCHAR).setSize(36).setNotNull(true);
+        table.addColumn("username", ISqlBulder.DataType.VARCHAR).setSize(80).setNotNull(true);
+        table.addColumn("first_seen", ISqlBulder.DataType.DATETIME).setNotNull(true).setDefault("CURRENT_TIMESTAMP");
+        table.addColumn("last_seen", ISqlBulder.DataType.DATETIME).setNotNull(true).setDefault("CURRENT_TIMESTAMP");
         try (Connection conn = getConnection(); Statement statement = conn.createStatement()) {
-            statement.executeUpdate(sql);
+            statement.executeUpdate(table.build());
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -24,7 +24,7 @@ public class SQLiteBuilder extends SqlBuilder {
         case TEXT:
             break;
         case VARCHAR:
-            return TYPE_TEXT;
+            return "VARCHAR (" + size + ")";
         }
         return dataType.toString();
     }
@@ -32,6 +32,11 @@ public class SQLiteBuilder extends SqlBuilder {
     @Override
     public ISqlBulderCreateTable createTable(String name) {
         return new SQLiteBuilderCreateTable(name);
+    }
+
+    @Override
+    public ISqlBulderAlterTable alterTable(String name) {
+        return new SQLiteBuilderAlterTable(name);
     }
 
     public class SQLiteBuilderCreateTable extends SqlBuilderCreateTable {
@@ -71,8 +76,63 @@ public class SQLiteBuilder extends SqlBuilder {
                 sb.append(primaryKey);
                 sb.append("`)");
             }
+            for (int i = 0; i < indexs.size(); i++) {
+                Index index = indexs.get(i);
+                if (index.isUnique()) {
+                    sb.append("UNIQUE ");
+                }
+                sb.append("INDEX ");
+                sb.append("`");
+                sb.append(index.getName());
+                sb.append("` (");
+                for (int j = 0; j < index.getKeys().length; j++) {
+                    sb.append("`");
+                    sb.append(index.getKeys()[j]);
+                    sb.append("`");
+                    if (j < index.getKeys().length - 1) {
+                        sb.append(",");
+                    }
+                }
+                sb.append(")");
+                if (i < indexs.size() - 1) {
+                    sb.append(" ");
+                }
+                /// "CREATE INDEX IF NOT EXISTS idx_item_reg ON " + TABLE_ITEMS_NAME + " (reg_name, meta, count, nbt_whitelist)";
+            }
             sb.append(")");
             return sb.toString();
+        }
+    }
+
+    public class SQLiteBuilderAlterTable implements ISqlBulder.ISqlBulderAlterTable {
+
+        private final ArrayList<SQLiteBuilder.SQLiteBuilderColumn> columns = new ArrayList<SQLiteBuilder.SQLiteBuilderColumn>();
+
+        public SQLiteBuilderAlterTable(String name) {
+            // TODO Auto-generated constructor stub
+        }
+        
+        @Override
+        public ISqlBulderColumn addColumn(String name, DataType dataTypes) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public void dropColumn(String name) {
+            // TODO Auto-generated method stub
+        }
+
+        @Override
+        public ISqlBulderColumn modifyColumn(String name, DataType dataTypes) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public String build() {
+            // TODO Auto-generated method stub
+            return null;
         }
     }
 

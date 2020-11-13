@@ -10,6 +10,8 @@ import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.core.common.database.DBPlayer;
 import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
 import moe.plushie.rpg_framework.core.common.database.DatebaseTable;
+import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder;
+import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder.ISqlBulderCreateTable;
 
 public final class TableBankAccounts {
 
@@ -17,27 +19,28 @@ public final class TableBankAccounts {
 
     private TableBankAccounts() {
     }
-    
+
     private static DatebaseTable getDatebaseTable() {
         return DatebaseTable.PLAYER_DATA;
     }
-    
+
     private static Connection getConnection() throws SQLException {
         return DatabaseManager.getConnection(getDatebaseTable());
     }
 
     public static void create() {
-        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME;
-        sql += "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,";
-        sql += "player_id INTEGER NOT NULL,";
-        sql += "bank_identifier TEXT NOT NULL,";
-        sql += "tabs TEXT NOT NULL,";
-        sql += "times_opened INTEGER NOT NULL,";
-        sql += "last_access DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,";
-        sql += "last_change DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL)";
-
+        ISqlBulderCreateTable table = DatabaseManager.getSqlBulder().createTable(TABLE_NAME);
+        table.addColumn("id", ISqlBulder.DataType.INT).setUnsigned(true).setNotNull(true).setAutoIncrement(true);
+        table.addColumn("player_id", ISqlBulder.DataType.INT).setNotNull(true);
+        table.addColumn("bank_identifier", ISqlBulder.DataType.TEXT).setNotNull(true);
+        table.addColumn("tabs", ISqlBulder.DataType.TEXT).setNotNull(true);
+        table.addColumn("times_opened", ISqlBulder.DataType.INT).setUnsigned(true).setNotNull(true);
+        table.addColumn("last_access", ISqlBulder.DataType.DATETIME).setNotNull(true).setDefault("CURRENT_TIMESTAMP");
+        table.addColumn("last_change", ISqlBulder.DataType.DATETIME).setNotNull(true).setDefault("CURRENT_TIMESTAMP");
+        table.ifNotExists(true);
+        table.setPrimaryKey("id");
         try (Connection conn = getConnection(); Statement statement = conn.createStatement()) {
-            statement.executeUpdate(sql);
+            statement.executeUpdate(table.build());
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -6,6 +6,7 @@ public interface ISqlBulder {
     
     public ISqlBulder.ISqlBulderCreateTable createTable(String name);
     
+    public ISqlBulder.ISqlBulderAlterTable alterTable(String name);
     
     /**
      * "CREATE TABLE IF NOT EXISTS
@@ -32,7 +33,7 @@ public interface ISqlBulder {
 
     public interface ISqlBulderCreateTable {
 
-        public ISqlBulder.ISqlBulderColumn addColumn(String name, DataType dataTypes);
+        public ISqlBulder.ISqlBulderColumn addColumn(String name, ISqlBulder.DataType dataTypes);
 
         public void ifNotExists(boolean value);
 
@@ -43,8 +44,19 @@ public interface ISqlBulder {
         public String build();
     }
 
+    public interface ISqlBulderAlterTable {
+
+        public ISqlBulder.ISqlBulderColumn addColumn(String name, ISqlBulder.DataType dataTypes);
+
+        public void dropColumn(String name);
+
+        public ISqlBulder.ISqlBulderColumn modifyColumn(String name, ISqlBulder.DataType dataTypes);
+
+        public String build();
+    }
+
     public interface ISqlBulderColumn {
-        
+
         public ISqlBulder.ISqlBulderColumn setSize(int size);
 
         public ISqlBulder.ISqlBulderColumn setCharacterSet(String charset, String collation);

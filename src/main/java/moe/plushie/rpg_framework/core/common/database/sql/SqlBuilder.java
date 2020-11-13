@@ -1,12 +1,15 @@
 package moe.plushie.rpg_framework.core.common.database.sql;
 
+import java.util.ArrayList;
+
 public abstract class SqlBuilder implements ISqlBulder {
 
-    public abstract class SqlBuilderCreateTable implements ISqlBulderCreateTable {
+    public abstract class SqlBuilderCreateTable implements ISqlBulder.ISqlBulderCreateTable {
 
         protected final String name;
         protected boolean ifNotExists = false;
         protected String primaryKey = null;
+        protected ArrayList<Index> indexs = new ArrayList<SqlBuilder.SqlBuilderCreateTable.Index>();
 
         public SqlBuilderCreateTable(String name) {
             this.name = name;
@@ -24,11 +27,57 @@ public abstract class SqlBuilder implements ISqlBulder {
 
         @Override
         public void addKey(String name, boolean unique, String... keys) {
-            // TODO Auto-generated method stub
+            indexs.add(new Index(name, unique, keys));
+        }
+
+        public class Index {
+
+            private final String name;
+            private final boolean unique;
+            private final String[] keys;
+
+            public Index(String name, boolean unique, String[] keys) {
+                this.name = name;
+                this.unique = unique;
+                this.keys = keys;
+            }
+
+            public String getName() {
+                return name;
+            }
+
+            public boolean isUnique() {
+                return unique;
+            }
+
+            public String[] getKeys() {
+                return keys;
+            }
         }
     }
 
-    public abstract class SqlBuilderColumn implements ISqlBulderColumn {
+    public abstract class SqlBulderAlterTable implements ISqlBulder.ISqlBulderAlterTable {
+
+        @Override
+        public ISqlBulderColumn addColumn(String name, DataType dataTypes) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public void dropColumn(String name) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public ISqlBulderColumn modifyColumn(String name, DataType dataTypes) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+    }
+
+    public abstract class SqlBuilderColumn implements ISqlBulder.ISqlBulderColumn {
 
         protected final String name;
         protected final ISqlBulder.DataType type;
