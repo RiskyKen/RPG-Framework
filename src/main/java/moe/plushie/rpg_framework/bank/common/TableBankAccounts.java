@@ -30,6 +30,7 @@ public final class TableBankAccounts {
 
     public static void create() {
         ISqlBulderCreateTable table = DatabaseManager.getSqlBulder().createTable(TABLE_NAME);
+        table.ifNotExists(true);
         table.addColumn("id", ISqlBulder.DataType.INT).setUnsigned(true).setNotNull(true).setAutoIncrement(true);
         table.addColumn("player_id", ISqlBulder.DataType.INT).setNotNull(true);
         table.addColumn("bank_identifier", ISqlBulder.DataType.TEXT).setNotNull(true);
@@ -37,7 +38,6 @@ public final class TableBankAccounts {
         table.addColumn("times_opened", ISqlBulder.DataType.INT).setUnsigned(true).setNotNull(true);
         table.addColumn("last_access", ISqlBulder.DataType.DATETIME).setNotNull(true).setDefault("CURRENT_TIMESTAMP");
         table.addColumn("last_change", ISqlBulder.DataType.DATETIME).setNotNull(true).setDefault("CURRENT_TIMESTAMP");
-        table.ifNotExists(true);
         table.setPrimaryKey("id");
         try (Connection conn = getConnection(); Statement statement = conn.createStatement()) {
             statement.executeUpdate(table.build());

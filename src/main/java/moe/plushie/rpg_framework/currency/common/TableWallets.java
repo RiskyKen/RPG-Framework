@@ -35,6 +35,7 @@ public final class TableWallets {
 
     public static void create() {
         ISqlBulderCreateTable table = DatabaseManager.getSqlBulder().createTable(TABLE_NAME);
+        table.ifNotExists(true);
         table.addColumn("id", ISqlBulder.DataType.INT).setUnsigned(true).setNotNull(true).setAutoIncrement(true);
         table.addColumn("player_id", ISqlBulder.DataType.INT).setUnsigned(true).setNotNull(true);
         table.addColumn("currency_identifier", ISqlBulder.DataType.TEXT).setNotNull(true);

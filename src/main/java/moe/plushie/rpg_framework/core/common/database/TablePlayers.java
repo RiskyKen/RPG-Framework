@@ -32,6 +32,7 @@ public final class TablePlayers {
 
     public static void create() {
         ISqlBulderCreateTable table = DatabaseManager.getSqlBulder().createTable(TABLE_NAME);
+        table.ifNotExists(true);
         table.addColumn("id", ISqlBulder.DataType.INT).setUnsigned(true).setNotNull(true).setAutoIncrement(true);
         table.addColumn("uuid", ISqlBulder.DataType.VARCHAR).setSize(36).setNotNull(true);
         table.addColumn("username", ISqlBulder.DataType.VARCHAR).setSize(80).setNotNull(true);
