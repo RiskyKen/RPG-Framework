@@ -30,7 +30,6 @@ import moe.plushie.rpg_framework.itemData.ModuleItemData;
 import moe.plushie.rpg_framework.mail.common.MailMessage;
 import moe.plushie.rpg_framework.mail.common.MailSystem;
 import moe.plushie.rpg_framework.mail.common.TableMail;
-import moe.plushie.rpg_framework.mail.common.tileentities.TileEntityMailBox;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.InventoryBasic;
@@ -51,7 +50,7 @@ public class ContainerMailBox extends ModContainer implements IMailSendCallback 
 
     private final ArrayList<Slot> slotsAttachmentsInput;
 
-    public ContainerMailBox(TileEntityMailBox tileEntity, EntityPlayer targetPlayer, DBPlayerInfo sourcePlayer, IMailSystem mailSystem) {
+    public ContainerMailBox(EntityPlayer targetPlayer, DBPlayerInfo sourcePlayer, IMailSystem mailSystem) {
         super(targetPlayer.inventory);
         this.targetPlayer = targetPlayer;
         this.sourcePlayer = sourcePlayer;

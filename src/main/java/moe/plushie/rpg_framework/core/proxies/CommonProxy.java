@@ -19,6 +19,7 @@ import moe.plushie.rpg_framework.core.common.ItemMatcherStack;
 import moe.plushie.rpg_framework.core.common.addons.ModAddonManager;
 import moe.plushie.rpg_framework.core.common.command.CommandRpg;
 import moe.plushie.rpg_framework.core.common.config.ConfigHandler;
+import moe.plushie.rpg_framework.core.common.config.ConfigStorage;
 import moe.plushie.rpg_framework.core.common.init.ModBlocks;
 import moe.plushie.rpg_framework.core.common.init.ModItems;
 import moe.plushie.rpg_framework.core.common.init.ModSounds;
@@ -95,6 +96,7 @@ public class CommonProxy {
             modConfigDirectory.mkdir();
         }
         ConfigHandler.init(new File(modConfigDirectory, "common.cfg"));
+        ConfigStorage.init(new File(modConfigDirectory, "storage.cfg"));
         configDirectory = event.getSuggestedConfigurationFile().getParentFile();
         instanceDirectory = configDirectory.getParentFile();
         modDirectory = new File(instanceDirectory, "rpg_framework");

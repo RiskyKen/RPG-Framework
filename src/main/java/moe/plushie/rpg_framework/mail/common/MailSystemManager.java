@@ -14,6 +14,7 @@ import com.google.gson.JsonElement;
 import com.mojang.authlib.GameProfile;
 
 import moe.plushie.rpg_framework.api.core.IIdentifier;
+import moe.plushie.rpg_framework.api.mail.IMailSystem;
 import moe.plushie.rpg_framework.api.mail.IMailSystemManager;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.IdentifierString;
@@ -110,6 +111,27 @@ public class MailSystemManager implements IMailSystemManager {
                 mailSystemMap.put(mailSystem.getIdentifier(), mailSystem);
             }
         }
+    }
+
+    public int getMailSystemIndex(IMailSystem mailSystem) {
+        if (mailSystem == null) {
+            return -1;
+        }
+        IMailSystem[] mailSystems = getMailSystems();
+        for (int i = 0; i < mailSystems.length; i++) {
+            if (mailSystem == mailSystems[i]) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public IMailSystem getMailSystem(int index) {
+        IMailSystem[] mailSystems = getMailSystems();
+        if (index >= 0 & index < mailSystems.length) {
+            return mailSystems[index];
+        }
+        return null;
     }
 
     @Override

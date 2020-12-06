@@ -4,6 +4,7 @@ public enum EnumGuiId {
     
     MANAGER(false),
     MAIL_BOX(true),
+    MAIL_COMMAND(false),
     WALLET(false),
     SHOP_TILE(true),
     SHOP_COMMAND(false),

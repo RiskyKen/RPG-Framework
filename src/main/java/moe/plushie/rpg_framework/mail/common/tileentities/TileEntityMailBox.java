@@ -85,7 +85,7 @@ public class TileEntityMailBox extends ModAutoSyncTileEntity implements IGuiFact
     @Override
     public Container getServerGuiElement(EntityPlayer player, World world, BlockPos pos) {
         if (getMailSystem() != null) {
-            return new ContainerMailBox(this, player, DatabaseManager.getPlayerInfoWait(player.getGameProfile()), getMailSystem());
+            return new ContainerMailBox(player, DatabaseManager.getPlayerInfoWait(player.getGameProfile()), getMailSystem());
         }
         return null;
     }
@@ -94,7 +94,7 @@ public class TileEntityMailBox extends ModAutoSyncTileEntity implements IGuiFact
     @Override
     public GuiScreen getClientGuiElement(EntityPlayer player, World world, BlockPos pos) {
         if (getMailSystem() != null) {
-            return new GuiMailBox(this, player, getMailSystem());
+            return new GuiMailBox(player, getMailSystem());
         }
         return null;
     }

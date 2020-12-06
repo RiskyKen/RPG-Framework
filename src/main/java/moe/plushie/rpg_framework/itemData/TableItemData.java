@@ -63,8 +63,8 @@ public final class TableItemData {
         table.addColumn(COLUMN_COST, ISqlBulder.DataType.TEXT).setNotNull(true).setDefault("'{}'");
         table.addColumn(COLUMN_TAGS, ISqlBulder.DataType.TEXT).setNotNull(true).setDefault("'[]'");
         table.addColumn(COLUMN_NBT_WHITELIST, ISqlBulder.DataType.TEXT).setNotNull(true).setDefault("''");
-        table.addKey("idx_item_reg", false, COLUMN_REG_NAME, COLUMN_META, COLUMN_COUNT, COLUMN_NBT_WHITELIST);
-
+        // table.addKey("idx_item_reg", false, COLUMN_REG_NAME, COLUMN_META, COLUMN_COUNT, COLUMN_NBT_WHITELIST);
+        table.setPrimaryKey(COLUMN_ID);
         try (Statement statement = conn.createStatement()) {
             statement.executeUpdate(table.build());
         } catch (SQLException e) {

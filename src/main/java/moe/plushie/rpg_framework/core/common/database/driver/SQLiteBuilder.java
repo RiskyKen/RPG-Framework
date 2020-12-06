@@ -2,6 +2,7 @@ package moe.plushie.rpg_framework.core.common.database.driver;
 
 import java.util.ArrayList;
 
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder;
 import moe.plushie.rpg_framework.core.common.database.sql.SqlBuilder;
 
@@ -100,6 +101,7 @@ public class SQLiteBuilder extends SqlBuilder {
                 /// "CREATE INDEX IF NOT EXISTS idx_item_reg ON " + TABLE_ITEMS_NAME + " (reg_name, meta, count, nbt_whitelist)";
             }
             sb.append(")");
+            RPGFramework.getLogger().info("Building SQL: " + sb.toString());
             return sb.toString();
         }
     }

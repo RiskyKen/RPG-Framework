@@ -24,7 +24,6 @@ import moe.plushie.rpg_framework.core.common.network.client.MessageClientGuiMail
 import moe.plushie.rpg_framework.core.common.network.client.MessageClientGuiMailBox.MailMessageType;
 import moe.plushie.rpg_framework.mail.common.MailMessage;
 import moe.plushie.rpg_framework.mail.common.inventory.ContainerMailBox;
-import moe.plushie.rpg_framework.mail.common.tileentities.TileEntityMailBox;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -48,7 +47,6 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
     private static final int MESSAGE_TEXT_HEIGHT = 100;
     private static final int MESSAGE_LINES_PRE_PAGE = 11;
 
-    private final TileEntityMailBox tileEntity;
     private final EntityPlayer player;
     private final IMailSystem mailSystem;
 
@@ -66,9 +64,8 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
     private GuiIconButton buttonMessageNext;
     private GuiIconButton buttonMessageWithdrawItems;
 
-    public GuiMailBox(TileEntityMailBox tileEntity, EntityPlayer entityPlayer, IMailSystem mailSystem) {
-        super(new ContainerMailBox(tileEntity, entityPlayer, null, mailSystem));
-        this.tileEntity = tileEntity;
+    public GuiMailBox(EntityPlayer entityPlayer, IMailSystem mailSystem) {
+        super(new ContainerMailBox(entityPlayer, null, mailSystem));
         this.player = entityPlayer;
         this.mailSystem = mailSystem;
         this.mailMessages = new ArrayList<MailMessage>();
@@ -198,10 +195,6 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
                 PacketHandler.NETWORK_WRAPPER.sendToServer(message);
             }
         }
-    }
-
-    public TileEntityMailBox getTileEntity() {
-        return tileEntity;
     }
 
     @Override

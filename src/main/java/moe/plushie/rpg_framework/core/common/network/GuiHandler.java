@@ -2,6 +2,7 @@ package moe.plushie.rpg_framework.core.common.network;
 
 import moe.plushie.rpg_framework.api.bank.IBank;
 import moe.plushie.rpg_framework.api.core.IIdentifier;
+import moe.plushie.rpg_framework.api.mail.IMailSystem;
 import moe.plushie.rpg_framework.bank.ModuleBank;
 import moe.plushie.rpg_framework.bank.client.GuiBank;
 import moe.plushie.rpg_framework.bank.common.inventory.ContainerBank;
@@ -9,6 +10,8 @@ import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.client.gui.manager.GuiManager;
 import moe.plushie.rpg_framework.core.common.IdentifierInt;
 import moe.plushie.rpg_framework.core.common.database.DBPlayer;
+import moe.plushie.rpg_framework.core.common.database.DBPlayerInfo;
+import moe.plushie.rpg_framework.core.common.database.TablePlayers;
 import moe.plushie.rpg_framework.core.common.init.ModItems;
 import moe.plushie.rpg_framework.core.common.inventory.ContainerManager;
 import moe.plushie.rpg_framework.core.common.inventory.IGuiFactory;
@@ -21,6 +24,8 @@ import moe.plushie.rpg_framework.loot.client.gui.GuiBasicLootBag;
 import moe.plushie.rpg_framework.loot.client.gui.GuiLootEditor;
 import moe.plushie.rpg_framework.loot.common.inventory.ContainerBasicLootBag;
 import moe.plushie.rpg_framework.loot.common.inventory.ContainerLootEditor;
+import moe.plushie.rpg_framework.mail.client.gui.GuiMailBox;
+import moe.plushie.rpg_framework.mail.common.inventory.ContainerMailBox;
 import moe.plushie.rpg_framework.shop.client.gui.GuiShop;
 import moe.plushie.rpg_framework.shop.common.inventory.ContainerShop;
 import moe.plushie.rpg_framework.stats.client.gui.GuiStats;
@@ -71,11 +76,11 @@ public class GuiHandler implements IGuiHandler {
             break;
         case BANK_COMMAND:
             IBank bank = ModuleBank.getBankManager().getBank(x);
-            DBPlayer dbPlayer = new DBPlayer(y);
-            if (bank == null | dbPlayer.isMissing()) {
+            DBPlayer dbPlayerBank = new DBPlayer(y);
+            if (bank == null | dbPlayerBank.isMissing()) {
                 return null;
             }
-            return new ContainerBank(player, bank, dbPlayer);
+            return new ContainerBank(player, bank, dbPlayerBank);
         case SHOP_COMMAND:
             IIdentifier identifier = new IdentifierInt(x);
             return new ContainerShop(player, identifier, null);
@@ -89,6 +94,13 @@ public class GuiHandler implements IGuiHandler {
             break;
         case STATS:
             return new ContainerStats(player);
+        case MAIL_COMMAND:
+            IMailSystem mailSystem = RPGFramework.getProxy().getMailSystemManager().getMailSystem(x);
+            DBPlayerInfo dbPlayerMail = TablePlayers.getPlayer(y);
+            if (mailSystem == null | dbPlayerMail.isMissing()) {
+                return null;
+            }
+            return new ContainerMailBox(player, dbPlayerMail, mailSystem);
         default:
             break;
         }
@@ -143,6 +155,13 @@ public class GuiHandler implements IGuiHandler {
             break;
         case STATS:
             return new GuiStats(player);
+        case MAIL_COMMAND:
+            IMailSystem mailSystem = RPGFramework.getProxy().getMailSystemManager().getMailSystem(x);
+            DBPlayerInfo dbPlayerMail = TablePlayers.getPlayer(y);
+            if (mailSystem == null | dbPlayerMail.isMissing()) {
+                return null;
+            }
+            return new GuiMailBox(player, mailSystem);
         default:
             break;
         }
