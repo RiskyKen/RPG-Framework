@@ -62,9 +62,9 @@ public class SQLiteBuilder extends SqlBuilder {
             if (ifNotExists) {
                 sb.append("IF NOT EXISTS ");
             }
-            sb.append("`");
+            sb.append("'");
             sb.append(name);
-            sb.append("`");
+            sb.append("'");
             sb.append(" (");
             for (int i = 0; i < columns.size(); i++) {
                 sb.append(columns.get(i).build());
@@ -73,9 +73,9 @@ public class SQLiteBuilder extends SqlBuilder {
                 }
             }
             if (primaryKey != null) {
-                sb.append(",PRIMARY KEY (`");
+                sb.append(",PRIMARY KEY ('");
                 sb.append(primaryKey);
-                sb.append("`)");
+                sb.append("')");
             }
             for (int i = 0; i < indexs.size(); i++) {
                 Index index = indexs.get(i);
@@ -83,13 +83,13 @@ public class SQLiteBuilder extends SqlBuilder {
                     sb.append("UNIQUE ");
                 }
                 sb.append("INDEX ");
-                sb.append("`");
+                sb.append("'");
                 sb.append(index.getName());
-                sb.append("` (");
+                sb.append("' (");
                 for (int j = 0; j < index.getKeys().length; j++) {
-                    sb.append("`");
+                    sb.append("'");
                     sb.append(index.getKeys()[j]);
-                    sb.append("`");
+                    sb.append("'");
                     if (j < index.getKeys().length - 1) {
                         sb.append(",");
                     }
@@ -146,9 +146,9 @@ public class SQLiteBuilder extends SqlBuilder {
 
         public String build() {
             StringBuilder sb = new StringBuilder();
-            sb.append("`");
+            sb.append("'");
             sb.append(name);
-            sb.append("`");
+            sb.append("'");
             sb.append(" ");
             sb.append(convertType(type, size));
             if (unsigned) {
