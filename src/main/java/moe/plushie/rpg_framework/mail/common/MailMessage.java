@@ -35,8 +35,8 @@ public class MailMessage implements IMailMessage {
         this.read = read;
     }
     
-    public MailMessage updateReceiver(GameProfile receiver) {
-        return new MailMessage(id, mailSystem, sender, receiver, sendDateTime, subject, messageText, attachments, read);
+    public static IMailMessage updateReceiver(IMailMessage mm, GameProfile receiver) {
+        return new MailMessage(((MailMessage)mm).getId(), mm.getMailSystem(), mm.getSender(), mm.getReceiver(), mm.getSendDateTime(), mm.getSubject(), mm.getMessageText(), mm.getAttachments(), ((MailMessage)mm).isRead());
     }
 
     public int getId() {

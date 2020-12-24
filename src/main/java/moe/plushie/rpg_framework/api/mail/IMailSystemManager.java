@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import com.mojang.authlib.GameProfile;
 
 import moe.plushie.rpg_framework.api.core.IIdentifier;
-import moe.plushie.rpg_framework.mail.common.MailMessage;
 
 public interface IMailSystemManager {
 
@@ -15,7 +14,7 @@ public interface IMailSystemManager {
 
     public String[] getMailSystemNames();
 
-    public void onSendMailMessages(IMailSendCallback callback, GameProfile[] receivers, MailMessage mailMessage);
+    public void onSendMailMessages(IMailSendCallback callback, GameProfile[] receivers, IMailMessage mailMessage);
 
     public static interface IMailSendCallback {
 

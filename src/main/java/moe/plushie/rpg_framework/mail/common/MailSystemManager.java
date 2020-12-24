@@ -14,6 +14,7 @@ import com.google.gson.JsonElement;
 import com.mojang.authlib.GameProfile;
 
 import moe.plushie.rpg_framework.api.core.IIdentifier;
+import moe.plushie.rpg_framework.api.mail.IMailMessage;
 import moe.plushie.rpg_framework.api.mail.IMailSystem;
 import moe.plushie.rpg_framework.api.mail.IMailSystemManager;
 import moe.plushie.rpg_framework.core.RPGFramework;
@@ -152,7 +153,7 @@ public class MailSystemManager implements IMailSystemManager {
     }
 
     @Override
-    public void onSendMailMessages(IMailSendCallback callback, GameProfile[] receivers, MailMessage mailMessage) {
+    public void onSendMailMessages(IMailSendCallback callback, GameProfile[] receivers, IMailMessage mailMessage) {
         DatabaseManager.createTaskAndExecute(new Runnable() {
             MailSystem mailSystem = getMailSystem(mailMessage.getMailSystem().getIdentifier());
 
@@ -166,7 +167,7 @@ public class MailSystemManager implements IMailSystemManager {
                         if (receiver.getName() != null && receiver.getName().startsWith("@")) {
                             specialNames.add(receiver);
                         } else {
-                            if (mailSystem.sendMailMessage(mailMessage.updateReceiver(receiver))) {
+                            if (mailSystem.sendMailMessage(MailMessage.updateReceiver(mailMessage, receiver))) {
                                 success.add(receiver);
                             } else {
                                 failed.add(receiver);
@@ -198,7 +199,7 @@ public class MailSystemManager implements IMailSystemManager {
         });
     }
 
-    private boolean sendSpecialMailMessage(String specialName, MailMessage mailMessage) {
+    private boolean sendSpecialMailMessage(String specialName, IMailMessage mailMessage) {
         if (specialName.equalsIgnoreCase("@a")) {
             sendToAll(mailMessage);
             return true;
@@ -214,7 +215,7 @@ public class MailSystemManager implements IMailSystemManager {
         return false;
     }
 
-    private void sendToAll(MailMessage mailMessage) {
+    private void sendToAll(IMailMessage mailMessage) {
         MailSystem mailSystem = getMailSystem(mailMessage.getMailSystem().getIdentifier());
         if (mailSystem == null) {
             return;
@@ -225,7 +226,7 @@ public class MailSystemManager implements IMailSystemManager {
             public void run() {
                 ArrayList<GameProfile> gameProfiles = TablePlayers.getAllPlayers();
                 for (GameProfile profile : gameProfiles) {
-                    if (mailSystem.sendMailMessage(mailMessage.updateReceiver(profile))) {
+                    if (mailSystem.sendMailMessage(MailMessage.updateReceiver(mailMessage, profile))) {
                         notifyClientMainThread(profile);
                     }
                 }
@@ -233,7 +234,7 @@ public class MailSystemManager implements IMailSystemManager {
         });
     }
 
-    private void sendToAllOnline(MailMessage mailMessage) {
+    private void sendToAllOnline(IMailMessage mailMessage) {
         MailSystem mailSystem = getMailSystem(mailMessage.getMailSystem().getIdentifier());
         if (mailSystem == null) {
             return;
@@ -245,7 +246,7 @@ public class MailSystemManager implements IMailSystemManager {
             DatabaseManager.createTaskAndExecute(new Runnable() {
                 @Override
                 public void run() {
-                    if (mailSystem.sendMailMessage(mailMessage.updateReceiver(profile))) {
+                    if (mailSystem.sendMailMessage(MailMessage.updateReceiver(mailMessage, profile))) {
                         notifyClientMainThread(profile);
                     }
                 }
@@ -254,7 +255,7 @@ public class MailSystemManager implements IMailSystemManager {
 
     }
 
-    private void sendToWhiteList(MailMessage mailMessage) {
+    private void sendToWhiteList(IMailMessage mailMessage) {
         MailSystem mailSystem = getMailSystem(mailMessage.getMailSystem().getIdentifier());
         if (mailSystem == null) {
             return;
@@ -266,7 +267,7 @@ public class MailSystemManager implements IMailSystemManager {
             DatabaseManager.createTaskAndExecute(new Runnable() {
                 @Override
                 public void run() {
-                    if (mailSystem.sendMailMessage(mailMessage.updateReceiver(profile))) {
+                    if (mailSystem.sendMailMessage(MailMessage.updateReceiver(mailMessage, profile))) {
                         notifyClientMainThread(profile);
                     }
                 }
