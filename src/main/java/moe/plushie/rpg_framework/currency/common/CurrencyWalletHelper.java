@@ -9,6 +9,7 @@ import moe.plushie.rpg_framework.core.common.utils.UtilItems;
 import moe.plushie.rpg_framework.currency.common.capability.CurrencyCapability;
 import moe.plushie.rpg_framework.currency.common.items.ItemWallet;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
@@ -67,6 +68,7 @@ public final class CurrencyWalletHelper {
             IWallet wallet = currencyCap.getWallet(currency);
             if (wallet != null) {
                 wallet.addAmount(amount);
+                currencyCap.syncToOwner((EntityPlayerMP) player, true);
                 return 0;
             }
         }
