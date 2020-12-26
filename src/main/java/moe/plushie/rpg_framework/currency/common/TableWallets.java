@@ -93,7 +93,7 @@ public final class TableWallets {
     }
 
     private static void updateWallet(Connection conn, DBPlayer dbPlayer, IIdentifier identifier, int value) throws SQLException {
-        String sql = "UPDATE wallets SET amount=?, last_access=datetime('now') WHERE player_id=? AND currency_identifier=?";
+        String sql = "UPDATE wallets SET amount=?, last_change=datetime('now') WHERE player_id=? AND currency_identifier=?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, value);
             ps.setInt(2, dbPlayer.getId());
