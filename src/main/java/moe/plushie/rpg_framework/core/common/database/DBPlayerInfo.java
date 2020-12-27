@@ -33,10 +33,11 @@ public class DBPlayerInfo extends DBPlayer {
     
     @Override
     public boolean isMissing() {
-        if (!super.isMissing()) {
-            if (this == MISSING_INFO) {
-                return true;
-            }
+        if (super.isMissing()) {
+            return true;
+        }
+        if (this == MISSING_INFO) {
+            return true;
         }
         return false;
     }

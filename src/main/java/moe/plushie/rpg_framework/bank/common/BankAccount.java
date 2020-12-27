@@ -21,6 +21,7 @@ public class BankAccount implements IBankAccount {
     }
     
     public void setNewAccount() {
+        tabs.clear();
         for (int i = 0; i < parentBank.getTabStartingCount(); i++) {
             unlockTab();
         }
