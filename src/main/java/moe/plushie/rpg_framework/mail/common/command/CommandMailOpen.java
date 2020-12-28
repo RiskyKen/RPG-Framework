@@ -1,5 +1,6 @@
 package moe.plushie.rpg_framework.mail.common.command;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.mojang.authlib.GameProfile;
@@ -18,7 +19,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
-import scala.actors.threadpool.Arrays;
 
 public class CommandMailOpen extends ModCommand {
 
