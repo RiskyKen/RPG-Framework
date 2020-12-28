@@ -30,6 +30,7 @@ import moe.plushie.rpg_framework.shop.client.gui.GuiShop;
 import moe.plushie.rpg_framework.shop.common.inventory.ContainerShop;
 import moe.plushie.rpg_framework.stats.client.gui.GuiStats;
 import moe.plushie.rpg_framework.stats.common.inventory.ContainerStats;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -97,10 +98,15 @@ public class GuiHandler implements IGuiHandler {
         case MAIL_COMMAND:
             IMailSystem mailSystem = RPGFramework.getProxy().getMailSystemManager().getMailSystem(x);
             DBPlayerInfo dbPlayerMail = TablePlayers.getPlayer(y);
+            EntityPlayer targetPlayer = player;
+            Entity entity = world.getEntityByID(z);
+            if (entity != null && entity instanceof EntityPlayer) {
+                targetPlayer = (EntityPlayer) entity;
+            }
             if (mailSystem == null | dbPlayerMail.isMissing()) {
                 return null;
             }
-            return new ContainerMailBox(player, dbPlayerMail, mailSystem);
+            return new ContainerMailBox(targetPlayer, dbPlayerMail, mailSystem);
         default:
             break;
         }
@@ -158,10 +164,15 @@ public class GuiHandler implements IGuiHandler {
         case MAIL_COMMAND:
             IMailSystem mailSystem = RPGFramework.getProxy().getMailSystemManager().getMailSystem(x);
             DBPlayerInfo dbPlayerMail = TablePlayers.getPlayer(y);
+            Entity entity = world.getEntityByID(z);
+            EntityPlayer targetPlayer = player;
+            if (entity != null && entity instanceof EntityPlayer) {
+                targetPlayer = (EntityPlayer) entity;
+            }
             if (mailSystem == null | dbPlayerMail.isMissing()) {
                 return null;
             }
-            return new GuiMailBox(player, mailSystem);
+            return new GuiMailBox(targetPlayer, mailSystem);
         default:
             break;
         }
