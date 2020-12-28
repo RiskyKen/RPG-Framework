@@ -59,12 +59,14 @@ public class CommandMailOpen extends ModCommand {
         } else {
             playerSource = getCommandSenderAsPlayer(sender).getGameProfile();
         }
-        playerTarget = getCommandSenderAsPlayer(sender);
+        
         
         RPGFramework.getInstance().getLogger().info("0.3 Opening mail " + Arrays.toString(args));
         
         if (args.length > getParentCount() + 2) {
             playerTarget = getPlayer(server, sender, args[getParentCount() + 2]);
+        } else {
+            playerTarget = getCommandSenderAsPlayer(sender);
         }
         
         RPGFramework.getInstance().getLogger().info("0.4 Opening mail " + Arrays.toString(args));
