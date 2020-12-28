@@ -103,9 +103,15 @@ public class GuiHandler implements IGuiHandler {
             if (entity != null && entity instanceof EntityPlayer) {
                 targetPlayer = (EntityPlayer) entity;
             }
-            if (mailSystem == null | dbPlayerMail.isMissing()) {
+            if (mailSystem == null) {
+                RPGFramework.getInstance().getLogger().warn("Tried to open an invalid mail system.");
                 return null;
             }
+            if (dbPlayerMail.isMissing()) {
+                RPGFramework.getInstance().getLogger().warn("Tried to open an mail system with invalid source.");
+                return null;
+            }
+            RPGFramework.getInstance().getLogger().info("2 Opening mail system '" + mailSystem.getIdentifier().getValue() + "' belonging to player '" + dbPlayerMail.getGameProfile().getName() + "' for player '" + targetPlayer.getDisplayNameString() + "'.");
             return new ContainerMailBox(targetPlayer, dbPlayerMail, mailSystem);
         default:
             break;
@@ -164,14 +170,16 @@ public class GuiHandler implements IGuiHandler {
         case MAIL_COMMAND:
             IMailSystem mailSystem = RPGFramework.getProxy().getMailSystemManager().getMailSystem(x);
             DBPlayerInfo dbPlayerMail = TablePlayers.getPlayer(y);
-            Entity entity = world.getEntityByID(z);
             EntityPlayer targetPlayer = player;
-            if (entity != null && entity instanceof EntityPlayer) {
-                targetPlayer = (EntityPlayer) entity;
-            }
-            if (mailSystem == null | dbPlayerMail.isMissing()) {
+            if (mailSystem == null) {
+                RPGFramework.getInstance().getLogger().warn("Tried to open an invalid mail system.");
                 return null;
             }
+            if (dbPlayerMail.isMissing()) {
+                RPGFramework.getInstance().getLogger().warn("Tried to open an mail system with invalid source.");
+                return null;
+            }
+            RPGFramework.getInstance().getLogger().info("3 Opening mail system '" + mailSystem.getIdentifier().getValue() + "' belonging to player '" + dbPlayerMail.getGameProfile().getName() + "' for player '" + targetPlayer.getDisplayNameString() + "'.");
             return new GuiMailBox(targetPlayer, mailSystem);
         default:
             break;

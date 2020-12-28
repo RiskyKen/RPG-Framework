@@ -65,6 +65,8 @@ public class CommandMailOpen extends ModCommand {
         if (mailSystem == null | playerTarget == null | playerSource == null) {
             throw new WrongUsageException(getUsage(sender), (Object) args);
         }
+        
+        RPGFramework.getInstance().getLogger().info("1 Opening mail system '" + identifierString.getValue() + "' belonging to player '" + playerSource.getName() + "' for player '" + playerTarget.getDisplayNameString() + "'.");
 
         int index = RPGFramework.getProxy().getMailSystemManager().getMailSystemIndex(mailSystem);
         FMLNetworkHandler.openGui(playerTarget, RPGFramework.getInstance(), EnumGuiId.MAIL_COMMAND.ordinal(), server.getEntityWorld(), index, sourcePlayer.getId(), playerTarget.getEntityId());
