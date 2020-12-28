@@ -39,14 +39,17 @@ public class CommandCurrencySet extends ModCommand {
         String playerText = args[getParentCount() + 1];
         String amountText = args[getParentCount() + 2];
         
+        
+        
         ICurrency currency = RPGFramework.getProxy().getCurrencyManager().getCurrency(new IdentifierString(currencyText));
         EntityPlayerMP entityPlayer = getPlayer(server, sender, playerText);
         int amount = parseInt(amountText, 0);
         
-        
+        RPGFramework.getLogger().info(amountText);
         if (currency == null) {
             throw new WrongUsageException(getUsage(sender), (Object)args);
         }
+        
         ICurrencyCapability currencyCap = CurrencyCapability.get(entityPlayer);
         if (currencyCap == null) {
             throw new WrongUsageException(getUsage(sender), (Object)args);
