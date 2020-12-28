@@ -18,6 +18,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
+import scala.actors.threadpool.Arrays;
 
 public class CommandMailOpen extends ModCommand {
 
@@ -35,11 +36,15 @@ public class CommandMailOpen extends ModCommand {
         // rpg mail open <"mail system"> [player source] [player target]
         args = mergeArgs(args);
         
+        RPGFramework.getInstance().getLogger().info("0.1 Opening mail " + Arrays.toString(args));
+        
         // Check for missing args.
         if (args.length <= getParentCount()) {
             throw new WrongUsageException(getUsage(sender), (Object) args);
         }
-
+        
+        RPGFramework.getInstance().getLogger().info("0.2 Opening mail " + Arrays.toString(args));
+        
         IdentifierString identifierString = new IdentifierString(args[getParentCount()]);
         IMailSystem mailSystem = RPGFramework.getProxy().getMailSystemManager().getMailSystem(identifierString);
 
@@ -55,11 +60,15 @@ public class CommandMailOpen extends ModCommand {
             playerSource = getCommandSenderAsPlayer(sender).getGameProfile();
         }
         playerTarget = getCommandSenderAsPlayer(sender);
-
+        
+        RPGFramework.getInstance().getLogger().info("0.3 Opening mail " + Arrays.toString(args));
+        
         if (args.length > getParentCount() + 2) {
             playerTarget = getPlayer(server, sender, args[getParentCount() + 2]);
         }
-
+        
+        RPGFramework.getInstance().getLogger().info("0.4 Opening mail " + Arrays.toString(args));
+        
         DBPlayer sourcePlayer = TablePlayers.getPlayer(playerSource);
 
         if (mailSystem == null | playerTarget == null | playerSource == null) {
