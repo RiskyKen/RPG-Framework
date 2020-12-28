@@ -1,5 +1,7 @@
 package moe.plushie.rpg_framework.core;
 
+import java.util.Map;
+
 import org.apache.logging.log4j.Logger;
 
 import moe.plushie.rpg_framework.core.common.creativetab.CreativeTabRPGEconomy;
@@ -15,6 +17,8 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
+import net.minecraftforge.fml.common.network.NetworkCheckHandler;
+import net.minecraftforge.fml.relauncher.Side;
 
 @Mod(modid = LibModInfo.ID, version = LibModInfo.VERSION, updateJSON = LibModInfo.UPDATE_JSON_URL)
 public class RPGFramework {
@@ -60,6 +64,11 @@ public class RPGFramework {
     @EventHandler
     public void serverStop(FMLServerStoppingEvent event) {
         proxy.serverStopping(event);
+    }
+    
+    @NetworkCheckHandler
+    public boolean versionCheck(Map<String, String> versions, Side side) {
+        return true;
     }
 
     public static CommonProxy getProxy() {

@@ -39,7 +39,7 @@ public class CommandOpenBank extends ModCommand {
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        // /rpg bank open "<bank> [playerShow] [playerBank]"
+        // /rpg bank open "<bank> [playerTarget] [playerSource]"
         if (args.length <= getParentCount()) {
             throw new WrongUsageException(getUsage(sender), (Object)args);
         }
