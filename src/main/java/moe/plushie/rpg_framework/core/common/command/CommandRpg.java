@@ -79,7 +79,7 @@ public class CommandRpg extends ModSubCommands {
             @Override
             public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
                 EntityPlayerMP player = getCommandSenderAsPlayer(sender);
-                String playerText = args[getParentCount()];
+                String playerText = args[getParentCount() + 1];
 
                 EntityPlayerMP targetPlayer = getPlayer(server, sender, playerText);
                 ICurrencyCapability currencyCapability = CurrencyCapability.get(player);
