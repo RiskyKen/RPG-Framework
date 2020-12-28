@@ -101,6 +101,7 @@ public class CommandRpg extends ModSubCommands {
                         for (IBank bank : ModuleBank.getBankManager().getBanks()) {
                             BankAccount bankAccount = BankAccountSerializer.deserializeDatabase(playerInfo, bank);
                             bankAccount.setNewAccount();
+                            BankAccountSerializer.serializeDatabase(playerInfo, bankAccount);
                             bankAccount.syncToOwner(targetPlayer);
                         }
                         for (IMailSystem mailSystem : RPGFramework.getProxy().getMailSystemManager().getMailSystems()) {
