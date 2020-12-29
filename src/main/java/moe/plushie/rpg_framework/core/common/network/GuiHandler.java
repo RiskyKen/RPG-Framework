@@ -111,7 +111,6 @@ public class GuiHandler implements IGuiHandler {
                 RPGFramework.getInstance().getLogger().warn("Tried to open an mail system with invalid source.");
                 return null;
             }
-            RPGFramework.getInstance().getLogger().info("2 Opening mail system '" + mailSystem.getIdentifier().getValue() + "' belonging to player '" + dbPlayerMail.getGameProfile().getName() + "' for player '" + targetPlayer.getDisplayNameString() + "'.");
             return new ContainerMailBox(targetPlayer, dbPlayerMail, mailSystem);
         default:
             break;
@@ -174,7 +173,6 @@ public class GuiHandler implements IGuiHandler {
                 RPGFramework.getInstance().getLogger().warn("Tried to open an invalid mail system.");
                 return null;
             }
-            RPGFramework.getInstance().getLogger().info("3 Opening mail system '" + mailSystem.getIdentifier().getValue() + "' belonging to player 'unknown' for player '" + targetPlayer.getDisplayNameString() + "'.");
             return new GuiMailBox(targetPlayer, mailSystem);
         default:
             break;

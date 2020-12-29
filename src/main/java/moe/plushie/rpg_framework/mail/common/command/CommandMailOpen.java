@@ -1,6 +1,5 @@
 package moe.plushie.rpg_framework.mail.common.command;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.mojang.authlib.GameProfile;
@@ -36,14 +35,10 @@ public class CommandMailOpen extends ModCommand {
         // rpg mail open <"mail system"> [player source] [player target]
         args = mergeArgs(args);
         
-        RPGFramework.getInstance().getLogger().info("0.1 Opening mail " + Arrays.toString(args));
-        
         // Check for missing args.
         if (args.length <= getParentCount()) {
             throw new WrongUsageException(getUsage(sender), (Object) args);
         }
-        
-        RPGFramework.getInstance().getLogger().info("0.2 Opening mail " + Arrays.toString(args));
         
         IdentifierString identifierString = new IdentifierString(args[getParentCount()]);
         IMailSystem mailSystem = RPGFramework.getProxy().getMailSystemManager().getMailSystem(identifierString);
@@ -60,24 +55,17 @@ public class CommandMailOpen extends ModCommand {
             playerSource = getCommandSenderAsPlayer(sender).getGameProfile();
         }
         
-        
-        RPGFramework.getInstance().getLogger().info("0.3 Opening mail " + Arrays.toString(args));
-        
         if (args.length > getParentCount() + 2) {
             playerTarget = getPlayer(server, sender, args[getParentCount() + 2]);
         } else {
             playerTarget = getCommandSenderAsPlayer(sender);
         }
         
-        RPGFramework.getInstance().getLogger().info("0.4 Opening mail " + Arrays.toString(args));
-        
         DBPlayer sourcePlayer = TablePlayers.getPlayer(playerSource);
 
         if (mailSystem == null | playerTarget == null | playerSource == null) {
             throw new WrongUsageException(getUsage(sender), (Object) args);
         }
-        
-        RPGFramework.getInstance().getLogger().info("1 Opening mail system '" + identifierString.getValue() + "' belonging to player '" + playerSource.getName() + "' for player '" + playerTarget.getDisplayNameString() + "'.");
 
         int index = RPGFramework.getProxy().getMailSystemManager().getMailSystemIndex(mailSystem);
         FMLNetworkHandler.openGui(playerTarget, RPGFramework.getInstance(), EnumGuiId.MAIL_COMMAND.ordinal(), server.getEntityWorld(), index, sourcePlayer.getId(), playerTarget.getEntityId());
