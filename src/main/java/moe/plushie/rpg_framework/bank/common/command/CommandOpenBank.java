@@ -39,7 +39,7 @@ public class CommandOpenBank extends ModCommand {
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        // rpg bank open <"bank"> [player source] [player target]
+        // /rpg bank open <"bank"> [player source] [player target]
         args = mergeArgs(args);
 
         // Check for missing args.
