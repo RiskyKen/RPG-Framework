@@ -16,9 +16,9 @@ import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 
 public class ModuleStats extends ModModule {
 
-    private static PlayerStatsHandler playerStatsHandler = new PlayerStatsHandler();
-    private static ServerStatsHandler serverStatsHandler = new ServerStatsHandler();
-    private static WorldStatsHandler worldStatsHandler = new WorldStatsHandler();
+    private static PlayerStatsHandler playerStatsHandler;
+    private static ServerStatsHandler serverStatsHandler;
+    private static WorldStatsHandler worldStatsHandler;
 
     public ModuleStats(File modDirectory) {
         super("stats");

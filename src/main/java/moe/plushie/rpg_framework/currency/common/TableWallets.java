@@ -15,6 +15,8 @@ import moe.plushie.rpg_framework.core.common.database.DBPlayer;
 import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
 import moe.plushie.rpg_framework.core.common.database.DatebaseTable;
 import moe.plushie.rpg_framework.core.common.database.TablePlayers;
+import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder;
+import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder.ISqlBulderCreateTable;
 
 public final class TableWallets {
 
@@ -32,33 +34,33 @@ public final class TableWallets {
     }
 
     public static void create() {
-        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME;
-        sql += "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,";
-        sql += "player_id INTEGER NOT NULL,";
-        sql += "currency_identifier TEXT NOT NULL,";
-        sql += "amount INTEGER NOT NULL,";
-        sql += "times_opened INTEGER NOT NULL,";
-        sql += "last_change DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL)";
-        try (Connection conn = getConnection(); Statement statement = conn.createStatement()) {
-            statement.executeUpdate(sql);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        /*
+//        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME;
+//        sql += "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,";
+//        sql += "player_id INTEGER NOT NULL,";
+//        sql += "currency_identifier TEXT NOT NULL,";
+//        sql += "amount INTEGER NOT NULL,";
+//        sql += "times_opened INTEGER NOT NULL,";
+//        sql += "last_change DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL)";
+//        try (Connection conn = getConnection(); Statement statement = conn.createStatement()) {
+//            statement.executeUpdate(sql);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+        
         ISqlBulderCreateTable table = DatabaseManager.getSqlBulder().createTable(TABLE_NAME);
-        table.ifNotExists(true);
         table.addColumn("id", ISqlBulder.DataType.INT).setUnsigned(true).setNotNull(true).setAutoIncrement(true);
         table.addColumn("player_id", ISqlBulder.DataType.INT).setUnsigned(true).setNotNull(true);
         table.addColumn("currency_identifier", ISqlBulder.DataType.TEXT).setNotNull(true);
         table.addColumn("amount", ISqlBulder.DataType.INT).setNotNull(true);
         table.addColumn("times_opened", ISqlBulder.DataType.INT).setNotNull(true);
         table.addColumn("last_change", ISqlBulder.DataType.DATETIME).setNotNull(true).setDefault("CURRENT_TIMESTAMP");
+        table.ifNotExists(true);
+        table.setPrimaryKey("id");
         try (Connection conn = getConnection(); Statement statement = conn.createStatement()) {
             statement.executeUpdate(table.build());
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        */
     }
 
     public static void saveWallet(GameProfile gameProfile, IWallet wallet) {

@@ -19,6 +19,8 @@ import moe.plushie.rpg_framework.core.common.database.DBPlayerInfo;
 import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
 import moe.plushie.rpg_framework.core.common.database.DatebaseTable;
 import moe.plushie.rpg_framework.core.common.database.TablePlayers;
+import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder;
+import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder.ISqlBulderCreateTable;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -26,34 +28,54 @@ import net.minecraft.util.NonNullList;
 
 public final class TableMail {
 
+    private final static String TABLE_NAME = "mail";
+
     private TableMail() {
     }
-    
+
     private static DatebaseTable getDatebaseTable() {
         return DatebaseTable.PLAYER_DATA;
     }
-    
+
     private static Connection getConnection() throws SQLException {
         return DatabaseManager.getConnection(getDatebaseTable());
     }
 
-    private static final String SQL_CREATE_TABLE = "CREATE TABLE IF NOT EXISTS mail"
-            + "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
-            + "mail_system VARCHAR(64) NOT NULL,"
-            + "player_id_sender INTEGER NOT NULL,"
-            + "player_id_receiver INTEGER NOT NULL,"
-            + "subject VARCHAR(64) NOT NULL,"
-            + "text TEXT NOT NULL,"
-            + "attachments TEXT NOT NULL,"
-            + "sent_date DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,"
-            + "read BOOLEAN NOT NULL)";
+//    private static final String SQL_CREATE_TABLE = "CREATE TABLE IF NOT EXISTS mail"
+//            + "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+//            + "mail_system VARCHAR(64) NOT NULL,"
+//            + "player_id_sender INTEGER NOT NULL,"
+//            + "player_id_receiver INTEGER NOT NULL,"
+//            + "subject VARCHAR(64) NOT NULL,"
+//            + "text TEXT NOT NULL,"
+//            + "attachments TEXT NOT NULL,"
+//            + "sent_date DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,"
+//            + "read BOOLEAN NOT NULL)";
 
     public static void create() {
+        ISqlBulderCreateTable table = DatabaseManager.getSqlBulder().createTable(TABLE_NAME);
+        table.addColumn("id", ISqlBulder.DataType.INT).setUnsigned(true).setNotNull(true).setAutoIncrement(true);
+        table.addColumn("mail_system", ISqlBulder.DataType.VARCHAR).setSize(64).setNotNull(true);
+        table.addColumn("player_id_sender", ISqlBulder.DataType.INT).setUnsigned(true).setNotNull(true);
+        table.addColumn("player_id_receiver", ISqlBulder.DataType.INT).setUnsigned(true).setNotNull(true);
+        table.addColumn("subject", ISqlBulder.DataType.VARCHAR).setSize(64).setNotNull(true);
+        table.addColumn("text", ISqlBulder.DataType.TEXT).setNotNull(true);
+        table.addColumn("attachments", ISqlBulder.DataType.TEXT).setNotNull(true);
+        table.addColumn("sent_date", ISqlBulder.DataType.DATETIME).setNotNull(true).setDefault("CURRENT_TIMESTAMP");
+        table.addColumn("read", ISqlBulder.DataType.BOOLEAN).setNotNull(true);
+        table.ifNotExists(true);
+        table.setPrimaryKey("id");
         try (Connection conn = getConnection(); Statement statement = conn.createStatement()) {
-            statement.executeUpdate(SQL_CREATE_TABLE);
+            statement.executeUpdate(table.build());
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+//        try (Connection conn = getConnection(); Statement statement = conn.createStatement()) {
+//            statement.executeUpdate(SQL_CREATE_TABLE);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
     }
 
     private static final String SQL_MESSAGE_ADD = "INSERT INTO mail (id, mail_system, player_id_sender, player_id_receiver, subject, text, attachments, sent_date, read) VALUES (NULL, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)";
@@ -103,7 +125,7 @@ public final class TableMail {
         DBPlayerInfo dbPlayer = TablePlayers.getPlayerInfo(player.getGameProfile());
         return getMessages(dbPlayer, mailSystem);
     }
-    
+
     public static ArrayList<MailMessage> getMessages(DBPlayerInfo player, IMailSystem mailSystem) {
         ArrayList<MailMessage> mailMessages = new ArrayList<MailMessage>();
         try (Connection conn = DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA); PreparedStatement ps = conn.prepareStatement(SQL_MESSAGES_GET)) {
@@ -151,7 +173,7 @@ public final class TableMail {
     private static final String SQL_MESSAGE_GET = "SELECT * FROM mail WHERE id=?";
 
     public static MailMessage getMessage(int id) {
-        
+
         MailMessage message = null;
         try (Connection conn = DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA); PreparedStatement ps = conn.prepareStatement(SQL_MESSAGE_GET)) {
             ps.setInt(1, id);

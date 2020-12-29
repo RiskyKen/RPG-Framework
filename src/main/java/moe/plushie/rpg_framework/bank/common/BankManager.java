@@ -49,7 +49,13 @@ public class BankManager implements IBankManager {
         }
         bankMap = new ConcurrentHashMap<IIdentifier, IBank>();
         MinecraftForge.EVENT_BUS.register(this);
-        TableBankAccounts.create();
+        DatabaseManager.createTaskAndExecute(new Runnable() {
+
+            @Override
+            public void run() {
+                TableBankAccounts.create();
+            }
+        });
     }
 
     public void reload(boolean syncWithClients) {

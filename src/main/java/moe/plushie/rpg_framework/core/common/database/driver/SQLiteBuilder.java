@@ -26,6 +26,8 @@ public class SQLiteBuilder extends SqlBuilder {
             break;
         case VARCHAR:
             return "VARCHAR (" + size + ")";
+        case BOOLEAN:
+            break;
         }
         return dataType.toString();
     }
@@ -54,6 +56,17 @@ public class SQLiteBuilder extends SqlBuilder {
             columns.add(column);
             return column;
         }
+        
+        @Override
+        public void setPrimaryKey(String key) {
+            super.setPrimaryKey(key);
+            for (int i = 0; i < columns.size(); i++) {
+                if (columns.get(i).getName().equals(key)) {
+                    columns.get(i).setPrimaryKey(true);
+                    break;
+                }
+            }
+        }
 
         @Override
         public String build() {
@@ -73,9 +86,9 @@ public class SQLiteBuilder extends SqlBuilder {
                 }
             }
             if (primaryKey != null) {
-                sb.append(",PRIMARY KEY ('");
-                sb.append(primaryKey);
-                sb.append("')");
+                //sb.append(",PRIMARY KEY ('");
+                //sb.append(primaryKey);
+                //sb.append("')");
             }
             for (int i = 0; i < indexs.size(); i++) {
                 Index index = indexs.get(i);
@@ -154,17 +167,28 @@ public class SQLiteBuilder extends SqlBuilder {
             if (unsigned) {
                 sb.append(" UNSIGNED");
             }
+            if (autoIncrement) {
+                if (primaryKey) {
+                    sb.append(" PRIMARY KEY");
+                }
+                sb.append(" AUTOINCREMENT");
+            }
             if (notNull) {
                 sb.append(" NOT NULL");
-            }
-            if (autoIncrement) {
-                sb.append(" AUTOINCREMENT");
             }
             if (defaultValue != null) {
                 sb.append(" DEFAULT ");
                 sb.append(defaultValue);
             }
             return sb.toString();
+        }
+        
+        public String getName() {
+            return name;
+        }
+        
+        public void setPrimaryKey(boolean primaryKey) {
+            this.primaryKey = primaryKey;
         }
     }
 }

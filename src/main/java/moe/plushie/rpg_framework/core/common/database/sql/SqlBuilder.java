@@ -86,6 +86,7 @@ public abstract class SqlBuilder implements ISqlBulder {
         protected boolean notNull = false;
         protected boolean autoIncrement = false;
         protected String defaultValue = null;
+        protected boolean primaryKey = false;
 
         public SqlBuilderColumn(String name, ISqlBulder.DataType type) {
             this.name = name;
