@@ -25,11 +25,11 @@ public class CommandOpenBank extends ModCommand {
     public CommandOpenBank(ModCommand parent, String name) {
         super(parent, name);
     }
-    
+
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos targetPos) {
         if (args.length == getParentCount() + 1) {
-            //return getListOfStringsMatchingLastWord(args, RpgEconomy.getProxy().getBankManager().getBanks());
+            // return getListOfStringsMatchingLastWord(args, RpgEconomy.getProxy().getBankManager().getBanks());
         }
         if (args.length == getParentCount() + 2) {
             return getListOfStringsMatchingLastWord(args, getPlayers(server));
@@ -39,63 +39,42 @@ public class CommandOpenBank extends ModCommand {
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        // /rpg bank open "<bank> [playerTarget] [playerSource]"
+        // rpg bank open <"bank"> [player source] [player target]
+        args = mergeArgs(args);
+
+        // Check for missing args.
         if (args.length <= getParentCount()) {
-            throw new WrongUsageException(getUsage(sender), (Object)args);
+            throw new WrongUsageException(getUsage(sender), (Object) args);
         }
-        
-        int identifierArgCount = 1;
-        if (!args[getParentCount()].startsWith("\"")) {
-            throw new WrongUsageException(getUsage(sender), (Object)args);
-        }
-        String bankIdentifier = args[getParentCount()];
-        for (int i = getParentCount() + 1; i < args.length; i++) {
-            if (bankIdentifier.endsWith("\"")) {
-                break;
-            }
-            bankIdentifier += args[i];
-            identifierArgCount++;
-        }
-        if (bankIdentifier.length() < 3) {
-            throw new WrongUsageException(getUsage(sender), (Object)args);
-        }
-        if (!bankIdentifier.endsWith("\"")) {
-            throw new WrongUsageException(getUsage(sender), (Object)args);
-        }
-        
-        bankIdentifier = bankIdentifier.substring(1, bankIdentifier.length() - 1);
-        
-        IBank bank = ModuleBank.getBankManager().getBank(new IdentifierString(bankIdentifier));
-        
-        // Player we want to display to.
-        EntityPlayer playerTarget = null;
+
+        IdentifierString identifierString = new IdentifierString(args[getParentCount()]);
+        IBank bank = ModuleBank.getBankManager().getBank(identifierString);
+
         // Players bank that will be opened.
         GameProfile playerSource = null;
-        DBPlayer sourcePlayer;
-        //EntityPlayer playerBank = getCommandSenderAsPlayer(sender);
-        
-        if (args.length > identifierArgCount + getParentCount()) {
-            playerTarget = getPlayer(server, sender, args[getParentCount() + identifierArgCount]);
-            
+        // Player we want to display to.
+        EntityPlayer playerTarget = null;
+
+        if (args.length > getParentCount() + 1) {
+            playerSource = new GameProfile(null, args[getParentCount() + 1]);
+
+        } else {
+            playerSource = getCommandSenderAsPlayer(sender).getGameProfile();
+        }
+
+        if (args.length > getParentCount() + 2) {
+            playerTarget = getPlayer(server, sender, args[getParentCount() + 2]);
         } else {
             playerTarget = getCommandSenderAsPlayer(sender);
         }
-        playerSource = playerTarget.getGameProfile();
-        
-        
-        if (args.length > identifierArgCount + getParentCount() + 1) {
-            String sourceName = args[getParentCount() + identifierArgCount + 1];
-            playerSource = new GameProfile(null, sourceName);
-        }
-        
-        sourcePlayer = TablePlayers.getPlayer(playerSource);
-        
+
+        DBPlayer sourcePlayer = TablePlayers.getPlayer(playerSource);
 
         if (bank == null | playerTarget == null | playerSource == null) {
-            throw new WrongUsageException(getUsage(sender), (Object)args);
+            throw new WrongUsageException(getUsage(sender), (Object) args);
         }
-        
+
         int index = ModuleBank.getBankManager().getBankIndex(bank);
-        FMLNetworkHandler.openGui(playerTarget, RPGFramework.getInstance(), EnumGuiId.BANK_COMMAND.ordinal(), server.getEntityWorld(), index, sourcePlayer.getId(), 0);
+        FMLNetworkHandler.openGui(playerTarget, RPGFramework.getInstance(), EnumGuiId.BANK_COMMAND.ordinal(), server.getEntityWorld(), index, sourcePlayer.getId(), playerTarget.getEntityId());
     }
 }

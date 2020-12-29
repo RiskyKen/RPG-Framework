@@ -32,18 +32,18 @@ public class CommandMailOpen extends ModCommand {
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        // rpg mail open <"mail system"> [player source] [player target]
+        // /rpg mail open <"mail system"> [player source] [player target]
         args = mergeArgs(args);
-        
+
         // Check for missing args.
         if (args.length <= getParentCount()) {
             throw new WrongUsageException(getUsage(sender), (Object) args);
         }
-        
+
         IdentifierString identifierString = new IdentifierString(args[getParentCount()]);
         IMailSystem mailSystem = RPGFramework.getProxy().getMailSystemManager().getMailSystem(identifierString);
 
-        // Players bank that will be opened.
+        // Players mail that will be opened.
         GameProfile playerSource = null;
         // Player we want to display to.
         EntityPlayer playerTarget = null;
@@ -54,13 +54,13 @@ public class CommandMailOpen extends ModCommand {
         } else {
             playerSource = getCommandSenderAsPlayer(sender).getGameProfile();
         }
-        
+
         if (args.length > getParentCount() + 2) {
             playerTarget = getPlayer(server, sender, args[getParentCount() + 2]);
         } else {
             playerTarget = getCommandSenderAsPlayer(sender);
         }
-        
+
         DBPlayer sourcePlayer = TablePlayers.getPlayer(playerSource);
 
         if (mailSystem == null | playerTarget == null | playerSource == null) {

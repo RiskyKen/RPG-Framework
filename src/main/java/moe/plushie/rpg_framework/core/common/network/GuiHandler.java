@@ -78,10 +78,20 @@ public class GuiHandler implements IGuiHandler {
         case BANK_COMMAND:
             IBank bank = ModuleBank.getBankManager().getBank(x);
             DBPlayer dbPlayerBank = new DBPlayer(y);
-            if (bank == null | dbPlayerBank.isMissing()) {
+            EntityPlayer targetPlayerBank = player;
+            Entity entityBank = world.getEntityByID(z);
+            if (entityBank != null && entityBank instanceof EntityPlayer) {
+                targetPlayerBank = (EntityPlayer) entityBank;
+            }
+            if (bank == null) {
+                RPGFramework.getInstance().getLogger().warn("Tried to open an invalid bank.");
                 return null;
             }
-            return new ContainerBank(player, bank, dbPlayerBank);
+            if (dbPlayerBank.isMissing()) {
+                RPGFramework.getInstance().getLogger().warn("Tried to open an bank with invalid source.");
+                return null;
+            }
+            return new ContainerBank(targetPlayerBank, bank, dbPlayerBank);
         case SHOP_COMMAND:
             IIdentifier identifier = new IdentifierInt(x);
             return new ContainerShop(player, identifier, null);
@@ -150,10 +160,12 @@ public class GuiHandler implements IGuiHandler {
             break;
         case BANK_COMMAND:
             IBank bank = ModuleBank.getBankManager().getBank(x);
+            EntityPlayer targetPlayerBank = player;
             if (bank == null) {
+                RPGFramework.getInstance().getLogger().warn("Tried to open an invalid bank.");
                 return null;
             }
-            return new GuiBank(player, bank);
+            return new GuiBank(targetPlayerBank, bank);
         case SHOP_COMMAND:
             return new GuiShop(player, false);
         case LOOT_EDITOR_COMMAND:
