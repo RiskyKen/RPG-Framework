@@ -74,8 +74,10 @@ public class BlockShop extends AbstractModBlockContainer {
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack stack = playerIn.getHeldItem(hand);
-        if (!playerIn.canPlayerEdit(pos, facing, stack)) {
-            return false;
+        if (playerIn.isAllowEdit()) {
+            if (!playerIn.canPlayerEdit(pos, facing, stack)) {
+                return false;
+            }
         }
         openGui(playerIn, EnumGuiId.SHOP_TILE.ordinal(), worldIn, pos, state, facing);
         return true;
