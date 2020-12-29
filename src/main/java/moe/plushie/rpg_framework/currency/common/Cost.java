@@ -106,8 +106,8 @@ public class Cost implements ICost {
                 if (capability != null) {
                     IWallet playerWallet = capability.getWallet(costCurrency);
                     if (playerWallet != null) {
-                        if (playerWallet.getAmount() >= cost.getAmount()) {
-                            continue;
+                        if (playerWallet.getAmount() < cost.getAmount()) {
+                            return false;
                         }
                     }
                 }
