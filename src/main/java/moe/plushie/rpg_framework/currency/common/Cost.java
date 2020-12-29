@@ -90,23 +90,23 @@ public class Cost implements ICost {
         }
 
         if (hasWalletCost()) {
-            for (IWallet wallet : walletCosts) {
-                ICurrency currency = wallet.getCurrency();
-                if (CurrencyWalletHelper.consumeAmountFromInventory(currency, player.inventory, wallet.getAmount(), true)) {
+            for (IWallet cost : walletCosts) {
+                ICurrency costCurrency = cost.getCurrency();
+                if (CurrencyWalletHelper.consumeAmountFromInventory(costCurrency, player.inventory, cost.getAmount(), true)) {
                     continue;
                 }
 
-                ICurrencyWalletInfo walletInfo = currency.getCurrencyWalletInfo();
+                ICurrencyWalletInfo walletInfo = costCurrency.getCurrencyWalletInfo();
                 if (walletInfo.getNeedItemToAccess()) {
-                    if (!CurrencyWalletHelper.haveWalletForCurrency(player, currency)) {
+                    if (!CurrencyWalletHelper.haveWalletForCurrency(player, costCurrency)) {
                         return false;
                     }
                 }
                 ICurrencyCapability capability = CurrencyCapability.get(player);
                 if (capability != null) {
-                    IWallet playerWallet = capability.getWallet(currency);
+                    IWallet playerWallet = capability.getWallet(costCurrency);
                     if (playerWallet != null) {
-                        if (playerWallet.getAmount() >= wallet.getAmount()) {
+                        if (playerWallet.getAmount() >= cost.getAmount()) {
                             continue;
                         }
                     }
