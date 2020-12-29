@@ -60,7 +60,7 @@ public final class SQLiteDriver implements IDatabaseDriver {
     }
 
     @Override
-    public Connection getConnection(DatebaseTable table) throws SQLException {
+    public synchronized Connection getConnection(DatebaseTable table) throws SQLException {
         Connection connection = null;
 
         connection = getPoolConnection(table);

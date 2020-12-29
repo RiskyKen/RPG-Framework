@@ -22,10 +22,18 @@ import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder;
 public final class DatabaseManager {
 
     private static final ExecutorService RETURN_EXECUTOR = Executors.newFixedThreadPool(10);
-    private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(1);
-    private static final IDatabaseDriver DATABASE_DRIVER = new SQLiteDriver();
+    private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(getExecutorThreadCount());
+    private static final IDatabaseDriver DATABASE_DRIVER = getDatabaseDriver();
 
     private DatabaseManager() {
+    }
+    
+    private static IDatabaseDriver getDatabaseDriver() {
+        return new SQLiteDriver();
+    }
+    
+    private static int getExecutorThreadCount() {
+        return 1;
     }
 
     public static void executeAndWait(Runnable runnable) {
