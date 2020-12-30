@@ -9,29 +9,30 @@ import java.util.ArrayList;
 
 import javax.sql.PooledConnection;
 
+import moe.plushie.rpg_framework.core.common.config.ConfigStorage;
 import moe.plushie.rpg_framework.core.common.database.DatebaseTable;
 import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder;
-import moe.plushie.rpg_framework.core.common.lib.LibModInfo;
 
 public class MySqlDriver implements IDatabaseDriver {
-    
+
     private PooledConnection pooledConnection = null;
-    
+
     private final ISqlBulder sqlBulder;
 
     public MySqlDriver() {
         sqlBulder = new MySqlBuilder();
         createDatabase();
     }
-    
+
     private String getConnectionUrl(boolean database) {
+        String host = ConfigStorage.getMySqlHost() + ":" + ConfigStorage.getMySqlPort();
         if (database) {
-            return "jdbc:mysql://localhost:3306/" + getDatabaseName();
+            return "jdbc:mysql://" + host + "/" + getDatabaseName();
         } else {
-            return "jdbc:mysql://localhost:3306/";
+            return "jdbc:mysql://" + host + "/";
         }
     }
-    
+
     private boolean createDatabase() {
         try (Connection connection = DriverManager.getConnection(getConnectionUrl(false), getUsername(), getPassword()); Statement statement = connection.createStatement()) {
             String sql = "CREATE DATABASE IF NOT EXISTS " + getDatabaseName();
@@ -43,28 +44,30 @@ public class MySqlDriver implements IDatabaseDriver {
         }
         return true;
     }
-    
+
     private String getUsername() {
-        return "root";
+        return ConfigStorage.getMySqlUsername();
     }
-    
+
     private String getPassword() {
-        return "";
+        return ConfigStorage.getMySqlPassword();
     }
-    
+
     private String getDatabaseName() {
-        return LibModInfo.ID;
+        return ConfigStorage.getMySqlDatabase();
     }
-    
+
     private PooledConnection makePool() throws SQLException {
+        // MysqlConnectionPoolDataSource poolDataSource = new MysqlConnectionPoolDataSource();
+        // poolDataSource.setUser
         return null;
     }
-    
+
     @Override
     public synchronized Connection getConnection(DatebaseTable table) throws SQLException {
         Connection connection = null;
         // connection = getPoolConnection(table);
-         connection = DriverManager.getConnection(getConnectionUrl(true), getUsername(), getPassword());
+        connection = DriverManager.getConnection(getConnectionUrl(true), getUsername(), getPassword());
 
         return connection;
     }

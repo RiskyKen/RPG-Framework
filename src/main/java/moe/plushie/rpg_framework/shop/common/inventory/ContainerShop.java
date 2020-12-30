@@ -54,7 +54,7 @@ public class ContainerShop extends ModContainer {
     private IShop shop;
     private TileEntityShop tileEntity;
     private boolean editMode = false;
-    private int activeTabIndex = 0;
+    private int activeTabIndex = -1;
     private boolean dirty = false;
     private boolean loadingShop = true;
     private boolean loadingShopLast = true;
@@ -70,7 +70,7 @@ public class ContainerShop extends ModContainer {
         slotsPrice = new ArrayList<Slot>();
 
         if (!entityPlayer.getEntityWorld().isRemote) {
-            changeTab(0);
+            changeTab(-1);
         }
 
         for (int i = 0; i < 4; i++) {
@@ -135,7 +135,7 @@ public class ContainerShop extends ModContainer {
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
         World world = player.getEntityWorld();
 
-        if (!editMode & clickTypeIn == ClickType.PICKUP & !world.isRemote & shop != null) {
+        if (!editMode & clickTypeIn == ClickType.PICKUP & !world.isRemote & shop != null & activeTabIndex != -1) {
             IShopTab activeTab = shop.getTabs().get(getActiveTabIndex());
 
             // Buying item.
@@ -404,6 +404,11 @@ public class ContainerShop extends ModContainer {
 
     public void changeTab(int index) {
         if (shop != null) {
+            if (shop.getTabCount() > 0) {
+                activeTabIndex = MathHelper.clamp(index, 0, shop.getTabCount() - 1);
+            } else {
+                activeTabIndex = -1;
+            }
             activeTabIndex = MathHelper.clamp(index, 0, shop.getTabCount() - 1);
         } else {
             activeTabIndex = -1;
@@ -435,10 +440,10 @@ public class ContainerShop extends ModContainer {
 
     public void addShop(String shopName) {
         ShopManager shopManager = ModuleShop.getShopManager();
-        shopManager.createShopAsync(shopName, new FutureCallback<IShop>() {
+        shopManager.createShopAsync(shopName, new FutureCallback<Void>() {
 
             @Override
-            public void onSuccess(IShop result) {
+            public void onSuccess(Void result) {
                 shopManager.sendShopListToClient((EntityPlayerMP) player);
             }
 

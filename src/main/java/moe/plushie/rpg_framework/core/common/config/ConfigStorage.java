@@ -13,7 +13,14 @@ public class ConfigStorage {
     public static final String CATEGORY_MY_SQL = "MySQL";
 
     private static Configuration config;
+
     private static StorageType storageType = StorageType.SQLITE;
+    private static String mySqlHost = "localhost";
+    private static int mySqlPort = 3306;
+    private static String mySqlUsername = "";
+    private static String mySqlPassword = "";
+    private static String mySqlDatabase = LibModInfo.ID;
+    private static int mySqlTimeout = 60 * 1000;
 
     public static void init(File file) {
         if (config == null) {
@@ -35,11 +42,7 @@ public class ConfigStorage {
     private static void loadCategoryGeneral() {
         config.setCategoryComment(CATEGORY_GENERAL, "General settings.");
 
-        String storageTypeStr = config.getString("storage_type", CATEGORY_GENERAL, "sqlite", "Select the storage type use by the mod.\n"
-                + "Valid values:\n"
-                + "json (!!! for debugging do not use !!!)\n"
-                + "sqlite\n"
-                + "mysql\n");
+        String storageTypeStr = config.getString("storage_type", CATEGORY_GENERAL, "sqlite", "Select the storage type use by the mod.\n" + "Valid values:\n" + "json (!!! for debugging do not use !!!)\n" + "sqlite\n" + "mysql\n");
         try {
             storageType = StorageType.valueOf(storageTypeStr.toUpperCase());
         } catch (Exception e) {
@@ -73,15 +76,40 @@ public class ConfigStorage {
     private static void loadCategoryMySql() {
         config.setCategoryComment(CATEGORY_MY_SQL, "MySQL storage settings. Only active if storage_type is set to mysql.");
 
-        config.getString("host", CATEGORY_MY_SQL, "localhost", "Host address of the server");
-        config.getString("username", CATEGORY_MY_SQL, "", "Username used to access the server.");
-        config.getString("password", CATEGORY_MY_SQL, "", "Password use to access the server.");
-        config.getString("database", CATEGORY_MY_SQL, LibModInfo.ID, "Database to use.");
-        config.getInt("timeout", CATEGORY_MY_SQL, 10 * 1000, 0, 60 * 1000, "Connection time in milliseconds.");
+        mySqlHost = config.getString("host", CATEGORY_MY_SQL, "localhost", "Host address of the server");
+        mySqlPort = config.getInt("port", CATEGORY_MY_SQL, 3306, 1, Integer.MAX_VALUE, "Host port of the server");
+        mySqlUsername = config.getString("username", CATEGORY_MY_SQL, "", "Username used to access the server.");
+        mySqlPassword = config.getString("password", CATEGORY_MY_SQL, "", "Password use to access the server.");
+        mySqlDatabase = config.getString("database", CATEGORY_MY_SQL, LibModInfo.ID, "Database to use.");
+        mySqlTimeout = config.getInt("timeout", CATEGORY_MY_SQL, 10 * 1000, 0, 60 * 1000, "Connection time in milliseconds.");
     }
 
     public static StorageType getStorageType() {
         return storageType;
+    }
+
+    public static String getMySqlHost() {
+        return mySqlHost;
+    }
+
+    public static int getMySqlPort() {
+        return mySqlPort;
+    }
+
+    public static String getMySqlUsername() {
+        return mySqlUsername;
+    }
+
+    public static String getMySqlPassword() {
+        return mySqlPassword;
+    }
+
+    public static String getMySqlDatabase() {
+        return mySqlDatabase;
+    }
+
+    public static int getMySqlTimeout() {
+        return mySqlTimeout;
     }
 
     public enum StorageType {

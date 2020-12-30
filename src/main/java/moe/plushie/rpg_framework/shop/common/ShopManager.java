@@ -82,17 +82,18 @@ public class ShopManager implements IShopManager {
     }
 
     @Override
-    public IShop createShop(String shopName) {
-        return TableShops.createNewShop(shopName);
+    public void createShop(String shopName) {
+        TableShops.createNewShop(shopName);
     }
 
     @Override
-    public ListenableFutureTask<IShop> createShopAsync(String shopName, FutureCallback<IShop> callback) {
-        return DatabaseManager.createTaskAndExecute(new Callable<IShop>() {
+    public ListenableFutureTask<Void> createShopAsync(String shopName, FutureCallback<Void> callback) {
+        return DatabaseManager.createTaskAndExecute(new Callable<Void>() {
 
             @Override
-            public IShop call() throws Exception {
-                return createShop(shopName);
+            public Void call() throws Exception {
+                createShop(shopName);
+                return null;
             }
         }, callback);
     }

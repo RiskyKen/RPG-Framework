@@ -6,8 +6,8 @@ import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder;
 import moe.plushie.rpg_framework.core.common.database.sql.SqlBuilder;
 
-public class MySqlBuilder extends SqlBuilder  {
-    
+public class MySqlBuilder extends SqlBuilder {
+
     public String convertType(ISqlBulder.DataType dataType, int size) {
         switch (dataType) {
         case INT:
@@ -22,10 +22,14 @@ public class MySqlBuilder extends SqlBuilder  {
             return "VARCHAR (" + size + ")";
         case BOOLEAN:
             break;
+        case DOUBLE:
+            break;
+        case FLOAT:
+            break;
         }
         return dataType.toString();
     }
-    
+
     @Override
     public ISqlBulderCreateTable createTable(String name) {
         return new MySqlBuilderCreateTable(name);
@@ -36,7 +40,7 @@ public class MySqlBuilder extends SqlBuilder  {
         // TODO Auto-generated method stub
         return null;
     }
-    
+
     public class MySqlBuilderCreateTable extends SqlBuilderCreateTable {
 
         private final ArrayList<MySqlBuilder.MySqlBuilderColumn> columns = new ArrayList<MySqlBuilder.MySqlBuilderColumn>();
@@ -51,7 +55,7 @@ public class MySqlBuilder extends SqlBuilder  {
             columns.add(column);
             return column;
         }
-        
+
         @Override
         public void setPrimaryKey(String key) {
             super.setPrimaryKey(key);
@@ -113,7 +117,7 @@ public class MySqlBuilder extends SqlBuilder  {
             return sb.toString();
         }
     }
-    
+
     public class MySqlBuilderColumn extends SqlBuilderColumn {
 
         public MySqlBuilderColumn(String name, DataType type) {
@@ -145,11 +149,11 @@ public class MySqlBuilder extends SqlBuilder  {
             }
             return sb.toString();
         }
-        
+
         public String getName() {
             return name;
         }
-        
+
         public void setPrimaryKey(boolean primaryKey) {
             this.primaryKey = primaryKey;
         }

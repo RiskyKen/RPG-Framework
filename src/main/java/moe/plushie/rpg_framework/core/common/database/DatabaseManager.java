@@ -10,13 +10,17 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.annotation.Nullable;
 
+import org.apache.commons.lang3.NotImplementedException;
+
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFutureTask;
 import com.mojang.authlib.GameProfile;
 
+import moe.plushie.rpg_framework.core.common.config.ConfigStorage;
 import moe.plushie.rpg_framework.core.common.database.driver.IDatabaseDriver;
 import moe.plushie.rpg_framework.core.common.database.driver.MySqlDriver;
+import moe.plushie.rpg_framework.core.common.database.driver.SQLiteDriver;
 import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder;
 
 public final class DatabaseManager {
@@ -27,12 +31,20 @@ public final class DatabaseManager {
 
     private DatabaseManager() {
     }
-    
+
     private static IDatabaseDriver getDatabaseDriver() {
-        //return new SQLiteDriver();
-        return new MySqlDriver();
+        switch (ConfigStorage.getStorageType()) {
+        case SQLITE:
+            return new SQLiteDriver();
+        case MYSQL:
+            return new MySqlDriver();
+        case JSON:
+            throw new NotImplementedException("JSON storage type is not implemented.");
+        default:
+            return null;
+        }
     }
-    
+
     private static int getExecutorThreadCount() {
         return 1;
     }

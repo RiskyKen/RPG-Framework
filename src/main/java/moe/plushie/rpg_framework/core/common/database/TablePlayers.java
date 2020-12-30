@@ -13,6 +13,8 @@ import java.util.UUID;
 import com.mojang.authlib.GameProfile;
 
 import moe.plushie.rpg_framework.core.RPGFramework;
+import moe.plushie.rpg_framework.core.common.config.ConfigStorage;
+import moe.plushie.rpg_framework.core.common.config.ConfigStorage.StorageType;
 import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder;
 import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder.ISqlBulderCreateTable;
 
@@ -88,7 +90,7 @@ public final class TablePlayers {
     }
 
     public static void addPlayerToDatabase(Connection conn, GameProfile gameProfile) {
-        String sql = "INSERT INTO players (id, uuid, username, first_seen, last_seen) VALUES (NULL, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
+        String sql = "INSERT INTO players (`id`, `uuid`, `username`, `first_seen`, `last_seen`) VALUES (NULL, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
         sql = String.format(sql, gameProfile.getId().toString(), gameProfile.getName());
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, gameProfile.getId().toString());
@@ -108,7 +110,12 @@ public final class TablePlayers {
     }
 
     public static void updatePlayerLastLogin(Connection conn, GameProfile gameProfile) {
-        String sql = "UPDATE players SET username=?, last_seen=datetime('now') WHERE uuid=?";
+        String sql = "UPDATE players SET `username`=?, `last_seen`=datetime('now') WHERE `uuid`=?";
+        if (ConfigStorage.getStorageType() == StorageType.MYSQL) {
+            sql = "UPDATE players SET `username`=?, `last_seen`=now() WHERE `uuid`=?";
+        }
+        
+        // last_seen=now()
         sql = String.format(sql, gameProfile.getName(), gameProfile.getId().toString());
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, gameProfile.getName());

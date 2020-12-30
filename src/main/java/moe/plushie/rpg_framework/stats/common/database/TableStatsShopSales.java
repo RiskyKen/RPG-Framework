@@ -9,11 +9,15 @@ import java.sql.Statement;
 import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
 import moe.plushie.rpg_framework.core.common.database.DatebaseTable;
+import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder;
+import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder.ISqlBulderCreateTable;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import net.minecraft.item.ItemStack;
 
 public final class TableStatsShopSales {
 
+    private final static String TABLE_NAME = "shop_sales";
+    
     private TableStatsShopSales() {
     }
 
@@ -26,17 +30,31 @@ public final class TableStatsShopSales {
     }
 
     public static void create() {
-        String sql = "CREATE TABLE IF NOT EXISTS shop_sales";
-        sql += "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,";
-        sql += "shop_identifier TEXT NOT NULL,";
-        sql += "item TEXT NOT NULL,";
-        sql += "amount INTEGER NOT NULL,";
-        sql += "date DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL)";
+        ISqlBulderCreateTable table = DatabaseManager.getSqlBulder().createTable(TABLE_NAME);
+        table.addColumn("id", ISqlBulder.DataType.INT).setUnsigned(true).setNotNull(true).setAutoIncrement(true);
+        table.addColumn("shop_identifier", ISqlBulder.DataType.TEXT).setNotNull(true);
+        table.addColumn("item", ISqlBulder.DataType.TEXT).setNotNull(true);
+        table.addColumn("amount", ISqlBulder.DataType.INT).setUnsigned(true).setNotNull(true);
+        table.addColumn("date", ISqlBulder.DataType.DATETIME).setNotNull(true).setDefault("CURRENT_TIMESTAMP");
+        table.ifNotExists(true);
+        table.setPrimaryKey("id");
         try (Connection conn = getConnection(); Statement statement = conn.createStatement()) {
-            statement.executeUpdate(sql);
+            statement.executeUpdate(table.build());
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        
+//        String sql = "CREATE TABLE IF NOT EXISTS shop_sales";
+//        sql += "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,";
+//        sql += "shop_identifier TEXT NOT NULL,";
+//        sql += "item TEXT NOT NULL,";
+//        sql += "amount INTEGER NOT NULL,";
+//        sql += "date DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL)";
+//        try (Connection conn = getConnection(); Statement statement = conn.createStatement()) {
+//            statement.executeUpdate(sql);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
     }
 
     public static void updateSoldItemCount(IIdentifier shop, ItemStack itemStack) {

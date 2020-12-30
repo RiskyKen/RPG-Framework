@@ -71,6 +71,6 @@ public interface ISqlBulder {
     }
 
     public enum DataType {
-        INT, VARCHAR, TEXT, DATETIME, LONGTEXT, BOOLEAN
+        INT, VARCHAR, TEXT, DATETIME, LONGTEXT, BOOLEAN, DOUBLE, FLOAT
     }
 }

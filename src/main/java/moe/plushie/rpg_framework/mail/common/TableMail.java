@@ -78,7 +78,7 @@ public final class TableMail {
 //        }
     }
 
-    private static final String SQL_MESSAGE_ADD = "INSERT INTO mail (id, mail_system, player_id_sender, player_id_receiver, subject, text, attachments, sent_date, read) VALUES (NULL, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)";
+    private static final String SQL_MESSAGE_ADD = "INSERT INTO mail (`id`, `mail_system`, `player_id_sender`, `player_id_receiver`, `subject`, `text`, `attachments`, `sent_date`, `read`) VALUES (NULL, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)";
 
     public static boolean addMessage(IMailMessage message) {
         try (Connection conn = DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA); PreparedStatement ps = conn.prepareStatement(SQL_MESSAGE_ADD)) {
@@ -150,7 +150,7 @@ public final class TableMail {
         return mailMessages;
     }
 
-    private static final String SQL_UNREAD_MESSAGES_GET = "SELECT COUNT(*) FROM mail WHERE mail_system=? AND player_id_receiver=? AND read=?";
+    private static final String SQL_UNREAD_MESSAGES_GET = "SELECT COUNT(*) FROM mail WHERE `mail_system`=? AND `player_id_receiver`=? AND `read`=?";
 
     public static int getUnreadMessagesCount(EntityPlayer entityPlayer, IMailSystem mailSystem) {
         int count = 0;
@@ -210,7 +210,7 @@ public final class TableMail {
         }
     }
 
-    private static final String SQL_MESSAGE_MARK_READ = "UPDATE mail SET read=? WHERE id=?";
+    private static final String SQL_MESSAGE_MARK_READ = "UPDATE mail SET `read`=? WHERE `id`=?";
 
     public static void markMessageasRead(int messageId) {
         try (Connection conn = DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA); PreparedStatement ps = conn.prepareStatement(SQL_MESSAGE_MARK_READ)) {

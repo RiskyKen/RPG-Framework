@@ -17,9 +17,9 @@ public interface IShopManager {
 
     public ListenableFutureTask<IShop> getShopAsync(IIdentifier identifier, @Nullable FutureCallback<IShop> callback);
 
-    public IShop createShop(String shopName);
+    public void createShop(String shopName);
 
-    public ListenableFutureTask<IShop> createShopAsync(String shopName, @Nullable FutureCallback<IShop> callback);
+    public ListenableFutureTask<Void> createShopAsync(String shopName, @Nullable FutureCallback<Void> callback);
 
     public void removeShop(IIdentifier identifier);
 
