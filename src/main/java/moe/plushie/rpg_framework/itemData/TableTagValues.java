@@ -6,6 +6,8 @@ import java.sql.Statement;
 
 import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
 import moe.plushie.rpg_framework.core.common.database.DatebaseTable;
+import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder;
+import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder.ISqlBulderCreateTable;
 
 public final class TableTagValues {
 
@@ -20,11 +22,23 @@ public final class TableTagValues {
     }
 
     public void create() {
-        try (Connection conn = getConnection()) {
-            createTableTags(conn);
+        ISqlBulderCreateTable table = DatabaseManager.getSqlBulder().createTable(TABLE_NAME);
+        table.addColumn("id", ISqlBulder.DataType.INT).setUnsigned(true).setNotNull(true).setAutoIncrement(true);
+        table.addColumn("tags", ISqlBulder.DataType.TEXT).setNotNull(true);
+        table.ifNotExists(true);
+        table.setPrimaryKey("id");
+        //table.addKey("idx_tags", false, "tags");
+        try (Connection conn = getConnection(); Statement statement = conn.createStatement()) {
+            statement.executeUpdate(table.build());
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        
+//        try (Connection conn = getConnection()) {
+//            createTableTags(conn);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
     }
 
     private void createTableTags(Connection conn) {

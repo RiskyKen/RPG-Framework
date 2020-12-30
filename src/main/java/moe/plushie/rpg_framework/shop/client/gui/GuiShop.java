@@ -52,7 +52,7 @@ public class GuiShop extends GuiTabbed<ContainerShop> implements IDialogCallback
 
     private final EntityPlayer entityPlayer;
     private final boolean hasTile;
-    private int activeTabIndex = 0;
+    private int activeTabIndex = -1;
     private IShop shop;
 
     private GuiIconButton buttonShopList;
@@ -484,6 +484,7 @@ public class GuiShop extends GuiTabbed<ContainerShop> implements IDialogCallback
         } else {
             activeTabIndex = -1;
         }
+        getContainer().changeTab(activeTabIndex);
         PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.TAB_CHANGED).setTabIndex(activeTabIndex));
     }
 }

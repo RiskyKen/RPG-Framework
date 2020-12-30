@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import moe.plushie.rpg_framework.api.core.IIdentifier;
+import moe.plushie.rpg_framework.core.common.config.ConfigStorage;
+import moe.plushie.rpg_framework.core.common.config.ConfigStorage.StorageType;
 import moe.plushie.rpg_framework.core.common.database.DBPlayer;
 import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
 import moe.plushie.rpg_framework.core.common.database.DatebaseTable;
@@ -65,14 +67,17 @@ public final class TableBankAccounts {
     public static String getAccountTabs(DBPlayer dbPlayer, IIdentifier bankIdentifier) {
         String tabs = null;
         try (Connection conn = DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA);) {
-            String sqlUpdate = "UPDATE bank_accounts SET times_opened = times_opened + 1, last_access=datetime('now') WHERE bank_identifier=? AND player_id=?";
+            String sqlUpdate = "UPDATE `bank_accounts` SET `times_opened` = `times_opened` + 1, `last_access`=datetime('now') WHERE `bank_identifier`=? AND `player_id`=?";
+            if (ConfigStorage.getStorageType() == StorageType.MYSQL) {
+                sqlUpdate = "UPDATE `bank_accounts` SET `times_opened` = `times_opened` + 1, `last_access`=now() WHERE `bank_identifier`=? AND `player_id`=?";
+            }
             try (PreparedStatement ps = conn.prepareStatement(sqlUpdate)) {
                 ps.setObject(1, bankIdentifier.getValue());
                 ps.setInt(2, dbPlayer.getId());
                 ps.executeUpdate();
             }
 
-            String sqlGetTabs = "SELECT * FROM bank_accounts WHERE bank_identifier=? AND player_id=?";
+            String sqlGetTabs = "SELECT * FROM `bank_accounts` WHERE `bank_identifier`=? AND `player_id`=?";
             try (PreparedStatement ps = conn.prepareStatement(sqlGetTabs)) {
                 ps.setObject(1, bankIdentifier.getValue());
                 ps.setInt(2, dbPlayer.getId());
@@ -105,7 +110,10 @@ public final class TableBankAccounts {
     }
 
     public static void updateAccount(DBPlayer dbPlayer, IIdentifier bankIdentifier, String tabs) {
-        String sql = "UPDATE bank_accounts SET tabs=?, last_access=datetime('now'), last_change=datetime('now') WHERE player_id=? AND bank_identifier=?";
+        String sql = "UPDATE `bank_accounts` SET `tabs`=?, `last_access`=datetime('now'), `last_change`=datetime('now') WHERE `player_id`=? AND `bank_identifier`=?";
+        if (ConfigStorage.getStorageType() == StorageType.MYSQL) {
+            sql = "UPDATE `bank_accounts` SET `tabs`=?, `last_access`=now(), `last_change`=now() WHERE `player_id`=? AND `bank_identifier`=?";
+        }
         try (Connection conn = DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, tabs);
             ps.setInt(2, dbPlayer.getId());
@@ -119,7 +127,7 @@ public final class TableBankAccounts {
 
     public static boolean isAccountInDatabase(DBPlayer dbPlayer, IIdentifier bankIdentifier) {
         boolean foundAccount = false;
-        String sql = "SELECT * FROM bank_accounts WHERE bank_identifier=? AND player_id=?";
+        String sql = "SELECT * FROM `bank_accounts` WHERE `bank_identifier`=? AND `player_id`=?";
         try (Connection conn = DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setObject(1, bankIdentifier.getValue());
             ps.setInt(2, dbPlayer.getId());

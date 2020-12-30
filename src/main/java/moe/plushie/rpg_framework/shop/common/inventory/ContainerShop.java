@@ -312,7 +312,7 @@ public class ContainerShop extends ModContainer {
             changeTab(0);
             sendShopToListeners(false);
             loadingShop = false;
-            PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerShop(shop, false), (EntityPlayerMP) player);
+            //PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerShop(shop, false), (EntityPlayerMP) player);
         }
     }
 
@@ -413,7 +413,9 @@ public class ContainerShop extends ModContainer {
         } else {
             activeTabIndex = -1;
         }
-        setSlotForTab();
+        if (!player.getEntityWorld().isRemote) {
+            setSlotForTab();
+        }
     }
 
     public int getActiveTabIndex() {

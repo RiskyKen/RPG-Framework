@@ -15,6 +15,8 @@ import moe.plushie.rpg_framework.api.currency.ICost;
 import moe.plushie.rpg_framework.api.itemData.IItemData;
 import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
 import moe.plushie.rpg_framework.core.common.database.DatebaseTable;
+import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder;
+import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder.ISqlBulderCreateTable;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import moe.plushie.rpg_framework.currency.common.serialize.CostSerializer;
 import net.minecraft.item.Item;
@@ -51,42 +53,41 @@ public final class TableItemData {
     }
 
     private void createTableItems(Connection conn) {
-        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_ITEMS_NAME;
-        sql += "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)";
-        try (Statement statement = conn.createStatement()) {
-            statement.executeUpdate(sql);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+//        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_ITEMS_NAME;
+//        sql += "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)";
+//        try (Statement statement = conn.createStatement()) {
+//            statement.executeUpdate(sql);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//
+//        addColumn(conn, COLUMN_REG_NAME + " TEXT DEFAULT '' NOT NULL");
+//        addColumn(conn, COLUMN_META + " INTEGER DEFAULT 0 NOT NULL");
+//        addColumn(conn, COLUMN_COUNT + " INTEGER DEFAULT 0 NOT NULL");
+//        addColumn(conn, COLUMN_CATEGORIES + " TEXT DEFAULT '[]' NOT NULL");
+//        addColumn(conn, COLUMN_COST + " TEXT DEFAULT '{}' NOT NULL");
+//        addColumn(conn, COLUMN_TAGS + " TEXT DEFAULT '[]' NOT NULL");
+//        addColumn(conn, COLUMN_NBT_WHITELIST + " TEXT DEFAULT '' NOT NULL");
 
-        addColumn(conn, COLUMN_REG_NAME + " TEXT DEFAULT '' NOT NULL");
-        addColumn(conn, COLUMN_META + " INTEGER DEFAULT 0 NOT NULL");
-        addColumn(conn, COLUMN_COUNT + " INTEGER DEFAULT 0 NOT NULL");
-        addColumn(conn, COLUMN_CATEGORIES + " TEXT DEFAULT '[]' NOT NULL");
-        addColumn(conn, COLUMN_COST + " TEXT DEFAULT '{}' NOT NULL");
-        addColumn(conn, COLUMN_TAGS + " TEXT DEFAULT '[]' NOT NULL");
-        addColumn(conn, COLUMN_NBT_WHITELIST + " TEXT DEFAULT '' NOT NULL");
-        /*
         ISqlBulderCreateTable table = DatabaseManager.getSqlBulder().createTable(TABLE_ITEMS_NAME);
-        table.ifNotExists(true);
         table.addColumn(COLUMN_ID, ISqlBulder.DataType.INT).setUnsigned(true).setNotNull(true).setAutoIncrement(true);
-        table.addColumn(COLUMN_REG_NAME, ISqlBulder.DataType.TEXT).setNotNull(true).setDefault("''");
+        table.addColumn(COLUMN_REG_NAME, ISqlBulder.DataType.TEXT).setNotNull(true);
         table.addColumn(COLUMN_META, ISqlBulder.DataType.INT).setNotNull(true).setDefault("0");
         table.addColumn(COLUMN_COUNT, ISqlBulder.DataType.INT).setNotNull(true).setDefault("0");
-        table.addColumn(COLUMN_CATEGORIES, ISqlBulder.DataType.TEXT).setNotNull(true).setDefault("'[]'");
-        table.addColumn(COLUMN_COST, ISqlBulder.DataType.TEXT).setNotNull(true).setDefault("'{}'");
-        table.addColumn(COLUMN_TAGS, ISqlBulder.DataType.TEXT).setNotNull(true).setDefault("'[]'");
-        table.addColumn(COLUMN_NBT_WHITELIST, ISqlBulder.DataType.TEXT).setNotNull(true).setDefault("''");
-        // table.addKey("idx_item_reg", false, COLUMN_REG_NAME, COLUMN_META, COLUMN_COUNT, COLUMN_NBT_WHITELIST);
+        table.addColumn(COLUMN_CATEGORIES, ISqlBulder.DataType.TEXT).setNotNull(true);
+        table.addColumn(COLUMN_COST, ISqlBulder.DataType.TEXT).setNotNull(true);
+        table.addColumn(COLUMN_TAGS, ISqlBulder.DataType.TEXT).setNotNull(true);
+        table.addColumn(COLUMN_NBT_WHITELIST, ISqlBulder.DataType.TEXT).setNotNull(true);
+        table.ifNotExists(true);
+        //table.addKey("idx_item_reg", false, COLUMN_REG_NAME, COLUMN_META, COLUMN_COUNT, COLUMN_NBT_WHITELIST);
         table.setPrimaryKey(COLUMN_ID);
         try (Statement statement = conn.createStatement()) {
             statement.executeUpdate(table.build());
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        */
     }
-    
+
     private void addColumn(Connection conn, String data) {
         try (Statement s = conn.createStatement()) {
             s.execute("ALTER TABLE " + TABLE_ITEMS_NAME + " ADD COLUMN " + data);
@@ -94,7 +95,7 @@ public final class TableItemData {
             // Column already exists.
         }
     }
-    
+
     public void setItemData(IItemMatcher itemMatcher, IItemData itemData) {
         Item item = itemMatcher.getItemStack().getItem();
         short meta = OreDictionary.WILDCARD_VALUE;

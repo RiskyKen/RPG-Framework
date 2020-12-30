@@ -56,6 +56,11 @@ public class WalletSerializer {
             if (jsonObject.has(PROP_AMOUNT)) {
                 amount = jsonObject.get(PROP_AMOUNT).getAsInt();
             }
+            
+            if (currency == null) {
+                RPGFramework.getLogger().info("Error null currency " + jsonObject.get(PROP_CURRENCY).toString());
+                return null;
+            }
 
             return new Wallet(currency, amount);
         } catch (Exception e) {

@@ -138,6 +138,9 @@ public class BankManager implements IBankManager {
 
     @Override
     public IBank getBank(IIdentifier identifier) {
+        if (identifier == null) {
+            return null;
+        }
         return bankMap.get(identifier);
     }
 

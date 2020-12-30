@@ -88,6 +88,9 @@ public class MySqlBuilder extends SqlBuilder {
                 sb.append(",PRIMARY KEY (`");
                 sb.append(primaryKey);
                 sb.append("`)");
+                if (!indexs.isEmpty()) {
+                    sb.append(",");
+                }
             }
             for (int i = 0; i < indexs.size(); i++) {
                 Index index = indexs.get(i);

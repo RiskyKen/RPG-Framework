@@ -11,6 +11,8 @@ import com.google.gson.JsonElement;
 import moe.plushie.rpg_framework.api.currency.ICost;
 import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
 import moe.plushie.rpg_framework.core.common.database.DatebaseTable;
+import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder;
+import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder.ISqlBulderCreateTable;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import moe.plushie.rpg_framework.currency.common.Cost;
 import moe.plushie.rpg_framework.currency.common.serialize.CostSerializer;
@@ -31,11 +33,25 @@ public class TableItemValues {
     }
 
     public void create() {
-        try (Connection conn = getConnection()) {
-            createTableTags(conn);
+        ISqlBulderCreateTable table = DatabaseManager.getSqlBulder().createTable(TABLE_NAME);
+        table.addColumn("id", ISqlBulder.DataType.INT).setUnsigned(true).setNotNull(true).setAutoIncrement(true);
+        table.addColumn("item_reg_name", ISqlBulder.DataType.TEXT).setNotNull(true);
+        table.addColumn("item_meta", ISqlBulder.DataType.INT).setNotNull(true).setDefault("0");
+        table.addColumn("cost", ISqlBulder.DataType.TEXT).setNotNull(true);
+        table.ifNotExists(true);
+        table.setPrimaryKey("id");
+        //table.addKey("idx_value_item_reg_name", false, "item_reg_name", "item_meta");
+        try (Connection conn = getConnection(); Statement statement = conn.createStatement()) {
+            statement.executeUpdate(table.build());
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        
+//        try (Connection conn = getConnection()) {
+//            createTableTags(conn);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
     }
 
     private void createTableTags(Connection conn) {
