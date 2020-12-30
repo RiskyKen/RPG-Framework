@@ -15,17 +15,45 @@ import moe.plushie.rpg_framework.core.common.lib.LibModInfo;
 
 public class MySqlDriver implements IDatabaseDriver {
     
-    private static final String DATABASE_NAME = LibModInfo.ID;
     private PooledConnection pooledConnection = null;
     
     private final ISqlBulder sqlBulder;
 
     public MySqlDriver() {
         sqlBulder = new MySqlBuilder();
+        createDatabase();
     }
     
-    private String getConnectionUrl() {
-        return "jdbc:mysql://localhost:3306/" + DATABASE_NAME;
+    private String getConnectionUrl(boolean database) {
+        if (database) {
+            return "jdbc:mysql://localhost:3306/" + getDatabaseName();
+        } else {
+            return "jdbc:mysql://localhost:3306/";
+        }
+    }
+    
+    private boolean createDatabase() {
+        try (Connection connection = DriverManager.getConnection(getConnectionUrl(false), getUsername(), getPassword()); Statement statement = connection.createStatement()) {
+            String sql = "CREATE DATABASE IF NOT EXISTS " + getDatabaseName();
+            statement.setQueryTimeout(10);
+            statement.executeUpdate(sql);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+    
+    private String getUsername() {
+        return "root";
+    }
+    
+    private String getPassword() {
+        return "BV8RJHJYVF";
+    }
+    
+    private String getDatabaseName() {
+        return LibModInfo.ID;
     }
     
     private PooledConnection makePool() throws SQLException {
@@ -36,7 +64,7 @@ public class MySqlDriver implements IDatabaseDriver {
     public synchronized Connection getConnection(DatebaseTable table) throws SQLException {
         Connection connection = null;
         // connection = getPoolConnection(table);
-         connection = DriverManager.getConnection(getConnectionUrl(), "root", "root");
+         connection = DriverManager.getConnection(getConnectionUrl(true), getUsername(), getPassword());
 
         return connection;
     }

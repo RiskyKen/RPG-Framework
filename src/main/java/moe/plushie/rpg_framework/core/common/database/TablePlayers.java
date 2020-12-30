@@ -12,6 +12,7 @@ import java.util.UUID;
 
 import com.mojang.authlib.GameProfile;
 
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder;
 import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder.ISqlBulderCreateTable;
 
@@ -53,6 +54,7 @@ public final class TablePlayers {
         table.ifNotExists(true);
         table.setPrimaryKey("id");
         try (Connection conn = getConnection(); Statement statement = conn.createStatement()) {
+            RPGFramework.getLogger().info(table.build());
             statement.executeUpdate(table.build());
         } catch (SQLException e) {
             e.printStackTrace();

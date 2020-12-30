@@ -16,7 +16,7 @@ import com.google.common.util.concurrent.ListenableFutureTask;
 import com.mojang.authlib.GameProfile;
 
 import moe.plushie.rpg_framework.core.common.database.driver.IDatabaseDriver;
-import moe.plushie.rpg_framework.core.common.database.driver.SQLiteDriver;
+import moe.plushie.rpg_framework.core.common.database.driver.MySqlDriver;
 import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder;
 
 public final class DatabaseManager {
@@ -29,7 +29,8 @@ public final class DatabaseManager {
     }
     
     private static IDatabaseDriver getDatabaseDriver() {
-        return new SQLiteDriver();
+        //return new SQLiteDriver();
+        return new MySqlDriver();
     }
     
     private static int getExecutorThreadCount() {
