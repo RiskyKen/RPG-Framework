@@ -49,7 +49,7 @@ public class MySqlDriver implements IDatabaseDriver {
     }
     
     private String getPassword() {
-        return "BV8RJHJYVF";
+        return "";
     }
     
     private String getDatabaseName() {
