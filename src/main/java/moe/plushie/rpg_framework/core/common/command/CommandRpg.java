@@ -78,11 +78,10 @@ public class CommandRpg extends ModSubCommands {
 
             @Override
             public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-                EntityPlayerMP player = getCommandSenderAsPlayer(sender);
                 String playerText = args[getParentCount() + 1];
 
                 EntityPlayerMP targetPlayer = getPlayer(server, sender, playerText);
-                ICurrencyCapability currencyCapability = CurrencyCapability.get(player);
+                ICurrencyCapability currencyCapability = CurrencyCapability.get(targetPlayer);
                 if (currencyCapability != null) {
                     for (ICurrency currency : RPGFramework.getProxy().getCurrencyManager().getCurrencies()) {
                         currencyCapability.getWallet(currency).setAmount(0);
@@ -119,7 +118,7 @@ public class CommandRpg extends ModSubCommands {
 
                             @Override
                             public void run() {
-                                player.sendMessage(new TextComponentString("Player was reset."));
+                                sender.sendMessage(new TextComponentString("Player was reset."));
                             }
                         });
                     }
@@ -131,7 +130,7 @@ public class CommandRpg extends ModSubCommands {
 
                             @Override
                             public void run() {
-                                player.sendMessage(new TextComponentString("Player reset failed."));
+                                sender.sendMessage(new TextComponentString("Player reset failed."));
                             }
                         });
                     }
