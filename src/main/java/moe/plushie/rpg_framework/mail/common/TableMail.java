@@ -121,6 +121,11 @@ public final class TableMail {
 
     private static final String SQL_MESSAGES_GET = "SELECT * FROM mail WHERE mail_system=? AND player_id_receiver=?";
 
+    public static ArrayList<MailMessage> getMessages(DBPlayer player, IMailSystem mailSystem) {
+        DBPlayerInfo dbPlayer = TablePlayers.getPlayer(player.getId());
+        return getMessages(dbPlayer, mailSystem);
+    }
+    
     public static ArrayList<MailMessage> getMessages(EntityPlayer player, IMailSystem mailSystem) {
         DBPlayerInfo dbPlayer = TablePlayers.getPlayerInfo(player.getGameProfile());
         return getMessages(dbPlayer, mailSystem);

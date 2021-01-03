@@ -10,8 +10,6 @@ import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.client.gui.manager.GuiManager;
 import moe.plushie.rpg_framework.core.common.IdentifierInt;
 import moe.plushie.rpg_framework.core.common.database.DBPlayer;
-import moe.plushie.rpg_framework.core.common.database.DBPlayerInfo;
-import moe.plushie.rpg_framework.core.common.database.TablePlayers;
 import moe.plushie.rpg_framework.core.common.init.ModItems;
 import moe.plushie.rpg_framework.core.common.inventory.ContainerManager;
 import moe.plushie.rpg_framework.core.common.inventory.IGuiFactory;
@@ -107,7 +105,7 @@ public class GuiHandler implements IGuiHandler {
             return new ContainerStats(player);
         case MAIL_COMMAND:
             IMailSystem mailSystem = RPGFramework.getProxy().getMailSystemManager().getMailSystem(x);
-            DBPlayerInfo dbPlayerMail = TablePlayers.getPlayer(y);
+            DBPlayer dbPlayerMail = new DBPlayer(y);
             EntityPlayer targetPlayer = player;
             Entity entity = world.getEntityByID(z);
             if (entity != null && entity instanceof EntityPlayer) {

@@ -88,6 +88,7 @@ inventory.rpg_economy:bank.dialog.buy_tab.label.unlock_cost=Unlock Cost:
 
 # Inventory - Mailbox
 inventory.rpg_economy:mailbox.name=Mail Box
+inventory.rpg_economy:mailbox.name.loading=Loading...
 
 inventory.rpg_economy:mailbox.button.previous_page=Previous Page
 inventory.rpg_economy:mailbox.button.next_page=Next Page

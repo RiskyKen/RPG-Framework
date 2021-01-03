@@ -51,6 +51,7 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
     private final IMailSystem mailSystem;
 
     private ArrayList<MailMessage> mailMessages;
+    private boolean gotMessages = false;
     private int mailListPage = 0;
     private int messagePage = 0;
 
@@ -241,7 +242,12 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        GuiHelper.renderLocalizedGuiName(fontRenderer, xSize, getName());
+        if (gotMessages) {
+            GuiHelper.renderLocalizedGuiName(fontRenderer, xSize, getName());
+        } else {
+            GuiHelper.renderLocalizedGuiName(fontRenderer, xSize, getName() + ".loading");
+        }
+        
 
         GuiHelper.renderPlayerInvlabel(0, 151, fontRenderer);
         fontRenderer.drawString((mailListPage + 1) + "/" + getMaxListPages(), 40, 135, 0x404040);
@@ -318,6 +324,7 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
     public void gotListFromServer(ArrayList<MailMessage> mailMessages) {
         synchronized (mailMessages) {
             this.mailMessages = mailMessages;
+            gotMessages = true;
         }
         updateMailList();
     }

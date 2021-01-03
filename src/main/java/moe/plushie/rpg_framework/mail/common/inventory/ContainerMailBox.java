@@ -15,7 +15,8 @@ import moe.plushie.rpg_framework.api.itemData.IItemData;
 import moe.plushie.rpg_framework.api.mail.IMailSystem;
 import moe.plushie.rpg_framework.api.mail.IMailSystemManager.IMailSendCallback;
 import moe.plushie.rpg_framework.core.RPGFramework;
-import moe.plushie.rpg_framework.core.common.database.DBPlayerInfo;
+import moe.plushie.rpg_framework.core.common.database.DBPlayer;
+import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
 import moe.plushie.rpg_framework.core.common.inventory.ModContainer;
 import moe.plushie.rpg_framework.core.common.inventory.slot.SlotHidable;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
@@ -42,7 +43,7 @@ public class ContainerMailBox extends ModContainer implements IMailSendCallback 
 
     private final ScriptEngine scriptEngine = new ScriptEngineManager(null).getEngineByName("nashorn");
     private final EntityPlayer targetPlayer;
-    private final DBPlayerInfo sourcePlayer;
+    private final DBPlayer sourcePlayer;
     private final IMailSystem mailSystem;
     private boolean synced = false;
 
@@ -50,7 +51,7 @@ public class ContainerMailBox extends ModContainer implements IMailSendCallback 
 
     private final ArrayList<Slot> slotsAttachmentsInput;
 
-    public ContainerMailBox(EntityPlayer targetPlayer, DBPlayerInfo sourcePlayer, IMailSystem mailSystem) {
+    public ContainerMailBox(EntityPlayer targetPlayer, DBPlayer sourcePlayer, IMailSystem mailSystem) {
         super(targetPlayer.inventory);
         this.targetPlayer = targetPlayer;
         this.sourcePlayer = sourcePlayer;
@@ -75,6 +76,8 @@ public class ContainerMailBox extends ModContainer implements IMailSendCallback 
         scriptEngine.put("getStackSize", (Function<Double, Integer>) this::getStackSize);
         scriptEngine.put("getStackMaxSize", (Function<Double, Integer>) this::getStackMaxSize);
         scriptEngine.put("getStackValue", (Function<Double, Integer>) this::getStackValue);
+        
+        syncMessagesToClientAsync();
     }
 
     @Override
@@ -89,7 +92,7 @@ public class ContainerMailBox extends ModContainer implements IMailSendCallback 
         super.onContainerClosed(playerIn);
     }
 
-    private EntityPlayer getEntityPlayer() {
+    private synchronized EntityPlayer getEntityPlayer() {
         return targetPlayer;
     }
 
@@ -110,12 +113,33 @@ public class ContainerMailBox extends ModContainer implements IMailSendCallback 
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
         if (!synced) {
-            EntityPlayerMP player = (EntityPlayerMP) getEntityPlayer();
-            ArrayList<MailMessage> mailMessages = TableMail.getMessages(sourcePlayer, mailSystem);
-            MessageServerMailList message = new MessageServerMailList(mailMessages);
-            PacketHandler.NETWORK_WRAPPER.sendTo(message, player);
+            //syncMessagesToClient();
             synced = true;
         }
+    }
+    
+    
+    
+    private void syncMessagesToClientAsync() {
+        DatabaseManager.createTaskAndExecute(new Runnable() {
+            
+            @Override
+            public void run() {
+                syncMessagesToClient();
+            }
+        });
+    }
+    
+    private synchronized void syncMessagesToClient() {
+        EntityPlayerMP player = (EntityPlayerMP) getEntityPlayer();
+        ArrayList<MailMessage> mailMessages = null;
+        if (targetPlayer != null) {
+            mailMessages = TableMail.getMessages(targetPlayer, mailSystem);
+        } else {
+            mailMessages = TableMail.getMessages(player, mailSystem);
+        }
+        MessageServerMailList message = new MessageServerMailList(mailMessages);
+        PacketHandler.NETWORK_WRAPPER.sendTo(message, player);
     }
 
     public void onClientSendMailMessages(EntityPlayerMP player, GameProfile[] receivers, MailMessage mailMessage) {
