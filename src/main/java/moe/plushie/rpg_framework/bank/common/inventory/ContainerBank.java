@@ -56,7 +56,11 @@ public class ContainerBank extends ModContainer implements IInventoryChangedList
             }
             // unlockedTabs = bankAccount.getTabUnlockCount();
             setActiveTab(0);
-            ModuleBank.getBankManager().getBankAccount(this, bank, sourcePlayer);
+            if (sourcePlayer != null) {
+                ModuleBank.getBankManager().getBankAccount(this, bank, sourcePlayer);
+            } else {
+                ModuleBank.getBankManager().getBankAccount(this, bank, player.getGameProfile());
+            }
         }
 
         addPlayerSlots(panelSizeX / 2 - 176 / 2 + 8, panelSizeY + 17);

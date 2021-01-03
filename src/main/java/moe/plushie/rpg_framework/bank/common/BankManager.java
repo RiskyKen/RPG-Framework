@@ -150,12 +150,35 @@ public class BankManager implements IBankManager {
             callback.onBackAccountLoad(null);
             return;
         }
-        DBPlayer dbPlayer = TablePlayers.getPlayer(sourcePlayer);
-        if (dbPlayer.getId() < 0 | dbPlayer == DBPlayerInfo.MISSING_INFO) {
-            callback.onBackAccountLoad(null);
-            return;
-        }
-        getBankAccount(callback, bank, dbPlayer);
+
+        DatabaseManager.createTaskAndExecute(new Callable<IBankAccount>() {
+
+            @Override
+            public IBankAccount call() throws Exception {
+                DBPlayer dbPlayer = TablePlayers.getPlayer(sourcePlayer);
+                if (dbPlayer.getId() < 0 | dbPlayer == DBPlayerInfo.MISSING_INFO) {
+                    return null;
+                }
+                return BankAccountSerializer.deserializeDatabase(dbPlayer, bank);
+            }
+        }, new FutureCallback<IBankAccount>() {
+
+            @Override
+            public void onSuccess(IBankAccount result) {
+                FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        callback.onBackAccountLoad(result);
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 
     public void getBankAccount(IBankAccountLoadCallback callback, IBank bank, DBPlayer sourcePlayer) {

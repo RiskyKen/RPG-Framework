@@ -242,12 +242,12 @@ public class GuiMailBox extends ModGuiContainer<ContainerMailBox> implements IDi
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        if (gotMessages) {
-            GuiHelper.renderLocalizedGuiName(fontRenderer, xSize, getName());
-        } else {
-            GuiHelper.renderLocalizedGuiName(fontRenderer, xSize, getName() + ".loading");
+        String title = GuiHelper.getLocalControlName(getName(), "name.loading");
+        if (mailSystem != null & gotMessages) {
+            title = mailSystem.getName();
         }
-        
+        int titleWidth = fontRenderer.getStringWidth(title);
+        fontRenderer.drawString(title, xSize / 2 - titleWidth / 2, 6, 4210752);
 
         GuiHelper.renderPlayerInvlabel(0, 151, fontRenderer);
         fontRenderer.drawString((mailListPage + 1) + "/" + getMaxListPages(), 40, 135, 0x404040);

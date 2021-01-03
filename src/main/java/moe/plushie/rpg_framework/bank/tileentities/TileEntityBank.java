@@ -7,7 +7,6 @@ import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.bank.ModuleBank;
 import moe.plushie.rpg_framework.bank.client.GuiBank;
 import moe.plushie.rpg_framework.bank.common.inventory.ContainerBank;
-import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
 import moe.plushie.rpg_framework.core.common.inventory.IGuiFactory;
 import moe.plushie.rpg_framework.core.common.serialize.IdentifierSerialize;
 import moe.plushie.rpg_framework.core.common.tileentities.ModAutoSyncTileEntity;
@@ -79,7 +78,7 @@ public class TileEntityBank extends ModAutoSyncTileEntity implements IGuiFactory
     @Override
     public Container getServerGuiElement(EntityPlayer player, World world, BlockPos pos) {
         if (haveBank()) {
-            return new ContainerBank(player, getBank(), DatabaseManager.getPlayerInfoWait(player.getGameProfile()));
+            return new ContainerBank(player, getBank(), null);
         }
         return null;
     }
