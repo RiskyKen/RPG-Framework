@@ -26,7 +26,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class GuiBank extends GuiTabbed<ContainerBank> implements IDialogCallback {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation(LibGuiResources.BANK);
-    private static int activeTabIndex = 0;
+    private static int activeTabIndex = -1;
 
     private final IBank bank;
 
@@ -34,7 +34,7 @@ public class GuiBank extends GuiTabbed<ContainerBank> implements IDialogCallback
     private int panelSizeX;
     private int panelSizeY;
     private int unlockedTabs;
-    
+
     public GuiBank(EntityPlayer player, IBank bank) {
         super(new ContainerBank(player, bank, null), false);
         this.bank = bank;
@@ -60,13 +60,13 @@ public class GuiBank extends GuiTabbed<ContainerBank> implements IDialogCallback
         tabController.x = getGuiLeft() - 17;
         tabController.width = xSize + 42;
         addTabs();
-        
+
         buttonAddTab = new GuiIconButton(this, 0, width / 2 + 89, getGuiTop() + panelSizeY + 1, 16, 16, TEXTURE_BUTTONS);
         buttonAddTab.setDrawButtonBackground(false).setIconLocation(208, 176, 16, 16);
         buttonAddTab.setHoverText(GuiHelper.getLocalControlName(getName(), "button.buy_new_tab"));
         buttonList.add(buttonAddTab);
     }
-    
+
     private void addTabs() {
         int oldActive = getActiveTab();
         tabController.clearTabs();
@@ -75,7 +75,11 @@ public class GuiBank extends GuiTabbed<ContainerBank> implements IDialogCallback
             return;
         }
         if (bank != null & oldActive == -1) {
-            oldActive = 0;
+            oldActive = -1;
+        }
+        //if (oldActive == -1 and bank.get)
+        if (oldActive == -1) {
+            //return;
         }
         tabController.setTabsPerSide(bank.getTabMaxCount() / 2);
         int iconIndex = bank.getTabIconIndex();
@@ -101,17 +105,18 @@ public class GuiBank extends GuiTabbed<ContainerBank> implements IDialogCallback
     public String getName() {
         return LibBlockNames.BANK;
     }
-    
+
     @Override
     public void updateScreen() {
         if (getContainer().getUnlockedTabs() != unlockedTabs) {
             unlockedTabs = getContainer().getUnlockedTabs();
+            setActiveTab(0);
             addTabs();
         }
         buttonAddTab.visible = unlockedTabs < bank.getTabUnlockableCount();
         super.updateScreen();
     }
-    
+
     @Override
     protected void actionPerformed(GuiButton button) {
         super.actionPerformed(button);
@@ -119,7 +124,7 @@ public class GuiBank extends GuiTabbed<ContainerBank> implements IDialogCallback
             PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiButton().setButtonID(getActiveTab()));
         }
         if (button == buttonAddTab) {
-            openDialog(new GuiBankDialogBuyTab(this, GuiHelper.getLocalControlName(getName(), "dialog.buy_tab") , this, bank, getContainer().getUnlockedTabs()));
+            openDialog(new GuiBankDialogBuyTab(this, GuiHelper.getLocalControlName(getName(), "dialog.buy_tab"), this, bank, getContainer().getUnlockedTabs()));
         }
     }
 
@@ -130,7 +135,10 @@ public class GuiBank extends GuiTabbed<ContainerBank> implements IDialogCallback
         // Render shop background.
         GuiUtils.drawContinuousTexturedBox(getGuiLeft(), getGuiTop(), 0, 0, panelSizeX, panelSizeY, 100, 100, 4, zLevel);
 
-        String title = getTitle();
+        String title = GuiHelper.getLocalControlName(getName(), "name.loading");
+        if (bank != null & activeTabIndex != -1) {
+            title = bank.getName();
+        }
         int titleWidth = fontRenderer.getStringWidth(title);
 
         // Render title box.
@@ -151,10 +159,13 @@ public class GuiBank extends GuiTabbed<ContainerBank> implements IDialogCallback
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        String title = getTitle();
-        int titleWidth = fontRenderer.getStringWidth(title);
         // Render title text.
-        fontRenderer.drawString(title, xSize / 2 - titleWidth / 2, 6, 0x333333);
+        String title = GuiHelper.getLocalControlName(getName(), "name.loading");
+        if (bank != null & activeTabIndex != -1) {
+            title = bank.getName();
+        }
+        int titleWidth = fontRenderer.getStringWidth(title);
+        fontRenderer.drawString(title, xSize / 2 - titleWidth / 2, 6, 4210752);
 
         GuiHelper.renderPlayerInvlabel(xSize / 2 - 176 / 2, panelSizeY + 1, fontRenderer);
         GL11.glPushMatrix();

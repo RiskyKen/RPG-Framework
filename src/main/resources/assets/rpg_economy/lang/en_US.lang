@@ -79,6 +79,7 @@ inventory.rpg_economy:common.button.next=Next
 
 
 # Inventory - Bank
+inventory.rpg_economy:bank.name.loading=Loading...
 inventory.rpg_economy:bank.tab.name=Tab %d
 inventory.rpg_economy:bank.button.buy_new_tab=Buy New Tab...
 
