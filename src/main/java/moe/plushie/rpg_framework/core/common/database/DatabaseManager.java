@@ -18,6 +18,7 @@ import com.google.common.util.concurrent.ListenableFutureTask;
 import com.mojang.authlib.GameProfile;
 
 import moe.plushie.rpg_framework.core.common.config.ConfigStorage;
+import moe.plushie.rpg_framework.core.common.config.ConfigStorage.StorageType;
 import moe.plushie.rpg_framework.core.common.database.driver.IDatabaseDriver;
 import moe.plushie.rpg_framework.core.common.database.driver.MySqlDriver;
 import moe.plushie.rpg_framework.core.common.database.driver.SQLiteDriver;
@@ -46,6 +47,9 @@ public final class DatabaseManager {
     }
 
     private static int getExecutorThreadCount() {
+        if (ConfigStorage.getStorageType() == StorageType.MYSQL) {
+            return 1;
+        }
         return 1;
     }
 

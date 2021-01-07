@@ -9,6 +9,8 @@ import java.util.ArrayList;
 
 import javax.sql.PooledConnection;
 
+import com.mysql.cj.jdbc.MysqlConnectionPoolDataSource;
+
 import moe.plushie.rpg_framework.core.common.config.ConfigStorage;
 import moe.plushie.rpg_framework.core.common.database.DatebaseTable;
 import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder;
@@ -58,17 +60,27 @@ public class MySqlDriver implements IDatabaseDriver {
     }
 
     private PooledConnection makePool() throws SQLException {
-        // MysqlConnectionPoolDataSource poolDataSource = new MysqlConnectionPoolDataSource();
-        // poolDataSource.setUser
-        return null;
+        MysqlConnectionPoolDataSource poolDataSource = new MysqlConnectionPoolDataSource();
+        poolDataSource.setServerName(ConfigStorage.getMySqlHost());
+        poolDataSource.setPort(ConfigStorage.getMySqlPort());
+        poolDataSource.setDatabaseName(ConfigStorage.getMySqlDatabase());
+        poolDataSource.setUser(ConfigStorage.getMySqlUsername());
+        poolDataSource.setPassword(ConfigStorage.getMySqlPassword());
+        return poolDataSource.getPooledConnection();
+    }
+
+    private Connection getPoolConnection(DatebaseTable table) throws SQLException {
+        if (pooledConnection == null) {
+            pooledConnection = makePool();
+        }
+        return pooledConnection.getConnection();
     }
 
     @Override
     public synchronized Connection getConnection(DatebaseTable table) throws SQLException {
         Connection connection = null;
-        // connection = getPoolConnection(table);
-        connection = DriverManager.getConnection(getConnectionUrl(true), getUsername(), getPassword());
-
+        connection = getPoolConnection(table);
+        // connection = DriverManager.getConnection(getConnectionUrl(true), getUsername(), getPassword());
         return connection;
     }
 
