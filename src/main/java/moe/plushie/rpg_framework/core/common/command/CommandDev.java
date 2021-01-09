@@ -8,10 +8,15 @@ import java.util.ArrayList;
 
 import com.google.common.util.concurrent.FutureCallback;
 
+import moe.plushie.rpg_framework.api.shop.IShop;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.command.CommandExecute.ICommandExecute;
+import moe.plushie.rpg_framework.core.common.database.DBPlayerInfo;
 import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
 import moe.plushie.rpg_framework.core.common.database.DatebaseTable;
+import moe.plushie.rpg_framework.core.common.database.TablePlayers;
+import moe.plushie.rpg_framework.core.common.database.driver.MySqlDriver;
+import moe.plushie.rpg_framework.shop.common.TableShops;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -34,11 +39,10 @@ public class CommandDev extends ModSubCommands {
                         sql += " " + args[i];
                     }
                     EntityPlayerMP player = getCommandSenderAsPlayer(sender);
-                    
-                    
+
                     final String sqla = sql;
                     final ArrayList<String> resultLines = new ArrayList<String>();
-                    //int updateCount;
+                    // int updateCount;
 
                     DatabaseManager.createTaskAndExecute(new Runnable() {
                         @Override
@@ -55,7 +59,7 @@ public class CommandDev extends ModSubCommands {
                                         }
                                     }
                                 } else {
-                                    //updateCount = statement.getUpdateCount();
+                                    // updateCount = statement.getUpdateCount();
                                 }
                             } catch (SQLException e) {
                                 e.printStackTrace();
@@ -76,7 +80,7 @@ public class CommandDev extends ModSubCommands {
                                         }
                                         player.sendMessage(new TextComponentString("End result"));
                                     } else {
-                                        //player.sendMessage(new TextComponentString("Update count: " + updateCount));
+                                        // player.sendMessage(new TextComponentString("Update count: " + updateCount));
                                     }
 
                                 }
@@ -103,6 +107,28 @@ public class CommandDev extends ModSubCommands {
             @Override
             public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
                 RPGFramework.getProxy().createExampleFiles();
+            }
+        }));
+        addSubCommand(new CommandExecute(this, "export_sqlite_to_mysql", new ICommandExecute() {
+
+            @Override
+            public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+                MySqlDriver mySqlDriver = new MySqlDriver();
+                try (Connection mySqlconn = mySqlDriver.getConnection(null)) {
+
+                    sender.sendMessage(new TextComponentString("Export started."));
+                    ArrayList<DBPlayerInfo> playerInfos = TablePlayers.exportData(DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA));
+                    TablePlayers.importData(playerInfos, mySqlconn, true);
+                    sender.sendMessage(new TextComponentString("Exported " + playerInfos.size() + " players."));
+                    
+                    ArrayList<IShop> shops = TableShops.exportData(DatabaseManager.getConnection(DatebaseTable.DATA));
+                    TableShops.importData(shops, mySqlconn, true);
+                    sender.sendMessage(new TextComponentString("Exported " + shops.size() + " shops."));
+                    
+                    sender.sendMessage(new TextComponentString("Export finished."));
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         }));
     }

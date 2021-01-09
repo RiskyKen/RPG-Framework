@@ -15,6 +15,7 @@ import com.mojang.authlib.GameProfile;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.config.ConfigStorage;
 import moe.plushie.rpg_framework.core.common.config.ConfigStorage.StorageType;
+import moe.plushie.rpg_framework.core.common.database.driver.MySqlBuilder;
 import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder;
 import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder.ISqlBulderCreateTable;
 
@@ -46,8 +47,16 @@ public final class TablePlayers {
 //        } catch (SQLException e) {
 //            e.printStackTrace();
 //        }
-        
-        ISqlBulderCreateTable table = DatabaseManager.getSqlBulder().createTable(TABLE_NAME);
+
+        try (Connection connection = getConnection()) {
+            create(connection, DatabaseManager.getSqlBulder());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void create(Connection connection, ISqlBulder sqlBulder) {
+        ISqlBulderCreateTable table = sqlBulder.createTable(TABLE_NAME);
         table.addColumn("id", ISqlBulder.DataType.INT).setUnsigned(true).setNotNull(true).setAutoIncrement(true);
         table.addColumn("uuid", ISqlBulder.DataType.VARCHAR).setSize(36).setNotNull(true);
         table.addColumn("username", ISqlBulder.DataType.VARCHAR).setSize(80).setNotNull(true);
@@ -55,13 +64,12 @@ public final class TablePlayers {
         table.addColumn("last_seen", ISqlBulder.DataType.DATETIME).setNotNull(true).setDefault("CURRENT_TIMESTAMP");
         table.ifNotExists(true);
         table.setPrimaryKey("id");
-        try (Connection conn = getConnection(); Statement statement = conn.createStatement()) {
+        try (Statement statement = connection.createStatement()) {
             RPGFramework.getLogger().info(table.build());
             statement.executeUpdate(table.build());
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
     }
 
     public static void updateOrAddPlayer(GameProfile gameProfile) {
@@ -114,7 +122,7 @@ public final class TablePlayers {
         if (ConfigStorage.getStorageType() == StorageType.MYSQL) {
             sql = "UPDATE players SET `username`=?, `last_seen`=now() WHERE `uuid`=?";
         }
-        
+
         // last_seen=now()
         sql = String.format(sql, gameProfile.getName(), gameProfile.getId().toString());
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -254,5 +262,56 @@ public final class TablePlayers {
             e.printStackTrace();
         }
         return playerInfo;
+    }
+
+    public static void importData(ArrayList<DBPlayerInfo> playerInfos, Connection connection, boolean dropTable) {
+        if (dropTable) {
+            String sqlDrop = "DROP TABLE IF EXISTS players";
+            try (PreparedStatement ps = connection.prepareStatement(sqlDrop)) {
+                ps.execute();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            create(connection, new MySqlBuilder());
+        }
+        
+        for (DBPlayerInfo playerInfo : playerInfos) {
+            try (PreparedStatement ps = connection.prepareStatement("ALTER TABLE players AUTO_INCREMENT=" + playerInfo.getId())) {
+                ps.execute();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            
+            String sql = "INSERT INTO players (`id`, `uuid`, `username`, `first_seen`, `last_seen`) VALUES (NULL, ?, ?, ?, ?)";
+            try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                ps.setString(1, playerInfo.getGameProfile().getId().toString());
+                ps.setString(2, playerInfo.getGameProfile().getName());
+                ps.setObject(3, playerInfo.getFirstSeen());
+                ps.setObject(4, playerInfo.getLastLogin());
+                ps.execute();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static ArrayList<DBPlayerInfo> exportData(Connection connection) {
+        ArrayList<DBPlayerInfo> playerInfos = new ArrayList<DBPlayerInfo>();
+        String sql = "SELECT * FROM players";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            try (ResultSet resultSet = ps.executeQuery()) {
+                while (resultSet.next()) {
+                    int id = resultSet.getInt("id");
+                    UUID uuid = UUID.fromString(resultSet.getString("uuid"));
+                    String username = resultSet.getString("username");
+                    Date firstSeen = resultSet.getDate("first_seen");
+                    Date lastLogin = resultSet.getDate("last_seen");
+                    playerInfos.add(new DBPlayerInfo(id, new GameProfile(uuid, username), firstSeen, lastLogin));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return playerInfos;
     }
 }

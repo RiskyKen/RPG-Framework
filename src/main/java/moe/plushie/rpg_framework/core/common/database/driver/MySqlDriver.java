@@ -69,7 +69,7 @@ public class MySqlDriver implements IDatabaseDriver {
         return poolDataSource.getPooledConnection();
     }
 
-    private Connection getPoolConnection(DatebaseTable table) throws SQLException {
+    private Connection getPoolConnection() throws SQLException {
         if (pooledConnection == null) {
             pooledConnection = makePool();
         }
@@ -79,7 +79,7 @@ public class MySqlDriver implements IDatabaseDriver {
     @Override
     public synchronized Connection getConnection(DatebaseTable table) throws SQLException {
         Connection connection = null;
-        connection = getPoolConnection(table);
+        connection = getPoolConnection();
         // connection = DriverManager.getConnection(getConnectionUrl(true), getUsername(), getPassword());
         return connection;
     }
