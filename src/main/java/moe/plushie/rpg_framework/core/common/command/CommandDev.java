@@ -16,6 +16,10 @@ import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
 import moe.plushie.rpg_framework.core.common.database.DatebaseTable;
 import moe.plushie.rpg_framework.core.common.database.TablePlayers;
 import moe.plushie.rpg_framework.core.common.database.driver.MySqlDriver;
+import moe.plushie.rpg_framework.currency.common.TableWallets;
+import moe.plushie.rpg_framework.currency.common.TableWallets.DBWallet;
+import moe.plushie.rpg_framework.mail.common.MailMessage;
+import moe.plushie.rpg_framework.mail.common.TableMail;
 import moe.plushie.rpg_framework.shop.common.TableShops;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -115,16 +119,28 @@ public class CommandDev extends ModSubCommands {
             public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
                 MySqlDriver mySqlDriver = new MySqlDriver();
                 try (Connection mySqlconn = mySqlDriver.getConnection(null)) {
-
                     sender.sendMessage(new TextComponentString("Export started."));
+
+                    // Players.
                     ArrayList<DBPlayerInfo> playerInfos = TablePlayers.exportData(DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA));
                     TablePlayers.importData(playerInfos, mySqlconn, true);
                     sender.sendMessage(new TextComponentString("Exported " + playerInfos.size() + " players."));
-                    
+
+                    // Shops.
                     ArrayList<IShop> shops = TableShops.exportData(DatabaseManager.getConnection(DatebaseTable.DATA));
                     TableShops.importData(shops, mySqlconn, true);
                     sender.sendMessage(new TextComponentString("Exported " + shops.size() + " shops."));
-                    
+
+                    // Mail messages.
+                    ArrayList<MailMessage> mailMessages = TableMail.exportData(DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA));
+                    TableMail.importData(mailMessages, mySqlconn, true);
+                    sender.sendMessage(new TextComponentString("Exported " + mailMessages.size() + " mail messages."));
+
+                    // Wallets.
+                    ArrayList<DBWallet> wallets = TableWallets.exportData(DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA));
+                    TableWallets.importData(wallets, mySqlconn, true);
+                    sender.sendMessage(new TextComponentString("Exported " + wallets.size() + " wallets."));
+
                     sender.sendMessage(new TextComponentString("Export finished."));
                 } catch (SQLException e) {
                     e.printStackTrace();

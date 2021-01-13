@@ -19,6 +19,7 @@ import moe.plushie.rpg_framework.core.common.database.DBPlayerInfo;
 import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
 import moe.plushie.rpg_framework.core.common.database.DatebaseTable;
 import moe.plushie.rpg_framework.core.common.database.TablePlayers;
+import moe.plushie.rpg_framework.core.common.database.driver.MySqlBuilder;
 import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder;
 import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder.ISqlBulderCreateTable;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
@@ -53,7 +54,15 @@ public final class TableMail {
 //            + "read BOOLEAN NOT NULL)";
 
     public static void create() {
-        ISqlBulderCreateTable table = DatabaseManager.getSqlBulder().createTable(TABLE_NAME);
+        try (Connection connection = getConnection()) {
+            create(connection, DatabaseManager.getSqlBulder());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void create(Connection connection, ISqlBulder sqlBulder) {
+        ISqlBulderCreateTable table = sqlBulder.createTable(TABLE_NAME);
         table.addColumn("id", ISqlBulder.DataType.INT).setUnsigned(true).setNotNull(true).setAutoIncrement(true);
         table.addColumn("mail_system", ISqlBulder.DataType.VARCHAR).setSize(64).setNotNull(true);
         table.addColumn("player_id_sender", ISqlBulder.DataType.INT).setUnsigned(true).setNotNull(true);
@@ -65,7 +74,7 @@ public final class TableMail {
         table.addColumn("read", ISqlBulder.DataType.BOOLEAN).setNotNull(true);
         table.ifNotExists(true);
         table.setPrimaryKey("id");
-        try (Connection conn = getConnection(); Statement statement = conn.createStatement()) {
+        try (Statement statement = connection.createStatement()) {
             statement.executeUpdate(table.build());
         } catch (SQLException e) {
             e.printStackTrace();
@@ -125,7 +134,7 @@ public final class TableMail {
         DBPlayerInfo dbPlayer = TablePlayers.getPlayer(player.getId());
         return getMessages(dbPlayer, mailSystem);
     }
-    
+
     public static ArrayList<MailMessage> getMessages(EntityPlayer player, IMailSystem mailSystem) {
         DBPlayerInfo dbPlayer = TablePlayers.getPlayerInfo(player.getGameProfile());
         return getMessages(dbPlayer, mailSystem);
@@ -239,5 +248,79 @@ public final class TableMail {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void importData(ArrayList<MailMessage> mailMessages, Connection connection, boolean dropTable) {
+        if (dropTable) {
+            String sqlDrop = "DROP TABLE IF EXISTS mail";
+            try (PreparedStatement ps = connection.prepareStatement(sqlDrop)) {
+                ps.execute();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            create(connection, new MySqlBuilder());
+        }
+
+        for (MailMessage mailMessage : mailMessages) {
+            try (PreparedStatement ps = connection.prepareStatement("ALTER TABLE mail AUTO_INCREMENT=" + mailMessage.getId())) {
+                ps.execute();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            DBPlayer dbPlayerSender;
+            DBPlayer dbPlayerReceiver;
+            RPGFramework.getLogger().info(mailMessage);
+            try {
+                dbPlayerSender = TablePlayers.getPlayer(connection, mailMessage.getSender());
+                dbPlayerReceiver = TablePlayers.getPlayer(connection, mailMessage.getReceiver());
+                String sql = "INSERT INTO mail (`id`, `mail_system`, `player_id_sender`, `player_id_receiver`, `subject`, `text`, `attachments`, `sent_date`, `read`) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?)";
+                try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                    ps.setObject(1, mailMessage.getMailSystem().getIdentifier().getValue());
+                    ps.setInt(2, dbPlayerSender.getId());
+                    ps.setInt(3, dbPlayerReceiver.getId());
+                    ps.setString(4, mailMessage.getSubject());
+                    ps.setString(5, mailMessage.getMessageText());
+                    ps.setString(6, SerializeHelper.writeItemsToJson(mailMessage.getAttachments(), false).toString());
+                    ps.setObject(7, mailMessage.getSendDateTime());
+                    ps.setBoolean(8, mailMessage.isRead());
+                    ps.execute();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static ArrayList<MailMessage> exportData(Connection connection) {
+        ArrayList<MailMessage> mailMessages = new ArrayList<MailMessage>();
+        String sql = "SELECT * FROM mail";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            try (ResultSet resultSet = ps.executeQuery()) {
+                while (resultSet.next()) {
+                    int id = resultSet.getInt("id");
+                    IMailSystem mailSystem = RPGFramework.getProxy().getMailSystemManager().getMailSystem(new IdentifierString(resultSet.getString("mail_system")));
+                    DBPlayerInfo dbPlayerSender = TablePlayers.getPlayer(connection, resultSet.getInt("player_id_sender"));
+                    DBPlayerInfo dbPlayerReceiver = TablePlayers.getPlayer(connection, resultSet.getInt("player_id_receiver"));
+                    Date sendDateTime = resultSet.getDate("sent_date");
+                    String subject = resultSet.getString("subject");
+                    String messageText = resultSet.getString("text");
+                    JsonArray jsonArray = SerializeHelper.stringToJson(resultSet.getString("attachments")).getAsJsonArray();
+                    NonNullList<ItemStack> attachments = SerializeHelper.readItemsFromJson(jsonArray);
+                    boolean read = resultSet.getBoolean("read");
+                    if (dbPlayerReceiver.isMissing() | dbPlayerSender.isMissing()) {
+                        continue;
+                    }
+                    if (mailSystem == null) {
+                        continue;
+                    }
+                    mailMessages.add(new MailMessage(id, mailSystem, dbPlayerSender.getGameProfile(), dbPlayerReceiver.getGameProfile(), sendDateTime, subject, messageText, attachments, read));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return mailMessages;
     }
 }
