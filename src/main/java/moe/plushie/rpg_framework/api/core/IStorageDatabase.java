@@ -9,5 +9,5 @@ public interface IStorageDatabase<T> {
 
     public void writeAsync(Capability<T> capability, T instance, GameProfile player, FutureCallback<Void> callback);
     
-    public void readAsync(Capability<T> capability, T instance, GameProfile player, FutureCallback<T> callback);
+    public void readAsync(Capability<T> capability, T instance, GameProfile player, FutureCallback<Void> callback);
 }

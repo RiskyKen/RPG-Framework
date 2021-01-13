@@ -42,6 +42,7 @@ public final class CurrencyCapabilityManager {
         ICurrencyCapability currencyCap = CurrencyCapability.get(event.player);
         if (currencyCap != null) {
             currencyCap.syncToOwner((EntityPlayerMP) event.player, false);
+            ((CurrencyCapability) currencyCap).asyncLoadWalletFromDB(event.player);
         }
     }
 

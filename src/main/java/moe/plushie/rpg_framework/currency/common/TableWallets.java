@@ -20,6 +20,7 @@ import moe.plushie.rpg_framework.core.common.database.TablePlayers;
 import moe.plushie.rpg_framework.core.common.database.driver.MySqlBuilder;
 import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder;
 import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder.ISqlBulderCreateTable;
+import net.minecraft.client.Minecraft;
 
 public final class TableWallets {
 
@@ -96,21 +97,29 @@ public final class TableWallets {
         try (Connection conn = getConnection()) {
             DBPlayer dbPlayer = TablePlayers.getPlayer(conn, gameProfile);
             if (dbPlayer.isMissing()) {
-                RPGFramework.getLogger().info("Tried to get missing players wallet from the DB. " + gameProfile.toString());
+                RPGFramework.getLogger().warn("Tried to get missing players wallet from the DB. " + gameProfile.toString());
+                conn.close();
                 return;
             }
-            if (isWalletInDatabase(conn, dbPlayer, wallet.getCurrency().getIdentifier())) {
-                String sql = "SELECT * FROM wallets WHERE currency_identifier=? AND player_id=?";
-                try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                    ps.setObject(1, wallet.getCurrency().getIdentifier().getValue());
-                    ps.setInt(2, dbPlayer.getId());
-                    try (ResultSet resultSet = ps.executeQuery()) {
-                        if (resultSet.next()) {
-                            wallet.setAmount(resultSet.getInt("amount"));
-                        }
+            String sql = "SELECT * FROM wallets WHERE currency_identifier=? AND player_id=?";
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setObject(1, wallet.getCurrency().getIdentifier().getValue());
+                ps.setInt(2, dbPlayer.getId());
+                try (ResultSet resultSet = ps.executeQuery()) {
+                    if (resultSet.next()) {
+                        int amount = resultSet.getInt("amount");
+                        Minecraft.getMinecraft().addScheduledTask(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                RPGFramework.getLogger().info("Loaded wallet for " + gameProfile.toString());
+                                wallet.setAmount(amount);
+                            }
+                        });
                     }
                 }
             }
+            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
