@@ -22,6 +22,7 @@ import moe.plushie.rpg_framework.currency.common.TableWallets;
 import moe.plushie.rpg_framework.currency.common.Wallet;
 import moe.plushie.rpg_framework.currency.common.serialize.WalletSerializer;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -47,6 +48,7 @@ public class CurrencyCapability implements ICurrencyCapability {
         for (Currency currency : currencies) {
             walletMap.put(currency.getName(), new Wallet(currency));
         }
+
     }
 
     @Override
@@ -70,6 +72,11 @@ public class CurrencyCapability implements ICurrencyCapability {
             IStorageDatabase<ICurrencyCapability> storageDatabase = (IStorageDatabase<ICurrencyCapability>) WALLET_CAP.getStorage();
             storageDatabase.writeAsync(WALLET_CAP, this, entityPlayer.getGameProfile(), null);
         }
+    }
+
+    public void asyncLoadWalletFromDB(EntityPlayer entityPlayer) {
+        IStorageDatabase<ICurrencyCapability> storageDatabase = (IStorageDatabase<ICurrencyCapability>) WALLET_CAP.getStorage();
+        storageDatabase.readAsync(WALLET_CAP, this, entityPlayer.getGameProfile(), null);
     }
 
     public static ICurrencyCapability get(EntityLivingBase player) {
@@ -116,14 +123,14 @@ public class CurrencyCapability implements ICurrencyCapability {
 
         @Override
         public void writeAsync(Capability<ICurrencyCapability> capability, ICurrencyCapability instance, GameProfile player, FutureCallback<Void> callback) {
-            
+
             DatabaseManager.createTaskAndExecute(new Callable<Void>() {
                 CurrencyManager currencyManager = RPGFramework.getProxy().getCurrencyManager();
                 Currency[] currencies = currencyManager.getCurrencies();
-                
+
                 @Override
                 public Void call() throws Exception {
-                    //RPGFramework.getLogger().info("saving wallet to db ");
+                    // RPGFramework.getLogger().info("saving wallet to db ");
                     for (Currency currency : currencies) {
                         TableWallets.saveWallet(player, instance.getWallet(currency));
                     }
@@ -133,19 +140,18 @@ public class CurrencyCapability implements ICurrencyCapability {
         }
 
         @Override
-        public void readAsync(Capability<ICurrencyCapability> capability, ICurrencyCapability instance, GameProfile player, FutureCallback<ICurrencyCapability> callback) {
-            // CurrencyManager currencyManager = RPGFramework.getProxy().getCurrencyManager();
-            // Currency[] currencies = currencyManager.getCurrencies();
-            DatabaseManager.createTaskAndExecute(new Callable<ICurrencyCapability>() {
-
-                @Override
-                public ICurrencyCapability call() throws Exception {
-                    //for (Currency currency : currencies) {
-                        // TableWallets.loadWallet(player, instance.getWallet(currency));
-                    //}
-                    return null;
-                }
-            }, callback);
+        public void readAsync(Capability<ICurrencyCapability> capability, ICurrencyCapability instance, GameProfile player, FutureCallback<Void> callback) {
+            CurrencyManager currencyManager = RPGFramework.getProxy().getCurrencyManager();
+            Currency[] currencies = currencyManager.getCurrencies();
+            
+            for (Currency currency : currencies) {
+                DatabaseManager.createTaskAndExecute(new Runnable() {
+                    @Override
+                    public void run() {
+                        TableWallets.loadWallet(player, instance.getWallet(currency));
+                    }
+                }, callback);
+            }
         }
     }
 
