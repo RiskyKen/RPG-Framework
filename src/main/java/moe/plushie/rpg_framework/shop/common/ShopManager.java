@@ -33,6 +33,7 @@ public class ShopManager implements IShopManager {
     private static final String DIRECTORY_NAME = "shop";
 
     private final File shopsDirectory;
+    private final NameGenerator nameGenerator;
 
     public ShopManager(File modDirectory) {
         shopsDirectory = new File(modDirectory, DIRECTORY_NAME);
@@ -45,6 +46,11 @@ public class ShopManager implements IShopManager {
                 TableStatsShopSales.create();
             }
         });
+        nameGenerator = new NameGenerator();
+    }
+    
+    public NameGenerator getNameGenerator() {
+        return nameGenerator;
     }
 
     @Override

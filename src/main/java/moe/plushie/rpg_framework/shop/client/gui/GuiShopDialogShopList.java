@@ -17,6 +17,7 @@ import moe.plushie.rpg_framework.core.common.network.client.MessageClientGuiShop
 import moe.plushie.rpg_framework.core.common.network.client.MessageClientGuiShopUpdate.ShopMessageType;
 import moe.plushie.rpg_framework.core.common.network.client.MessageClientRequestSync;
 import moe.plushie.rpg_framework.core.common.network.client.MessageClientRequestSync.SyncType;
+import moe.plushie.rpg_framework.shop.ModuleShop;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
@@ -83,7 +84,7 @@ public class GuiShopDialogShopList extends AbstractGuiDialog {
             returnDialogResult(DialogResult.OK);
         }
         if (button == buttonEditTabAdd) {
-            PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.SHOP_ADD).setShopName("New Shop"));
+            PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientGuiShopUpdate(ShopMessageType.SHOP_ADD).setShopName(ModuleShop.getShopManager().getNameGenerator().generateName()));
             PacketHandler.NETWORK_WRAPPER.sendToServer(new MessageClientRequestSync(SyncType.SHOPS_IDENTIFIERS));
         }
         if (button == buttonEditTabRemove) {
