@@ -117,34 +117,64 @@ public class CommandDev extends ModSubCommands {
 
             @Override
             public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-                MySqlDriver mySqlDriver = new MySqlDriver();
-                try (Connection mySqlconn = mySqlDriver.getConnection(null)) {
-                    sender.sendMessage(new TextComponentString("Export started."));
+                sender.sendMessage(new TextComponentString("Export started."));
+                DatabaseManager.createTaskAndExecute(new Runnable() {
 
-                    // Players.
-                    ArrayList<DBPlayerInfo> playerInfos = TablePlayers.exportData(DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA));
-                    TablePlayers.importData(playerInfos, mySqlconn, true);
-                    sender.sendMessage(new TextComponentString("Exported " + playerInfos.size() + " players."));
+                    @Override
+                    public void run() {
+                        MySqlDriver mySqlDriver = new MySqlDriver();
+                        try (Connection mySqlconn = mySqlDriver.getConnection(null)) {
 
-                    // Shops.
-                    ArrayList<IShop> shops = TableShops.exportData(DatabaseManager.getConnection(DatebaseTable.DATA));
-                    TableShops.importData(shops, mySqlconn, true);
-                    sender.sendMessage(new TextComponentString("Exported " + shops.size() + " shops."));
+                            // Players.
+                            ArrayList<DBPlayerInfo> playerInfos = TablePlayers.exportData(DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA));
+                            TablePlayers.importData(playerInfos, mySqlconn, true);
+                            FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(new Runnable() {
 
-                    // Mail messages.
-                    ArrayList<MailMessage> mailMessages = TableMail.exportData(DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA));
-                    TableMail.importData(mailMessages, mySqlconn, true);
-                    sender.sendMessage(new TextComponentString("Exported " + mailMessages.size() + " mail messages."));
+                                @Override
+                                public void run() {
+                                    sender.sendMessage(new TextComponentString("Exported " + playerInfos.size() + " players."));
+                                }
+                            });
 
-                    // Wallets.
-                    ArrayList<DBWallet> wallets = TableWallets.exportData(DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA));
-                    TableWallets.importData(wallets, mySqlconn, true);
-                    sender.sendMessage(new TextComponentString("Exported " + wallets.size() + " wallets."));
+                            // Shops.
+                            ArrayList<IShop> shops = TableShops.exportData(DatabaseManager.getConnection(DatebaseTable.DATA));
+                            TableShops.importData(shops, mySqlconn, true);
+                            FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(new Runnable() {
 
-                    sender.sendMessage(new TextComponentString("Export finished."));
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                                @Override
+                                public void run() {
+                                    sender.sendMessage(new TextComponentString("Exported " + shops.size() + " shops."));
+                                }
+                            });
+
+                            // Mail messages.
+                            ArrayList<MailMessage> mailMessages = TableMail.exportData(DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA));
+                            TableMail.importData(mailMessages, mySqlconn, true);
+                            FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    sender.sendMessage(new TextComponentString("Exported " + mailMessages.size() + " mail messages."));
+                                }
+                            });
+
+                            // Wallets.
+                            ArrayList<DBWallet> wallets = TableWallets.exportData(DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA));
+                            TableWallets.importData(wallets, mySqlconn, true);
+                            FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    sender.sendMessage(new TextComponentString("Exported " + wallets.size() + " wallets."));
+                                    sender.sendMessage(new TextComponentString("Export finished."));
+                                }
+                            });
+
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             }
         }));
     }
