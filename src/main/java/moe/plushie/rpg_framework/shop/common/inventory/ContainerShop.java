@@ -195,7 +195,7 @@ public class ContainerShop extends ModContainer {
                 }
                 ICost cost = costFactory.build();
                 cost.refund(player);
-                // player.getEntityWorld().playSound((EntityPlayer) null, player.posX, player.posY, player.posZ, ModSounds.COIN_DEPOSIT, SoundCategory.PLAYERS, 0.5F, 0.8F + (player.getRNG().nextFloat() * 0.4F));
+                player.getEntityWorld().playSound((EntityPlayer) null, player.posX, player.posY, player.posZ, ModSounds.COIN_DEPOSIT, SoundCategory.PLAYERS, 0.5F, 0.8F + (player.getRNG().nextFloat() * 0.4F));
                 activeTab.getItems().add(0, new ShopItem(itemStack.copy(), cost));
                 activeTab.getItems().remove(activeTab.getItems().size() - 1);
                 PacketHandler.NETWORK_WRAPPER.sendTo(new MessageServerShop(shop, true), (EntityPlayerMP) player);
