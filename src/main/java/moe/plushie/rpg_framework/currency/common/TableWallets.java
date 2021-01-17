@@ -13,6 +13,8 @@ import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.api.currency.IWallet;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.IdentifierString;
+import moe.plushie.rpg_framework.core.common.config.ConfigStorage;
+import moe.plushie.rpg_framework.core.common.config.ConfigStorage.StorageType;
 import moe.plushie.rpg_framework.core.common.database.DBPlayer;
 import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
 import moe.plushie.rpg_framework.core.common.database.DatebaseTable;
@@ -140,6 +142,9 @@ public final class TableWallets {
 
     private static void updateWallet(Connection conn, DBPlayer dbPlayer, IIdentifier identifier, int value) throws SQLException {
         String sql = "UPDATE wallets SET amount=?, last_change=datetime('now') WHERE player_id=? AND currency_identifier=?";
+        if (ConfigStorage.getStorageType() == StorageType.MYSQL) {
+            sql = "UPDATE wallets SET amount=?, last_change=now() WHERE player_id=? AND currency_identifier=?";
+        }
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, value);
             ps.setInt(2, dbPlayer.getId());
