@@ -203,11 +203,13 @@ public final class TablePlayers {
         return gameProfiles;
     }
 
-    private static final String SQL_GET_PLAYER_USERNAME = "SELECT id FROM players WHERE username=? COLLATE NOCASE";
-
     public static DBPlayer getPlayerName(Connection conn, String username) throws SQLException {
+        String sql = "SELECT id FROM players WHERE username=? COLLATE NOCASE";
+        if (ConfigStorage.getStorageType() == StorageType.MYSQL) {
+            sql = "SELECT id FROM players WHERE username=?";
+        }
         DBPlayer playerInfo = DBPlayer.MISSING;
-        try (PreparedStatement ps = conn.prepareStatement(SQL_GET_PLAYER_USERNAME)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, username);
             try (ResultSet resultSet = ps.executeQuery()) {
                 if (resultSet.next()) {
@@ -274,14 +276,14 @@ public final class TablePlayers {
             }
             create(connection, new MySqlBuilder());
         }
-        
+
         for (DBPlayerInfo playerInfo : playerInfos) {
             try (PreparedStatement ps = connection.prepareStatement("ALTER TABLE players AUTO_INCREMENT=" + playerInfo.getId())) {
                 ps.execute();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            
+
             String sql = "INSERT INTO players (`id`, `uuid`, `username`, `first_seen`, `last_seen`) VALUES (NULL, ?, ?, ?, ?)";
             try (PreparedStatement ps = connection.prepareStatement(sql)) {
                 ps.setString(1, playerInfo.getGameProfile().getId().toString());
