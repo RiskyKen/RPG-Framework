@@ -260,37 +260,68 @@ public final class TableMail {
             }
             create(connection, new MySqlBuilder());
         }
-
-        for (MailMessage mailMessage : mailMessages) {
-            try (PreparedStatement ps = connection.prepareStatement("ALTER TABLE mail AUTO_INCREMENT=" + mailMessage.getId())) {
-                ps.execute();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            DBPlayer dbPlayerSender;
-            DBPlayer dbPlayerReceiver;
-            RPGFramework.getLogger().info(mailMessage);
-            try {
-                dbPlayerSender = TablePlayers.getPlayer(connection, mailMessage.getSender());
-                dbPlayerReceiver = TablePlayers.getPlayer(connection, mailMessage.getReceiver());
-                String sql = "INSERT INTO mail (`id`, `mail_system`, `player_id_sender`, `player_id_receiver`, `subject`, `text`, `attachments`, `sent_date`, `read`) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?)";
-                try (PreparedStatement ps = connection.prepareStatement(sql)) {
-                    ps.setObject(1, mailMessage.getMailSystem().getIdentifier().getValue());
-                    ps.setInt(2, dbPlayerSender.getId());
-                    ps.setInt(3, dbPlayerReceiver.getId());
-                    ps.setString(4, mailMessage.getSubject());
-                    ps.setString(5, mailMessage.getMessageText());
-                    ps.setString(6, SerializeHelper.writeItemsToJson(mailMessage.getAttachments(), false).toString());
-                    ps.setObject(7, mailMessage.getSendDateTime());
-                    ps.setBoolean(8, mailMessage.isRead());
-                    ps.execute();
+        
+        DBPlayer dbPlayerSender;
+        DBPlayer dbPlayerReceiver;
+        
+        String sql = "INSERT INTO mail (`id`, `mail_system`, `player_id_sender`, `player_id_receiver`, `subject`, `text`, `attachments`, `sent_date`, `read`) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?);";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            for (MailMessage mailMessage : mailMessages) {
+                ps.addBatch("ALTER TABLE mail AUTO_INCREMENT=" + mailMessage.getId() + ";");
+                try {
+                    dbPlayerSender = TablePlayers.getPlayer(connection, mailMessage.getSender());
+                    dbPlayerReceiver = TablePlayers.getPlayer(connection, mailMessage.getReceiver());
                 } catch (SQLException e) {
                     e.printStackTrace();
+                    continue;
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
+                ps.setObject(1, mailMessage.getMailSystem().getIdentifier().getValue());
+                ps.setInt(2, dbPlayerSender.getId());
+                ps.setInt(3, dbPlayerReceiver.getId());
+                ps.setString(4, mailMessage.getSubject());
+                ps.setString(5, mailMessage.getMessageText());
+                ps.setString(6, SerializeHelper.writeItemsToJson(mailMessage.getAttachments(), false).toString());
+                ps.setObject(7, mailMessage.getSendDateTime());
+                ps.setBoolean(8, mailMessage.isRead());
+                ps.addBatch();
             }
+            ps.executeBatch();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        
+
+
+//        for (MailMessage mailMessage : mailMessages) {
+//            try (PreparedStatement ps = connection.prepareStatement("ALTER TABLE mail AUTO_INCREMENT=" + mailMessage.getId())) {
+//                ps.execute();
+//            } catch (SQLException e) {
+//                e.printStackTrace();
+//            }
+//            DBPlayer dbPlayerSender;
+//            DBPlayer dbPlayerReceiver;
+//            RPGFramework.getLogger().info(mailMessage);
+//            try {
+//                dbPlayerSender = TablePlayers.getPlayer(connection, mailMessage.getSender());
+//                dbPlayerReceiver = TablePlayers.getPlayer(connection, mailMessage.getReceiver());
+//                String sql = "INSERT INTO mail (`id`, `mail_system`, `player_id_sender`, `player_id_receiver`, `subject`, `text`, `attachments`, `sent_date`, `read`) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?)";
+//                try (PreparedStatement ps = connection.prepareStatement(sql)) {
+//                    ps.setObject(1, mailMessage.getMailSystem().getIdentifier().getValue());
+//                    ps.setInt(2, dbPlayerSender.getId());
+//                    ps.setInt(3, dbPlayerReceiver.getId());
+//                    ps.setString(4, mailMessage.getSubject());
+//                    ps.setString(5, mailMessage.getMessageText());
+//                    ps.setString(6, SerializeHelper.writeItemsToJson(mailMessage.getAttachments(), false).toString());
+//                    ps.setObject(7, mailMessage.getSendDateTime());
+//                    ps.setBoolean(8, mailMessage.isRead());
+//                    ps.execute();
+//                } catch (SQLException e) {
+//                    e.printStackTrace();
+//                }
+//            } catch (SQLException e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     public static ArrayList<MailMessage> exportData(Connection connection) {
