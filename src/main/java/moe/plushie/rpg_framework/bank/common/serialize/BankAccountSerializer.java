@@ -29,9 +29,9 @@ public final class BankAccountSerializer {
         return jsonArray;
     }
 
-    public static BankAccount deserializeJson(JsonElement json, IBank bank) {
+    public static BankAccount deserializeJson(JsonElement json, IBank bank, DBPlayer dbPlayer) {
         try {
-            BankAccount account = new BankAccount(bank);
+            BankAccount account = new BankAccount(bank, dbPlayer);
             JsonArray jsonArray = (JsonArray) json;
             for (int i = 0; i < jsonArray.size(); i++) {
                 JsonArray itemsArray = jsonArray.get(i).getAsJsonArray();
@@ -65,10 +65,10 @@ public final class BankAccountSerializer {
         if (TableBankAccounts.isAccountInDatabase(dbPlayer, bank.getIdentifier())) {
             String tabs = TableBankAccounts.getAccountTabs(dbPlayer, bank.getIdentifier());
             JsonElement tabsJson = SerializeHelper.stringToJson(tabs);
-            deserializeJson(tabsJson, bank);
-            return deserializeJson(tabsJson, bank);
+            //deserializeJson(tabsJson, bank, dbPlayer);
+            return deserializeJson(tabsJson, bank, dbPlayer);
         } else {
-            BankAccount account = new BankAccount(bank);
+            BankAccount account = new BankAccount(bank, dbPlayer);
             account.setNewAccount();
             return account;
         }

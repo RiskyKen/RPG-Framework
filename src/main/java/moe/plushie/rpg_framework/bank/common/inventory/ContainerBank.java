@@ -7,6 +7,7 @@ import moe.plushie.rpg_framework.api.currency.ICost;
 import moe.plushie.rpg_framework.bank.ModuleBank;
 import moe.plushie.rpg_framework.bank.common.inventory.slot.SlotBank;
 import moe.plushie.rpg_framework.bank.common.serialize.BankAccountSerializer;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.database.DBPlayer;
 import moe.plushie.rpg_framework.core.common.inventory.ModContainer;
 import moe.plushie.rpg_framework.core.common.network.client.MessageClientGuiButton.IButtonPress;
@@ -24,12 +25,13 @@ public class ContainerBank extends ModContainer implements IInventoryChangedList
 
     private final EntityPlayer player;
     private final IBank bank;
-    private final DBPlayer sourcePlayer;
+    private DBPlayer sourcePlayer;
     private IBankAccount bankAccount = null;
 
     private InventoryBasic inventory;
     private boolean updatingSlots = false;
-
+    private boolean dirty = false;
+    
     private int unlockedTabs = 0;
     private int activeTab = -1;
 
@@ -56,11 +58,14 @@ public class ContainerBank extends ModContainer implements IInventoryChangedList
                 }
             }
             // unlockedTabs = bankAccount.getTabUnlockCount();
-            setActiveTab(0);
-            if (sourcePlayer != null) {
-                ModuleBank.getBankManager().getBankAccount(this, bank, sourcePlayer);
-            } else {
-                ModuleBank.getBankManager().getBankAccount(this, bank, player.getGameProfile());
+            setActiveTab(-1);
+
+            if (!isRemote()) {
+                if (sourcePlayer != null) {
+                    ModuleBank.getBankManager().getBankAccount(this, bank, sourcePlayer);
+                } else {
+                    ModuleBank.getBankManager().getBankAccount(this, bank, player.getGameProfile());
+                }
             }
         }
 
@@ -79,9 +84,9 @@ public class ContainerBank extends ModContainer implements IInventoryChangedList
         }
         for (int i = 0; i < this.listeners.size(); ++i) {
             IContainerListener icontainerlistener = this.listeners.get(i);
-            if (unlockedTabs != bankAccount.getTabUnlockCount()) {
-                icontainerlistener.sendWindowProperty(this, 0, bankAccount.getTabUnlockCount());
-                unlockedTabs = bankAccount.getTabUnlockCount();
+            if (unlockedTabs != bankAccount.getTabCount()) {
+                icontainerlistener.sendWindowProperty(this, 0, bankAccount.getTabCount());
+                unlockedTabs = bankAccount.getTabCount();
             }
         }
     }
@@ -106,10 +111,10 @@ public class ContainerBank extends ModContainer implements IInventoryChangedList
         if (bankAccount != null) {
             updatingSlots = true;
             for (int i = 0; i < bank.getTabSlotCount(); i++) {
-                if (activeTab < 0 | activeTab > bankAccount.getTabCount()) {
+                if (activeTab < 0 | activeTab > bankAccount.getTabCount() - 1) {
                     inventory.setInventorySlotContents(i, ItemStack.EMPTY);
                 } else {
-                    inventory.setInventorySlotContents(i, bankAccount.getTab(getActiveTabIndex()).getStackInSlot(i));
+                    inventory.setInventorySlotContents(i, bankAccount.getTab(activeTab).getStackInSlot(i));
                 }
             }
             updatingSlots = false;
@@ -120,7 +125,7 @@ public class ContainerBank extends ModContainer implements IInventoryChangedList
     public IBank getBank() {
         return bank;
     }
-    
+
     public IBankAccount getBankAccount() {
         return bankAccount;
     }
@@ -137,6 +142,14 @@ public class ContainerBank extends ModContainer implements IInventoryChangedList
         }
         updateSlotForTab();
     }
+    
+    public void setActiveTabClient(int activeTab) {
+        if (unlockedTabs < 1) {
+            this.activeTab = -1;
+        } else {
+            this.activeTab = MathHelper.clamp(activeTab, 0, unlockedTabs - 1);
+        }
+    }
 
     @Override
     public void onInventoryChanged(IInventory invBasic) {
@@ -150,7 +163,16 @@ public class ContainerBank extends ModContainer implements IInventoryChangedList
             for (int i = 0; i < bank.getTabSlotCount(); i++) {
                 bankAccount.getTab(getActiveTabIndex()).setInventorySlotContents(i, inventory.getStackInSlot(i));
             }
-            BankAccountSerializer.serializeDatabase(sourcePlayer, bankAccount);
+        }
+        dirty = true;
+    }
+    
+    @Override
+    public void onContainerClosed(EntityPlayer playerIn) {
+        super.onContainerClosed(playerIn);
+        if (!isRemote() & dirty & bankAccount != null) {
+            RPGFramework.getLogger().info("Saving back account for " + bankAccount.getOwner());
+            ModuleBank.getBankManager().saveBankAccount(getBankAccount());
         }
     }
 
@@ -177,6 +199,9 @@ public class ContainerBank extends ModContainer implements IInventoryChangedList
 
     @Override
     public void onBackAccountLoad(IBankAccount bankAccount) {
+        if (bankAccount != null) {
+            this.sourcePlayer = new DBPlayer(bankAccount.getOwner().getId());
+        }
         setBankAccount(bankAccount);
     }
 }

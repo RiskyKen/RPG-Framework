@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import moe.plushie.rpg_framework.api.bank.IBank;
 import moe.plushie.rpg_framework.api.bank.IBankAccount;
+import moe.plushie.rpg_framework.api.core.IDBPlayer;
+import moe.plushie.rpg_framework.core.common.database.DBPlayer;
 import moe.plushie.rpg_framework.core.common.network.PacketHandler;
 import moe.plushie.rpg_framework.core.common.network.server.MessageServerSyncBankAccount;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -13,13 +15,15 @@ import net.minecraft.inventory.InventoryBasic;
 public class BankAccount implements IBankAccount {
 
     private final IBank parentBank;
+    private final DBPlayer owner;
     private final ArrayList<IInventory> tabs;
 
-    public BankAccount(IBank parentBank) {
+    public BankAccount(IBank parentBank, DBPlayer owner) {
         this.parentBank = parentBank;
+        this.owner = owner;
         this.tabs = new ArrayList<IInventory>();
     }
-    
+
     public void setNewAccount() {
         tabs.clear();
         for (int i = 0; i < parentBank.getTabStartingCount(); i++) {
@@ -30,6 +34,11 @@ public class BankAccount implements IBankAccount {
     @Override
     public IBank getBank() {
         return parentBank;
+    }
+
+    @Override
+    public IDBPlayer getOwner() {
+        return owner;
     }
 
     @Override
@@ -56,7 +65,7 @@ public class BankAccount implements IBankAccount {
     public void removeTab(int index) {
         tabs.remove(index);
     }
-    
+
     @Override
     public int getTabCount() {
         return tabs.size();

@@ -25,9 +25,16 @@ public class SlotBank extends SlotHidable {
 
     @Override
     public boolean canTakeStack(EntityPlayer playerIn) {
-        if (parent.getBank() == null || parent.getBankAccount() == null || parent.getBankAccount().getTabCount() == 0) {
-            return false;
+        if (!parent.isRemote()) {
+            if (parent.getBank() == null || parent.getBankAccount() == null || parent.getBankAccount().getTabCount() == 0) {
+                return false;
+            }
+        } else {
+            if (parent.getBank() == null) {
+                return false;
+            }
         }
+
         if (parent.getActiveTabIndex() == -1) {
             return false;
         }
@@ -36,8 +43,14 @@ public class SlotBank extends SlotHidable {
 
     @Override
     public boolean isItemValid(ItemStack stack) {
-        if (parent.getBank() == null || parent.getBankAccount() == null || parent.getBankAccount().getTabCount() == 0) {
-            return false;
+        if (!parent.isRemote()) {
+            if (parent.getBank() == null || parent.getBankAccount() == null || parent.getBankAccount().getTabCount() == 0) {
+                return false;
+            }
+        } else {
+            if (parent.getBank() == null) {
+                return false;
+            }
         }
         if (parent.getActiveTabIndex() == -1) {
             return false;

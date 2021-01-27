@@ -213,6 +213,16 @@ public class BankManager implements IBankManager {
         });
     }
 
+    public void saveBankAccount(IBankAccount bankAccount) {
+        DatabaseManager.createTaskAndExecute(new Runnable() {
+
+            @Override
+            public void run() {
+                BankAccountSerializer.serializeDatabase(new DBPlayer(bankAccount.getOwner().getId()), bankAccount);
+            }
+        });
+    }
+
     @Override
     public IBank[] getBanks() {
         IBank[] banks = bankMap.values().toArray(new IBank[bankMap.size()]);

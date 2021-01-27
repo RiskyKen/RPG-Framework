@@ -7,11 +7,11 @@ import com.mojang.authlib.GameProfile;
 public class DBPlayerInfo extends DBPlayer {
 
     public static final DBPlayerInfo MISSING_INFO = new DBPlayerInfo(-1, null, null, null);
-    
-	private final GameProfile gameProfile;
-	private final Date firstSeen;
-	private final Date lastLogin;
-	
+
+    private final GameProfile gameProfile;
+    private final Date firstSeen;
+    private final Date lastLogin;
+
     public DBPlayerInfo(int id, GameProfile gameProfile, Date firstSeen, Date lastLogin) {
         super(id);
         this.gameProfile = gameProfile;
@@ -30,7 +30,7 @@ public class DBPlayerInfo extends DBPlayer {
     public Date getLastLogin() {
         return lastLogin;
     }
-    
+
     @Override
     public boolean isMissing() {
         if (super.isMissing()) {
@@ -40,5 +40,10 @@ public class DBPlayerInfo extends DBPlayer {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return "DBPlayerInfo [gameProfile=" + gameProfile + ", firstSeen=" + firstSeen + ", lastLogin=" + lastLogin + ", id=" + id + "]";
     }
 }

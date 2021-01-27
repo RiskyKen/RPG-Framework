@@ -4,6 +4,7 @@ import org.lwjgl.opengl.GL11;
 
 import moe.plushie.rpg_framework.api.bank.IBank;
 import moe.plushie.rpg_framework.bank.common.inventory.ContainerBank;
+import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpg_framework.core.client.gui.GuiHelper;
 import moe.plushie.rpg_framework.core.client.gui.IDialogCallback;
@@ -85,7 +86,7 @@ public class GuiBank extends GuiTabbed<ContainerBank> implements IDialogCallback
         int iconIndex = bank.getTabIconIndex();
         int y = MathHelper.floor(iconIndex / 16);
         int x = iconIndex - (y * 16);
-        for (int i = 0; i < unlockedTabs + bank.getTabStartingCount(); i++) {
+        for (int i = 0; i < unlockedTabs; i++) {
             tabController.addTab(new GuiTab(tabController, GuiHelper.getLocalControlName(getName(), "tab.name", (i + 1))).setIconLocation(x * 16, y * 16).setTabTextureSize(26, 30).setPadding(0, 4, 3, 3));
         }
         tabController.setActiveTabIndex(oldActive);
@@ -99,6 +100,7 @@ public class GuiBank extends GuiTabbed<ContainerBank> implements IDialogCallback
     @Override
     protected void setActiveTab(int value) {
         activeTabIndex = value;
+        getContainer().setActiveTabClient(value);
     }
 
     @Override
@@ -109,6 +111,7 @@ public class GuiBank extends GuiTabbed<ContainerBank> implements IDialogCallback
     @Override
     public void updateScreen() {
         if (getContainer().getUnlockedTabs() != unlockedTabs) {
+            RPGFramework.getLogger().info("setting tabs");
             unlockedTabs = getContainer().getUnlockedTabs();
             setActiveTab(0);
             addTabs();

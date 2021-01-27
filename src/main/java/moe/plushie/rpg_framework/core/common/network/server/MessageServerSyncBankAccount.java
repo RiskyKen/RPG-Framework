@@ -8,6 +8,7 @@ import moe.plushie.rpg_framework.api.bank.IBankAccount;
 import moe.plushie.rpg_framework.api.core.IIdentifier;
 import moe.plushie.rpg_framework.bank.ModuleBank;
 import moe.plushie.rpg_framework.bank.common.serialize.BankAccountSerializer;
+import moe.plushie.rpg_framework.core.common.database.DBPlayer;
 import moe.plushie.rpg_framework.core.common.utils.ByteBufHelper;
 import moe.plushie.rpg_framework.core.common.utils.SerializeHelper;
 import net.minecraft.client.Minecraft;
@@ -33,6 +34,7 @@ public class MessageServerSyncBankAccount implements IMessage, IMessageHandler<M
     public void toBytes(ByteBuf buf) {
         buf.writeInt(bankAccounts.length);
         for (int i = 0; i < bankAccounts.length; i++) {
+            buf.writeInt(bankAccounts[i].getOwner().getId());
             ByteBufHelper.writeIdentifier(buf, bankAccounts[i].getBank().getIdentifier());
             JsonElement json = BankAccountSerializer.serializeJson(bankAccounts[i], false);
             ByteBufUtils.writeUTF8String(buf, json.toString());
@@ -43,11 +45,12 @@ public class MessageServerSyncBankAccount implements IMessage, IMessageHandler<M
     public void fromBytes(ByteBuf buf) {
         bankAccounts = new IBankAccount[buf.readInt()];
         for (int i = 0; i < bankAccounts.length; i++) {
+            DBPlayer owner = new DBPlayer(buf.readInt());
             IIdentifier bankIdentifier = ByteBufHelper.readIdentifier(buf);
             IBank bank = ModuleBank.getBankManager().getBank(bankIdentifier);
             String jsonString = ByteBufUtils.readUTF8String(buf);
             JsonElement json = SerializeHelper.stringToJson(jsonString);
-            bankAccounts[i] = BankAccountSerializer.deserializeJson(json, bank);
+            bankAccounts[i] = BankAccountSerializer.deserializeJson(json, bank, owner);
         }
     }
 
@@ -63,14 +66,8 @@ public class MessageServerSyncBankAccount implements IMessage, IMessageHandler<M
             @Override
             public void run() {
                 /*
-                EntityPlayer player = Minecraft.getMinecraft().player;
-                IBankCapability capability = BankCapability.get(player);
-                if (capability != null) {
-                    for (int i = 0; i < bankAccounts.length; i++) {
-                        capability.setBankAccount(bankAccounts[i]);
-                    }
-                }
-                */
+                 * EntityPlayer player = Minecraft.getMinecraft().player; IBankCapability capability = BankCapability.get(player); if (capability != null) { for (int i = 0; i < bankAccounts.length; i++) { capability.setBankAccount(bankAccounts[i]); } }
+                 */
             }
         });
     }
