@@ -224,7 +224,6 @@ public class MailSystem implements IMailSystem, Comparable<IMailSystem> {
 
     public void markMessageasRead(int messageId) {
         TableMail.markMessageasRead(messageId);
-
     }
 
     public void notifyClient(EntityPlayerMP entityPlayer) {

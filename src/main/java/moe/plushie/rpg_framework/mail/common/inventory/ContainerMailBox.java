@@ -193,13 +193,25 @@ public class ContainerMailBox extends ModContainer implements IMailSendCallback 
     }
 
     public void onClientSelectMessage(EntityPlayerMP player, int messageId) {
-        ((MailSystem) mailSystem).markMessageasRead(messageId);
-        ((MailSystem) mailSystem).notifyClient(player);
+        DatabaseManager.createTaskAndExecute(new Runnable() {
+            
+            @Override
+            public void run() {
+                ((MailSystem) mailSystem).markMessageasRead(messageId);
+                ((MailSystem) mailSystem).notifyClient(player);
+            }
+        });
     }
 
     public void onClientDeleteMessage(EntityPlayerMP player, int messageId) {
-        ((MailSystem) mailSystem).deleteMessage(messageId);
-        ((MailSystem) mailSystem).notifyClient(player);
+        DatabaseManager.createTaskAndExecute(new Runnable() {
+            
+            @Override
+            public void run() {
+                ((MailSystem) mailSystem).deleteMessage(messageId);
+                ((MailSystem) mailSystem).notifyClient(player);
+            }
+        });
     }
 
     public void onClientWithdrawItems(EntityPlayerMP player, int messageId) {

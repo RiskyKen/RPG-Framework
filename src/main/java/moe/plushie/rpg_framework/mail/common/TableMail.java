@@ -146,9 +146,10 @@ public final class TableMail {
             ps.setObject(1, mailSystem.getIdentifier().getValue());
             ps.setInt(2, player.getId());
             ResultSet resultSet = ps.executeQuery();
+            resultSet.setFetchSize(10);
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
-                DBPlayerInfo dbPlayerSender = TablePlayers.getPlayer(resultSet.getInt("player_id_sender"));
+                DBPlayerInfo dbPlayerSender = TablePlayers.getPlayer(conn, resultSet.getInt("player_id_sender"));
                 Date sendDateTime = resultSet.getDate("sent_date");
                 String subject = resultSet.getString("subject");
                 String messageText = resultSet.getString("text");
