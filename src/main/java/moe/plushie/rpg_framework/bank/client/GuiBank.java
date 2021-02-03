@@ -4,7 +4,6 @@ import org.lwjgl.opengl.GL11;
 
 import moe.plushie.rpg_framework.api.bank.IBank;
 import moe.plushie.rpg_framework.bank.common.inventory.ContainerBank;
-import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.client.gui.AbstractGuiDialog;
 import moe.plushie.rpg_framework.core.client.gui.GuiHelper;
 import moe.plushie.rpg_framework.core.client.gui.IDialogCallback;
@@ -111,7 +110,6 @@ public class GuiBank extends GuiTabbed<ContainerBank> implements IDialogCallback
     @Override
     public void updateScreen() {
         if (getContainer().getUnlockedTabs() != unlockedTabs) {
-            RPGFramework.getLogger().info("setting tabs");
             unlockedTabs = getContainer().getUnlockedTabs();
             setActiveTab(0);
             addTabs();
