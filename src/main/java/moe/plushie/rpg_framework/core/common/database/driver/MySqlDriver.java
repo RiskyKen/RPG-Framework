@@ -66,10 +66,12 @@ public class MySqlDriver implements IDatabaseDriver {
         poolDataSource.setDatabaseName(ConfigStorage.getMySqlDatabase());
         poolDataSource.setUser(ConfigStorage.getMySqlUsername());
         poolDataSource.setPassword(ConfigStorage.getMySqlPassword());
+        poolDataSource.setAutoReconnect(true);
+        poolDataSource.setAutoReconnectForPools(true);
         return poolDataSource.getPooledConnection();
     }
 
-    private Connection getPoolConnection() throws SQLException {
+    private synchronized Connection getPoolConnection() throws SQLException {
         if (pooledConnection == null) {
             pooledConnection = makePool();
         }
@@ -78,10 +80,7 @@ public class MySqlDriver implements IDatabaseDriver {
 
     @Override
     public synchronized Connection getConnection(DatebaseTable table) throws SQLException {
-        Connection connection = null;
-        connection = getPoolConnection();
-        // connection = DriverManager.getConnection(getConnectionUrl(true), getUsername(), getPassword());
-        return connection;
+        return getPoolConnection();
     }
 
     @Override
