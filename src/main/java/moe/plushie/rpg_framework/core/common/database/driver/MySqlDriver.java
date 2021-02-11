@@ -1,5 +1,6 @@
 package moe.plushie.rpg_framework.core.common.database.driver;
 
+import java.beans.PropertyVetoException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 
 import javax.sql.PooledConnection;
 
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.mysql.cj.jdbc.MysqlConnectionPoolDataSource;
 
 import moe.plushie.rpg_framework.core.common.config.ConfigStorage;
@@ -18,7 +20,8 @@ import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder;
 public class MySqlDriver implements IDatabaseDriver {
 
     private PooledConnection pooledConnection = null;
-
+    private ComboPooledDataSource comboPooledDataSource = null;
+    
     private final ISqlBulder sqlBulder;
 
     public MySqlDriver() {
@@ -60,6 +63,9 @@ public class MySqlDriver implements IDatabaseDriver {
     }
 
     private PooledConnection makePool() throws SQLException {
+        
+
+        
         MysqlConnectionPoolDataSource poolDataSource = new MysqlConnectionPoolDataSource();
         poolDataSource.setServerName(ConfigStorage.getMySqlHost());
         poolDataSource.setPort(ConfigStorage.getMySqlPort());
@@ -70,12 +76,30 @@ public class MySqlDriver implements IDatabaseDriver {
         poolDataSource.setAutoReconnectForPools(true);
         return poolDataSource.getPooledConnection();
     }
+    
+    private ComboPooledDataSource makeComboPooledDataSource() {
+        try {
+            ComboPooledDataSource cpds = new ComboPooledDataSource();
+            cpds.setDriverClass("com.mysql.jdbc.Driver");
+            cpds.setJdbcUrl(getConnectionUrl(true));
+            cpds.setUser(ConfigStorage.getMySqlUsername());
+            cpds.setPassword(ConfigStorage.getMySqlPassword());
+            return cpds;
+        } catch (PropertyVetoException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     private synchronized Connection getPoolConnection() throws SQLException {
-        if (pooledConnection == null) {
-            pooledConnection = makePool();
+        if (comboPooledDataSource == null) {
+            comboPooledDataSource = makeComboPooledDataSource();
         }
-        return pooledConnection.getConnection();
+        if (pooledConnection == null) {
+            //pooledConnection = makePool();
+        }
+        return comboPooledDataSource.getConnection();
     }
 
     @Override

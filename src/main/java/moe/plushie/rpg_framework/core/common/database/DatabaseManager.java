@@ -48,7 +48,7 @@ public final class DatabaseManager {
 
     private static int getExecutorThreadCount() {
         if (ConfigStorage.getStorageType() == StorageType.MYSQL) {
-            return 1;
+            return 10;
         }
         return 1;
     }
