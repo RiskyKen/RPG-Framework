@@ -59,13 +59,22 @@ public final class ItemDataManager implements IItemDataManager {
 
     @Override
     public IItemData getItemData(ItemStack itemStack) {
-        ListenableFutureTask<IItemData> task = getItemDataAsync(itemStack, null);
         IItemData itemData = ItemData.ITEM_DATA_MISSING;
-        try {
-            itemData = task.get();
-        } catch (Exception e) {
-            e.printStackTrace();
+
+        if (ModAddonManager.addonFaerunHeroes.isModLoaded()) {
+            ICost cost = ModAddonManager.addonFaerunHeroes.getItemValue(itemStack);
+            if (!cost.isNoCost() & cost.hasWalletCost()) {
+                itemData = itemData.setValue(cost);
+            }
+        } else {
+            ListenableFutureTask<IItemData> task = getItemDataAsync(itemStack, null);
+            try {
+                itemData = task.get();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+
         return itemData;
     }
 
@@ -83,15 +92,7 @@ public final class ItemDataManager implements IItemDataManager {
 
                 ICost overrideValue = tableItemOverrideValues.getItemValue(itemStack);
                 if (!overrideValue.isNoCost() && overrideValue.hasWalletCost()) {
-                    //itemData = itemData.setValue(overrideValue);
-                }
-
-                // TODO fix cross thread crap below!
-                if (ModAddonManager.addonFaerunHeroes.isModLoaded()) {
-                    ICost cost = ModAddonManager.addonFaerunHeroes.getItemValue(itemStack);
-                    if (!cost.isNoCost() & cost.hasWalletCost()) {
-                        itemData = itemData.setValue(cost);
-                    }
+                    // itemData = itemData.setValue(overrideValue);
                 }
                 return itemData;
             }
