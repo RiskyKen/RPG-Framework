@@ -84,6 +84,10 @@ public class MySqlDriver implements IDatabaseDriver {
             cpds.setJdbcUrl(getConnectionUrl(true));
             cpds.setUser(ConfigStorage.getMySqlUsername());
             cpds.setPassword(ConfigStorage.getMySqlPassword());
+            cpds.setTestConnectionOnCheckin(true);
+            cpds.setTestConnectionOnCheckout(true);
+            cpds.setIdleConnectionTestPeriod(5);
+            cpds.setAutomaticTestTable("connection_test");
             return cpds;
         } catch (PropertyVetoException e) {
             // TODO Auto-generated catch block
