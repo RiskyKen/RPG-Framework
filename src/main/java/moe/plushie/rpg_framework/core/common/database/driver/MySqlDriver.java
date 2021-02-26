@@ -8,10 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import javax.sql.PooledConnection;
-
 import com.mchange.v2.c3p0.ComboPooledDataSource;
-import com.mysql.cj.jdbc.MysqlConnectionPoolDataSource;
 
 import moe.plushie.rpg_framework.core.common.config.ConfigStorage;
 import moe.plushie.rpg_framework.core.common.database.DatebaseTable;
@@ -19,9 +16,8 @@ import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder;
 
 public class MySqlDriver implements IDatabaseDriver {
 
-    private PooledConnection pooledConnection = null;
     private ComboPooledDataSource comboPooledDataSource = null;
-    
+
     private final ISqlBulder sqlBulder;
 
     public MySqlDriver() {
@@ -62,21 +58,6 @@ public class MySqlDriver implements IDatabaseDriver {
         return ConfigStorage.getMySqlDatabase();
     }
 
-    private PooledConnection makePool() throws SQLException {
-        
-
-        
-        MysqlConnectionPoolDataSource poolDataSource = new MysqlConnectionPoolDataSource();
-        poolDataSource.setServerName(ConfigStorage.getMySqlHost());
-        poolDataSource.setPort(ConfigStorage.getMySqlPort());
-        poolDataSource.setDatabaseName(ConfigStorage.getMySqlDatabase());
-        poolDataSource.setUser(ConfigStorage.getMySqlUsername());
-        poolDataSource.setPassword(ConfigStorage.getMySqlPassword());
-        poolDataSource.setAutoReconnect(true);
-        poolDataSource.setAutoReconnectForPools(true);
-        return poolDataSource.getPooledConnection();
-    }
-    
     private ComboPooledDataSource makeComboPooledDataSource() {
         try {
             ComboPooledDataSource cpds = new ComboPooledDataSource();
@@ -90,7 +71,6 @@ public class MySqlDriver implements IDatabaseDriver {
             cpds.setAutomaticTestTable("connection_test");
             return cpds;
         } catch (PropertyVetoException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return null;
@@ -99,9 +79,6 @@ public class MySqlDriver implements IDatabaseDriver {
     private synchronized Connection getPoolConnection() throws SQLException {
         if (comboPooledDataSource == null) {
             comboPooledDataSource = makeComboPooledDataSource();
-        }
-        if (pooledConnection == null) {
-            //pooledConnection = makePool();
         }
         return comboPooledDataSource.getConnection();
     }
@@ -158,7 +135,6 @@ public class MySqlDriver implements IDatabaseDriver {
 
     @Override
     public int getLastInsertRow(Connection conn) throws SQLException {
-        // TODO Auto-generated method stub
         return 0;
     }
 

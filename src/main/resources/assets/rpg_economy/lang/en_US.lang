@@ -150,6 +150,7 @@ inventory.rpg_economy:shop.dialog.tab_remove.name=Remove Tab
 
 inventory.rpg_economy:shop.dialog.tab_edit.name=Edit Tab
 inventory.rpg_economy:shop.dialog.tab_edit.button.edit=Edit
+inventory.rpg_economy:shop.dialog.tab_edit.label.tab_type=Tab Type:
 
 inventory.rpg_economy:shop.dialog.cost_edit.name=Edit Cost
 inventory.rpg_economy:shop.dialog.cost_edit.button.edit=Edit

@@ -28,6 +28,10 @@ public class SQLiteBuilder extends SqlBuilder {
             return "VARCHAR (" + size + ")";
         case BOOLEAN:
             break;
+        case DOUBLE:
+            break;
+        case FLOAT:
+            break;
         }
         return dataType.toString();
     }
@@ -56,7 +60,7 @@ public class SQLiteBuilder extends SqlBuilder {
             columns.add(column);
             return column;
         }
-        
+
         @Override
         public void setPrimaryKey(String key) {
             super.setPrimaryKey(key);
@@ -86,9 +90,9 @@ public class SQLiteBuilder extends SqlBuilder {
                 }
             }
             if (primaryKey != null) {
-                //sb.append(",PRIMARY KEY ('");
-                //sb.append(primaryKey);
-                //sb.append("')");
+                // sb.append(",PRIMARY KEY ('");
+                // sb.append(primaryKey);
+                // sb.append("')");
             }
             for (int i = 0; i < indexs.size(); i++) {
                 Index index = indexs.get(i);
@@ -126,7 +130,7 @@ public class SQLiteBuilder extends SqlBuilder {
         public SQLiteBuilderAlterTable(String name) {
             // TODO Auto-generated constructor stub
         }
-        
+
         @Override
         public ISqlBulderColumn addColumn(String name, DataType dataTypes) {
             // TODO Auto-generated method stub
@@ -182,11 +186,11 @@ public class SQLiteBuilder extends SqlBuilder {
             }
             return sb.toString();
         }
-        
+
         public String getName() {
             return name;
         }
-        
+
         public void setPrimaryKey(boolean primaryKey) {
             this.primaryKey = primaryKey;
         }
