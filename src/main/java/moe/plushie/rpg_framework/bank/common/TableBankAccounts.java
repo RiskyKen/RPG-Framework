@@ -1,17 +1,21 @@
 package moe.plushie.rpg_framework.bank.common;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import moe.plushie.rpg_framework.api.core.IIdentifier;
+import moe.plushie.rpg_framework.core.common.IdentifierString;
 import moe.plushie.rpg_framework.core.common.config.ConfigStorage;
 import moe.plushie.rpg_framework.core.common.config.ConfigStorage.StorageType;
 import moe.plushie.rpg_framework.core.common.database.DBPlayer;
 import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
 import moe.plushie.rpg_framework.core.common.database.DatebaseTable;
+import moe.plushie.rpg_framework.core.common.database.driver.MySqlBuilder;
 import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder;
 import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder.ISqlBulderCreateTable;
 
@@ -31,22 +35,15 @@ public final class TableBankAccounts {
     }
 
     public static void create() {
-//        String sql = "CREATE TABLE IF NOT EXISTS '" + TABLE_NAME;
-//        sql += "' ('id' INTEGER UNSIGNED PRIMARY KEY AUTOINCREMENT NOT NULL,";
-//        sql += "'player_id' INTEGER NOT NULL,";
-//        sql += "'bank_identifier' TEXT NOT NULL,";
-//        sql += "'tabs' TEXT NOT NULL,";
-//        sql += "'times_opened' INTEGER NOT NULL,";
-//        sql += "'last_access' DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,";
-//        sql += "'last_change' DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL)";
-//        try (Connection conn = getConnection(); Statement statement = conn.createStatement()) {
-//            RPGFramework.getLogger().info(sql);
-//            statement.executeUpdate(sql);
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
+        try (Connection connection = getConnection()) {
+            create(connection, DatabaseManager.getSqlBulder());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
-        ISqlBulderCreateTable table = DatabaseManager.getSqlBulder().createTable(TABLE_NAME);
+    public static void create(Connection connection, ISqlBulder sqlBulder) {
+        ISqlBulderCreateTable table = sqlBulder.createTable(TABLE_NAME);
         table.addColumn("id", ISqlBulder.DataType.INT).setUnsigned(true).setNotNull(true).setAutoIncrement(true);
         table.addColumn("player_id", ISqlBulder.DataType.INT).setNotNull(true);
         table.addColumn("bank_identifier", ISqlBulder.DataType.TEXT).setNotNull(true);
@@ -56,12 +53,11 @@ public final class TableBankAccounts {
         table.addColumn("last_change", ISqlBulder.DataType.DATETIME).setNotNull(true).setDefault("CURRENT_TIMESTAMP");
         table.ifNotExists(true);
         table.setPrimaryKey("id");
-        try (Connection conn = getConnection(); Statement statement = conn.createStatement()) {
+        try (Statement statement = connection.createStatement()) {
             statement.executeUpdate(table.build());
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
 
     public static String getAccountTabs(DBPlayer dbPlayer, IIdentifier bankIdentifier) {
@@ -140,5 +136,108 @@ public final class TableBankAccounts {
             e.printStackTrace();
         }
         return foundAccount;
+    }
+
+    public static void importData(ArrayList<DBBankAccount> bankAccounts, Connection connection, boolean dropTable) {
+        if (dropTable) {
+            String sqlDrop = "DROP TABLE IF EXISTS bank_accounts";
+            try (PreparedStatement ps = connection.prepareStatement(sqlDrop)) {
+                ps.execute();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            create(connection, new MySqlBuilder());
+        }
+
+        for (DBBankAccount bankAccount : bankAccounts) {
+            try (PreparedStatement ps = connection.prepareStatement("ALTER TABLE bank_accounts AUTO_INCREMENT=" + bankAccount.getId())) {
+                ps.execute();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            String sql = "INSERT INTO bank_accounts (id, player_id, bank_identifier, tabs, times_opened, last_access, last_change) VALUES (NULL, ?, ?, ?, ?, ?, ?)";
+            try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                ps.setInt(1, bankAccount.getPlayer().getId());
+                ps.setObject(2, bankAccount.getBankIdentifier().getValue());
+                ps.setString(3, bankAccount.getTabs());
+                ps.setInt(4, bankAccount.getTimesOpened());
+                ps.setDate(5, bankAccount.getLastAccess());
+                ps.setDate(6, bankAccount.getLastChanged());
+                ps.execute();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static ArrayList<DBBankAccount> exportData(Connection connection) {
+        ArrayList<DBBankAccount> bankAccounts = new ArrayList<DBBankAccount>();
+        String sql = "SELECT * FROM bank_accounts";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            try (ResultSet resultSet = ps.executeQuery()) {
+                while (resultSet.next()) {
+                    int id = resultSet.getInt("id");
+                    DBPlayer player = new DBPlayer(resultSet.getInt("player_id"));
+                    IIdentifier bankIdentifier = new IdentifierString(resultSet.getString("bank_identifier"));
+                    String tabs = resultSet.getString("tabs");
+                    int timesOpened = resultSet.getInt("times_opened");
+                    java.sql.Date lastAccess = resultSet.getDate("last_access");
+                    java.sql.Date lastChanged = resultSet.getDate("last_change");
+                    bankAccounts.add(new DBBankAccount(id, player, bankIdentifier, tabs, timesOpened, lastAccess, lastChanged));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return bankAccounts;
+    }
+
+    public static class DBBankAccount {
+
+        private final int id;
+        private final DBPlayer player;
+        private final IIdentifier bankIdentifier;
+        private final String tabs;
+        private final int timesOpened;
+        private final java.sql.Date lastAccess;
+        private final java.sql.Date lastChanged;
+
+        public DBBankAccount(int id, DBPlayer player, IIdentifier bankIdentifier, String tabs, int timesOpened, Date lastAccess, Date lastChanged) {
+            this.id = id;
+            this.player = player;
+            this.bankIdentifier = bankIdentifier;
+            this.tabs = tabs;
+            this.timesOpened = timesOpened;
+            this.lastAccess = lastAccess;
+            this.lastChanged = lastChanged;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public DBPlayer getPlayer() {
+            return player;
+        }
+
+        public IIdentifier getBankIdentifier() {
+            return bankIdentifier;
+        }
+
+        public String getTabs() {
+            return tabs;
+        }
+
+        public int getTimesOpened() {
+            return timesOpened;
+        }
+
+        public java.sql.Date getLastAccess() {
+            return lastAccess;
+        }
+
+        public java.sql.Date getLastChanged() {
+            return lastChanged;
+        }
     }
 }

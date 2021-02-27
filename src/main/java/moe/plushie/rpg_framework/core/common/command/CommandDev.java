@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import com.google.common.util.concurrent.FutureCallback;
 
 import moe.plushie.rpg_framework.api.shop.IShop;
+import moe.plushie.rpg_framework.bank.common.TableBankAccounts;
+import moe.plushie.rpg_framework.bank.common.TableBankAccounts.DBBankAccount;
 import moe.plushie.rpg_framework.core.RPGFramework;
 import moe.plushie.rpg_framework.core.common.command.CommandExecute.ICommandExecute;
 import moe.plushie.rpg_framework.core.common.database.DBPlayerInfo;
@@ -166,6 +168,17 @@ public class CommandDev extends ModSubCommands {
                                 @Override
                                 public void run() {
                                     sender.sendMessage(new TextComponentString("Exported " + wallets.size() + " wallets."));
+                                }
+                            });
+
+                            // Banks Accounts
+                            ArrayList<DBBankAccount> bankAccounts = TableBankAccounts.exportData(DatabaseManager.getConnection(DatebaseTable.PLAYER_DATA));
+                            TableBankAccounts.importData(bankAccounts, mySqlconn, true);
+                            FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    sender.sendMessage(new TextComponentString("Exported " + bankAccounts.size() + " bank accounts."));
                                     sender.sendMessage(new TextComponentString("Export finished."));
                                 }
                             });
