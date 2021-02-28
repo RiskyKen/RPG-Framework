@@ -32,6 +32,10 @@ public class SQLiteBuilder extends SqlBuilder {
             break;
         case FLOAT:
             break;
+        case MEDIUMTEXT:
+            return TYPE_TEXT;
+        case TINYTEXT:
+            return TYPE_TEXT;
         }
         return dataType.toString();
     }

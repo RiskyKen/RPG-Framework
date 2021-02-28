@@ -47,7 +47,7 @@ public final class TableBankAccounts {
         table.addColumn("id", ISqlBulder.DataType.INT).setUnsigned(true).setNotNull(true).setAutoIncrement(true);
         table.addColumn("player_id", ISqlBulder.DataType.INT).setNotNull(true);
         table.addColumn("bank_identifier", ISqlBulder.DataType.TEXT).setNotNull(true);
-        table.addColumn("tabs", ISqlBulder.DataType.TEXT).setNotNull(true);
+        table.addColumn("tabs", ISqlBulder.DataType.LONGTEXT).setNotNull(true);
         table.addColumn("times_opened", ISqlBulder.DataType.INT).setUnsigned(true).setNotNull(true);
         table.addColumn("last_access", ISqlBulder.DataType.DATETIME).setNotNull(true).setDefault("CURRENT_TIMESTAMP");
         table.addColumn("last_change", ISqlBulder.DataType.DATETIME).setNotNull(true).setDefault("CURRENT_TIMESTAMP");

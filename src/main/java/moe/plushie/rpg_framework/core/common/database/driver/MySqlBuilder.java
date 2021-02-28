@@ -26,6 +26,10 @@ public class MySqlBuilder extends SqlBuilder {
             break;
         case FLOAT:
             break;
+        case TINYTEXT:
+            break;
+        case MEDIUMTEXT:
+            break;
         }
         return dataType.toString();
     }
