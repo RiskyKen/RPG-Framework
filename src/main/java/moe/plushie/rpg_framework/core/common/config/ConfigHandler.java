@@ -96,7 +96,6 @@ public class ConfigHandler {
     private static void loadCategoryStats() {
         config.setCategoryComment(CATEGORY_STATS, "Setting to do with the stats system.");
         
-        
         optionsLocal.trackHeatmaps = config.getBoolean("trackHeatmaps", CATEGORY_STATS, true,
                 "Save player heatmap stats in the database.");
         
@@ -105,6 +104,9 @@ public class ConfigHandler {
         
         optionsLocal.trackWorldStats = config.getBoolean("trackWorldStats", CATEGORY_STATS, true,
                 "Save long term stats about the worlds in the database.");
+        
+        optionsLocal.trackShopSales = config.getBoolean("trackShopSales", CATEGORY_STATS, true,
+                "Save long term stats about shop sales in the database.");
     }
 
     private static int versionCompare(String str1, String str2) {

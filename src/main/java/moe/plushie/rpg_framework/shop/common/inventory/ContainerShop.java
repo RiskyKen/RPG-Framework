@@ -167,13 +167,15 @@ public class ContainerShop extends ModContainer {
             IShopItem shopItem = activeTab.getItems().get(slotId);
             ICost cost = shopItem.getCost();
             if (cost.canAfford(player)) {
-                DatabaseManager.createTaskAndExecute(new Runnable() {
+                if (ConfigHandler.optionsLocal.trackShopSales) {
+                    DatabaseManager.createTaskAndExecute(new Runnable() {
 
-                    @Override
-                    public void run() {
-                        TableStatsShopSales.updateSoldItemCount(shop.getIdentifier(), itemStack);
-                    }
-                });
+                        @Override
+                        public void run() {
+                            TableStatsShopSales.updateSoldItemCount(shop.getIdentifier(), itemStack);
+                        }
+                    });
+                }
                 cost.pay(player);
                 world.playSound(null, player.posX, player.posY, player.posZ, ModSounds.COIN_WITHDRAW, SoundCategory.PLAYERS, 0.3F, 0.8F + (player.getRNG().nextFloat() * 0.4F));
                 PlayerUtils.giveItemToPlayer(player, shopItem.getItem());

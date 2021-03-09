@@ -4,11 +4,13 @@ public class ConfigOptionsLocal {
 
     // Stats
     public boolean trackHeatmaps;
-    
+
     public boolean trackServerStats;
-    
+
     public boolean trackWorldStats;
-    
+
+    public boolean trackShopSales;
+
     // Other
     public String lastVersion = "";
 
