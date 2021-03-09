@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import moe.plushie.rpg_framework.api.core.IIdentifier;
+import moe.plushie.rpg_framework.core.common.config.ConfigStorage;
+import moe.plushie.rpg_framework.core.common.config.ConfigStorage.StorageType;
 import moe.plushie.rpg_framework.core.common.database.DatabaseManager;
 import moe.plushie.rpg_framework.core.common.database.DatebaseTable;
 import moe.plushie.rpg_framework.core.common.database.sql.ISqlBulder;
@@ -17,7 +19,7 @@ import net.minecraft.item.ItemStack;
 public final class TableStatsShopSales {
 
     private final static String TABLE_NAME = "shop_sales";
-    
+
     private TableStatsShopSales() {
     }
 
@@ -43,7 +45,7 @@ public final class TableStatsShopSales {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
+
 //        String sql = "CREATE TABLE IF NOT EXISTS shop_sales";
 //        sql += "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,";
 //        sql += "shop_identifier TEXT NOT NULL,";
@@ -72,6 +74,9 @@ public final class TableStatsShopSales {
 
     private static void itemRecordUpdate(Connection conn, IIdentifier shop, String item) throws SQLException {
         String sql = "UPDATE shop_sales SET amount = amount + 1, date=datetime('now') WHERE shop_identifier=? AND item=?";
+        if (ConfigStorage.getStorageType() == StorageType.MYSQL) {
+            sql = "UPDATE shop_sales SET amount = amount + 1, date=now() WHERE shop_identifier=? AND item=?";
+        }
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setObject(1, shop.getValue());
             ps.setString(2, item);
