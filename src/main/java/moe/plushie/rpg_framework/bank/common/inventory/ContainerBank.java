@@ -212,7 +212,6 @@ public class ContainerBank extends ModContainer implements IInventoryChangedList
         if (slot.getHasStack()) {
             ItemStack stack = slot.getStack();
             ItemStack result = stack.copy();
-            // Moving from tile entity to player.
             if (!this.mergeItemStack(stack, 0, getPlayerInvStartIndex(), false)) {
                 return ItemStack.EMPTY;
             }
