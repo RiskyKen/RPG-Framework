@@ -16,6 +16,7 @@ import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.IInventoryChangedListener;
 import net.minecraft.inventory.InventoryBasic;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -31,7 +32,7 @@ public class ContainerBank extends ModContainer implements IInventoryChangedList
     private InventoryBasic inventory;
     private boolean updatingSlots = false;
     private boolean dirty = false;
-    
+
     private int unlockedTabs = 0;
     private int activeTab = -1;
 
@@ -142,7 +143,7 @@ public class ContainerBank extends ModContainer implements IInventoryChangedList
         }
         updateSlotForTab();
     }
-    
+
     public void setActiveTabClient(int activeTab) {
         if (unlockedTabs < 1) {
             this.activeTab = -1;
@@ -166,7 +167,7 @@ public class ContainerBank extends ModContainer implements IInventoryChangedList
         }
         dirty = true;
     }
-    
+
     @Override
     public void onContainerClosed(EntityPlayer playerIn) {
         super.onContainerClosed(playerIn);
@@ -203,5 +204,26 @@ public class ContainerBank extends ModContainer implements IInventoryChangedList
             this.sourcePlayer = new DBPlayer(bankAccount.getOwner().getId());
         }
         setBankAccount(bankAccount);
+    }
+
+    @Override
+    protected ItemStack transferStackFromPlayer(EntityPlayer playerIn, int index) {
+        Slot slot = getSlot(index);
+        if (slot.getHasStack()) {
+            ItemStack stack = slot.getStack();
+            ItemStack result = stack.copy();
+            // Moving from tile entity to player.
+            if (!this.mergeItemStack(stack, 0, getPlayerInvStartIndex(), false)) {
+                return ItemStack.EMPTY;
+            }
+            if (stack.getCount() == 0) {
+                slot.putStack(ItemStack.EMPTY);
+            } else {
+                slot.onSlotChanged();
+            }
+            slot.onTake(playerIn, stack);
+            return result;
+        }
+        return super.transferStackFromPlayer(playerIn, index);
     }
 }
